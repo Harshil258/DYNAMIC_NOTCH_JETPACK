@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">DynamicIslandDemo</string>
+    <string name="accessibility_service_description">Dynamic Island overlay service that displays notifications, music controls, and system information in an iOS-style interface at the top of your screen.</string>
+</resources>

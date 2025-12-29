@@ -249,6 +249,39 @@ class DynamicIslandAccessibilityService : AccessibilityService(), LifecycleOwner
                 }
             }
         }, 500)
+        
+        // Follow position changes
+        serviceScope.launch {
+            preferencesDataStore.verticalOffset.collect { offset ->
+                windowLayoutParams?.let { params ->
+                    params.y = offset
+                    Logger.d(TAG, "Position: updated vertical offset to $offset")
+                    overlayView?.let { view ->
+                        try {
+                            windowManager.updateViewLayout(view, params)
+                        } catch (e: Exception) {
+                            Logger.e(TAG, "Position: failed to update vertical layout", e)
+                        }
+                    }
+                }
+            }
+        }
+        
+        serviceScope.launch {
+            preferencesDataStore.horizontalOffset.collect { offset ->
+                windowLayoutParams?.let { params ->
+                    params.x = offset
+                    Logger.d(TAG, "Position: updated horizontal offset to $offset")
+                    overlayView?.let { view ->
+                        try {
+                            windowManager.updateViewLayout(view, params)
+                        } catch (e: Exception) {
+                            Logger.e(TAG, "Position: failed to update horizontal layout", e)
+                        }
+                    }
+                }
+            }
+        }
 
         Logger.i(TAG, "<<< initializeService() - Initialization complete")
     }

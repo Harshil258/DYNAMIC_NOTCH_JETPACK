@@ -57,5 +57,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation(libs.capsule)
     implementation(libs.backdrop)
-
+    implementation("androidx.navigation:navigation-compose:2.8.0")
 }

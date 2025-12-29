@@ -18,6 +18,7 @@ import com.kyant.backdrop.Backdrop
 import com.notch.dynamicislanddemo.data.PreferencesDataStore
 import com.notch.dynamicislanddemo.ui.glass.GlassCard
 import com.notch.dynamicislanddemo.ui.glass.GlassSettingToggleItem
+import com.notch.dynamicislanddemo.ui.glass.GlassSettingSliderItem
 import kotlinx.coroutines.launch
 
 @Composable

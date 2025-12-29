@@ -23,14 +23,18 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.kyant.backdrop.Backdrop
 import com.notch.dynamicislanddemo.data.PreferencesDataStore
 import com.notch.dynamicislanddemo.services.DynamicIslandAccessibilityService
+import com.notch.dynamicislanddemo.ui.components.NavigationDestination
 import com.notch.dynamicislanddemo.ui.glass.*
 import com.notch.dynamicislanddemo.utils.HapticFeedback
 import com.notch.dynamicislanddemo.utils.Utils
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.Icons
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     backdrop: Backdrop,
+    onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -148,6 +152,47 @@ fun HomeScreen(
                     },
                     backdrop = backdrop,
                     enabled = isMainSwitchInteractable
+                )
+            }
+        }
+        
+        // Display Positioning Card
+        GlassCard(
+            backdrop = backdrop,
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { 
+                HapticFeedback.light(context)
+                onNavigate(NavigationDestination.DisplaySettings.route)
+            }
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    BasicText(
+                        text = "Display Positioning",
+                        style = TextStyle(
+                            color = primaryTextColor,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                    BasicText(
+                        text = "Fine-tune island position",
+                        style = TextStyle(
+                            color = secondaryTextColor,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Normal
+                        )
+                    )
+                }
+                
+                androidx.compose.material3.Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = secondaryTextColor
                 )
             }
         }

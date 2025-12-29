@@ -34,6 +34,10 @@ class PreferencesDataStore(private val context: Context) {
         
         // Notifications
         private val SHOW_BATTERY_NOTIFICATIONS_KEY = booleanPreferencesKey("show_battery_notifications")
+        
+        // Positioning
+        private val VERTICAL_OFFSET_KEY = androidx.datastore.preferences.core.intPreferencesKey("vertical_offset")
+        private val HORIZONTAL_OFFSET_KEY = androidx.datastore.preferences.core.intPreferencesKey("horizontal_offset")
     }
     
     // Flows
@@ -49,6 +53,9 @@ class PreferencesDataStore(private val context: Context) {
     val compactMusicControls: Flow<Boolean> = context.dataStore.data.map { it[COMPACT_MUSIC_CONTROLS_KEY] ?: false }
     
     val showBatteryNotifications: Flow<Boolean> = context.dataStore.data.map { it[SHOW_BATTERY_NOTIFICATIONS_KEY] ?: true }
+    
+    val verticalOffset: Flow<Int> = context.dataStore.data.map { it[VERTICAL_OFFSET_KEY] ?: 12 }
+    val horizontalOffset: Flow<Int> = context.dataStore.data.map { it[HORIZONTAL_OFFSET_KEY] ?: 0 }
     
     // Setters
     suspend fun setIslandEnabled(enabled: Boolean) {
@@ -85,6 +92,14 @@ class PreferencesDataStore(private val context: Context) {
     
     suspend fun setShowBatteryNotifications(enabled: Boolean) {
         context.dataStore.edit { it[SHOW_BATTERY_NOTIFICATIONS_KEY] = enabled }
+    }
+    
+    suspend fun setVerticalOffset(offset: Int) {
+        context.dataStore.edit { it[VERTICAL_OFFSET_KEY] = offset }
+    }
+    
+    suspend fun setHorizontalOffset(offset: Int) {
+        context.dataStore.edit { it[HORIZONTAL_OFFSET_KEY] = offset }
     }
 }
 

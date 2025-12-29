@@ -1,6 +1,7 @@
 package com.notch.dynamicislanddemo.ui.glass
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -31,6 +32,7 @@ fun GlassCard(
     cornerRadius: Dp = 24.dp,
     padding: Dp = 16.dp,
     containerColor: Color? = null,
+    onClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
     val isLightTheme = !isSystemInDarkTheme()
@@ -43,8 +45,16 @@ fun GlassCard(
     
     val finalContainerColor = containerColor ?: defaultContainerColor
     
+    
     Box(
         modifier = modifier
+            .then(
+                if (onClick != null) {
+                    Modifier.clickable(onClick = onClick)
+                } else {
+                    Modifier
+                }
+            )
             .drawBackdrop(
                 backdrop = backdrop,
                 shape = { ContinuousRoundedRectangle(with(density) { cornerRadius.toPx() }) },

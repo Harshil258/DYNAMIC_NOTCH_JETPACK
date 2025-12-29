@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.*
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -13,6 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.notch.dynamicislanddemo.catalog.AnimatedBackground
 import com.notch.dynamicislanddemo.catalog.BackdropDemoScaffold
 import com.notch.dynamicislanddemo.catalog.ripple
@@ -41,12 +46,20 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainContent() {
     val isLightTheme = !isSystemInDarkTheme()
-    var currentDestination by remember { mutableStateOf<NavigationDestination>(NavigationDestination.Home) }
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route ?: NavigationDestination.Home.route
+
+    val currentDestination = remember(currentRoute) {
+        NavigationDestination.values.find { it.route == currentRoute } ?: NavigationDestination.Home
+    }
+    
     val currentTabIndex = when (currentDestination) {
         NavigationDestination.Home -> 0
         NavigationDestination.Preview -> 1
         NavigationDestination.Settings -> 2
         NavigationDestination.About -> 3
+        else -> 0
     }
     
     CompositionLocalProvider(
@@ -88,28 +101,70 @@ fun MainContent() {
                             .fillMaxWidth()
                             .weight(1f)
                     ) {
-                        when (currentDestination) {
-                            NavigationDestination.Home -> HomeScreen(backdrop)
-                            NavigationDestination.Preview -> PreviewScreen(backdrop)
-                            NavigationDestination.Settings -> SettingsScreen(backdrop)
-                            NavigationDestination.About -> AboutScreen(backdrop)
+                        NavHost(
+                            navController = navController,
+                            startDestination = NavigationDestination.Home.route,
+                            enterTransition = {
+                                slideInHorizontally { it } + fadeIn()
+                            },
+                            exitTransition = {
+                                slideOutHorizontally { -it } + fadeOut()
+                            },
+                            popEnterTransition = {
+                                slideInHorizontally { -it } + fadeIn()
+                            },
+                            popExitTransition = {
+                                slideOutHorizontally { it } + fadeOut()
+                            }
+                        ) {
+                            composable(NavigationDestination.Home.route) {
+                                HomeScreen(
+                                    backdrop = backdrop,
+                                    onNavigate = { route ->
+                                        navController.navigate(route)
+                                    }
+                                )
+                            }
+                            composable(NavigationDestination.Preview.route) { PreviewScreen(backdrop) }
+                            composable(NavigationDestination.Settings.route) { SettingsScreen(backdrop) }
+                            composable(NavigationDestination.About.route) { AboutScreen(backdrop) }
+                            composable(NavigationDestination.DisplaySettings.route) {
+                                com.notch.dynamicislanddemo.ui.screens.DisplaySettingsScreen(
+                                    backdrop = backdrop,
+                                    onBack = { navController.popBackStack() }
+                                )
+                            }
                         }
                     }
                     
-                    // Bottom navigation bar
-                    AppNavigationBar(
-                        selectedTab = currentTabIndex,
-                        onTabSelected = { index ->
-                            currentDestination = when (index) {
-                                0 -> NavigationDestination.Home
-                                1 -> NavigationDestination.Preview
-                                2 -> NavigationDestination.Settings
-                                3 -> NavigationDestination.About
-                                else -> NavigationDestination.Home
-                            }
-                        },
-                        backdrop = backdrop
-                    )
+                    // Bottom navigation bar - Only show if current destination is a tab
+                    if (currentDestination.isTab) {
+                        AppNavigationBar(
+                            selectedTab = currentTabIndex,
+                            onTabSelected = { index ->
+                                val destination = when (index) {
+                                    0 -> NavigationDestination.Home
+                                    1 -> NavigationDestination.Preview
+                                    2 -> NavigationDestination.Settings
+                                    3 -> NavigationDestination.About
+                                    else -> NavigationDestination.Home
+                                }
+                                navController.navigate(destination.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    // Avoid multiple copies of the same destination when
+                                    // reselecting the same item
+                                    launchSingleTop = true
+                                    // Restore state when reselecting a previously selected item
+                                    restoreState = true
+                                }
+                            },
+                            backdrop = backdrop
+                        )
+                    }
                 }
             }
         }

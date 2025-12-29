@@ -14,6 +14,8 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -172,4 +174,57 @@ fun GlassSettingNavigationItem(
         showNavigationArrow = true,
         onClick = onClick
     )
+}
+
+/**
+ * Glass setting item with slider
+ */
+@Composable
+fun GlassSettingSliderItem(
+    title: String,
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    valueRange: ClosedFloatingPointRange<Float>,
+    backdrop: Backdrop,
+    modifier: Modifier = Modifier,
+    subtitle: String? = null,
+    icon: ImageVector? = null,
+    valueDisplay: String = value.toInt().toString()
+) {
+    val isLightTheme = !isSystemInDarkTheme()
+    val primaryTextColor = if (isLightTheme) Color.Black else Color.White
+    
+    Column(modifier = modifier.fillMaxWidth()) {
+        GlassSettingItem(
+            title = title,
+            backdrop = backdrop,
+            subtitle = subtitle,
+            icon = icon,
+            trailingContent = {
+                BasicText(
+                    text = valueDisplay,
+                    style = TextStyle(
+                        color = primaryTextColor,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            }
+        )
+        
+        Slider(
+            value = value,
+            onValueChange = onValueChange,
+            valueRange = valueRange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 12.dp),
+            colors = SliderDefaults.colors(
+                thumbColor = primaryTextColor,
+                activeTrackColor = primaryTextColor,
+                inactiveTrackColor = primaryTextColor.copy(alpha = 0.2f)
+            )
+        )
+    }
 }

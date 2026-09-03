@@ -27,34 +27,36 @@ fun CompactNotificationIslandMain(
     sender: String = "John Doe",
     modifier: Modifier = Modifier
 ) {
+    // The real capsule is 126pt wide: a single app badge plus a short label.
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = AppTheme.spacing.md),
+            .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+        horizontalArrangement = Arrangement.spacedBy(7.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(24.dp)
+                .size(23.dp)
                 .clip(CircleShape)
                 .background(Color(0xFF25D366)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Notifications,
-                contentDescription = null,
+            AppleIcon(
+                glyph = AppleGlyph.Bell,
                 tint = Color.White,
-                modifier = Modifier.size(14.dp)
+                size = 12.dp
             )
         }
 
         AppText(
-            text = "$appName: $sender",
+            text = sender,
             style = AppTheme.typography.islandSubtitle,
             color = Color.White,
             fontWeight = FontWeight.Medium,
-            maxLines = 1
+            maxLines = 1,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
         )
     }
 }

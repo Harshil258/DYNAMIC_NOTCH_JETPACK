@@ -35,30 +35,26 @@ fun OngoingCallIslandMain(
     duration: String = "0:45",
     modifier: Modifier = Modifier
 ) {
+    // Leading capsule of the split call activity: just the running timer.
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = AppTheme.spacing.md),
+            .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Icon(
-            imageVector = Icons.Default.Phone,
-            contentDescription = null,
+        AppleIcon(
+            glyph = AppleGlyph.Phone,
             tint = iOSGreen,
-            modifier = Modifier.size(16.dp)
+            size = 12.dp
         )
-
         AppText(
             text = duration,
             style = AppTheme.typography.islandTime,
             color = iOSGreen,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1
         )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        WaveformBarsAnimation()
     }
 }
 
@@ -71,20 +67,10 @@ fun OngoingCallIslandSide(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .size(28.dp)
-                .clip(CircleShape)
-                .background(iOSGreen),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = Icons.Default.Phone,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(16.dp)
-            )
-        }
+        WaveformAnimation(
+            modifier = Modifier.size(width = 17.dp, height = 14.dp),
+            gradient = listOf(Color(0xFF5CE07E), iOSGreen)
+        )
     }
 }
 

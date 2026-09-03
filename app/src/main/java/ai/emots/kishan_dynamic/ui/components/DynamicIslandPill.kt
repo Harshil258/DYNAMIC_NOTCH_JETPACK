@@ -40,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
@@ -111,27 +112,35 @@ fun DynamicIslandPill(
     val isPressed by interactionSource.collectIsPressedAsState()
     val pressScale by animateFloatAsState(
         targetValue = if (isPressed) 0.96f else 1.0f,
-        animationSpec = spring(
-            dampingRatio = 0.65f,
-            stiffness = Spring.StiffnessMedium
-        ),
+        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.pressSpring(),
         label = "island_press"
     )
 
-    // Exact iOS 17 compact and expanded widths
+    // -------------------------------------------------------------------------
+    // TRUE iOS GEOMETRY
+    //
+    // Measured against the iPhone 15 Pro reference (393pt wide). The compact
+    // presentations sit between the idle 126pt pill and ~160pt — they are
+    // deliberately NOT screen-width banners. Only genuinely expanded sheets
+    // reach the 371pt maximum.
+    // -------------------------------------------------------------------------
+    val islandTokens = ai.emots.kishan_dynamic.ui.theme.AppTheme.island
+    val screenWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp.dp
+    val maxExpanded = islandTokens.expandedWidth(screenWidth)
+
     val targetWidth: Dp = when (state) {
         IslandDemoState.Minimal -> 126.dp
-        IslandDemoState.MusicCompact -> 196.dp
-        IslandDemoState.CallCompact -> 206.dp
-        IslandDemoState.ChargingCompact -> 186.dp
-        IslandDemoState.NotificationCompact -> 216.dp
-        IslandDemoState.TimerCompact -> 186.dp
-        IslandDemoState.DeliveryCompact -> 196.dp
-        IslandDemoState.FlightCompact -> 206.dp
-        IslandDemoState.SportsCompact -> 198.dp
-        IslandDemoState.NavigationCompact -> 208.dp
-        // Standard iOS Expanded Island width
-        else -> 371.dp
+        IslandDemoState.MusicCompact -> 134.dp
+        IslandDemoState.CallCompact -> 140.dp
+        IslandDemoState.ChargingCompact -> 132.dp
+        IslandDemoState.NotificationCompact -> 152.dp
+        IslandDemoState.TimerCompact -> 132.dp
+        IslandDemoState.DeliveryCompact -> 140.dp
+        IslandDemoState.FlightCompact -> 146.dp
+        IslandDemoState.SportsCompact -> 144.dp
+        IslandDemoState.NavigationCompact -> 150.dp
+        // Expanded sheets: the device width minus iOS side margins, capped.
+        else -> maxExpanded
     }
 
     // Exact Apple prototype heights per state type:
@@ -149,18 +158,18 @@ fun DynamicIslandPill(
         IslandDemoState.DeliveryCompact,
         IslandDemoState.FlightCompact,
         IslandDemoState.SportsCompact,
-        IslandDemoState.NavigationCompact -> 37.dp
+        IslandDemoState.NavigationCompact -> 37.33.dp
 
         IslandDemoState.CallExpanded,
         IslandDemoState.NotificationExpanded,
         IslandDemoState.TimerExpanded,
-        IslandDemoState.ChargingExpanded -> 96.dp
+        IslandDemoState.ChargingExpanded -> 92.dp
 
-        IslandDemoState.MusicExpanded -> 192.dp
+        IslandDemoState.MusicExpanded -> 176.dp
 
         IslandDemoState.DeliveryExpanded,
         IslandDemoState.FlightExpanded,
-        IslandDemoState.SportsExpanded -> 164.dp
+        IslandDemoState.SportsExpanded -> 160.dp
     }
 
     // Curvature: 50% capsule for compact & medium expanded capsules, 44dp squircle for full cards
@@ -177,19 +186,13 @@ fun DynamicIslandPill(
     // Apple Liquid Morphing Springs
     val animatedWidth by animateDpAsState(
         targetValue = targetWidth,
-        animationSpec = spring(
-            dampingRatio = 0.72f,
-            stiffness = Spring.StiffnessMediumLow
-        ),
+        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
         label = "island_width"
     )
 
     val animatedHeight by animateDpAsState(
         targetValue = targetHeight,
-        animationSpec = spring(
-            dampingRatio = 0.72f,
-            stiffness = Spring.StiffnessMediumLow
-        ),
+        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
         label = "island_height"
     )
 
@@ -229,7 +232,12 @@ fun DynamicIslandPill(
 
         Row(
             modifier = modifier
-                .scale(pressScale)
+                .graphicsLayer {
+                    scaleX = pressScale
+                    scaleY = pressScale
+                    // Grow downwards out of the cutout, like the real island.
+                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0f)
+                }
                 .clickable(
                     interactionSource = interactionSource,
                     indication = null,

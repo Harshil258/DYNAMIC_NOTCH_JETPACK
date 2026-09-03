@@ -47,10 +47,12 @@ import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.kit.AppBackground
+import ai.emots.kishan_dynamic.ui.motion.AppMotion
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 enum class SubScreen {
     DisplaySettings,
+    Language,
     NotificationSettings,
     MusicSettings,
     CallSettings,
@@ -92,17 +94,16 @@ fun MainContainerScreen(
             targetState = currentSubScreen,
             transitionSpec = {
                 if (targetState != null) {
-                    (slideInHorizontally { it } + fadeIn()) togetherWith
-                        (slideOutHorizontally { -it / 4 } + fadeOut())
+                    AppMotion.pushEnter() togetherWith AppMotion.pushExit()
                 } else {
-                    (slideInHorizontally { -it / 4 } + fadeIn()) togetherWith
-                        (slideOutHorizontally { it } + fadeOut())
+                    AppMotion.popEnter() togetherWith AppMotion.popExit()
                 }
             },
             label = "sub_screen_navigator"
         ) { sub ->
             when (sub) {
                 SubScreen.DisplaySettings -> DisplaySettingsScreen(onBack = { currentSubScreen = null })
+                SubScreen.Language -> LanguageScreen(onBack = { currentSubScreen = null })
                 SubScreen.NotificationSettings -> NotificationSettingsScreen(onBack = { currentSubScreen = null })
                 SubScreen.MusicSettings -> MusicSettingsScreen(onBack = { currentSubScreen = null })
                 SubScreen.CallSettings -> CallSettingsScreen(onBack = { currentSubScreen = null })
@@ -116,7 +117,9 @@ fun MainContainerScreen(
                 null -> Box(modifier = Modifier.fillMaxSize()) {
                     AnimatedContent(
                         targetState = selectedTab,
-                        transitionSpec = { fadeIn() togetherWith fadeOut() },
+                        transitionSpec = {
+                            AppMotion.fadeThroughEnter() togetherWith AppMotion.fadeThroughExit()
+                        },
                         label = "root_tab_switch"
                     ) { tab ->
                         when (tab) {
@@ -142,7 +145,8 @@ fun MainContainerScreen(
 
                             2 -> LiveActivitiesScreen()
                             3 -> SettingsVaultScreen(
-                                onNavigatePermissions = { currentSubScreen = SubScreen.PermissionHub }
+                                onNavigatePermissions = { currentSubScreen = SubScreen.PermissionHub },
+                                onNavigateLanguage = { currentSubScreen = SubScreen.Language }
                             )
                         }
                     }

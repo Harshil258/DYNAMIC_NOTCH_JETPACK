@@ -49,6 +49,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppStage
 import ai.emots.kishan_dynamic.ui.kit.AppStatusPill
 import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 
@@ -166,10 +167,15 @@ fun PlaygroundScreen(
                 label = "Silent",
                 headline = "Silent mode",
                 detail = "Ringer switched off",
-                supportsExpand = true,
-                stateGenerator = { expanded ->
-                    IslandState.RingerMode(mode = RingerModeType.SILENT, isExpanded = expanded)
-                }
+                supportsExpand = false,
+                stateGenerator = { IslandState.RingerMode(mode = RingerModeType.SILENT) }
+            ),
+            PreviewStateItem(
+                label = "Idle",
+                headline = "Idle island",
+                detail = "The 126pt pill, exactly as iOS draws it",
+                supportsExpand = false,
+                stateGenerator = { IslandState.Minimal }
             )
         )
     }
@@ -185,6 +191,7 @@ fun PlaygroundScreen(
         AppLargeTitle(
             title = "Dynamic Island",
             subtitle = "Preview every state before it appears on your screen.",
+            modifier = Modifier.appReveal(0),
             trailing = {
                 AppIconButton(
                     glyph = AppleGlyph.Settings,
@@ -198,10 +205,11 @@ fun PlaygroundScreen(
         // Live stage
         // ---------------------------------------------------------------
         AppStage(
+            modifier = Modifier.appReveal(1),
             caption = if (currentItem.supportsExpand) {
                 if (isExpanded) "Tap the island to collapse" else "Tap the island to expand"
             } else null,
-            minHeight = 210.dp
+            minHeight = 250.dp
         ) {
             DynamicNotchParent(
                 state = activeState,
@@ -256,7 +264,7 @@ fun PlaygroundScreen(
         // Setup status
         // ---------------------------------------------------------------
         AppSectionTitle("Status")
-        AppCard {
+        AppCard(modifier = Modifier.appReveal(2)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -301,7 +309,7 @@ fun PlaygroundScreen(
         // Shortcuts
         // ---------------------------------------------------------------
         AppSectionTitle("Experiences")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(3)) {
             AppNavRow(
                 title = "Notifications",
                 subtitle = "Expand alerts into the island",
@@ -357,7 +365,7 @@ fun PlaygroundScreen(
         // Service switch
         // ---------------------------------------------------------------
         AppSectionTitle("Service")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(4)) {
             AppToggleRow(
                 title = "Enable Dynamic Island",
                 subtitle = if (isIslandEnabled) "Running over your apps" else "Currently paused",

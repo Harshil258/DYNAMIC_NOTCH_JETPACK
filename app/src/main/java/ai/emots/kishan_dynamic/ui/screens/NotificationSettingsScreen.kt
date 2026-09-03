@@ -28,6 +28,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppStage
 import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
 import ai.emots.kishan_dynamic.ui.components.AppText
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,12 +56,14 @@ fun NotificationSettingsScreen(
 
     AppScreen {
         AppTopBar(
+            modifier = Modifier.appReveal(0),
             title = "Notifications",
             subtitle = "Heads-up alerts inside the island",
             onBack = onBack
         )
 
         AppStage(
+            modifier = Modifier.appReveal(1),
             caption = if (autoExpand || isSimulating) "Expanded preview" else "Compact preview",
             minHeight = 190.dp
         ) {
@@ -73,7 +76,7 @@ fun NotificationSettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Behaviour")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(2)) {
             AppToggleRow(
                 title = "Auto-expand new messages",
                 subtitle = "Open the full preview with sender and message text",
@@ -94,7 +97,7 @@ fun NotificationSettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Display duration")
-        AppCard {
+        AppCard(modifier = Modifier.appReveal(3)) {
             AppText(
                 text = "How long the island stays visible before collapsing.",
                 style = AppTheme.typography.bodySmall,

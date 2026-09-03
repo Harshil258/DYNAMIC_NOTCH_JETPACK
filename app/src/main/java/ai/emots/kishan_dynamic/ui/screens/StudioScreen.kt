@@ -3,6 +3,7 @@ package ai.emots.kishan_dynamic.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Modifier
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.kit.AppFootnote
 import ai.emots.kishan_dynamic.ui.kit.AppLargeTitle
@@ -12,6 +13,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppRowDivider
 import ai.emots.kishan_dynamic.ui.kit.AppScreen
 import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
 import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 private data class FeatureEntry(
@@ -98,12 +100,13 @@ fun StudioScreen(
 
     AppScreen(bottomInset = BottomDockInset) {
         AppLargeTitle(
+            modifier = Modifier.appReveal(0),
             title = "Features",
             subtitle = "Choose what the island reacts to and how it looks."
         )
 
         AppSectionTitle("Island behaviour")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(1)) {
             behaviours.forEachIndexed { index, item ->
                 AppNavRow(
                     title = item.title,
@@ -120,7 +123,7 @@ fun StudioScreen(
         AppSectionSpacer()
 
         AppSectionTitle("System & layout")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(2)) {
             system.forEachIndexed { index, item ->
                 AppNavRow(
                     title = item.title,

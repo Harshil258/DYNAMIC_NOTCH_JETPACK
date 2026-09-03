@@ -25,6 +25,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppTile
 import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 private data class QuickToggle(
@@ -59,13 +60,14 @@ fun QuickControlScreen(
 
     AppScreen {
         AppTopBar(
+            modifier = Modifier.appReveal(0),
             title = "Quick controls",
             subtitle = "System toggles and the volume HUD",
             onBack = onBack
         )
 
         AppSectionTitle("Behaviour")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(1)) {
             AppToggleRow(
                 title = "Control centre on the island",
                 subtitle = "Long press the island to open your shortcuts",
@@ -86,7 +88,7 @@ fun QuickControlScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Shortcut tiles · $activeCount active")
-        AppCard {
+        AppCard(modifier = Modifier.appReveal(2)) {
             AppText(
                 text = "Tap a tile to add or remove it from the island control centre.",
                 style = AppTheme.typography.bodySmall,

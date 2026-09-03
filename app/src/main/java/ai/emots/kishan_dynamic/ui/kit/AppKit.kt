@@ -530,21 +530,27 @@ fun AppStatusPill(
 }
 
 /**
- * The stage that showcases a live Dynamic Island. Gives the island a calm,
- * device-like backdrop so it never floats awkwardly on the page.
+ * The stage that showcases a live Dynamic Island.
+ *
+ * Rather than floating the island on a flat card, we draw a scaled-down phone:
+ * rounded 46dp bezel, a hairline aluminium rim and a wallpaper wash. That
+ * context is what makes a 126pt pill read as a real hardware cutout instead of
+ * a black rectangle — and it is how the reference design presents it too.
  */
 @Composable
 fun AppStage(
     modifier: Modifier = Modifier,
     caption: String? = null,
-    minHeight: Dp = 200.dp,
+    minHeight: Dp = 240.dp,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val shape = RoundedCornerShape(AppTheme.radius.card)
+    val outerShape = RoundedCornerShape(AppTheme.radius.card)
+    val deviceShape = RoundedCornerShape(46.dp)
+
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(shape)
+            .clip(outerShape)
             .background(
                 Brush.verticalGradient(
                     listOf(
@@ -553,17 +559,45 @@ fun AppStage(
                     )
                 )
             )
-            .border(0.5.dp, AppTheme.colors.border, shape)
-            .padding(vertical = AppTheme.spacing.xl, horizontal = AppTheme.spacing.md),
+            .border(0.5.dp, AppTheme.colors.border, outerShape)
+            .padding(AppTheme.spacing.lg),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = minHeight),
-            contentAlignment = Alignment.Center,
-            content = content
-        )
+                .heightIn(min = minHeight)
+                // The device body.
+                .clip(deviceShape)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            Color(0xFF14151A),
+                            Color(0xFF07070A)
+                        )
+                    )
+                )
+                .border(1.dp, Color.White.copy(alpha = 0.10f), deviceShape)
+                .padding(vertical = AppTheme.spacing.md),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            // A soft wallpaper bloom behind the island, so the black pill has
+            // something to sit against.
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            StageBloom.copy(alpha = 0.30f),
+                            Color.Transparent
+                        ),
+                        center = Offset(size.width * 0.5f, size.height * 0.1f),
+                        radius = size.width * 0.9f
+                    )
+                )
+            }
+            content()
+        }
+
         if (caption != null) {
             Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
             AppText(
@@ -574,6 +608,9 @@ fun AppStage(
         }
     }
 }
+
+/** Wallpaper tint used behind the island inside [AppStage]. */
+private val StageBloom = Color(0xFF4C6FFF)
 
 /** Short explanatory paragraph shown under a card group. */
 @Composable

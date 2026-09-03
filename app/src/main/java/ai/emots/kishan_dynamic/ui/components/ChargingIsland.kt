@@ -1,21 +1,41 @@
 package ai.emots.kishan_dynamic.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import ai.emots.kishan_dynamic.ui.motion.AppMotion
+import ai.emots.kishan_dynamic.ui.motion.rememberBreathing
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
+
+internal fun batteryColorFor(percentage: Int): Color = when {
+    percentage >= 20 -> Color(0xFF30D158)
+    percentage >= 10 -> Color(0xFFFF9F0A)
+    else -> Color(0xFFFF453A)
+}
 
 /**
- * Charging/Battery island (main pill)
+ * CHARGING — leading capsule.
+ *
+ * The compact split capsule only has room for a percentage, exactly like the
+ * iOS charging live activity. The ring lives in the trailing bubble.
  */
 @Composable
 fun ChargingIslandMain(
@@ -23,46 +43,34 @@ fun ChargingIslandMain(
     isLowBattery: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val batteryColor = when {
-        percentage >= 20 -> Color(0xFF34C759)
-        percentage >= 10 -> Color(0xFFFF9500)
-        else -> Color(0xFFFF3B30)
-    }
-    
+    val color = batteryColorFor(percentage)
+    val glow by rememberBreathing(min = 0.55f, max = 1f, durationMillis = 1800)
+
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.lg),
+            .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        AppText(
-            text = if (isLowBattery) "Low Battery" else "Charging",
-            style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandSubtitle,
-            color = Color.White
+        AppleIcon(
+            glyph = if (isLowBattery) AppleGlyph.Battery else AppleGlyph.Power,
+            tint = color,
+            size = 13.dp,
+            modifier = Modifier.graphicsLayer { alpha = if (isLowBattery) 1f else glow }
         )
-        
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.sm)
-        ) {
-            AppText(
-                text = "$percentage%",
-                style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandTitle,
-                color = batteryColor
-            )
-            
-            BatteryIcon(
-                percentage = percentage,
-                color = batteryColor,
-                modifier = Modifier.size(width = 28.dp, height = 14.dp)
-            )
-        }
+        AppText(
+            text = "$percentage%",
+            style = AppTheme.typography.islandSubtitle,
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1
+        )
     }
 }
 
 /**
- * iOS-style Battery icon with rounded shell, nub, and inner fill
+ * iOS-style battery glyph: rounded shell, nub, animated inner fill.
  */
 @Composable
 fun BatteryIcon(
@@ -70,78 +78,101 @@ fun BatteryIcon(
     color: Color,
     modifier: Modifier = Modifier
 ) {
+    val fill by animateFloatAsState(
+        targetValue = (percentage / 100f).coerceIn(0f, 1f),
+        animationSpec = AppMotion.settleSpring(),
+        label = "battery_fill"
+    )
+
     Canvas(modifier = modifier) {
         val width = size.width
         val height = size.height
-        
+
         val bodyWidth = width * 0.85f
-        val bodyHeight = height
         val cornerRadius = height * 0.35f
-        
+
         val nubWidth = width * 0.08f
         val nubHeight = height * 0.35f
         val nubX = bodyWidth + 1.5.dp.toPx()
         val nubY = (height - nubHeight) / 2
-        val nubCornerRadius = 1.5.dp.toPx()
-        
-        // 1. Battery shell background
+
         drawRoundRect(
             color = color.copy(alpha = 0.3f),
-            topLeft = androidx.compose.ui.geometry.Offset(0f, 0f),
-            size = androidx.compose.ui.geometry.Size(bodyWidth, bodyHeight),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(cornerRadius, cornerRadius)
+            topLeft = Offset(0f, 0f),
+            size = Size(bodyWidth, height),
+            cornerRadius = CornerRadius(cornerRadius, cornerRadius)
         )
-        
-        // 2. Nub
         drawRoundRect(
             color = color,
-            topLeft = androidx.compose.ui.geometry.Offset(nubX, nubY),
-            size = androidx.compose.ui.geometry.Size(nubWidth, nubHeight),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(nubCornerRadius, nubCornerRadius)
+            topLeft = Offset(nubX, nubY),
+            size = Size(nubWidth, nubHeight),
+            cornerRadius = CornerRadius(1.5.dp.toPx(), 1.5.dp.toPx())
         )
-        
-        // 3. Inner fill
+
         val fillPadding = 1.5.dp.toPx()
-        val maxFillWidth = bodyWidth - (fillPadding * 2)
-        val fillWidth = maxFillWidth * (percentage / 100f)
-        val fillHeight = bodyHeight - (fillPadding * 2)
-        val fillCornerRadius = cornerRadius - fillPadding
-        
-        if (percentage > 0) {
+        val maxFillWidth = bodyWidth - fillPadding * 2
+        val fillHeight = height - fillPadding * 2
+        val fillCorner = (cornerRadius - fillPadding).coerceAtLeast(0f)
+
+        if (fill > 0f) {
             drawRoundRect(
                 color = color,
-                topLeft = androidx.compose.ui.geometry.Offset(fillPadding, fillPadding),
-                size = androidx.compose.ui.geometry.Size(fillWidth.coerceAtLeast(fillHeight), fillHeight),
-                cornerRadius = androidx.compose.ui.geometry.CornerRadius(fillCornerRadius.coerceAtLeast(0f), fillCornerRadius.coerceAtLeast(0f))
+                topLeft = Offset(fillPadding, fillPadding),
+                size = Size((maxFillWidth * fill).coerceAtLeast(fillHeight), fillHeight),
+                cornerRadius = CornerRadius(fillCorner, fillCorner)
             )
         }
     }
 }
 
 /**
- * Side island bubble with circular progress ring
+ * CHARGING — trailing bubble: a hand-drawn progress ring so it stays crisp at
+ * the true 37pt bubble size (Material's indicator is too heavy here).
  */
 @Composable
 fun ChargingIslandSide(
     percentage: Int,
     modifier: Modifier = Modifier
 ) {
-    val ringColor = when {
-        percentage >= 20 -> Color(0xFF34C759)
-        percentage >= 10 -> Color(0xFFFF9500)
-        else -> Color(0xFFFF3B30)
-    }
-    
+    val ringColor = batteryColorFor(percentage)
+    val progress by animateFloatAsState(
+        targetValue = (percentage / 100f).coerceIn(0f, 1f),
+        animationSpec = AppMotion.settleSpring(),
+        label = "charge_ring"
+    )
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(
-            progress = { percentage / 100f },
-            modifier = Modifier.size(28.dp),
-            color = ringColor,
-            trackColor = ringColor.copy(alpha = 0.25f),
-            strokeWidth = 2.5.dp
+        Canvas(modifier = Modifier.size(24.dp)) {
+            val stroke = 2.6.dp.toPx()
+            val inset = stroke / 2f
+            val arcSize = Size(size.width - stroke, size.height - stroke)
+
+            drawArc(
+                color = ringColor.copy(alpha = 0.22f),
+                startAngle = 0f,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = Offset(inset, inset),
+                size = arcSize,
+                style = Stroke(width = stroke, cap = StrokeCap.Round)
+            )
+            drawArc(
+                color = ringColor,
+                startAngle = -90f,
+                sweepAngle = 360f * progress,
+                useCenter = false,
+                topLeft = Offset(inset, inset),
+                size = arcSize,
+                style = Stroke(width = stroke, cap = StrokeCap.Round)
+            )
+        }
+        AppleIcon(
+            glyph = AppleGlyph.Power,
+            tint = ringColor,
+            size = 10.dp
         )
     }
 }

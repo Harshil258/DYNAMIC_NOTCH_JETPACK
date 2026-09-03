@@ -20,8 +20,10 @@ import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppStage
 import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Modifier
 
 @Composable
 fun BatterySettingsScreen(
@@ -34,12 +36,14 @@ fun BatterySettingsScreen(
 
     AppScreen {
         AppTopBar(
+            modifier = Modifier.appReveal(0),
             title = "Battery & charging",
             subtitle = "Charging animation and low-power alerts",
             onBack = onBack
         )
 
         AppStage(
+            modifier = Modifier.appReveal(1),
             caption = if (isExpandedCharging) "Expanded charging HUD" else "Compact battery pill",
             minHeight = 190.dp
         ) {
@@ -53,7 +57,7 @@ fun BatterySettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Alerts")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(2)) {
             AppToggleRow(
                 title = "Charging animation",
                 subtitle = "Show a pulsing ring and wattage when plugged in",
@@ -74,7 +78,7 @@ fun BatterySettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Keep the island alive")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(3)) {
             AppNavRow(
                 title = "Background guardian guide",
                 subtitle = "Stop aggressive battery savers from closing the service",

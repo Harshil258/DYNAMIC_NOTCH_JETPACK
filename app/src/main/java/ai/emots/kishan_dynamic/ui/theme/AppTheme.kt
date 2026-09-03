@@ -97,20 +97,69 @@ data class AppLayoutTokens(
     val bottomBarHeight: Dp
 )
 
+/**
+ * Physical geometry of the Dynamic Island, measured 1:1 against the
+ * iPhone 15 Pro (393 x 852 pt) reference used by the iOS 17 Dynamic Island
+ * component library.
+ *
+ * Every number below is a real iOS point value — do NOT round them to
+ * "nice" numbers, the authenticity of the island depends on them:
+ *
+ *   idle pill          126.0 x 37.33   corner 18.67 (perfect capsule)
+ *   compact split      ~ pill + 8pt gap + 37.33 bubble
+ *   minimal bubble     37.33 diameter
+ *   expanded sheet     371.0 wide, corner 44
+ *   top inset          11.0 from the top edge of the display
+ */
 data class AppIslandTokens(
-    val compactHeight: Dp = 37.dp,
-    val compactWidth: Dp = 155.dp,
-    val mediaCompactWidth: Dp = 195.dp,
-    val sideSize: Dp = 37.dp,
-    val splitGap: Dp = 10.dp,
-    val incomingCallHeight: Dp = 98.dp,
-    val ringerExpandedHeight: Dp = 96.dp,
-    val musicExpandedHeight: Dp = 210.dp,
-    val callExpandedHeight: Dp = 200.dp,
-    val notificationExpandedHeight: Dp = 190.dp
+    /** True iOS capsule height. */
+    val compactHeight: Dp = 37.33.dp,
+    /** True iOS idle capsule width — never stretch this to the screen. */
+    val compactWidth: Dp = 126.dp,
+    /** Compact media capsule: slightly wider to host the artwork + waveform. */
+    val mediaCompactWidth: Dp = 134.dp,
+    /** Trailing bubble used in split (live-activity) mode. */
+    val sideSize: Dp = 37.33.dp,
+    /** Gap between the capsule and the trailing bubble. */
+    val splitGap: Dp = 8.dp,
+    /** Distance from the top edge of the display to the island. */
+    val topInset: Dp = 11.dp,
+    /** Capsule corner radius (exact half of the height = true capsule). */
+    val compactCorner: Dp = 18.67.dp,
+    /** Expanded sheet corner radius, matching iOS continuous corners. */
+    val expandedCorner: Dp = 44.dp,
+    /** Maximum expanded width on the reference device. */
+    val expandedMaxWidth: Dp = 371.dp,
+    /** Horizontal breathing room kept on each side when expanded. */
+    val expandedSideMargin: Dp = 11.dp,
+    val incomingCallHeight: Dp = 160.dp,
+    val ringerExpandedHeight: Dp = 84.dp,
+    val musicExpandedHeight: Dp = 176.dp,
+    val callExpandedHeight: Dp = 168.dp,
+    val notificationExpandedHeight: Dp = 148.dp,
+    /** Reference device the geometry above was measured on. */
+    val referenceScreenWidth: Dp = 393.dp
 ) {
+    /**
+     * Expanded width for the current display.
+     *
+     * The island grows to the device width minus the iOS side margins, but is
+     * hard-capped at [expandedMaxWidth] so it never becomes an edge-to-edge
+     * banner on tablets or foldables.
+     */
     fun expandedWidth(screenWidth: Dp): Dp {
-        return (screenWidth - 24.dp).coerceIn(300.dp, 420.dp)
+        val available = screenWidth - expandedSideMargin * 2
+        return available.coerceIn(300.dp, expandedMaxWidth)
+    }
+
+    /**
+     * Scale factor to keep the island physically correct on displays that are
+     * narrower than the reference device (small phones), so a 126pt pill still
+     * reads as a 126pt pill relative to the screen.
+     */
+    fun deviceScale(screenWidth: Dp): Float {
+        val raw = screenWidth / referenceScreenWidth
+        return raw.coerceIn(0.86f, 1f)
     }
 }
 

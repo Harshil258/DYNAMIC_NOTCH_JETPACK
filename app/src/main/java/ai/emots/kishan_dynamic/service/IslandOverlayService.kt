@@ -98,7 +98,22 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val horizontalOffset by preferences.horizontalOffset.collectAsState(initial = 0)
                 val widthScale by preferences.widthScale.collectAsState(initial = 1.0f)
 
-                if (isEnabled && islandState !is IslandState.Hidden) {
+                // The island drops out of the cutout rather than popping in.
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = isEnabled && islandState !is IslandState.Hidden,
+                    enter = androidx.compose.animation.expandVertically(
+                        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
+                        expandFrom = Alignment.Top
+                    ) + androidx.compose.animation.fadeIn(
+                        animationSpec = androidx.compose.animation.core.tween(180)
+                    ),
+                    exit = androidx.compose.animation.shrinkVertically(
+                        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
+                        shrinkTowards = Alignment.Top
+                    ) + androidx.compose.animation.fadeOut(
+                        animationSpec = androidx.compose.animation.core.tween(140)
+                    )
+                ) {
                     AppTheme(darkTheme = true) {
                         Box(
                             modifier = Modifier

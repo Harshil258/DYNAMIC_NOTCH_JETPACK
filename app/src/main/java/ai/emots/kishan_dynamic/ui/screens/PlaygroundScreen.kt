@@ -1,77 +1,68 @@
 package ai.emots.kishan_dynamic.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import ai.emots.kishan_dynamic.data.model.ContactInfo
 import ai.emots.kishan_dynamic.data.model.DummyData
 import ai.emots.kishan_dynamic.data.model.IslandState
 import ai.emots.kishan_dynamic.data.model.RingerModeType
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.service.PermissionUtils
-import ai.emots.kishan_dynamic.ui.components.AppleGlyph
-import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.components.AppText
-import ai.emots.kishan_dynamic.ui.components.AtmosphericBackground
+import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.DynamicNotchParent
-import ai.emots.kishan_dynamic.ui.components.LuxurySwitch
+import ai.emots.kishan_dynamic.ui.kit.AppButton
+import ai.emots.kishan_dynamic.ui.kit.AppCard
+import ai.emots.kishan_dynamic.ui.kit.AppChip
+import ai.emots.kishan_dynamic.ui.kit.AppFootnote
+import ai.emots.kishan_dynamic.ui.kit.AppIconButton
+import ai.emots.kishan_dynamic.ui.kit.AppLargeTitle
+import ai.emots.kishan_dynamic.ui.kit.AppListCard
+import ai.emots.kishan_dynamic.ui.kit.AppNavRow
+import ai.emots.kishan_dynamic.ui.kit.AppRowDivider
+import ai.emots.kishan_dynamic.ui.kit.AppScreen
+import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
+import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
+import ai.emots.kishan_dynamic.ui.kit.AppStage
+import ai.emots.kishan_dynamic.ui.kit.AppStatusPill
+import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 
-data class PreviewStateItem(
+private data class PreviewStateItem(
     val label: String,
     val headline: String,
     val detail: String,
-    val indicatorColor: Color,
+    val supportsExpand: Boolean,
     val stateGenerator: (Boolean) -> IslandState
 )
 
 /**
- * Redesigned from first principles:
- * Minimal, spatial, editorial, and calm.
- * Eliminates all card-based visual noise, neon borders, and dashboard tiles.
- * The Dynamic Island floats freely in open space as the living hero of the experience.
+ * Island tab — the live preview hub.
+ * Structure: title → live stage → state picker → setup status → shortcuts → service switch.
  */
 @Composable
 fun PlaygroundScreen(
@@ -105,88 +96,79 @@ fun PlaygroundScreen(
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
-    val arePermissionsGranted = hasAccessibility && hasNotification
+    val permissionsGranted = hasAccessibility && hasNotification
 
-    var selectedIndex by remember { mutableStateOf(0) }
+    var selectedIndex by remember { mutableIntStateOf(0) }
     var isExpanded by remember { mutableStateOf(true) }
 
     val states = remember {
         listOf(
             PreviewStateItem(
                 label = "Music",
-                headline = "Music playback",
-                detail = "Glass Animals • Heat Waves",
-                indicatorColor = Color(0xFF0A84FF),
-                stateGenerator = { exp ->
+                headline = "Now playing",
+                detail = "Glass Animals · Heat Waves",
+                supportsExpand = true,
+                stateGenerator = { expanded ->
                     IslandState.Music(
                         track = DummyData.sampleMusicTracks[0],
                         isPlaying = true,
-                        isExpanded = exp
+                        isExpanded = expanded
                     )
                 }
             ),
             PreviewStateItem(
-                label = "Call",
+                label = "Incoming call",
                 headline = "Incoming call",
-                detail = "Harshil Vekariya • Mobile",
-                indicatorColor = Color(0xFF30D158),
-                stateGenerator = {
-                    IslandState.IncomingCall(contact = DummyData.sampleContacts[0])
-                }
+                detail = "Tamia Castillo · Mobile",
+                supportsExpand = false,
+                stateGenerator = { IslandState.IncomingCall(contact = DummyData.sampleContacts[0]) }
             ),
             PreviewStateItem(
-                label = "Active Call",
-                headline = "Ongoing call",
-                detail = "02:45 • High definition audio",
-                indicatorColor = Color(0xFF30D158),
-                stateGenerator = { exp ->
+                label = "Active call",
+                headline = "Call in progress",
+                detail = "02:45 · HD voice",
+                supportsExpand = true,
+                stateGenerator = { expanded ->
                     IslandState.OngoingCall(
                         contact = DummyData.sampleContacts[0],
                         durationSeconds = 165L,
-                        isExpanded = exp
+                        isExpanded = expanded
                     )
                 }
             ),
             PreviewStateItem(
                 label = "Alerts",
-                headline = "Notification",
-                detail = "WhatsApp • 2 new messages",
-                indicatorColor = Color(0xFF0A84FF),
-                stateGenerator = { exp ->
+                headline = "New notification",
+                detail = "WhatsApp · 2 messages",
+                supportsExpand = true,
+                stateGenerator = { expanded ->
                     IslandState.Notification(
                         notifications = DummyData.sampleNotifications,
-                        isExpanded = exp
+                        isExpanded = expanded
                     )
                 }
             ),
             PreviewStateItem(
                 label = "Charging",
                 headline = "Fast charging",
-                detail = "85% • SuperVOOC Warp HUD",
-                indicatorColor = Color(0xFFFF9F0A),
-                stateGenerator = {
-                    IslandState.Charging(batteryPercent = 85, isFastCharging = true)
-                }
+                detail = "85% · Warp charge",
+                supportsExpand = false,
+                stateGenerator = { IslandState.Charging(batteryPercent = 85, isFastCharging = true) }
             ),
             PreviewStateItem(
-                label = "Low Battery",
+                label = "Low battery",
                 headline = "Low battery",
                 detail = "14% remaining",
-                indicatorColor = Color(0xFFFF453A),
-                stateGenerator = {
-                    IslandState.Charging(batteryPercent = 14, isFastCharging = false)
-                }
+                supportsExpand = false,
+                stateGenerator = { IslandState.Charging(batteryPercent = 14, isFastCharging = false) }
             ),
             PreviewStateItem(
                 label = "Silent",
                 headline = "Silent mode",
                 detail = "Ringer switched off",
-                indicatorColor = Color(0xFFFF453A),
-                stateGenerator = { exp ->
-                    IslandState.RingerMode(
-                        mode = RingerModeType.SILENT,
-                        isExpanded = exp
-                    )
+                supportsExpand = true,
+                stateGenerator = { expanded ->
+                    IslandState.RingerMode(mode = RingerModeType.SILENT, isExpanded = expanded)
                 }
             )
         )
@@ -197,373 +179,195 @@ fun PlaygroundScreen(
         currentItem.stateGenerator(isExpanded)
     }
 
-    AtmosphericBackground {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .widthIn(max = 760.dp)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = AppTheme.layout.screenGutter)
-                .padding(bottom = AppTheme.layout.bottomBarHeight + 48.dp)
+    val serviceRunning = isIslandEnabled && permissionsGranted
+
+    AppScreen(bottomInset = BottomDockInset) {
+        AppLargeTitle(
+            title = "Dynamic Island",
+            subtitle = "Preview every state before it appears on your screen.",
+            trailing = {
+                AppIconButton(
+                    glyph = AppleGlyph.Settings,
+                    onClick = onNavigateVault,
+                    contentDescription = "Settings"
+                )
+            }
+        )
+
+        // ---------------------------------------------------------------
+        // Live stage
+        // ---------------------------------------------------------------
+        AppStage(
+            caption = if (currentItem.supportsExpand) {
+                if (isExpanded) "Tap the island to collapse" else "Tap the island to expand"
+            } else null,
+            minHeight = 210.dp
         ) {
-            // =================================================================
-            // 1. MINIMAL FLOATING APP IDENTITY
-            // =================================================================
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 24.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .width(18.dp)
-                            .height(10.dp)
-                            .clip(RoundedCornerShape(5.dp))
-                            .background(AppTheme.colors.textPrimary)
-                    )
-                    AppText(
-                        text = "Dynamic Island",
-                        style = AppTheme.typography.body,
-                        fontWeight = FontWeight.Medium,
-                        color = AppTheme.colors.textPrimary
-                    )
-                }
+            DynamicNotchParent(
+                state = activeState,
+                onIslandTap = { if (currentItem.supportsExpand) isExpanded = !isExpanded }
+            )
+        }
 
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .clickable { onNavigateVault() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Settings,
-                        tint = Color(0xFF8E8E93),
-                        size = 18.dp
-                    )
-                }
-            }
+        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AppText(
+                text = currentItem.headline,
+                style = AppTheme.typography.h3,
+                color = AppTheme.colors.textPrimary,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
+            AppText(
+                text = currentItem.detail,
+                style = AppTheme.typography.bodySmall,
+                color = AppTheme.colors.textSecondary,
+                textAlign = TextAlign.Center
+            )
+        }
 
-            // =================================================================
-            // 2. HERO: DYNAMIC ISLAND LIVING IN OPEN SPACE (NO CARDS)
-            // =================================================================
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                DynamicNotchParent(
-                    state = activeState,
-                    onIslandTap = {
-                        isExpanded = !isExpanded
+        Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+        ) {
+            states.forEachIndexed { index, item ->
+                AppChip(
+                    label = item.label,
+                    selected = selectedIndex == index,
+                    onClick = {
+                        selectedIndex = index
+                        isExpanded = true
                     }
                 )
             }
+        }
 
-            Spacer(modifier = Modifier.height(28.dp))
+        AppSectionSpacer()
 
-            // =================================================================
-            // 3. REFINED SYSTEM STATUS READOUT
-            // =================================================================
-            Column(
+        // ---------------------------------------------------------------
+        // Setup status
+        // ---------------------------------------------------------------
+        AppSectionTitle("Status")
+        AppCard {
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(7.dp)
-                            .clip(CircleShape)
-                            .background(currentItem.indicatorColor)
-                    )
-                    AppText(
-                        text = currentItem.headline,
-                        style = AppTheme.typography.h3,
-                        fontWeight = FontWeight.SemiBold,
-                        color = AppTheme.colors.textPrimary
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                AppText(
-                    text = currentItem.detail,
-                    style = AppTheme.typography.bodySmall,
-                    color = AppTheme.colors.textSecondary
-                )
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // =================================================================
-            // 4. CALM FLOATING STATE SELECTOR
-            // =================================================================
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                states.forEachIndexed { index, item ->
-                    val isSelected = selectedIndex == index
-                    val interactionSource = remember { MutableInteractionSource() }
-
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(999.dp))
-                            .background(
-                                if (isSelected) Color(0xFF1C1C1E)
-                                else Color.Transparent
-                            )
-                            .clickable(
-                                interactionSource = interactionSource,
-                                indication = null
-                            ) {
-                                selectedIndex = index
-                            }
-                            .padding(horizontal = 14.dp, vertical = 7.dp)
-                    ) {
-                        AppText(
-                            text = item.label,
-                            style = AppTheme.typography.caption,
-                            fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                            color = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textTertiary
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(40.dp))
-
-            // =================================================================
-            // 5. IN-LINE SETUP (IF PERMISSIONS ARE MISSING, NO RECTANGULAR CARD)
-            // =================================================================
-            if (!arePermissionsGranted) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(6.dp)
-                                .clip(CircleShape)
-                                .background(AppTheme.colors.warning)
-                        )
-                        AppText(
-                            text = "Setup required",
-                            style = AppTheme.typography.body,
-                            fontWeight = FontWeight.SemiBold,
-                            color = AppTheme.colors.textPrimary
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
+                Column(modifier = Modifier.weight(1f)) {
                     AppText(
-                        text = "Accessibility and notification access allow the island to hover over your apps.",
+                        text = if (serviceRunning) "Island is active" else "Setup required",
+                        style = AppTheme.typography.h3,
+                        color = AppTheme.colors.textPrimary
+                    )
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
+                    AppText(
+                        text = if (serviceRunning) {
+                            "The island is running above your apps."
+                        } else {
+                            "Grant accessibility and notification access so the island can appear over your apps."
+                        },
                         style = AppTheme.typography.bodySmall,
                         color = AppTheme.colors.textSecondary
                     )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFF1E1E22))
-                            .clickable { onNavigatePermissions() }
-                            .padding(horizontal = 22.dp, vertical = 12.dp)
-                    ) {
-                        AppText(
-                            text = "Enable Dynamic Island",
-                            style = AppTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium,
-                            color = AppTheme.colors.textPrimary
-                        )
-                    }
                 }
-
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.width(AppTheme.spacing.md))
+                AppStatusPill(
+                    text = if (serviceRunning) "Ready" else "Action needed",
+                    color = if (serviceRunning) AppTheme.colors.success else AppTheme.colors.warning
+                )
             }
 
-            // =================================================================
-            // 6. EDITORIAL VERTICAL FEATURE LIST ("EXPERIENCES")
-            // =================================================================
-            AppText(
-                text = "Experiences",
-                style = AppTheme.typography.caption,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = 1.2.sp,
-                color = Color(0xFF636366),
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-
-            EditorialFeatureRow(
-                title = "Notifications",
-                subtitle = "Expand important alerts into your island.",
-                onClick = onNavigateNotificationSettings
-            )
-            EditorialDivider()
-
-            EditorialFeatureRow(
-                title = "Calls",
-                subtitle = "Incoming calls and live call controls.",
-                onClick = onNavigateCallSettings
-            )
-            EditorialDivider()
-
-            EditorialFeatureRow(
-                title = "Music & Media",
-                subtitle = "Now playing with live visual feedback.",
-                onClick = onNavigateMusicSettings
-            )
-            EditorialDivider()
-
-            EditorialFeatureRow(
-                title = "Battery & Charging",
-                subtitle = "Battery status and charging animations.",
-                onClick = onNavigateBatterySettings
-            )
-            EditorialDivider()
-
-            EditorialFeatureRow(
-                title = "Quick Controls",
-                subtitle = "System toggles and rapid shortcuts.",
-                onClick = onNavigateQuickControl
-            )
-            EditorialDivider()
-
-            EditorialFeatureRow(
-                title = "Alignment",
-                subtitle = "Calibrate island position around camera.",
-                onClick = onNavigateDisplaySettings
-            )
-
-            Spacer(modifier = Modifier.height(36.dp))
-
-            // =================================================================
-            // 7. SYSTEM SERVICE CONTROL
-            // =================================================================
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(7.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (isIslandEnabled && arePermissionsGranted) AppTheme.colors.success
-                                else AppTheme.colors.disabled
-                            )
-                    )
-                    Column {
-                        AppText(
-                            text = "Dynamic Island",
-                            style = AppTheme.typography.body,
-                            fontWeight = FontWeight.SemiBold,
-                            color = AppTheme.colors.textPrimary
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        AppText(
-                            text = if (isIslandEnabled) "Running and available over your apps" else "Service currently paused",
-                            style = AppTheme.typography.caption,
-                            color = AppTheme.colors.textSecondary
-                        )
-                    }
-                }
-
-                LuxurySwitch(
-                    checked = isIslandEnabled,
-                    onCheckedChange = { checked ->
-                        scope.launch { preferences.setIslandEnabled(checked) }
-                    }
+            if (!permissionsGranted) {
+                Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+                AppButton(
+                    text = "Complete setup",
+                    onClick = onNavigatePermissions,
+                    glyph = AppleGlyph.Shield
                 )
             }
         }
-    }
-}
 
-@Composable
-private fun EditorialFeatureRow(
-    title: String,
-    subtitle: String,
-    onClick: () -> Unit
-) {
-    val interactionSource = remember { MutableInteractionSource() }
+        AppSectionSpacer()
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
+        // ---------------------------------------------------------------
+        // Shortcuts
+        // ---------------------------------------------------------------
+        AppSectionTitle("Experiences")
+        AppListCard {
+            AppNavRow(
+                title = "Notifications",
+                subtitle = "Expand alerts into the island",
+                glyph = AppleGlyph.Bell,
+                accent = AppTheme.colors.info,
+                onClick = onNavigateNotificationSettings
             )
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
-        ) {
-            AppText(
-                text = title,
-                style = AppTheme.typography.body,
-                fontWeight = FontWeight.Medium,
-                color = AppTheme.colors.textPrimary
+            AppRowDivider()
+            AppNavRow(
+                title = "Calls",
+                subtitle = "Caller HUD and live call controls",
+                glyph = AppleGlyph.Phone,
+                accent = AppTheme.colors.success,
+                onClick = onNavigateCallSettings
             )
-            AppText(
-                text = subtitle,
-                style = AppTheme.typography.bodySmall,
-                color = Color(0xFF8E8E93)
+            AppRowDivider()
+            AppNavRow(
+                title = "Music & media",
+                subtitle = "Now playing with visualiser",
+                glyph = AppleGlyph.Music,
+                accent = AppTheme.colors.accent,
+                onClick = onNavigateMusicSettings
+            )
+            AppRowDivider()
+            AppNavRow(
+                title = "Battery & charging",
+                subtitle = "Charging and low-power alerts",
+                glyph = AppleGlyph.Battery,
+                accent = AppTheme.colors.warning,
+                onClick = onNavigateBatterySettings
+            )
+            AppRowDivider()
+            AppNavRow(
+                title = "Quick controls",
+                subtitle = "System toggles and shortcuts",
+                glyph = AppleGlyph.Controls,
+                accent = AppTheme.colors.gold,
+                onClick = onNavigateQuickControl
+            )
+            AppRowDivider()
+            AppNavRow(
+                title = "Notch alignment",
+                subtitle = "Calibrate around your camera",
+                glyph = AppleGlyph.Notch,
+                accent = AppTheme.colors.secondary,
+                onClick = onNavigateDisplaySettings
             )
         }
 
-        AppText(
-            text = "→",
-            style = AppTheme.typography.body,
-            color = Color(0xFF48484A),
-            modifier = Modifier.padding(start = 12.dp)
-        )
-    }
-}
+        AppSectionSpacer()
 
-@Composable
-private fun EditorialDivider() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(0.5.dp)
-            .background(Color(0x0EFFFFFF))
-    )
+        // ---------------------------------------------------------------
+        // Service switch
+        // ---------------------------------------------------------------
+        AppSectionTitle("Service")
+        AppListCard {
+            AppToggleRow(
+                title = "Enable Dynamic Island",
+                subtitle = if (isIslandEnabled) "Running over your apps" else "Currently paused",
+                glyph = AppleGlyph.Power,
+                checked = isIslandEnabled,
+                onCheckedChange = { checked ->
+                    scope.launch { preferences.setIslandEnabled(checked) }
+                }
+            )
+        }
+        AppFootnote("Turning the service off keeps your settings but hides the island everywhere.")
+    }
 }

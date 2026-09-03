@@ -3,6 +3,7 @@ package ai.emots.kishan_dynamic.ui.dialogs
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,20 +11,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AutoAwesome
-import androidx.compose.material.icons.rounded.Block
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.GraphicEq
-import androidx.compose.material.icons.rounded.Palette
-import androidx.compose.material.icons.rounded.WorkspacePremium
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -33,173 +26,198 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import ai.emots.kishan_dynamic.ui.components.AuroraBadge
-import ai.emots.kishan_dynamic.ui.components.AuroraBottomSheet
-import ai.emots.kishan_dynamic.ui.components.AuroraButton
-import ai.emots.kishan_dynamic.ui.components.AuroraIconButton
-import ai.emots.kishan_dynamic.ui.components.ButtonVariant
-import ai.emots.kishan_dynamic.ui.components.GlassCard
-import ai.emots.kishan_dynamic.ui.components.GlowCard
-import ai.emots.kishan_dynamic.ui.theme.AuroraIslandTheme
-import ai.emots.kishan_dynamic.ui.theme.AuroraTheme
+import ai.emots.kishan_dynamic.ui.components.AppText
+import ai.emots.kishan_dynamic.ui.components.AppleGlyph
+import ai.emots.kishan_dynamic.ui.components.AppleIcon
+import ai.emots.kishan_dynamic.ui.kit.AppButton
+import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
+import ai.emots.kishan_dynamic.ui.kit.AppSheet
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
-/**
- * Holographic Crystal Glass Paywall Sheet.
- */
+private data class PaywallPlan(
+    val id: String,
+    val title: String,
+    val price: String,
+    val note: String,
+    val badge: String? = null
+)
+
 @Composable
 fun ProPaywallSheet(
     onDismiss: () -> Unit,
     onSelectPlan: (String) -> Unit
 ) {
-    var selectedPlanIndex by remember { mutableIntStateOf(2) } // Yearly
+    var selectedPlanIndex by remember { mutableIntStateOf(2) }
 
-    val plans = listOf(
-        Triple("Weekly", "₹39/wk", null),
-        Triple("Monthly", "₹59/mo", null),
-        Triple("Yearly", "₹99/yr", "MOST POPULAR"),
-        Triple("Lifetime", "₹149", "SUPER SAVER")
+    val plans = remember {
+        listOf(
+            PaywallPlan("weekly", "Weekly", "₹39", "Billed every week"),
+            PaywallPlan("monthly", "Monthly", "₹59", "Billed every month"),
+            PaywallPlan("yearly", "Yearly", "₹199", "Billed once a year", "Save 70%"),
+            PaywallPlan("lifetime", "Lifetime", "₹499", "One-time payment", "Best value")
+        )
+    }
+
+    val benefits = listOf(
+        "No ads, anywhere",
+        "Every island style and colour",
+        "All visualiser palettes",
+        "Priority updates and early access"
     )
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+    AppSheet(
+        onDismiss = onDismiss,
+        title = "Unlock Pro",
+        subtitle = "Everything, with nothing in the way.",
+        glyph = AppleGlyph.Crown,
+        accent = AppTheme.colors.gold
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AuroraTheme.spacing.md),
-            contentAlignment = Alignment.BottomCenter
+                .clip(RoundedCornerShape(AppTheme.radius.lg))
+                .background(AppTheme.colors.surfaceVariant)
+                .padding(AppTheme.spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
-            AuroraBottomSheet {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AuroraTheme.spacing.md),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    // Top Bar
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+            benefits.forEach { benefit ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(CircleShape)
+                            .background(AppTheme.colors.success.copy(alpha = 0.18f)),
+                        contentAlignment = Alignment.Center
                     ) {
-                        AuroraBadge(text = "AURORA PRO", backgroundColor = AuroraTheme.colors.primary)
-                        AuroraIconButton(icon = Icons.Rounded.Close, onClick = onDismiss, size = 32.dp)
+                        AppleIcon(glyph = AppleGlyph.Check, tint = AppTheme.colors.success, size = 11.dp)
                     }
-
-                    // Title
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Elevate Your Dynamic Notch",
-                            style = AuroraTheme.typography.headlineMedium,
-                            color = AuroraTheme.colors.textPrimary
-                        )
-                        Text(
-                            text = "Uncompromised performance, zero ads & unlimited customization",
-                            style = AuroraTheme.typography.bodySmall,
-                            color = AuroraTheme.colors.textSecondary
-                        )
-                    }
-
-                    // 4 Key Features Showcase
-                    GlassCard(modifier = Modifier.fillMaxWidth(), contentPadding = AuroraTheme.spacing.sm) {
-                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                            FeatureRow(icon = Icons.Rounded.Block, text = "100% Ad-Free Experience")
-                            FeatureRow(icon = Icons.Rounded.Palette, text = "Custom Island Skins & Aurora Glow")
-                            FeatureRow(icon = Icons.Rounded.GraphicEq, text = "All Waveform & Visualizer Palettes")
-                            FeatureRow(icon = Icons.Rounded.AutoAwesome, text = "Priority Updates & Early Access")
-                        }
-                    }
-
-                    // 2x2 Plan Cards
-                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        plans.chunked(2).forEachIndexed { rowIndex, rowPlans ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                rowPlans.forEachIndexed { colIndex, planData ->
-                                    val planIndex = rowIndex * 2 + colIndex
-                                    val isSelected = selectedPlanIndex == planIndex
-
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .clip(AuroraTheme.shapes.cardSmall)
-                                            .background(
-                                                if (isSelected) AuroraTheme.colors.primary.copy(alpha = 0.25f)
-                                                else AuroraTheme.colors.glassSurfaceSubtle
-                                            )
-                                            .border(
-                                                width = if (isSelected) AuroraTheme.elevation.activeBorder else AuroraTheme.elevation.hairlineBorder,
-                                                brush = if (isSelected) AuroraTheme.colors.brandGradientBrush else AuroraTheme.colors.glassBorderBrush,
-                                                shape = AuroraTheme.shapes.cardSmall
-                                            )
-                                            .clickable { selectedPlanIndex = planIndex }
-                                            .padding(AuroraTheme.spacing.sm),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                            planData.third?.let { badge ->
-                                                AuroraBadge(text = badge)
-                                                Spacer(modifier = Modifier.height(4.dp))
-                                            }
-                                            Text(text = planData.first, style = AuroraTheme.typography.labelSmall, color = AuroraTheme.colors.textSecondary)
-                                            Text(text = planData.second, style = AuroraTheme.typography.titleMedium, color = AuroraTheme.colors.textPrimary)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // Terms Summary
-                    Text(
-                        text = "Cancel anytime via Google Play Subscriptions. One-tap restoration.",
-                        style = AuroraTheme.typography.labelSmall,
-                        color = AuroraTheme.colors.textTertiary
+                    Spacer(modifier = Modifier.width(AppTheme.spacing.md))
+                    AppText(
+                        text = benefit,
+                        style = AppTheme.typography.bodySmall,
+                        color = AppTheme.colors.textPrimary
                     )
-
-                    // CTA
-                    AuroraButton(
-                        onClick = { onSelectPlan(plans[selectedPlanIndex].first) },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "Continue with ${plans[selectedPlanIndex].first} (${plans[selectedPlanIndex].second})",
-                            style = AuroraTheme.typography.labelLarge,
-                            color = Color.White
-                        )
-                    }
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+            plans.forEachIndexed { index, plan ->
+                PlanRow(
+                    plan = plan,
+                    selected = selectedPlanIndex == index,
+                    onClick = { selectedPlanIndex = index }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+
+        AppButton(
+            text = "Continue with ${plans[selectedPlanIndex].title}",
+            glyph = AppleGlyph.Crown,
+            onClick = { onSelectPlan(plans[selectedPlanIndex].id) }
+        )
+        Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
+        AppButton(
+            text = "Maybe later",
+            style = AppButtonStyle.Secondary,
+            onClick = onDismiss
+        )
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+        AppText(
+            text = "Cancel anytime in Google Play subscriptions.",
+            style = AppTheme.typography.caption,
+            color = AppTheme.colors.textTertiary
+        )
     }
 }
 
 @Composable
-private fun FeatureRow(icon: ImageVector, text: String) {
+private fun PlanRow(
+    plan: PaywallPlan,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    val shape = RoundedCornerShape(AppTheme.radius.lg)
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AuroraTheme.spacing.sm)
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(
+                if (selected) AppTheme.colors.accent.copy(alpha = 0.12f)
+                else AppTheme.colors.surfaceVariant
+            )
+            .border(
+                if (selected) 1.dp else 0.5.dp,
+                if (selected) AppTheme.colors.accent.copy(alpha = 0.6f) else AppTheme.colors.border,
+                shape
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick
+            )
+            .heightIn(min = 60.dp)
+            .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(imageVector = icon, contentDescription = null, tint = AuroraTheme.colors.primary, modifier = Modifier.size(16.dp))
-        Text(text = text, style = AuroraTheme.typography.bodySmall, color = AuroraTheme.colors.textPrimary)
-    }
-}
+        Box(
+            modifier = Modifier
+                .size(20.dp)
+                .clip(CircleShape)
+                .background(
+                    if (selected) AppTheme.colors.accent else AppTheme.colors.surfaceElevated
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (selected) {
+                AppleIcon(glyph = AppleGlyph.Check, tint = Color.White, size = 11.dp)
+            }
+        }
 
-// =============================================================================
-// PREVIEWS
-// =============================================================================
+        Spacer(modifier = Modifier.width(AppTheme.spacing.md))
 
-@Preview(name = "Paywall Sheet - Dark", showBackground = true, backgroundColor = 0xFF0B0B12)
-@Composable
-private fun PaywallSheetDarkPreview() {
-    AuroraIslandTheme(darkTheme = true) {
-        ProPaywallSheet(onDismiss = {}, onSelectPlan = {})
+        Column(modifier = Modifier.weight(1f)) {
+            AppText(
+                text = plan.title,
+                style = AppTheme.typography.body,
+                fontWeight = FontWeight.Medium,
+                color = AppTheme.colors.textPrimary
+            )
+            AppText(
+                text = plan.note,
+                style = AppTheme.typography.caption,
+                color = AppTheme.colors.textSecondary
+            )
+        }
+
+        if (plan.badge != null) {
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(AppTheme.colors.gold.copy(alpha = 0.16f))
+                    .padding(horizontal = AppTheme.spacing.sm, vertical = 2.dp)
+            ) {
+                AppText(
+                    text = plan.badge,
+                    style = AppTheme.typography.caption,
+                    color = AppTheme.colors.gold,
+                    maxLines = 1
+                )
+            }
+            Spacer(modifier = Modifier.width(AppTheme.spacing.sm))
+        }
+
+        AppText(
+            text = plan.price,
+            style = AppTheme.typography.h3,
+            color = AppTheme.colors.textPrimary
+        )
     }
 }

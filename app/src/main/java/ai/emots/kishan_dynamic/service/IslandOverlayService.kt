@@ -34,7 +34,7 @@ import ai.emots.kishan_dynamic.data.model.IslandState
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
 import ai.emots.kishan_dynamic.ui.components.IslandDemoState
-import ai.emots.kishan_dynamic.ui.theme.AuroraIslandTheme
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -99,7 +99,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val widthScale by preferences.widthScale.collectAsState(initial = 1.0f)
 
                 if (isEnabled && islandState !is IslandState.Hidden) {
-                    AuroraIslandTheme(darkTheme = true) {
+                    AppTheme(darkTheme = true) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()

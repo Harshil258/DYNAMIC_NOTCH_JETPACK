@@ -1,54 +1,36 @@
 package ai.emots.kishan_dynamic.ui.screens
 
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
-import ai.emots.kishan_dynamic.ui.components.AppleIcon
-import ai.emots.kishan_dynamic.ui.components.AtmosphericBackground
-import ai.emots.kishan_dynamic.ui.components.LuxuryCard
-import ai.emots.kishan_dynamic.ui.components.LuxurySwitch
-import ai.emots.kishan_dynamic.ui.components.LuxuryTopBar
+import ai.emots.kishan_dynamic.ui.kit.AppCard
+import ai.emots.kishan_dynamic.ui.kit.AppFootnote
+import ai.emots.kishan_dynamic.ui.kit.AppListCard
+import ai.emots.kishan_dynamic.ui.kit.AppRowDivider
+import ai.emots.kishan_dynamic.ui.kit.AppScreen
+import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
+import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
+import ai.emots.kishan_dynamic.ui.kit.AppTile
+import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
+import ai.emots.kishan_dynamic.ui.kit.AppTopBar
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
-import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
-data class AppleQuickToggleItem(
+private data class QuickToggle(
     val name: String,
     val glyph: AppleGlyph,
-    var isEnabled: Boolean
+    val isEnabled: Boolean
 )
 
 @Composable
@@ -61,173 +43,85 @@ fun QuickControlScreen(
     var toggles by remember {
         mutableStateOf(
             listOf(
-                AppleQuickToggleItem("Wi-Fi", AppleGlyph.Wifi, true),
-                AppleQuickToggleItem("Bluetooth", AppleGlyph.Bluetooth, true),
-                AppleQuickToggleItem("Torch", AppleGlyph.Torch, false),
-                AppleQuickToggleItem("Location", AppleGlyph.Location, true),
-                AppleQuickToggleItem("Rotate", AppleGlyph.Rotate, false),
-                AppleQuickToggleItem("Mute", AppleGlyph.Mute, false),
-                AppleQuickToggleItem("Airplane", AppleGlyph.Airplane, false)
+                QuickToggle("Wi-Fi", AppleGlyph.Wifi, true),
+                QuickToggle("Bluetooth", AppleGlyph.Bluetooth, true),
+                QuickToggle("Torch", AppleGlyph.Torch, false),
+                QuickToggle("Location", AppleGlyph.Location, true),
+                QuickToggle("Rotate", AppleGlyph.Rotate, false),
+                QuickToggle("Mute", AppleGlyph.Mute, false),
+                QuickToggle("Airplane", AppleGlyph.Airplane, false),
+                QuickToggle("Timer", AppleGlyph.Timer, false)
             )
         )
     }
 
-    AtmosphericBackground {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .widthIn(max = 760.dp)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = AppTheme.layout.screenGutter)
-                .padding(bottom = AppTheme.spacing.xxxl),
-            verticalArrangement = Arrangement.spacedBy(AuroraTokens.Spacing.sectionGap)
-        ) {
-            // Top Bar
-            LuxuryTopBar(
-                title = "Control Center & Shortcuts",
-                subtitle = "Instant system toggles & volume HUD",
-                onBack = onBack
+    val activeCount = toggles.count { it.isEnabled }
+
+    AppScreen {
+        AppTopBar(
+            title = "Quick controls",
+            subtitle = "System toggles and the volume HUD",
+            onBack = onBack
+        )
+
+        AppSectionTitle("Behaviour")
+        AppListCard {
+            AppToggleRow(
+                title = "Control centre on the island",
+                subtitle = "Long press the island to open your shortcuts",
+                glyph = AppleGlyph.Controls,
+                checked = isQuickControlsEnabled,
+                onCheckedChange = { isQuickControlsEnabled = it }
+            )
+            AppRowDivider()
+            AppToggleRow(
+                title = "Volume & brightness HUD",
+                subtitle = "Show a readout when you press the volume keys",
+                glyph = AppleGlyph.Speaker,
+                checked = isVolumeHudEnabled,
+                onCheckedChange = { isVolumeHudEnabled = it }
+            )
+        }
+
+        AppSectionSpacer()
+
+        AppSectionTitle("Shortcut tiles · $activeCount active")
+        AppCard {
+            AppText(
+                text = "Tap a tile to add or remove it from the island control centre.",
+                style = AppTheme.typography.bodySmall,
+                color = AppTheme.colors.textSecondary
             )
 
-            // Toggles Switch Card
-            LuxuryCard {
-                Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                    // Switch 1
+            Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                toggles.chunked(4).forEach { rowItems ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
                     ) {
-                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                            Text(
-                                text = "Enable Control Center on Island",
-                                fontSize = 14.5.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AppTheme.colors.textPrimary
-                            )
-                            Text(
-                                text = "Long press or tap the island to quickly access device shortcuts",
-                                fontSize = 11.5.sp,
-                                color = AppTheme.colors.textSecondary
-                            )
-                        }
-
-                        LuxurySwitch(
-                            checked = isQuickControlsEnabled,
-                            onCheckedChange = { isQuickControlsEnabled = it }
-                        )
-                    }
-
-                    // Switch 2
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                            Text(
-                                text = "Hardware Volume & Brightness HUD",
-                                fontSize = 14.5.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AppTheme.colors.textPrimary
-                            )
-                            Text(
-                                text = "Show sleek island percentage readout when pressing physical volume keys",
-                                fontSize = 11.5.sp,
-                                color = AppTheme.colors.textSecondary
-                            )
-                        }
-
-                        LuxurySwitch(
-                            checked = isVolumeHudEnabled,
-                            onCheckedChange = { isVolumeHudEnabled = it }
-                        )
-                    }
-                }
-            }
-
-            // Quick Toggle Tiles Grid
-            LuxuryCard {
-                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    Text(
-                        text = "Customize Active Shortcut Tiles",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = AppTheme.colors.textPrimary
-                    )
-                    Text(
-                        text = "Tap tiles to add or remove them from your island control center",
-                        fontSize = 12.sp,
-                        color = AppTheme.colors.textSecondary
-                    )
-
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        toggles.chunked(3).forEach { rowToggles ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                rowToggles.forEach { item ->
-                                    val interactionSource = remember { MutableInteractionSource() }
-                                    val isPressed by interactionSource.collectIsPressedAsState()
-                                    val tileScale by animateFloatAsState(
-                                        targetValue = if (isPressed) 0.92f else 1.0f,
-                                        animationSpec = spring(dampingRatio = 0.65f, stiffness = Spring.StiffnessMedium),
-                                        label = "tile_scale"
-                                    )
-
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .scale(tileScale)
-                                            .clip(RoundedCornerShape(16.dp))
-                                            .background(
-                                                if (item.isEnabled) Color(0xFF2C1E4A)
-                                                else Color(0xFF1A1726)
-                                            )
-                                            .border(
-                                                width = 1.dp,
-                                                color = if (item.isEnabled) AppTheme.colors.accent else Color(0x10FFFFFF),
-                                                shape = RoundedCornerShape(16.dp)
-                                            )
-                                            .clickable(
-                                                interactionSource = interactionSource,
-                                                indication = null
-                                            ) {
-                                                toggles = toggles.map {
-                                                    if (it.name == item.name) it.copy(isEnabled = !it.isEnabled)
-                                                    else it
-                                                }
-                                            }
-                                            .padding(vertical = 14.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                                        ) {
-                                            AppleIcon(
-                                                glyph = item.glyph,
-                                                tint = if (item.isEnabled) AppTheme.colors.accent else AppTheme.colors.textTertiary,
-                                                size = 22.dp
-                                            )
-                                            Text(
-                                                text = item.name,
-                                                fontSize = 11.5.sp,
-                                                fontWeight = FontWeight.Medium,
-                                                color = if (item.isEnabled) Color.White else AppTheme.colors.textSecondary
-                                            )
-                                        }
+                        rowItems.forEach { item ->
+                            AppTile(
+                                label = item.name,
+                                glyph = item.glyph,
+                                selected = item.isEnabled,
+                                modifier = Modifier.weight(1f),
+                                onClick = {
+                                    toggles = toggles.map {
+                                        if (it.name == item.name) it.copy(isEnabled = !it.isEnabled) else it
                                     }
                                 }
-                            }
+                            )
+                        }
+                        // Keep the last row aligned to the same 4-column grid.
+                        repeat(4 - rowItems.size) {
+                            Box(modifier = Modifier.weight(1f))
                         }
                     }
                 }
             }
         }
+        AppFootnote("Some toggles open the matching system panel on Android 13 and newer.")
     }
 }

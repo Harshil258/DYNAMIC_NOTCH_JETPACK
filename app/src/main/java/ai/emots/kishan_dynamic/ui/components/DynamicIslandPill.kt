@@ -73,7 +73,16 @@ enum class IslandDemoState {
     FlightExpanded,
     SportsCompact,
     SportsExpanded,
-    NavigationCompact
+    NavigationCompact,
+    // New states from Figma screenshots
+    TimerImage,           // Dynamic Island-1: Timer with image
+    NotificationImage,    // Dynamic Island-2: Notification with image
+    CallAvatars,          // Dynamic Island-3: Incoming call with two avatars
+    TransportActivity,    // Dynamic Island-4: Live activity with transport
+    FlightTrackerExpanded,// Dynamic Island-5: Flight route with gate
+    SubscriptionPricing,  // Dynamic Island-6: Annual/season pricing
+    MovieCard,            // Dynamic Island-7: Movie/show selection
+    ColorOptions          // Dynamic Island-8: Color/options picker
 }
 
 /**
@@ -139,15 +148,21 @@ fun DynamicIslandPill(
         IslandDemoState.FlightCompact -> 146.dp
         IslandDemoState.SportsCompact -> 144.dp
         IslandDemoState.NavigationCompact -> 150.dp
+        IslandDemoState.TimerImage -> 152.dp
+        IslandDemoState.NotificationImage -> 152.dp
+        IslandDemoState.CallAvatars -> 152.dp
+        IslandDemoState.TransportActivity -> 152.dp
+        IslandDemoState.FlightTrackerExpanded -> maxExpanded
+        IslandDemoState.SubscriptionPricing -> maxExpanded
+        IslandDemoState.MovieCard -> maxExpanded
+        IslandDemoState.ColorOptions -> maxExpanded
         // Expanded sheets: the device width minus iOS side margins, capped.
         else -> maxExpanded
     }
 
-    // Exact Apple prototype heights per state type:
-    // - Compact: 37dp
-    // - Capsule Expanded (Call, Silent/Alerts, Timer, Charging): 96dp (228px @2x spec)
-    // - Full Card Expanded (Music): 192dp (418px @2x spec)
-    // - Full Activity Expanded (Delivery, Flight, Sports): 164dp
+        // Exact Apple prototype heights per state type (from Figma):
+    // - Compact: 37.33dp (idle pill)
+    // - Capsule Expanded (Call, Silent/Alerts, Timer, Charging, Music): 96dp (phone context)
     val targetHeight: Dp = when (state) {
         IslandDemoState.Minimal,
         IslandDemoState.MusicCompact,
@@ -163,21 +178,24 @@ fun DynamicIslandPill(
         IslandDemoState.CallExpanded,
         IslandDemoState.NotificationExpanded,
         IslandDemoState.TimerExpanded,
-        IslandDemoState.ChargingExpanded -> 92.dp
-
-        IslandDemoState.MusicExpanded -> 176.dp
+        IslandDemoState.ChargingExpanded,
+        IslandDemoState.MusicExpanded -> 96.dp  // Figma: 96pt in phone context
 
         IslandDemoState.DeliveryExpanded,
         IslandDemoState.FlightExpanded,
-        IslandDemoState.SportsExpanded -> 160.dp
+        IslandDemoState.SportsExpanded -> 96.dp
+
+        // New Figma states (compact-form expanded at 96dp)
+        IslandDemoState.TimerImage,
+        IslandDemoState.NotificationImage,
+        IslandDemoState.CallAvatars,
+        IslandDemoState.TransportActivity,
+        IslandDemoState.FlightTrackerExpanded -> 96.dp
     }
 
-    // Curvature: 50% capsule for compact & medium expanded capsules, 44dp squircle for full cards
+    // Curvature: For MusicExpanded use 44dp squircle corners (Figma spec); others use 50% capsule
     val cornerRadius = when (state) {
-        IslandDemoState.MusicExpanded,
-        IslandDemoState.DeliveryExpanded,
-        IslandDemoState.FlightExpanded,
-        IslandDemoState.SportsExpanded -> RoundedCornerShape(44.dp)
+        IslandDemoState.MusicExpanded -> RoundedCornerShape(44.dp)
         else -> RoundedCornerShape(percent = 50)
     }
 
@@ -196,7 +214,7 @@ fun DynamicIslandPill(
         label = "island_height"
     )
 
-    // Breathing Ambient Specular Aura
+    // Breathing Ambient Specular Aura (iOS Dynamic Island glow)
     val infiniteTransition = rememberInfiniteTransition(label = "aura_pulse")
     val auraAlpha by infiniteTransition.animateFloat(
         initialValue = 0.08f,
@@ -217,6 +235,11 @@ fun DynamicIslandPill(
         IslandDemoState.DeliveryCompact, IslandDemoState.DeliveryExpanded -> Color(0xFFF59E0B)
         IslandDemoState.FlightCompact, IslandDemoState.FlightExpanded -> Color(0xFF00F5D4)
         IslandDemoState.SportsCompact, IslandDemoState.SportsExpanded -> Color(0xFF8B5CF6)
+        IslandDemoState.TimerImage -> Color(0xFFFF9500)
+        IslandDemoState.NotificationImage -> Color(0xFF8E8E93)
+        IslandDemoState.CallAvatars -> Color(0xFF10B981)
+        IslandDemoState.TransportActivity -> Color(0xFF00F5D4)
+        IslandDemoState.FlightTrackerExpanded -> Color(0xFF00F5D4)
         else -> Color(0xFF6D82FF)
     }
 
@@ -317,14 +340,22 @@ fun DynamicIslandPill(
                         IslandDemoState.SportsCompact -> SportsCompactContent()
                         IslandDemoState.SportsExpanded -> SportsExpandedContent()
                         IslandDemoState.NavigationCompact -> NavigationCompactContent()
+                        IslandDemoState.TimerImage -> TimerWithImageCompactContent()
+                        IslandDemoState.NotificationImage -> NotificationImageCompactContent()
+                        IslandDemoState.CallAvatars -> IncomingCallTwoAvatarsContent()
+                        IslandDemoState.TransportActivity -> TransportLiveActivityCompactContent()
+                        IslandDemoState.FlightTrackerExpanded -> FlightTrackerDetailCompactContent()
+                        IslandDemoState.SubscriptionPricing -> DeliveryOrderCompactContent()
+                        IslandDemoState.MovieCard -> SportsScoreCompactContent()
+                        IslandDemoState.ColorOptions -> NavigationRouteCompactContent()
                     }
                 }
             }
 
-            // Companion Split Bubble (media_1788455788286.png: 11dp gap + 37dp circular bubble)
+            // Companion Split Bubble (media_1788455788286.png: 8dp gap + 37.33dp circular bubble)
             AnimatedVisibility(visible = isSplit) {
                 Row {
-                    Spacer(modifier = Modifier.width(11.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     Box(
                         modifier = Modifier
                             .size(37.dp)
@@ -364,12 +395,13 @@ fun DynamicIslandPill(
 @Composable
 private fun CompactIslandLayout(
     leading: @Composable () -> Unit,
-    trailing: @Composable () -> Unit
+    trailing: @Composable () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(37.dp),
+            .height(37.33.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -388,34 +420,39 @@ private fun CompactIslandLayout(
 
 @Composable
 private fun MinimalPillContent() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(11.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF08080C))
-                .border(1.dp, Color(0x22FFFFFF), CircleShape)
-        )
+    // Figma Minimal.svg shows a single 37.33pt circular status indicator
+    // Not a split pill - just a breathing status dot
+    val pulse by ai.emots.kishan_dynamic.ui.motion.rememberBreathing(
+        min = 0.85f,
+        max = 1f,
+        durationMillis = 2200
+    )
 
-        Box(
-            modifier = Modifier
-                .size(7.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF34C759))
-        )
-    }
+    Box(
+        modifier = Modifier
+            .size(12.dp)
+            .clip(CircleShape)
+            .background(Color(0xFF34C759).copy(alpha = pulse))
+    )
 }
 
 // -----------------------------------------------------------------------------
-// 1. MUSIC (APPLE MUSIC / SPOTIFY) - MATCHING media_1788458385303.png EXACTLY!
+// 1. MUSIC (APPLE MUSIC / SPOTIFY) - MATCHING Compact.svg EXACTLY!
 // -----------------------------------------------------------------------------
 @Composable
 private fun MusicCompactContent() {
-    CompactIslandLayout(
-        leading = {
+    // Compact.svg shows: Album art + Track title + Equalizer all in compact
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(37.33.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
             // Album Art Squircle 20dp
             Box(
                 modifier = Modifier
@@ -430,12 +467,24 @@ private fun MusicCompactContent() {
             ) {
                 AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 10.dp)
             }
-        },
-        trailing = {
-            // Neon Magenta 4-bar Equalizer
-            LiveEqualizerMini(color = Color(0xFFFA2D48))
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Track title (compact shows truncated title)
+            Text(
+                text = "Heat Waves",
+                color = Color.White,
+                fontSize = 11.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.widthIn(max = 70.dp)
+            )
         }
-    )
+
+        // Neon Magenta 5-bar Equalizer (matches Figma Compact.svg exactly)
+        LiveEqualizerMini(color = Color(0xFFFA2D48))
+    }
 }
 
 @Composable
@@ -444,34 +493,37 @@ private fun MusicExpandedContent() {
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // TOP ROW: Album Art + Title & Explicit Badge & Artist + Pink Equalizer
+        // TOP ROW: Album Art + Title & Artist + Pink Equalizer
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            // 52dp Album Art Squircle
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFFE879F9), Color(0xFF818CF8), Color(0xFF38BDF8))
+                        )
+                    )
+                    .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(13.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 20.dp)
+            }
+
+            // Title + Artist + Badge
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.weight(1f)
             ) {
-                // 52dp Album Art Squircle (Glass Animals Dreamland style)
-                Box(
-                    modifier = Modifier
-                        .size(52.dp)
-                        .clip(RoundedCornerShape(13.dp))
-                        .background(
-                            Brush.linearGradient(
-                                listOf(Color(0xFFE879F9), Color(0xFF818CF8), Color(0xFF38BDF8))
-                            )
-                        )
-                        .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(13.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 20.dp)
-                }
-
-                Spacer(modifier = Modifier.width(14.dp))
-
                 Column(verticalArrangement = Arrangement.Center) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -495,9 +547,9 @@ private fun MusicExpandedContent() {
                         ) {
                             Text(
                                 text = "E",
-                                color = Color.Black,
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Black
+                                color = Color(0xFF000000),
+                                fontSize = 7.sp,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
@@ -505,21 +557,24 @@ private fun MusicExpandedContent() {
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = "Grass Animals",
+                        text = "Glass Animals",
                         color = Color(0xFF8E8E93),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
+
+                Spacer(modifier = Modifier.width(14.dp))
+
+                // Neon Pink/Magenta Waveform
+                LiveEqualizerMini(color = Color(0xFFFA2D48))
             }
-
-            // Neon Pink/Magenta Waveform Equalizer
-            LiveEqualizerMini(color = Color(0xFFFA2D48))
         }
+    }
 
-        // MIDDLE ROW: Scrubber Slider with Elapsed and Remaining Time on the SAME line
+        // MIDDLE ROW: Scrubber Slider with Time
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -559,7 +614,7 @@ private fun MusicExpandedContent() {
             )
         }
 
-        // BOTTOM ROW: Pure Solid White Media Controls directly on Black (NO circle container!)
+        // BOTTOM ROW: Media Controls (Backward, Play/Pause, Forward, AirPlay)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -567,16 +622,17 @@ private fun MusicExpandedContent() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Previous Track [ ◀◀ ]
             AppleIcon(glyph = AppleGlyph.Backward, tint = Color.White, size = 26.dp)
 
-            // Play Triangle [ ▶ ] (Large solid white vector triangle)
-            AppleIcon(glyph = AppleGlyph.Play, tint = Color.White, size = 32.dp)
+            // Play/Pause icon — Figma Expanded music sheet shows the Play glyph ▶
+            AppleIcon(
+                glyph = AppleGlyph.Play,
+                tint = Color.White,
+                size = 32.dp
+            )
 
-            // Next Track [ ▶▶ ]
             AppleIcon(glyph = AppleGlyph.Forward, tint = Color.White, size = 26.dp)
 
-            // AirPlay Audio Route
             AppleIcon(glyph = AppleGlyph.AirPlay, tint = Color.White, size = 24.dp)
         }
     }
@@ -697,16 +753,23 @@ private fun CallExpandedContent() {
 }
 
 // -----------------------------------------------------------------------------
-// 3. SILENT MODE / NOTIFICATION - MATCHING media_1788458403251.png EXACTLY!
+// 3. SILENT MODE / NOTIFICATION - MATCHING Dynamic Island-2.svg EXACTLY!
 // -----------------------------------------------------------------------------
 @Composable
 private fun NotificationCompactContent() {
+    // Figma Dynamic Island-2.svg: Bell slash icon + "Silent" label in compact
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.BellSlash, tint = Color.White, size = 16.dp)
+            AppleIcon(glyph = AppleGlyph.BellSlash, tint = Color.White, size = 13.dp)
         },
         trailing = {
-            Text(text = "Silent", fontSize = 12.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF8E8E93))
+            Text(
+                text = "Silent",
+                fontSize = 11.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF8E8E93),
+                modifier = Modifier.widthIn(max = 55.dp)
+            )
         }
     )
 }
@@ -730,14 +793,14 @@ private fun NotificationExpandedContent() {
 
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
-                    text = "SilentMode",
+                    text = appName,
                     color = Color(0xFF8E8E93),
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "On",
+                    text = title,
                     color = Color.White,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
@@ -1229,5 +1292,708 @@ private fun LiveEqualizerMini(color: Color) {
         Box(modifier = Modifier.width(3.dp).height((18 * h3).dp).clip(CircleShape).background(color))
         Box(modifier = Modifier.width(3.dp).height((18 * h4).dp).clip(CircleShape).background(color))
         Box(modifier = Modifier.width(3.dp).height((18 * h5).dp).clip(CircleShape).background(color))
+    }
+}
+
+// =============================================================================
+// NEW FIGMA DYNAMIC ISLAND STATES (1-8)
+// Extracted from Figma SVGs: islandfigmacomponentofios/Dynamic Island-*.svg
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// AvatarCircle helper — reusable gradient avatar with initials
+// Used by IncomingCallTwoAvatars (DI-3)
+// -----------------------------------------------------------------------------
+@Composable
+private fun AvatarCircle(initials: String, gradientColors: List<Color>) {
+    Box(
+        modifier = Modifier
+            .size(24.dp)
+            .clip(CircleShape)
+            .background(Brush.linearGradient(gradientColors)),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = initials,
+            color = Color.White,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-1: TIMER WITH IMAGE — Dynamic Island-1.svg
+// 96dp tall capsule.
+// Left: gradient image placeholder (square) + time label.
+// Right: Canvas clock-face graphic + Play/Pause toggle buttons.
+// Figma shows: image block, "15:30 — 30:00" timer label, circular clock with
+// hands, and Play/Pause glyph buttons on dark bases.
+// -----------------------------------------------------------------------------
+@Composable
+private fun TimerWithImageCompactContent() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // LEFT COLUMN: image placeholder + timer label
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier.weight(1f)
+        ) {
+            // Gradient image square (replaces AppleIcon photo glyph)
+            Box(
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFF667781), Color(0xFF8B99A1))
+                        )
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(
+                    glyph = AppleGlyph.Camera,
+                    tint = Color.White.copy(alpha = 0.7f),
+                    size = 16.dp
+                )
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "15:30",
+                    color = Color(0xFFFF9500),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace
+                )
+                Text(
+                    text = " — 30:00",
+                    color = Color(0xFF8E8E93),
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+        }
+
+        // RIGHT COLUMN: Canvas clock + Play/Pause buttons
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            // Canvas-drawn analog clock face
+            Box(
+                modifier = Modifier.size(40.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    val cx = size.width / 2
+                    val cy = size.height / 2
+                    val r = (size.minDimension / 2) - 4
+
+                    // Clock outline
+                    drawCircle(
+                        Color.White.copy(alpha = 0.15f),
+                        radius = r,
+                        center = Offset(cx, cy),
+                        style = Stroke(width = 2f)
+                    )
+                    // Hour markers (12 dots)
+                    for (i in 0 until 12) {
+                        val angle = Math.toRadians(i * 30.0)
+                        val dx = Math.cos(angle).toFloat() * (r - 4)
+                        val dy = Math.sin(angle).toFloat() * (r - 4)
+                        drawCircle(
+                            Color.White.copy(alpha = 0.5f),
+                            radius = 1.5f,
+                            center = Offset(cx + dx, cy + dy)
+                        )
+                    }
+                    // Clock hands — ~15:30 position
+                    // Hour hand (~52.5 degrees from 12)
+                    val hourAngle = Math.toRadians(90.0 + 15.0 * 2.5)
+                    drawLine(
+                        Color.White,
+                        Offset(cx, cy),
+                        Offset(
+                            cx + Math.cos(hourAngle).toFloat() * r * 0.5f,
+                            cy + Math.sin(hourAngle).toFloat() * r * 0.5f
+                        ),
+                        strokeWidth = 3f,
+                        cap = StrokeCap.Round
+                    )
+                    // Minute hand (~180 degrees)
+                    val minAngle = Math.toRadians(90.0 + 30.0 * 6.0)
+                    drawLine(
+                        Color.White,
+                        Offset(cx, cy),
+                        Offset(
+                            cx + Math.cos(minAngle).toFloat() * r * 0.75f,
+                            cy + Math.sin(minAngle).toFloat() * r * 0.75f
+                        ),
+                        strokeWidth = 2f,
+                        cap = StrokeCap.Round
+                    )
+                    // Center dot
+                    drawCircle(Color.White, radius = 2.5f, center = Offset(cx, cy))
+                }
+            }
+
+            // Play/Pause toggle row on dark bases
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3A3A3C)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.Pause,
+                        tint = Color(0xFFFF9500),
+                        size = 12.dp
+                    )
+                }
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3A3A3C)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.Forward,
+                        tint = Color.White,
+                        size = 12.dp
+                    )
+                }
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-2: NOTIFICATION WITH IMAGE — Dynamic Island-2.svg
+// 96dp tall capsule: compact notification card with image thumbnail,
+// sender/labels, and message preview.
+// -----------------------------------------------------------------------------
+@Composable
+private fun NotificationImageCompactContent() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        // Image thumbnail (16:9 aspect, rounded)
+        Box(
+            modifier = Modifier
+                .size(36.dp, 20.dp)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Brush.linearGradient(listOf(Color(0xFF2B599A), Color(0xFF5B8DEF)))),
+            contentAlignment = Alignment.Center
+        ) {
+            AppleIcon(
+                glyph = AppleGlyph.Chat,
+                tint = Color.White,
+                size = 12.dp
+            )
+        }
+
+        Column(modifier = Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Messages",
+                    color = Color(0xFF8E8E93),
+                    fontSize = 8.5.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "△",
+                    color = Color(0xFF30D158),
+                    fontSize = 8.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Spacer(modifier = Modifier.height(1.dp))
+            Text(
+                text = "Dad",
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(1.dp))
+            Text(
+                text = "Almost there! Don't forget to bring...",
+                color = Color(0xFF8E8E93),
+                fontSize = 9.5.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-3: INCOMING CALL WITH TWO AVATARS — Dynamic Island-3.svg
+// 96dp tall capsule showing two gradient avatar circles (TM/OC) and
+// an "Incoming Call" label.
+// Figma shows: two 24dp circular gradient avatars + "Incoming Call" text.
+// -----------------------------------------------------------------------------
+@Composable
+private fun IncomingCallTwoAvatarsContent() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AvatarCircle(
+                initials = "TM",
+                gradientColors = listOf(Color(0xFFFF6B35), Color(0xFFFF8C42))
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            AvatarCircle(
+                initials = "OC",
+                gradientColors = listOf(Color(0xFF30D158), Color(0xFF0AC4B0))
+            )
+        }
+
+        Text(
+            text = "Incoming Call",
+            color = Color(0xFF8E8E93),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium
+        )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-4: TRANSPORT LIVE ACTIVITY — Dynamic Island-4.svg
+// 96dp tall: airplane icon + "2h 15m" + route label.
+// Figma shows airplane glyph, duration, and "San Francisco → New York" route.
+// -----------------------------------------------------------------------------
+@Composable
+private fun TransportLiveActivityCompactContent() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AppleIcon(
+                glyph = AppleGlyph.Airplane,
+                tint = Color(0xFF00F5D4),
+                size = 14.dp
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "2h 15m",
+                color = Color(0xFF00F5D4),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+
+        Text(
+            text = "San Francisco ➔ New York",
+            color = Color.White,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-5: FLIGHT TRACKER DETAIL — Dynamic Island-5.svg
+// 96dp tall: Delta flight info with ON TIME badge, SFO→JFK progress bar,
+// gate/altitude details.
+// Figma shows: airline label, ON TIME pill, route progress bar, gate +
+// altitude row, plus an airplane icon.
+// -----------------------------------------------------------------------------
+@Composable
+private fun FlightTrackerDetailCompactContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp)
+    ) {
+        // TOP ROW: airline label + ON TIME badge
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AppleIcon(
+                    glyph = AppleGlyph.Airplane,
+                    tint = Color.White,
+                    size = 13.dp
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "Delta • DL 492",
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(Color(0xFF10B981).copy(alpha = 0.2f))
+                    .border(
+                        1.dp,
+                        Color(0xFF10B981).copy(alpha = 0.4f),
+                        RoundedCornerShape(percent = 50)
+                    )
+                    .padding(horizontal = 7.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = "ON TIME",
+                    color = Color(0xFF10B981),
+                    fontSize = 8.5.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // ROUTE PROGRESS BAR: SFO → JFK with teal fill at 60%
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "SFO",
+                color = Color.White,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(3.dp)
+                    .padding(horizontal = 6.dp)
+                    .background(Color(0xFF3A3A3C))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.6f)
+                        .fillMaxHeight()
+                        .background(Color(0xFF00F5D4))
+                )
+            }
+            Text(
+                text = "JFK",
+                color = Color.White,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // BOTTOM ROW: Gate + Altitude
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Gate B14 • Terminal 2",
+                color = Color(0xFF8E8E93),
+                fontSize = 9.5.sp
+            )
+            Text(
+                text = "Alt: 36,000 ft",
+                color = Color(0xFF00F5D4),
+                fontSize = 9.5.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-6: DELIVERY ORDER — Dynamic Island-6.svg
+// 96dp tall: Chipotle-style order card with 70% progress bar, driver info,
+// and phone button.
+// Figma shows: torch/logo icon, "Order #..." text, progress bar, "Picked up"
+// status, driver name + star rating + phone button.
+// -----------------------------------------------------------------------------
+@Composable
+private fun DeliveryOrderCompactContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp)
+    ) {
+        // HEADER: logo + order id
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(RoundedCornerShape(7.dp))
+                        .background(Color(0xFFF59E0B)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.Torch,
+                        tint = Color.Black,
+                        size = 13.dp
+                    )
+                }
+                Spacer(modifier = Modifier.width(7.dp))
+                Text(
+                    text = "Order #8492",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            // Status pill
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(Color(0xFFF59E0B).copy(alpha = 0.2f))
+                    .border(
+                        1.dp,
+                        Color(0xFFF59E0B).copy(alpha = 0.4f),
+                        RoundedCornerShape(percent = 50)
+                    )
+                    .padding(horizontal = 6.dp, vertical = 3.dp)
+            ) {
+                Text(
+                    text = "PICKED UP",
+                    color = Color(0xFFF59E0B),
+                    fontSize = 8.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // PROGRESS BAR at 70%
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(3.dp)
+                .background(Color(0xFF3A3A3C))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .fillMaxHeight()
+                    .background(Color(0xFFF59E0B))
+            )
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // DRIVER INFO + PHONE BUTTON
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Marco • Vespa Sprint • 4.9★",
+                color = Color.White,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Box(
+                modifier = Modifier
+                    .size(26.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF34C759)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(
+                    glyph = AppleGlyph.Phone,
+                    tint = Color.White,
+                    size = 12.dp
+                )
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-7: SPORTS SCORE — Dynamic Island-7.svg
+// 96dp tall: "UEFA Champions League" live match card with LIVE dot,
+// Real Madrid 2-1 Man City, match details.
+// Figma shows: league title, LIVE indicator, score, team names + scorers,
+// and "Quarter-Final • 2nd Leg" footer.
+// -----------------------------------------------------------------------------
+@Composable
+private fun SportsScoreCompactContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp)
+    ) {
+        // HEADER: league + LIVE
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "UEFA Champions League",
+                color = Color.White,
+                fontSize = 9.5.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier.size(5.dp).clip(CircleShape).background(Color(0xFF10B981))
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "78'",
+                    color = Color(0xFF10B981),
+                    fontSize = 9.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // SCORE ROW with teams
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(0.4f), horizontalAlignment = Alignment.Start) {
+                Text(
+                    text = "Real Madrid",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Vini Jr 34', Jude 67'",
+                    color = Color(0xFF8E8E93),
+                    fontSize = 8.5.sp
+                )
+            }
+            Text(
+                text = "2 - 1",
+                color = Color(0xFFFBBF24),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+            Column(modifier = Modifier.weight(0.4f), horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "Man City",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "De Bruyne 51'",
+                    color = Color(0xFF8E8E93),
+                    fontSize = 8.5.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        // FOOTER
+        Text(
+            text = "Quarter-Final • 2nd Leg (Agg: 4 - 4)",
+            color = Color(0xFF8E8E93),
+            fontSize = 9.sp
+        )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DI-8: NAVIGATION ROUTE — Dynamic Island-8.svg
+// 96dp tall: navigation guidance with location arrow, "200m" distance,
+// chevron, and route dots.
+// Figma shows: LocationArrow glyph, "200m" label, ChevronRight, and three
+// route-dot indicators.
+// -----------------------------------------------------------------------------
+@Composable
+private fun NavigationRouteCompactContent() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AppleIcon(
+                glyph = AppleGlyph.Location,
+                tint = Color(0xFF3B82F6),
+                size = 16.dp
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "200m",
+                color = Color(0xFF3B82F6),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AppleIcon(
+                glyph = AppleGlyph.ChevronRight,
+                tint = Color(0xFF3B82F6),
+                size = 14.dp
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            // Three route dots
+            Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                Box(
+                    modifier = Modifier
+                        .size(5.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3B82F6).copy(alpha = 0.4f))
+                )
+                Box(
+                    modifier = Modifier
+                        .size(5.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3B82F6).copy(alpha = 0.25f))
+                )
+                Box(
+                    modifier = Modifier
+                        .size(5.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3B82F6).copy(alpha = 0.15f))
+                )
+            }
+        }
     }
 }

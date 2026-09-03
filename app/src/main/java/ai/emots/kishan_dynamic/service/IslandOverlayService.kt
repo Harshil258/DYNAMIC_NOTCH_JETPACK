@@ -149,7 +149,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             is IslandState.Music -> if (state.isExpanded) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact
             is IslandState.OngoingCall -> if (state.isExpanded) IslandDemoState.CallExpanded else IslandDemoState.CallCompact
             is IslandState.IncomingCall -> IslandDemoState.CallExpanded
-            is IslandState.Notification -> if (state.isExpanded) IslandDemoState.MusicExpanded else IslandDemoState.NotificationCompact
+            is IslandState.Notification -> if (state.isExpanded) IslandDemoState.NotificationExpanded else IslandDemoState.NotificationCompact
             is IslandState.NotificationWithMusic -> IslandDemoState.MusicCompact
             is IslandState.Charging -> IslandDemoState.ChargingCompact
             is IslandState.RingerMode -> IslandDemoState.Minimal

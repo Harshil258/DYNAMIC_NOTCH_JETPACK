@@ -5,9 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,7 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ai.emots.kishan_dynamic.ui.components.AppleIcon
+import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.components.AppText
 
 /**
  * Compact stacked notification main pill
@@ -62,117 +63,68 @@ fun CompactNotificationIslandMain(
 }
 
 /**
- * Notification expanded card
+ * Notification expanded card - MATCHING Dynamic Island-2.svg
+ * 
+ * Layout: Bell slash icon + "SilentMode" + "On" on left,
+ * Charcoal pill button [Unmute] on right.
  */
 @Composable
 fun NotificationIslandExpanded(
-    appName: String = "WhatsApp",
-    timeAgo: String = "now",
-    title: String = "John Doe",
-    message: String = "Hey! Are we still meeting at 5:00 PM for the project review?",
+    appName: String = "SilentMode",
+    title: String = "On",
+    message: String = "",
     onReply: () -> Unit = {},
     onDismiss: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = AppTheme.spacing.xl, vertical = AppTheme.spacing.lg),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+            .fillMaxSize()
+            .padding(horizontal = 18.dp, vertical = 13.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // App Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(22.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color(0xFF25D366)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(14.dp)
+        // LEFT: Bell slash icon + "SilentMode" + "On"
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AppleIcon(
+                glyph = AppleGlyph.BellSlash,
+                tint = Color.White,
+                size = 28.dp
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(verticalArrangement = Arrangement.Center) {
+                AppText(
+                    text = appName,
+                    style = AppTheme.typography.caption,
+                    color = Color(0xFF8E8E93),
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                AppText(
+                    text = title,
+                    style = AppTheme.typography.islandTitle,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
                 )
             }
-
-            Spacer(modifier = Modifier.width(AppTheme.spacing.sm))
-
-            AppText(
-                text = appName.uppercase(),
-                style = AppTheme.typography.caption,
-                color = Color.White.copy(alpha = 0.6f),
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            AppText(
-                text = timeAgo,
-                style = AppTheme.typography.caption,
-                color = Color.White.copy(alpha = 0.4f)
-            )
         }
 
-        // Message Title & Body
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            AppText(
-                text = title,
-                style = AppTheme.typography.islandTitle,
+        // RIGHT: Apple Dark Charcoal Glass Pill Button [ Unmute ]
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(percent = 50))
+                .background(Color(0xFF2C2C2E))
+                .padding(horizontal = 22.dp, vertical = 10.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Unmute",
                 color = Color.White,
-                fontWeight = FontWeight.SemiBold
+                fontSize = 14.5.sp,
+                fontWeight = FontWeight.Bold
             )
-            AppText(
-                text = message,
-                style = AppTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.8f),
-                maxLines = 2
-            )
-        }
-
-        Spacer(modifier = Modifier.height(2.dp))
-
-        // Action Pills
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(36.dp)
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFF2C2C2E))
-                    .clickable { onReply() },
-                contentAlignment = Alignment.Center
-            ) {
-                AppText(
-                    text = "Reply",
-                    style = AppTheme.typography.button,
-                    color = Color.White
-                )
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(36.dp)
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFF2C2C2E))
-                    .clickable { onDismiss() },
-                contentAlignment = Alignment.Center
-            ) {
-                AppText(
-                    text = "Mark as Read",
-                    style = AppTheme.typography.button,
-                    color = Color.White
-                )
-            }
         }
     }
 }

@@ -79,7 +79,7 @@ fun DynamicNotchParent(
     val compactWidth = tokens.compactWidth * deviceScale
     val mediaCompactWidth = tokens.mediaCompactWidth * deviceScale
     val sideBubbleSize = tokens.sideSize * deviceScale
-    val splitGap = tokens.splitGap * deviceScale
+    val splitGap = tokens.splitGap * deviceScale  // iOS uses 8pt, not 11pt
 
     // -------------------------------------------------------------------------
     // Presentation model
@@ -124,7 +124,7 @@ fun DynamicNotchParent(
 
     val targetHeight = when (state) {
         is IslandState.Hidden -> 0.dp
-        is IslandState.Music -> if (state.isExpanded) tokens.musicExpandedHeight else compactHeight
+        is IslandState.Music -> if (state.isExpanded) 96.dp else compactHeight
         is IslandState.IncomingCall -> tokens.incomingCallHeight
         is IslandState.OngoingCall -> if (state.isExpanded) tokens.callExpandedHeight else compactHeight
         is IslandState.Notification -> if (state.isExpanded) tokens.notificationExpandedHeight else compactHeight
@@ -359,10 +359,8 @@ private fun IslandContent(
             val notification = state.notifications.firstOrNull()
             if (state.isExpanded) {
                 NotificationIslandExpanded(
-                    appName = notification?.appName ?: "WhatsApp",
-                    title = notification?.title ?: "John Doe",
-                    message = notification?.text ?: "Hey! Are we still meeting at 5:00 PM?",
-                    onDismiss = onIslandTap
+                    appName = notification?.appName ?: "SilentMode",
+                    title = notification?.title ?: "On"
                 )
             } else {
                 CompactNotificationIslandMain(

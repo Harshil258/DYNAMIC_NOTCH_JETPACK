@@ -56,185 +56,202 @@ fun MusicPlayerIsland(
         }
     }
 
+    // Figma Expanded-1.svg / Expanded.svg shows:
+    // Album art: 52dp squircle (rx=13dp)
+    // Title: 17sp Bold, Artist: 13sp Gray
+    // Equalizer: Pink/Magenta waveform
+    // Scrubber: Time | Progress | Time
+    // Controls: ◀◀ ▶ ▶▶ AirPlay - solid white icons on black
+    // Compact: album art + track title + waveform
+
     val isCompact = ai.emots.kishan_dynamic.ui.theme.AppTheme.windowSize == ai.emots.kishan_dynamic.ui.theme.AppWindowSize.Compact
-    val albumArtSize = if (isCompact) 64.dp else 72.dp
-    val controlSpacing = if (isCompact) 28.dp else 36.dp
+    val hPad = if (isCompact) 11.dp else 20.dp
+    val vPad = if (isCompact) 13.dp else 16.dp
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                horizontal = ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.xl,
-                vertical = ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.lg
-            ),
-        verticalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = hPad, vertical = vPad),
+        verticalArrangement = if (isCompact) Arrangement.Center else Arrangement.SpaceBetween
     ) {
-        // Top row: Album Art, Song Info, Waveform
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Album art squircle
-            Box(
-                modifier = Modifier
-                    .size(albumArtSize)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                Color(0xFFB18CFD),
-                                Color(0xFFF095FF)
-                            )
-                        )
-                    ),
-                contentAlignment = Alignment.Center
+        if (isCompact) {
+            // COMPACT: Album Art + Track Title + Waveform
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                AppleIcon(
-                    glyph = AppleGlyph.Music,
-                    tint = Color.White,
-                    size = if (isCompact) 28.dp else 32.dp
-                )
-            }
-
-            Spacer(modifier = Modifier.width(if (isCompact) 12.dp else 16.dp))
-
-            // Track metadata
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    AppText(
-                        text = title,
-                        style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandTitle,
-                        color = Color.White,
-                        maxLines = 1,
-                        modifier = Modifier
-                            .weight(1f, fill = false)
-                            .basicMarquee()
-                    )
-
-                    Spacer(modifier = Modifier.width(6.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    // 25dp Album Art Squircle
                     Box(
                         modifier = Modifier
-                            .size(16.dp)
-                            .background(Color.White.copy(alpha = 0.8f), RoundedCornerShape(3.dp)),
+                            .size(25.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(Color(0xFFE879F9), Color(0xFF818CF8))
+                                )
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
-                        AppText(
-                            text = "E",
-                            style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandBadge,
-                            color = Color.Black
+                        AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 10.dp)
+                    }
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Text(
+                        text = title,
+                        color = Color.White,
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.widthIn(max = 60.dp)
+                    )
+                }
+
+                // Neon Pink/Magenta Waveform
+                LiveEqualizerMini(color = Color(0xFFFA2D48))
+            }
+        } else {
+            // EXPANDED: Album Art + Title & Artist + Pink Equalizer
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    // 52dp Album Art Squircle
+                    Box(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .clip(RoundedCornerShape(13.dp))
+                            .background(
+                                Brush.linearGradient(
+                                    listOf(Color(0xFFE879F9), Color(0xFF818CF8), Color(0xFF38BDF8))
+                                )
+                            )
+                            .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(13.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 20.dp)
+                    }
+
+                    Spacer(modifier = Modifier.width(14.dp))
+
+                    Column(verticalArrangement = Arrangement.Center) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = title,
+                                color = Color.White,
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+
+                            Spacer(modifier = Modifier.width(7.dp))
+
+                            // Apple [E] Explicit Badge
+                            Box(
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .clip(RoundedCornerShape(3.5.dp))
+                                    .background(Color(0xFF8E8E93)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "E",
+                                    color = Color(0xFF000000),
+                                    fontSize = 7.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(2.dp))
+
+                        Text(
+                            text = artist,
+                            color = Color(0xFF8E8E93),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(3.dp))
-
-                AppText(
-                    text = artist,
-                    style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandSubtitle,
-                    color = Color.White.copy(alpha = 0.6f),
-                    maxLines = 1
-                )
+                // Neon Pink/Magenta Warm-up Waveform
+                LiveEqualizerMini(color = Color(0xFFFA2D48))
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // Waveform
-            if (isPlaying) {
-                WaveformAnimation(
-                    modifier = Modifier
-                        .size(if (isCompact) 28.dp else 32.dp, 24.dp)
-                        .padding(top = 4.dp)
-                )
-            } else {
-                Spacer(modifier = Modifier.width(32.dp))
-            }
-        }
-
-        // Inline scrubber row: Time - Scrubber - Time
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AppText(
-                text = currentTime,
-                style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandTime,
-                color = Color.White.copy(alpha = 0.5f),
-                modifier = Modifier.width(36.dp)
-            )
-
-            AppleAudioScrubber(
-                progress = progress,
-                onProgressChange = {
-                    isDragging = true
-                    progress = it
-                },
-                onProgressChangeFinished = {
-                    isDragging = false
-                    onSeek(progress)
-                },
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 4.dp)
-                    .height(24.dp)
-            )
-
-            AppText(
-                text = remainingTime,
-                style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandTime,
-                color = Color.White.copy(alpha = 0.5f),
-                modifier = Modifier.width(42.dp),
-                textAlign = androidx.compose.ui.text.style.TextAlign.End
-            )
-        }
-
-        // Playback controls (Rewind, Play/Pause, Forward, AirPlay)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 4.dp)
-        ) {
+            // MIDDLE ROW: Scrubber Slider with Time
             Row(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalArrangement = Arrangement.spacedBy(controlSpacing),
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = currentTime,
+                    fontSize = 12.sp,
+                    color = Color(0xFF8E8E93),
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = FontFamily.Monospace
+                )
+
+                // Linear Progress Track
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(5.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF3A3A3C))
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.32f)
+                            .fillMaxHeight()
+                            .clip(CircleShape)
+                            .background(Color.White)
+                    )
+                }
+
+                Text(
+                    text = remainingTime,
+                    fontSize = 12.sp,
+                    color = Color(0xFF8E8E93),
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = FontFamily.Monospace
+                )
+            }
+
+            // BOTTOM ROW: Media Controls (Backward, Play Pause, Forward, AirPlay)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(
-                    onClick = onPrevious,
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    RewindIcon(color = Color.White, modifier = Modifier.fillMaxSize())
-                }
+                AppleIcon(glyph = AppleGlyph.Backward, tint = Color.White, size = 26.dp)
 
-                IconButton(
-                    onClick = onPlayPause,
-                    modifier = Modifier.size(32.dp)
-                ) {
-                    if (isPlaying) {
-                        PauseIcon(color = Color.White, modifier = Modifier.fillMaxSize())
-                    } else {
-                        PlayIcon(color = Color.White, modifier = Modifier.fillMaxSize())
-                    }
-                }
+                // Play/Pause icon
+                AppleIcon(
+                    glyph = if (isPlaying) AppleGlyph.Pause else AppleGlyph.Play,
+                    tint = Color.White,
+                    size = 32.dp
+                )
 
-                IconButton(
-                    onClick = onNext,
-                    modifier = Modifier.size(28.dp)
-                ) {
-                    FastForwardIcon(color = Color.White, modifier = Modifier.fillMaxSize())
-                }
-            }
+                AppleIcon(glyph = AppleGlyph.Forward, tint = Color.White, size = 26.dp)
 
-            IconButton(
-                onClick = {},
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .size(24.dp)
-            ) {
-                AirPlayIcon(color = Color.White, modifier = Modifier.fillMaxSize())
+                AppleIcon(glyph = AppleGlyph.AirPlay, tint = Color.White, size = 24.dp)
             }
         }
     }

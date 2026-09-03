@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.ui.components.AuroraButton
+import ai.emots.kishan_dynamic.ui.components.AtmosphericBackground
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
 import ai.emots.kishan_dynamic.ui.components.GlassCard
 import ai.emots.kishan_dynamic.ui.components.IslandDemoState
@@ -90,27 +91,7 @@ fun OnboardingScreen(
 
     val currentSlide = slides[currentPage]
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AuroraTheme.colors.rootBackgroundBrush)
-    ) {
-        // Atmospheric Ambient Background Blobs
-        Box(
-            modifier = Modifier
-                .size(320.dp)
-                .align(Alignment.TopCenter)
-                .blur(AuroraTheme.elevation.glowBlurProminent)
-                .background(AuroraTheme.colors.backgroundRadialBloom.copy(alpha = 0.5f))
-        )
-        Box(
-            modifier = Modifier
-                .size(260.dp)
-                .align(Alignment.BottomEnd)
-                .blur(AuroraTheme.elevation.glowBlurProminent)
-                .background(AuroraTheme.colors.primary.copy(alpha = 0.25f))
-        )
-
+    AtmosphericBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()

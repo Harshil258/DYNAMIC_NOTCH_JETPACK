@@ -214,7 +214,7 @@ fun DynamicIslandPill(
         IslandDemoState.DeliveryCompact, IslandDemoState.DeliveryExpanded -> Color(0xFFF59E0B)
         IslandDemoState.FlightCompact, IslandDemoState.FlightExpanded -> Color(0xFF00F5D4)
         IslandDemoState.SportsCompact, IslandDemoState.SportsExpanded -> Color(0xFF8B5CF6)
-        else -> Color(0xFF7C3AED)
+        else -> Color(0xFF6D82FF)
     }
 
     Box(contentAlignment = Alignment.Center) {

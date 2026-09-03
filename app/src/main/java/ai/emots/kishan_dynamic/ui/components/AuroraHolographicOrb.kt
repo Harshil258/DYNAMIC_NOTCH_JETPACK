@@ -123,7 +123,7 @@ fun AuroraHolographicOrb(
                         colors = listOf(
                             Color(0xFFFF2E93), // Vivid Magenta
                             Color(0xFFFFAE19), // Warm Gold
-                            Color(0xFF7C3AED), // Violet
+                            Color(0xFF6D82FF), // Violet
                             Color(0xFFFF2E93)
                         )
                     ),

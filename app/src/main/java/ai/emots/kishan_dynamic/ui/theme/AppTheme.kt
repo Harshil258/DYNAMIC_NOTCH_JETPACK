@@ -139,6 +139,27 @@ val DarkColorTokens = AppColorTokens(
     disabled = Color(0xFF3A3A3C)
 )
 
+val LightColorTokens = AppColorTokens(
+    background = Color(0xFFF8F9FB),
+    surface = Color(0xEFFFFFFF),
+    surfaceVariant = Color(0xFFF0F2F5),
+    surfaceElevated = Color(0xFFFFFFFF),
+    primary = Color(0xFF111318),
+    secondary = Color(0xFF646870),
+    accent = Color(0xFF0B57D0),
+    textPrimary = Color(0xFF111318),
+    textSecondary = Color(0xFF5F6368),
+    textTertiary = Color(0xFF858A92),
+    border = Color(0x16000000),
+    borderSubtle = Color(0x0C000000),
+    success = Color(0xFF17833D),
+    warning = Color(0xFFB85C00),
+    error = Color(0xFFBA1A1A),
+    info = Color(0xFF0B57D0),
+    gold = Color(0xFF9A6700),
+    disabled = Color(0xFFD5D8DE)
+)
+
 // =============================================================================
 // 4. ADAPTIVE TYPOGRAPHY BUILDER (DEVICE-SCALED)
 // =============================================================================
@@ -153,23 +174,23 @@ private fun typographyFor(windowSize: AppWindowSize): AppTypographyTokens {
     return AppTypographyTokens(
         h1 = TextStyle(
             fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Bold,
-            fontSize = (20f * scaleFactor).sp,
-            lineHeight = (26f * scaleFactor).sp,
-            letterSpacing = (-0.3).sp
+            fontWeight = FontWeight.SemiBold,
+            fontSize = (30f * scaleFactor).sp,
+            lineHeight = (36f * scaleFactor).sp,
+            letterSpacing = (-0.7).sp
         ),
         h2 = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.SemiBold,
-            fontSize = (16f * scaleFactor).sp,
-            lineHeight = (22f * scaleFactor).sp,
-            letterSpacing = (-0.2).sp
+            fontSize = (20f * scaleFactor).sp,
+            lineHeight = (26f * scaleFactor).sp,
+            letterSpacing = (-0.35).sp
         ),
         h3 = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.SemiBold,
-            fontSize = (14f * scaleFactor).sp,
-            lineHeight = (19f * scaleFactor).sp
+            fontSize = (16f * scaleFactor).sp,
+            lineHeight = (22f * scaleFactor).sp
         ),
         body = TextStyle(
             fontFamily = FontFamily.Default,
@@ -328,7 +349,10 @@ object AppTheme {
 // =============================================================================
 
 @Composable
-fun AppTheme(content: @Composable () -> Unit) {
+fun AppTheme(
+    darkTheme: Boolean = true,
+    content: @Composable () -> Unit
+) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
@@ -338,7 +362,7 @@ fun AppTheme(content: @Composable () -> Unit) {
         else -> AppWindowSize.Expanded
     }
 
-    val colors = DarkColorTokens
+    val colors = if (darkTheme) DarkColorTokens else LightColorTokens
     val typography = typographyFor(windowSize)
     val layout = layoutFor(windowSize)
     val spacing = AppSpacingTokens()

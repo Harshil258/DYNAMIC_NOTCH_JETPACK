@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
 /**
@@ -47,8 +48,8 @@ fun AppleSegmentedControl(
             .fillMaxWidth()
             .height(44.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(Color(0xFF141020))
-            .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(14.dp))
+            .background(AppTheme.colors.surface)
+            .border(1.dp, AppTheme.colors.border, RoundedCornerShape(14.dp))
             .padding(3.dp)
     ) {
         val count = options.size.coerceAtLeast(1)
@@ -73,18 +74,18 @@ fun AppleSegmentedControl(
                     elevation = 6.dp,
                     shape = RoundedCornerShape(11.dp),
                     ambientColor = Color.Black.copy(alpha = 0.5f),
-                    spotColor = AuroraTokens.Palette.primary.copy(alpha = 0.4f)
+                    spotColor = Color.Black.copy(alpha = 0.5f)
                 )
                 .clip(RoundedCornerShape(11.dp))
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0xFF322352), Color(0xFF24183E))
+                        listOf(AppTheme.colors.surfaceElevated, AppTheme.colors.surfaceVariant)
                     )
                 )
                 .border(
                     width = 1.dp,
                     brush = Brush.verticalGradient(
-                        listOf(Color(0x55A78BFA), Color(0x15A78BFA))
+                        listOf(Color(0x35FFFFFF), Color(0x10FFFFFF))
                     ),
                     shape = RoundedCornerShape(11.dp)
                 )
@@ -111,7 +112,7 @@ fun AppleSegmentedControl(
                         text = title,
                         fontSize = 13.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) Color.White else AuroraTokens.TextColor.secondary
+                        color = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary
                     )
                 }
             }

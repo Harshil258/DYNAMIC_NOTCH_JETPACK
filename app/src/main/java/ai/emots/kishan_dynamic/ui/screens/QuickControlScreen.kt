@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +42,7 @@ import ai.emots.kishan_dynamic.ui.components.AtmosphericBackground
 import ai.emots.kishan_dynamic.ui.components.LuxuryCard
 import ai.emots.kishan_dynamic.ui.components.LuxurySwitch
 import ai.emots.kishan_dynamic.ui.components.LuxuryTopBar
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
 data class AppleQuickToggleItem(
@@ -72,11 +75,14 @@ fun QuickControlScreen(
     AtmosphericBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = AuroraTokens.Spacing.screenGutter)
-                .padding(bottom = 60.dp),
+                .padding(horizontal = AppTheme.layout.screenGutter)
+                .padding(bottom = AppTheme.spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(AuroraTokens.Spacing.sectionGap)
         ) {
             // Top Bar
@@ -100,12 +106,12 @@ fun QuickControlScreen(
                                 text = "Enable Control Center on Island",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Long press or tap the island to quickly access device shortcuts",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -126,12 +132,12 @@ fun QuickControlScreen(
                                 text = "Hardware Volume & Brightness HUD",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Show sleek island percentage readout when pressing physical volume keys",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -150,12 +156,12 @@ fun QuickControlScreen(
                         text = "Customize Active Shortcut Tiles",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = AuroraTokens.TextColor.primary
+                        color = AppTheme.colors.textPrimary
                     )
                     Text(
                         text = "Tap tiles to add or remove them from your island control center",
                         fontSize = 12.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
 
                     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -184,7 +190,7 @@ fun QuickControlScreen(
                                             )
                                             .border(
                                                 width = 1.dp,
-                                                color = if (item.isEnabled) AuroraTokens.Palette.primary else Color(0x10FFFFFF),
+                                                color = if (item.isEnabled) AppTheme.colors.accent else Color(0x10FFFFFF),
                                                 shape = RoundedCornerShape(16.dp)
                                             )
                                             .clickable(
@@ -205,14 +211,14 @@ fun QuickControlScreen(
                                         ) {
                                             AppleIcon(
                                                 glyph = item.glyph,
-                                                tint = if (item.isEnabled) AuroraTokens.Palette.primaryLight else AuroraTokens.TextColor.tertiary,
+                                                tint = if (item.isEnabled) AppTheme.colors.accent else AppTheme.colors.textTertiary,
                                                 size = 22.dp
                                             )
                                             Text(
                                                 text = item.name,
                                                 fontSize = 11.5.sp,
                                                 fontWeight = FontWeight.Medium,
-                                                color = if (item.isEnabled) Color.White else AuroraTokens.TextColor.secondary
+                                                color = if (item.isEnabled) Color.White else AppTheme.colors.textSecondary
                                             )
                                         }
                                     }

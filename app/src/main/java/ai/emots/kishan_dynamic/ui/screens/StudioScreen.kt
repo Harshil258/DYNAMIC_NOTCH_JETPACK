@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -99,11 +101,14 @@ fun StudioScreen(
     AtmosphericBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 120.dp)
+                .padding(horizontal = AppTheme.layout.screenGutter)
+                .padding(bottom = AppTheme.layout.bottomBarHeight + 48.dp)
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -114,7 +119,7 @@ fun StudioScreen(
                 text = "Experiences",
                 style = AppTheme.typography.h1,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = AppTheme.colors.textPrimary
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -122,7 +127,7 @@ fun StudioScreen(
             AppText(
                 text = "Custom behaviors and adaptive interactions for your hardware notch.",
                 style = AppTheme.typography.bodySmall,
-                color = Color(0xFF8E8E93)
+                color = AppTheme.colors.textSecondary
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -157,14 +162,14 @@ fun StudioScreen(
                                 text = item.title,
                                 style = AppTheme.typography.body,
                                 fontWeight = FontWeight.Medium,
-                                color = Color.White
+                                color = AppTheme.colors.textPrimary
                             )
                         }
 
                         AppText(
                             text = item.description,
                             style = AppTheme.typography.bodySmall,
-                            color = Color(0xFF8E8E93),
+                            color = AppTheme.colors.textSecondary,
                             lineHeight = 18.sp
                         )
                     }
@@ -177,7 +182,7 @@ fun StudioScreen(
                         AppText(
                             text = item.statusText,
                             style = AppTheme.typography.caption,
-                            color = Color(0xFF636366)
+                            color = AppTheme.colors.textTertiary
                         )
                         AppText(
                             text = "→",

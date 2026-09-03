@@ -24,10 +24,10 @@ object AuroraTokens {
     // 1. ATMOSPHERIC BACKGROUND TOKENS
     // =========================================================================
     object Background {
-        val baseVoid = Color(0xFF090710) // Ultra-deep obsidian velvet
-        val nebulaViolet = Color(0x42532A86) // Top radial atmospheric light pool
-        val nebulaTeal = Color(0x350A3648)   // Bottom-right oceanic teal pool
-        val nebulaVioletSecondary = Color(0x1F301650)
+        val baseVoid = Color(0xFF000000) // Ultra-deep obsidian velvet
+        val nebulaViolet = Color(0x183C5FA8) // Top radial atmospheric light pool
+        val nebulaTeal = Color(0x1F087084)   // Bottom-right oceanic teal pool
+        val nebulaVioletSecondary = Color(0x12213C7A)
         val centerTop = Offset(0.50f, 0.12f)
         val centerBottom = Offset(0.78f, 0.88f)
     }
@@ -36,11 +36,11 @@ object AuroraTokens {
     // 2. SURFACE & GLASS TOKENS
     // =========================================================================
     object Surface {
-        val cardBase = Color(0xFF161224)
-        val cardGradientTop = Color(0xFF1A152A)
-        val cardGradientBottom = Color(0xFF110E1C)
-        val cardElevated = Color(0xFF221B36)
-        val cardSubtle = Color(0xFF14111E)
+        val cardBase = Color(0xEB121317)
+        val cardGradientTop = Color(0xF0181A20)
+        val cardGradientBottom = Color(0xF00D0E12)
+        val cardElevated = Color(0xFF202228)
+        val cardSubtle = Color(0xE60D0E12)
         val glassTranslucent = Color(0x18FFFFFF)
         val glassInteractive = Color(0x24FFFFFF)
 
@@ -49,7 +49,7 @@ object AuroraTokens {
         )
 
         val stageBrush = Brush.verticalGradient(
-            listOf(Color(0xFF151222), Color(0xFF0D0B16))
+            listOf(Color(0xFF15171C), Color(0xFF090A0D))
         )
     }
 
@@ -66,11 +66,11 @@ object AuroraTokens {
         )
 
         val activeGradient = Brush.horizontalGradient(
-            listOf(Color(0xFF7C3AED), Color(0xFF9333EA))
+            listOf(Color(0xFF6D82FF), Color(0xFF4D9CFF))
         )
 
         val borderSubtle = Color(0x14FFFFFF)
-        val borderFocused = Color(0xFF7C3AED)
+        val borderFocused = Color(0xFF6D82FF)
         val borderError = Color(0xFFEF4444).copy(alpha = 0.5f)
     }
 
@@ -78,19 +78,19 @@ object AuroraTokens {
     // 4. BRAND & PALETTE ACCENT TOKENS
     // =========================================================================
     object Palette {
-        val primary = Color(0xFF7C3AED)          // Royal Violet
-        val primaryLight = Color(0xFFA78BFA)     // Lavender Glow
-        val secondary = Color(0xFF00F5D4)        // Electric Cyan
-        val accent = Color(0xFFEC4899)           // Neon Pink
+        val primary = Color(0xFF6D82FF)          // Royal Violet
+        val primaryLight = Color(0xFFB7C4FF)     // Lavender Glow
+        val secondary = Color(0xFF67D4E8)        // Electric Cyan
+        val accent = Color(0xFF7AA7FF)           // Neon Pink
         val gold = Color(0xFFF59E0B)             // Amber Gold
         val success = Color(0xFF10B981)          // Emerald Green
         val warning = Color(0xFFFBBF24)          // Solar Yellow
         val error = Color(0xFFEF4444)            // Coral Red
         val info = Color(0xFF38BDF8)             // Sky Blue
-        val disabled = Color(0xFF6B657D)         // Muted Slate
+        val disabled = Color(0xFF686D78)         // Muted Slate
 
         val primaryGradient = Brush.horizontalGradient(
-            listOf(primary, Color(0xFF9333EA))
+            listOf(primary, Color(0xFF4D9CFF))
         )
 
         val alertGradient = Brush.horizontalGradient(
@@ -106,10 +106,10 @@ object AuroraTokens {
     // 5. TYPOGRAPHY COLOR TOKENS
     // =========================================================================
     object TextColor {
-        val primary = Color(0xFFF8F7FC)   // Crisp porcelain white
-        val secondary = Color(0xFF9E98B0) // Soft lavender ash
-        val tertiary = Color(0xFF6B657D)  // Muted deep slate
-        val accent = Color(0xFFA78BFA)    // Radiant purple accent
+        val primary = Color(0xFFF5F7FA)   // Crisp porcelain white
+        val secondary = Color(0xFFA4A8B2) // Soft lavender ash
+        val tertiary = Color(0xFF686D78)  // Muted deep slate
+        val accent = Color(0xFFB7C4FF)    // Radiant purple accent
         val proGold = Color(0xFFFBBF24)   // Golden crown accent
     }
 

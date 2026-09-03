@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,6 +42,7 @@ import ai.emots.kishan_dynamic.ui.components.LuxuryCard
 import ai.emots.kishan_dynamic.ui.components.LuxurySwitch
 import ai.emots.kishan_dynamic.ui.components.LuxuryTopBar
 import ai.emots.kishan_dynamic.ui.dialogs.BatteryOptimizationDialog
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
 @Composable
@@ -54,11 +57,14 @@ fun BatterySettingsScreen(
     AtmosphericBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = AuroraTokens.Spacing.screenGutter)
-                .padding(bottom = 60.dp),
+                .padding(horizontal = AppTheme.layout.screenGutter)
+                .padding(bottom = AppTheme.spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(AuroraTokens.Spacing.sectionGap)
         ) {
             // Top Bar
@@ -84,7 +90,7 @@ fun BatterySettingsScreen(
                     Text(
                         text = if (isExpandedCharging) "Expanded 65W Warp Charge HUD" else "Compact Battery Status Pill",
                         fontSize = 12.sp,
-                        color = AuroraTokens.Palette.warning,
+                        color = AppTheme.colors.warning,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -104,12 +110,12 @@ fun BatterySettingsScreen(
                                 text = "Show Super Charging Animation",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Pulsing neon ring and wattage indicator when power cable is plugged in",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -130,12 +136,12 @@ fun BatterySettingsScreen(
                                 text = "Low Battery Warning (15% & 10%)",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Critical battery heads-up reminder before your device turns off",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -163,12 +169,12 @@ fun BatterySettingsScreen(
                             modifier = Modifier
                                 .size(40.dp)
                                 .clip(CircleShape)
-                                .background(AuroraTokens.Palette.info.copy(alpha = 0.2f)),
+                                .background(AppTheme.colors.info.copy(alpha = 0.2f)),
                             contentAlignment = Alignment.Center
                         ) {
                             AppleIcon(
                                 glyph = AppleGlyph.Shield,
-                                tint = AuroraTokens.Palette.info,
+                                tint = AppTheme.colors.info,
                                 size = 20.dp
                             )
                         }
@@ -178,12 +184,12 @@ fun BatterySettingsScreen(
                                 text = "Background Guardian Guide",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Prevent Samsung, Xiaomi, Vivo & OnePlus battery killer",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
                     }
@@ -199,7 +205,7 @@ fun BatterySettingsScreen(
                             text = "VIEW GUIDE",
                             fontSize = 10.5.sp,
                             fontWeight = FontWeight.Bold,
-                            color = AuroraTokens.Palette.info
+                            color = AppTheme.colors.info
                         )
                     }
                 }

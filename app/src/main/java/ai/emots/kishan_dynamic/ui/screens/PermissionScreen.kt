@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -57,6 +59,7 @@ import ai.emots.kishan_dynamic.ui.components.AtmosphericBackground
 import ai.emots.kishan_dynamic.ui.components.LuxuryCard
 import ai.emots.kishan_dynamic.ui.components.LuxuryTopBar
 import ai.emots.kishan_dynamic.ui.dialogs.PermissionExplanationSheet
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
 data class PermissionItemData(
@@ -147,11 +150,14 @@ fun PermissionScreen(
     AtmosphericBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = AuroraTokens.Spacing.screenGutter)
-                .padding(bottom = 60.dp),
+                .padding(horizontal = AppTheme.layout.screenGutter)
+                .padding(bottom = AppTheme.spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(AuroraTokens.Spacing.sectionGap)
         ) {
             // Header
@@ -179,13 +185,13 @@ fun PermissionScreen(
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(
-                                    if (canProceed) AuroraTokens.Palette.success.copy(alpha = 0.2f)
-                                    else AuroraTokens.Palette.primary.copy(alpha = 0.25f)
+                                    if (canProceed) AppTheme.colors.success.copy(alpha = 0.2f)
+                                    else AppTheme.colors.accent.copy(alpha = 0.25f)
                                 )
                                 .border(
                                     1.dp,
-                                    if (canProceed) AuroraTokens.Palette.success.copy(alpha = 0.5f)
-                                    else AuroraTokens.Palette.primary.copy(alpha = 0.4f),
+                                    if (canProceed) AppTheme.colors.success.copy(alpha = 0.5f)
+                                    else AppTheme.colors.accent.copy(alpha = 0.4f),
                                     CircleShape
                                 )
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
@@ -196,14 +202,14 @@ fun PermissionScreen(
                             ) {
                                 AppleIcon(
                                     glyph = if (canProceed) AppleGlyph.Check else AppleGlyph.Shield,
-                                    tint = if (canProceed) AuroraTokens.Palette.success else AuroraTokens.Palette.primaryLight,
+                                    tint = if (canProceed) AppTheme.colors.success else AppTheme.colors.accent,
                                     size = 12.dp
                                 )
                                 Text(
                                     text = if (canProceed) "SYSTEM SECURE" else "ACTIVATION IN PROGRESS",
                                     fontSize = 10.5.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = if (canProceed) AuroraTokens.Palette.success else AuroraTokens.Palette.primaryLight,
+                                    color = if (canProceed) AppTheme.colors.success else AppTheme.colors.accent,
                                     letterSpacing = 0.5.sp
                                 )
                             }
@@ -213,14 +219,14 @@ fun PermissionScreen(
                             text = "$grantedCount of $totalCount Armed",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = AppTheme.colors.textPrimary
                         )
 
                         Text(
                             text = if (canProceed) "Core capabilities satisfied. Ready to engage island overlay."
                             else "Grant required permissions below to draw fluid island over your notch.",
                             fontSize = 12.sp,
-                            color = AuroraTokens.TextColor.secondary,
+                            color = AppTheme.colors.textSecondary,
                             lineHeight = 16.sp
                         )
                     }
@@ -252,9 +258,9 @@ fun PermissionScreen(
                             drawArc(
                                 brush = Brush.sweepGradient(
                                     listOf(
-                                        AuroraTokens.Palette.primary,
+                                        AppTheme.colors.accent,
                                         AuroraTokens.Palette.secondary,
-                                        AuroraTokens.Palette.success
+                                        AppTheme.colors.success
                                     )
                                 ),
                                 startAngle = -90f,
@@ -271,7 +277,7 @@ fun PermissionScreen(
                                 text = "${(animatedProgress * 100).toInt()}%",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = AppTheme.colors.textPrimary
                             )
                         }
                     }
@@ -295,10 +301,10 @@ fun PermissionScreen(
                     modifier = Modifier
                         .size(30.dp)
                         .clip(CircleShape)
-                        .background(AuroraTokens.Palette.success.copy(alpha = 0.2f)),
+                        .background(AppTheme.colors.success.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(glyph = AppleGlyph.Shield, tint = AuroraTokens.Palette.success, size = 15.dp)
+                    AppleIcon(glyph = AppleGlyph.Shield, tint = AppTheme.colors.success, size = 15.dp)
                 }
 
                 Column {
@@ -306,12 +312,12 @@ fun PermissionScreen(
                         text = "100% On-Device Processing",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = AppTheme.colors.textPrimary
                     )
                     Text(
                         text = "No personal data, notifications, or keystrokes ever leave your device.",
                         fontSize = 11.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
                 }
             }
@@ -323,7 +329,7 @@ fun PermissionScreen(
                 text = "System Capabilities",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = AppTheme.colors.textPrimary
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -340,20 +346,20 @@ fun PermissionScreen(
                                     .size(46.dp)
                                     .clip(CircleShape)
                                     .background(
-                                        if (item.isGranted) AuroraTokens.Palette.success.copy(alpha = 0.2f)
-                                        else AuroraTokens.Palette.primary.copy(alpha = 0.2f)
+                                        if (item.isGranted) AppTheme.colors.success.copy(alpha = 0.2f)
+                                        else AppTheme.colors.accent.copy(alpha = 0.2f)
                                     )
                                     .border(
                                         1.dp,
-                                        if (item.isGranted) AuroraTokens.Palette.success.copy(alpha = 0.4f)
-                                        else AuroraTokens.Palette.primary.copy(alpha = 0.3f),
+                                        if (item.isGranted) AppTheme.colors.success.copy(alpha = 0.4f)
+                                        else AppTheme.colors.accent.copy(alpha = 0.3f),
                                         CircleShape
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
                                 AppleIcon(
                                     glyph = item.glyph,
-                                    tint = if (item.isGranted) AuroraTokens.Palette.success else AuroraTokens.Palette.primaryLight,
+                                    tint = if (item.isGranted) AppTheme.colors.success else AppTheme.colors.accent,
                                     size = 22.dp
                                 )
                             }
@@ -370,21 +376,21 @@ fun PermissionScreen(
                                         text = item.title,
                                         fontSize = 14.5.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color.White
+                                        color = AppTheme.colors.textPrimary
                                     )
 
                                     if (item.isRequired) {
                                         Box(
                                             modifier = Modifier
                                                 .clip(CircleShape)
-                                                .background(AuroraTokens.Palette.primary.copy(alpha = 0.25f))
+                                                .background(AppTheme.colors.accent.copy(alpha = 0.25f))
                                                 .padding(horizontal = 6.dp, vertical = 2.dp)
                                         ) {
                                             Text(
                                                 text = "REQ",
                                                 fontSize = 8.5.sp,
                                                 fontWeight = FontWeight.Bold,
-                                                color = AuroraTokens.Palette.primaryLight
+                                                color = AppTheme.colors.accent
                                             )
                                         }
                                     }
@@ -395,7 +401,7 @@ fun PermissionScreen(
                                 Text(
                                     text = item.description,
                                     fontSize = 11.5.sp,
-                                    color = AuroraTokens.TextColor.secondary,
+                                    color = AppTheme.colors.textSecondary,
                                     lineHeight = 15.sp
                                 )
                             }
@@ -421,7 +427,7 @@ fun PermissionScreen(
                                         text = "i",
                                         fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = AuroraTokens.TextColor.secondary
+                                        color = AppTheme.colors.textSecondary
                                     )
                                 }
 
@@ -430,8 +436,8 @@ fun PermissionScreen(
                                     Box(
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .background(AuroraTokens.Palette.success.copy(alpha = 0.2f))
-                                            .border(1.dp, AuroraTokens.Palette.success.copy(alpha = 0.4f), CircleShape)
+                                            .background(AppTheme.colors.success.copy(alpha = 0.2f))
+                                            .border(1.dp, AppTheme.colors.success.copy(alpha = 0.4f), CircleShape)
                                             .clickable {
                                                 when (item.id) {
                                                     "accessibility" -> accessibilityGranted = false
@@ -446,12 +452,12 @@ fun PermissionScreen(
                                             verticalAlignment = Alignment.CenterVertically,
                                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                                         ) {
-                                            AppleIcon(glyph = AppleGlyph.Check, tint = AuroraTokens.Palette.success, size = 12.dp)
+                                            AppleIcon(glyph = AppleGlyph.Check, tint = AppTheme.colors.success, size = 12.dp)
                                             Text(
                                                 text = "Active",
                                                 fontSize = 11.sp,
                                                 fontWeight = FontWeight.Bold,
-                                                color = AuroraTokens.Palette.success
+                                                color = AppTheme.colors.success
                                             )
                                         }
                                     }

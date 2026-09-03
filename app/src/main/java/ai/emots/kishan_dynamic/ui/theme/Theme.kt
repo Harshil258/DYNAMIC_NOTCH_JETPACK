@@ -50,7 +50,7 @@ fun AuroraIslandTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    AppTheme {
+    AppTheme(darkTheme = darkTheme) {
         val colors = if (darkTheme) DarkAuroraColors else LightAuroraColors
         val typography = AuroraTypography()
         val shapes = AuroraShapes()
@@ -59,33 +59,19 @@ fun AuroraIslandTheme(
         val motion = AuroraMotion()
 
         // Bridge into Material3 color scheme for system widgets
-        val materialColorScheme = if (darkTheme) {
-            darkColorScheme(
-                primary = colors.primary,
-                secondary = colors.lavender,
-                tertiary = colors.cyan,
-                background = colors.backgroundBase,
-                surface = colors.glassSurface,
-                onPrimary = Color.White,
-                onSecondary = Color.White,
-                onBackground = colors.textPrimary,
-                onSurface = colors.textPrimary,
-                error = colors.error
-            )
-        } else {
-            lightColorScheme(
-                primary = colors.primary,
-                secondary = colors.lavender,
-                tertiary = colors.cyan,
-                background = colors.backgroundBase,
-                surface = colors.glassSurface,
-                onPrimary = Color.White,
-                onSecondary = Color.White,
-                onBackground = colors.textPrimary,
-                onSurface = colors.textPrimary,
-                error = colors.error
-            )
-        }
+        val materialColorScheme = if (darkTheme) darkColorScheme(
+            primary = colors.primary, secondary = colors.lavender, tertiary = colors.cyan,
+            background = colors.backgroundBase, surface = colors.glassSurface,
+            surfaceContainer = colors.glassSurfaceStrong, onPrimary = Color.Black,
+            onBackground = colors.textPrimary, onSurface = colors.textPrimary,
+            outline = colors.glassBorder, error = colors.error
+        ) else lightColorScheme(
+            primary = colors.primary, secondary = colors.lavender, tertiary = colors.cyan,
+            background = colors.backgroundBase, surface = colors.glassSurface,
+            surfaceContainer = colors.glassSurfaceStrong, onPrimary = Color.White,
+            onBackground = colors.textPrimary, onSurface = colors.textPrimary,
+            outline = colors.glassBorder, error = colors.error
+        )
 
         CompositionLocalProvider(
             LocalAuroraColors provides colors,

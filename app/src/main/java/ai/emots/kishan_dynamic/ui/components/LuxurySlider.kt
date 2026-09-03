@@ -66,8 +66,8 @@ fun LuxurySlider(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color(0xFF281E44))
-                    .border(1.dp, Color(0x30A78BFA), RoundedCornerShape(8.dp))
+                    .background(Color(0xFF202228))
+                    .border(1.dp, Color(0x28FFFFFF), RoundedCornerShape(8.dp))
                     .padding(horizontal = 8.dp, vertical = 3.dp)
             ) {
                 Text(
@@ -96,7 +96,7 @@ fun LuxurySlider(
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(100.dp))
-                    .background(Color(0xFF1F1A2F))
+                    .background(Color(0xFF292A30))
                     .border(1.dp, Color(0x14FFFFFF), RoundedCornerShape(100.dp))
             )
 

@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.ui.components.AtmosphericBackground
 import ai.emots.kishan_dynamic.ui.components.AuroraBadge
 import ai.emots.kishan_dynamic.ui.components.AuroraButton
 import ai.emots.kishan_dynamic.ui.components.AuroraChip
@@ -77,26 +78,7 @@ fun ComponentGalleryScreen(
     var selectedSegment by remember { mutableIntStateOf(0) }
     var inputValue by remember { mutableStateOf("Aurora Dynamic Notch") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AuroraTheme.colors.rootBackgroundBrush)
-    ) {
-        // Atmospheric Ambient Background Blobs
-        Box(
-            modifier = Modifier
-                .size(320.dp)
-                .align(Alignment.TopEnd)
-                .blur(AuroraTheme.elevation.glowBlurProminent)
-                .background(AuroraTheme.colors.backgroundRadialBloom.copy(alpha = 0.45f))
-        )
-        Box(
-            modifier = Modifier
-                .size(280.dp)
-                .align(Alignment.BottomStart)
-                .blur(AuroraTheme.elevation.glowBlurProminent)
-                .background(AuroraTheme.colors.primary.copy(alpha = 0.25f))
-        )
+    AtmosphericBackground {
 
         Column(
             modifier = Modifier

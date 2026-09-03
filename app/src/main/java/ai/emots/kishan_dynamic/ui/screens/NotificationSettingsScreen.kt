@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,6 +39,7 @@ import ai.emots.kishan_dynamic.ui.components.IslandDemoState
 import ai.emots.kishan_dynamic.ui.components.LuxuryCard
 import ai.emots.kishan_dynamic.ui.components.LuxurySwitch
 import ai.emots.kishan_dynamic.ui.components.LuxuryTopBar
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -61,11 +64,14 @@ fun NotificationSettingsScreen(
     AtmosphericBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = AuroraTokens.Spacing.screenGutter)
-                .padding(bottom = 60.dp),
+                .padding(horizontal = AppTheme.layout.screenGutter)
+                .padding(bottom = AppTheme.spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(AuroraTokens.Spacing.sectionGap)
         ) {
             // Top Bar
@@ -111,12 +117,12 @@ fun NotificationSettingsScreen(
                                 text = "Auto-Expand on New Message",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Instantly open expanded preview showing message text and sender avatar",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -139,12 +145,12 @@ fun NotificationSettingsScreen(
                                 text = "Swipe Up to Dismiss",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Flick the island upward with your thumb to dismiss it early",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -165,12 +171,12 @@ fun NotificationSettingsScreen(
                         text = "How Long to Show Alert",
                         fontSize = 14.5.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = AuroraTokens.TextColor.primary
+                        color = AppTheme.colors.textPrimary
                     )
                     Text(
                         text = "Time the island remains visible before smoothly collapsing",
                         fontSize = 11.5.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
 
                     AppleSegmentedControl(

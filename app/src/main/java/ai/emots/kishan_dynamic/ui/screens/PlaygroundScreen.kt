@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -198,11 +200,14 @@ fun PlaygroundScreen(
     AtmosphericBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 120.dp)
+                .padding(horizontal = AppTheme.layout.screenGutter)
+                .padding(bottom = AppTheme.layout.bottomBarHeight + 48.dp)
         ) {
             // =================================================================
             // 1. MINIMAL FLOATING APP IDENTITY
@@ -223,13 +228,13 @@ fun PlaygroundScreen(
                             .width(18.dp)
                             .height(10.dp)
                             .clip(RoundedCornerShape(5.dp))
-                            .background(Color.White)
+                            .background(AppTheme.colors.textPrimary)
                     )
                     AppText(
                         text = "Dynamic Island",
                         style = AppTheme.typography.body,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White
+                        color = AppTheme.colors.textPrimary
                     )
                 }
 
@@ -290,7 +295,7 @@ fun PlaygroundScreen(
                         text = currentItem.headline,
                         style = AppTheme.typography.h3,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = AppTheme.colors.textPrimary
                     )
                 }
 
@@ -338,7 +343,7 @@ fun PlaygroundScreen(
                             text = item.label,
                             style = AppTheme.typography.caption,
                             fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
-                            color = if (isSelected) Color.White else Color(0xFF636366)
+                            color = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textTertiary
                         )
                     }
                 }
@@ -369,7 +374,7 @@ fun PlaygroundScreen(
                             text = "Setup required",
                             style = AppTheme.typography.body,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            color = AppTheme.colors.textPrimary
                         )
                     }
 
@@ -394,7 +399,7 @@ fun PlaygroundScreen(
                             text = "Enable Dynamic Island",
                             style = AppTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
-                            color = Color.White
+                            color = AppTheme.colors.textPrimary
                         )
                     }
                 }
@@ -485,7 +490,7 @@ fun PlaygroundScreen(
                             text = "Dynamic Island",
                             style = AppTheme.typography.body,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.White
+                            color = AppTheme.colors.textPrimary
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         AppText(
@@ -535,7 +540,7 @@ private fun EditorialFeatureRow(
                 text = title,
                 style = AppTheme.typography.body,
                 fontWeight = FontWeight.Medium,
-                color = Color.White
+                color = AppTheme.colors.textPrimary
             )
             AppText(
                 text = subtitle,

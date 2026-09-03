@@ -1,0 +1,2 @@
+-keep class ai.emots.kishan_dynamic.MainActivity { *; }
+-keep class ai.emots.kishan_dynamic.** { *; }

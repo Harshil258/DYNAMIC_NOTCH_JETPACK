@@ -1,34 +1,10 @@
-# Gradle files
-.gradle/
-build/
-
-# IntelliJ IDEA files
-.idea/
 *.iml
-*.iws
-*.ipr
-
-# Android Studio files
-captures/
-.externalNativeBuild/
-.cxx/
-local.properties
-
-# OS-specific files
+.gradle
+/local.properties
+.idea/
 .DS_Store
-Thumbs.db
-
-# Kotlin files
-.kotlin/
-
-# Mobile specific files
-*.ap_
-*.apk
-*.dex
-
-# Log files
-*.log
-
-# Temp files
-*.tmp
-*.temp
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties

@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">DynamicIslandDemo</string>
-    <string name="accessibility_service_description">Dynamic Island overlay service that displays notifications, music controls, and system information in an iOS-style interface at the top of your screen.</string>
+    <string name="app_name">Dynamic Island</string>
+    <string name="accessibility_service_description">Dynamic Island uses Accessibility Services solely to display interactive dynamic island overlays and visual alerts over the camera notch. No keystrokes or private information are collected or transmitted.</string>
 </resources>

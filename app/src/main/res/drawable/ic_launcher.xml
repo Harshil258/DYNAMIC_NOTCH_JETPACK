@@ -1,0 +1,24 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Background Circle -->
+    <path
+        android:fillColor="#0B0B12"
+        android:pathData="M54,0C24.18,0,0,24.18,0,54s24.18,54,54,54,54,-24.18,54,-54S83.82,0,54,0z"/>
+    <!-- Outer Glow -->
+    <path
+        android:fillColor="#338A5CFF"
+        android:pathData="M54,34c-18,0 -32,8 -32,20s14,20 32,20 32,-8 32,-20 -14,-20 -32,-20z"/>
+    <!-- Dynamic Island Pill -->
+    <path
+        android:fillColor="#1E1733"
+        android:strokeColor="#8A5CFF"
+        android:strokeWidth="2"
+        android:pathData="M34,44h40c5.52,0 10,4.48 10,10s-4.48,10 -10,10H34c-5.52,0 -10,-4.48 -10,-10s4.48,-10 10,-10z"/>
+    <!-- Inner Camera Dot -->
+    <path
+        android:fillColor="#00F5D4"
+        android:pathData="M40,54m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0"/>
+</vector>

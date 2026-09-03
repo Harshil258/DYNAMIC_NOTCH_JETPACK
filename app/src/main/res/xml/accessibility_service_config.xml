@@ -6,6 +6,6 @@
     android:canRetrieveWindowContent="true"
     android:canRequestTouchExplorationMode="false"
     android:canPerformGestures="true"
-    android:settingsActivity="ccom.notch.dynamicislanddemo.MainActivity"
+    android:settingsActivity="ai.emots.kishan_dynamic.MainActivity"
     android:description="@string/accessibility_service_description"
     android:notificationTimeout="100" />

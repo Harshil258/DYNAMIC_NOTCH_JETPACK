@@ -46,7 +46,8 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            var isDarkTheme by remember { mutableStateOf(isSystemInDarkTheme()) }
+            val systemDark = isSystemInDarkTheme()
+            var isDarkTheme by remember { mutableStateOf(systemDark) }
             SideEffect {
                 window.navigationBarColor = if (isDarkTheme) android.graphics.Color.BLACK else android.graphics.Color.rgb(248, 249, 251)
                 window.statusBarColor = android.graphics.Color.TRANSPARENT

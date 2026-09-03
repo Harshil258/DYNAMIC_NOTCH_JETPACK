@@ -238,6 +238,11 @@ fun PermissionScreen(
                             .scale(pulseScale),
                         contentAlignment = Alignment.Center
                     ) {
+                        val sweepColors = listOf(
+                            AppTheme.colors.accent,
+                            AuroraTokens.Palette.secondary,
+                            AppTheme.colors.success
+                        )
                         Canvas(modifier = Modifier.fillMaxSize()) {
                             val strokeWidth = 6.dp.toPx()
                             val arcSize = Size(size.width - strokeWidth, size.height - strokeWidth)
@@ -256,13 +261,7 @@ fun PermissionScreen(
 
                             // Active Gradient Sweep
                             drawArc(
-                                brush = Brush.sweepGradient(
-                                    listOf(
-                                        AppTheme.colors.accent,
-                                        AuroraTokens.Palette.secondary,
-                                        AppTheme.colors.success
-                                    )
-                                ),
+                                brush = Brush.sweepGradient(sweepColors),
                                 startAngle = -90f,
                                 sweepAngle = 360f * animatedProgress,
                                 useCenter = false,

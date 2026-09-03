@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlin.math.sin
+import ai.emots.kishan_dynamic.ui.theme.AuroraTheme
 
 /**
  * The shared spatial canvas for every screen.
@@ -55,10 +56,11 @@ fun AtmosphericBackground(
         label = "ambient_breathe"
     )
 
+    val isDark = AuroraTheme.colors.isDark
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(AuroraTheme.colors.backgroundBase)
     ) {
         Canvas(
             modifier = Modifier
@@ -66,24 +68,25 @@ fun AtmosphericBackground(
                 // Force one composited layer so gradients remain smooth on older GPUs.
                 .graphicsLayer { alpha = 0.98f }
         ) {
-            drawAtmosphere(if (animated) phase else 0.42f, if (animated) breathe else 1f)
+            drawAtmosphere(if (animated) phase else 0.42f, if (animated) breathe else 1f, isDark)
         }
         content()
     }
 }
 
-private fun DrawScope.drawAtmosphere(phase: Float, breathe: Float) {
+private fun DrawScope.drawAtmosphere(phase: Float, breathe: Float, isDark: Boolean) {
     val w = size.width
     val h = size.height
 
+    if (!isDark) drawRect(Color(0xFFF8F9FB))
     // Stable Gemini-like horizon. It anchors the layout even when animation is disabled.
     drawRect(
         brush = Brush.verticalGradient(
             colorStops = arrayOf(
                 0.00f to Color.Transparent,
                 0.52f to Color.Transparent,
-                0.76f to Color(0x080B2B5B),
-                1.00f to Color(0x24114D73)
+                0.76f to if (isDark) Color(0x080B2B5B) else Color(0x102A8BF2),
+                1.00f to if (isDark) Color(0x24114D73) else Color(0x523FA9F5)
             )
         )
     )
@@ -93,24 +96,24 @@ private fun DrawScope.drawAtmosphere(phase: Float, breathe: Float) {
     ambientPool(
         center = Offset(w * (0.14f + phase * 0.18f), h * 0.97f),
         radius = w * 0.82f * breathe,
-        core = Color(0x343F2B96)
+        core = if (isDark) Color(0x343F2B96) else Color(0x283E8FF4)
     )
     ambientPool(
         center = Offset(w * (0.88f - phase * 0.22f), h * (0.88f + drift * 0.025f)),
         radius = w * 0.74f,
-        core = Color(0x2A006E83)
+        core = if (isDark) Color(0x2A006E83) else Color(0x2439C2E4)
     )
     ambientPool(
         center = Offset(w * (0.50f + drift * 0.12f), h * 1.08f),
         radius = w * 0.64f * (2f - breathe),
-        core = Color(0x2A174EA6)
+        core = if (isDark) Color(0x2A174EA6) else Color(0x283A72E8)
     )
 
     // A nearly invisible top bloom gives tall and foldable layouts depth without tinting chrome.
     ambientPool(
         center = Offset(w * 0.72f, -h * 0.08f),
         radius = w * 0.68f,
-        core = Color(0x0D50398A)
+        core = if (isDark) Color(0x0D50398A) else Color(0x0A79AFFF)
     )
 }
 

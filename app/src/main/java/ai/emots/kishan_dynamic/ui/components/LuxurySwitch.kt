@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
 /**
@@ -58,7 +59,7 @@ fun LuxurySwitch(
     )
 
     val trackBorderColor by animateColorAsState(
-        targetValue = if (checked) Color(0x406D82FF) else Color(0x18FFFFFF),
+        targetValue = if (checked) Color(0x406D82FF) else AppTheme.colors.border,
         animationSpec = tween(200),
         label = "switch_track_border"
     )
@@ -75,7 +76,7 @@ fun LuxurySwitch(
                     )
                 } else {
                     Brush.horizontalGradient(
-                        listOf(Color(0xFF25262B), Color(0xFF1A1B20))
+                        listOf(AppTheme.colors.surfaceVariant, AppTheme.colors.surface)
                     )
                 }
             )
@@ -101,8 +102,8 @@ fun LuxurySwitch(
                     spotColor = Color.Black.copy(alpha = 0.7f)
                 )
                 .clip(CircleShape)
-                .background(Color.White)
-                .border(1.dp, Color(0x20000000), CircleShape)
+                .background(AppTheme.colors.surfaceElevated)
+                .border(1.dp, AppTheme.colors.border, CircleShape)
         )
     }
 }

@@ -115,7 +115,7 @@ fun SettingsVaultScreen(
                 text = "Settings",
                 style = AppTheme.typography.h1,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = AppTheme.colors.textPrimary
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -123,7 +123,7 @@ fun SettingsVaultScreen(
             AppText(
                 text = "Preferences, membership & system diagnostics.",
                 style = AppTheme.typography.bodySmall,
-                color = Color(0xFF8E8E93)
+                color = AppTheme.colors.textSecondary
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -136,7 +136,7 @@ fun SettingsVaultScreen(
                 style = AppTheme.typography.caption,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 1.2.sp,
-                color = Color(0xFF636366),
+                color = AppTheme.colors.textTertiary,
                 modifier = Modifier.padding(bottom = 14.dp)
             )
 
@@ -150,12 +150,12 @@ fun SettingsVaultScreen(
                         text = if (isProActive) "Dynamic Island Pro" else "Unlock Pro Access",
                         style = AppTheme.typography.body,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White
+                        color = AppTheme.colors.textPrimary
                     )
                     AppText(
                         text = "Permanent ad-free & full experience controls",
                         style = AppTheme.typography.bodySmall,
-                        color = Color(0xFF8E8E93)
+                        color = AppTheme.colors.textSecondary
                     )
                 }
 
@@ -212,19 +212,19 @@ fun SettingsVaultScreen(
                                 AppText(
                                     text = plan.badge,
                                     style = AppTheme.typography.islandBadge,
-                                    color = if (isSelected) Color.White else Color(0xFF636366)
+                                    color = if (isSelected) Color.White else AppTheme.colors.textTertiary
                                 )
                             }
                             AppText(
                                 text = plan.title,
                                 style = AppTheme.typography.caption,
-                                color = Color(0xFF8E8E93)
+                                color = AppTheme.colors.textSecondary
                             )
                             AppText(
                                 text = plan.price,
                                 style = AppTheme.typography.bodySmall,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.White
+                                color = AppTheme.colors.textPrimary
                             )
                         }
                     }
@@ -267,7 +267,7 @@ fun SettingsVaultScreen(
                         text = "Watch Ad (Pass)",
                         style = AppTheme.typography.bodySmall,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White
+                        color = AppTheme.colors.textPrimary
                     )
                 }
             }
@@ -282,7 +282,7 @@ fun SettingsVaultScreen(
                 style = AppTheme.typography.caption,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 1.2.sp,
-                color = Color(0xFF636366),
+                color = AppTheme.colors.textTertiary,
                 modifier = Modifier.padding(bottom = 14.dp)
             )
 
@@ -298,12 +298,12 @@ fun SettingsVaultScreen(
                         text = "Midnight Spatial Aura",
                         style = AppTheme.typography.body,
                         fontWeight = FontWeight.Medium,
-                        color = Color.White
+                        color = AppTheme.colors.textPrimary
                     )
                     AppText(
                         text = "Pure black OLED canvas with bottom atmospheric glow",
                         style = AppTheme.typography.bodySmall,
-                        color = Color(0xFF8E8E93)
+                        color = AppTheme.colors.textSecondary
                     )
                 }
 
@@ -324,7 +324,7 @@ fun SettingsVaultScreen(
                 style = AppTheme.typography.caption,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 1.2.sp,
-                color = Color(0xFF636366),
+                color = AppTheme.colors.textTertiary,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
@@ -351,7 +351,7 @@ fun SettingsVaultScreen(
                         AppText(
                             text = flagAndName.second,
                             style = AppTheme.typography.body,
-                            color = if (isSelected) Color.White else Color(0xFF8E8E93),
+                            color = if (isSelected) Color.White else AppTheme.colors.textSecondary,
                             fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal
                         )
                     }
@@ -360,7 +360,7 @@ fun SettingsVaultScreen(
                         AppText(
                             text = "✓",
                             style = AppTheme.typography.body,
-                            color = Color.White
+                            color = AppTheme.colors.textPrimary
                         )
                     }
                 }
@@ -385,7 +385,7 @@ fun SettingsVaultScreen(
                 style = AppTheme.typography.caption,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 1.2.sp,
-                color = Color(0xFF636366),
+                color = AppTheme.colors.textTertiary,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
@@ -444,7 +444,7 @@ private fun SettingsActionRow(title: String, onClick: () -> Unit) {
         AppText(
             text = title,
             style = AppTheme.typography.body,
-            color = Color.White
+            color = AppTheme.colors.textPrimary
         )
         AppText(
             text = "→",

@@ -87,7 +87,7 @@ fun CallSettingsScreen(
                     Text(
                         text = if (isExpandedCall) "Expanded Caller HUD with Answer / Decline" else "Compact Call Timer Bubble",
                         fontSize = 12.sp,
-                        color = AuroraTokens.Palette.success,
+                        color = AppTheme.colors.success,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -107,12 +107,12 @@ fun CallSettingsScreen(
                                 text = "Incoming Call Heads-Up Banner",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Show caller name, photo, Answer and Decline buttons right on the island",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -133,12 +133,12 @@ fun CallSettingsScreen(
                                 text = "Show Call Duration Timer",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Display a live ticking call duration bubble in your notch while on a call",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -159,12 +159,12 @@ fun CallSettingsScreen(
                                 text = "Show Call Summary when Call Ends",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Instant popup card with duration, redial, WhatsApp and SMS shortcuts",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 

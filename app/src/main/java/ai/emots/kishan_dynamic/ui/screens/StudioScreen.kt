@@ -119,7 +119,7 @@ fun StudioScreen(
                 text = "Experiences",
                 style = AppTheme.typography.h1,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = AppTheme.colors.textPrimary
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -127,7 +127,7 @@ fun StudioScreen(
             AppText(
                 text = "Custom behaviors and adaptive interactions for your hardware notch.",
                 style = AppTheme.typography.bodySmall,
-                color = Color(0xFF8E8E93)
+                color = AppTheme.colors.textSecondary
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -162,14 +162,14 @@ fun StudioScreen(
                                 text = item.title,
                                 style = AppTheme.typography.body,
                                 fontWeight = FontWeight.Medium,
-                                color = Color.White
+                                color = AppTheme.colors.textPrimary
                             )
                         }
 
                         AppText(
                             text = item.description,
                             style = AppTheme.typography.bodySmall,
-                            color = Color(0xFF8E8E93),
+                            color = AppTheme.colors.textSecondary,
                             lineHeight = 18.sp
                         )
                     }
@@ -182,7 +182,7 @@ fun StudioScreen(
                         AppText(
                             text = item.statusText,
                             style = AppTheme.typography.caption,
-                            color = Color(0xFF636366)
+                            color = AppTheme.colors.textTertiary
                         )
                         AppText(
                             text = "→",

@@ -44,16 +44,16 @@ internal val RawTextTertiaryDark = Color(0xFF686D78)
 
 // Root Light Palette (Titanium & Frosted Pearlescent)
 internal val RawBgBaseLight = Color(0xFFF7F5FC)
-internal val RawBgGradientStartLight = Color(0xFFEDE8F8)
-internal val RawBgGradientEndLight = Color(0xFFDDD4F5)
-internal val RawBgRadialBloomLight = Color(0xFFC7B8F2)
+internal val RawBgGradientStartLight = Color(0xFFF8F9FB)
+internal val RawBgGradientEndLight = Color(0xFFEAF3FC)
+internal val RawBgRadialBloomLight = Color(0xFFB7D9F7)
 internal val RawGlassLightSurface = Color(0xC8FFFFFF)
-internal val RawGlassLightBorder = Color(0x408A5CFF)
+internal val RawGlassLightBorder = Color(0x1F000000)
 internal val RawGlassLightScrim = Color(0x26000000)
 
-internal val RawTextPrimaryLight = Color(0xFF161226)
-internal val RawTextSecondaryLight = Color(0xFF5A527A)
-internal val RawTextTertiaryLight = Color(0xFF948CAE)
+internal val RawTextPrimaryLight = Color(0xFF111318)
+internal val RawTextSecondaryLight = Color(0xFF5F6368)
+internal val RawTextTertiaryLight = Color(0xFF858A92)
 
 // =============================================================================
 // SEMANTIC COLOR TOKENS
@@ -224,8 +224,8 @@ val LightAuroraColors = AuroraColors(
     
     primary = RawBrandPrimarySoft,
     primarySoft = RawBrandPrimary,
-    lavender = Color(0xFF6E44E6),
-    auraPink = Color(0xFF9D65FF),
+    lavender = Color(0xFF0B57D0),
+    auraPink = Color(0xFF4D9CFF),
     
     cyan = Color(0xFF00BFA5),
     success = Color(0xFF059669),

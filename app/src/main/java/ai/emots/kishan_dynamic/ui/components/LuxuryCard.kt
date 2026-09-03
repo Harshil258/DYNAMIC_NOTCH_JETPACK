@@ -53,12 +53,12 @@ fun LuxuryCard(
             .clip(shape)
             .background(
                 Brush.verticalGradient(
-                    listOf(Color(0xE81A1B20), Color(0xE6111216))
+                    listOf(AppTheme.colors.surfaceElevated, AppTheme.colors.surface)
                 )
             )
             .border(
                 0.75.dp,
-                Brush.verticalGradient(listOf(Color(0x2EFFFFFF), Color(0x08FFFFFF))),
+                Brush.verticalGradient(listOf(AppTheme.colors.border, AppTheme.colors.borderSubtle)),
                 shape
             )
             .then(click)

@@ -134,7 +134,7 @@ fun DisplaySettingsScreen(
                     Text(
                         text = "Live Hardware Alignment Stage",
                         fontSize = 12.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
                 }
             }
@@ -146,12 +146,12 @@ fun DisplaySettingsScreen(
                         text = "Camera Hole Position",
                         fontSize = 15.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = AuroraTokens.TextColor.primary
+                        color = AppTheme.colors.textPrimary
                     )
                     Text(
                         text = "Select where your front selfie camera is located",
                         fontSize = 12.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
 
                     AppleSegmentedControl(

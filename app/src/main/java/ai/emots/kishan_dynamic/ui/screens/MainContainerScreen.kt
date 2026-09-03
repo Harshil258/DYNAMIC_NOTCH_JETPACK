@@ -146,8 +146,8 @@ fun MainContainerScreen(
                                         Brush.verticalGradient(
                                             listOf(
                                                 Color.Transparent,
-                                                Color(0xCC000000),
-                                                Color.Black
+                                                AppTheme.colors.background.copy(alpha = 0.80f),
+                                                AppTheme.colors.background
                                             )
                                         )
                                     )
@@ -157,7 +157,7 @@ fun MainContainerScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(Color.Black)
+                                    .background(AppTheme.colors.background)
                                     .navigationBarsPadding()
                                     .padding(horizontal = 8.dp, vertical = 8.dp)
                             ) {
@@ -166,10 +166,10 @@ fun MainContainerScreen(
                                         .fillMaxWidth()
                                         .height(50.dp)
                                         .clip(RoundedCornerShape(999.dp))
-                                        .background(Color(0xF0141418))
+                                        .background(AppTheme.colors.surface.copy(alpha = 0.94f))
                                         .border(
                                             0.5.dp,
-                                            Color(0x1CFFFFFF),
+                                            AppTheme.colors.border,
                                             RoundedCornerShape(999.dp)
                                         )
                                         .padding(horizontal = 2.dp, vertical = 2.dp)
@@ -198,7 +198,7 @@ fun MainContainerScreen(
                                                     .scale(tabScale)
                                                     .clip(RoundedCornerShape(999.dp))
                                                     .background(
-                                                        if (isSelected) Color(0xFF222228)
+                                                        if (isSelected) AppTheme.colors.surfaceElevated
                                                         else Color.Transparent
                                                     )
                                                     .clickable(
@@ -216,7 +216,7 @@ fun MainContainerScreen(
                                                 ) {
                                                     AppleIcon(
                                                         glyph = tab.glyph,
-                                                        tint = if (isSelected) Color.White else Color(0xFF636366),
+                                                        tint = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textTertiary,
                                                         size = 13.dp
                                                     )
                                                     AppText(
@@ -225,7 +225,7 @@ fun MainContainerScreen(
                                                             fontSize = 10.5.sp,
                                                             letterSpacing = (-0.2).sp
                                                         ),
-                                                        color = if (isSelected) Color.White else Color(0xFF636366),
+                                                        color = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textTertiary,
                                                         fontWeight = if (isSelected) FontWeight.Medium else FontWeight.Normal,
                                                         maxLines = 1,
                                                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis

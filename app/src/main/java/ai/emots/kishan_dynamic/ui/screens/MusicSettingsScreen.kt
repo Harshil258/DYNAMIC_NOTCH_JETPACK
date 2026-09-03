@@ -94,7 +94,7 @@ fun MusicSettingsScreen(
                     Text(
                         text = if (isExpandedPreview) "Tap island to collapse to compact disc" else "Tap island to expand full music player",
                         fontSize = 11.5.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
                 }
             }
@@ -112,12 +112,12 @@ fun MusicSettingsScreen(
                                 text = "Show Island for Music",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Automatically display spinning album art when songs play on Spotify, YouTube, etc.",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -137,12 +137,12 @@ fun MusicSettingsScreen(
                                 text = "Show Scrubbable Progress Bar",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Drag along the island timeline to fast-forward or rewind songs",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -161,12 +161,12 @@ fun MusicSettingsScreen(
                         text = "Audio Waveform Visualizer Style",
                         fontSize = 14.5.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = AuroraTokens.TextColor.primary
+                        color = AppTheme.colors.textPrimary
                     )
                     Text(
                         text = "Choose the look of the glowing dancing equalizer bars",
                         fontSize = 11.5.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
 
                     AppleSegmentedControl(

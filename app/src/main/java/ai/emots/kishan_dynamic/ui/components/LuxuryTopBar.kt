@@ -48,8 +48,8 @@ fun LuxuryTopBar(
                 .size(48.dp)
                 .scale(scale)
                 .clip(CircleShape)
-                .background(Color(0xE61A1B1F))
-                .border(0.75.dp, Color(0x28FFFFFF), CircleShape)
+                .background(AppTheme.colors.surfaceElevated)
+                .border(0.75.dp, AppTheme.colors.border, CircleShape)
                 .clickable(source, indication = null, onClick = onBack),
             contentAlignment = Alignment.Center
         ) {

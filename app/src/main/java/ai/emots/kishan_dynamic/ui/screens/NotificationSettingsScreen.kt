@@ -117,12 +117,12 @@ fun NotificationSettingsScreen(
                                 text = "Auto-Expand on New Message",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Instantly open expanded preview showing message text and sender avatar",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -145,12 +145,12 @@ fun NotificationSettingsScreen(
                                 text = "Swipe Up to Dismiss",
                                 fontSize = 14.5.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = AuroraTokens.TextColor.primary
+                                color = AppTheme.colors.textPrimary
                             )
                             Text(
                                 text = "Flick the island upward with your thumb to dismiss it early",
                                 fontSize = 11.5.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
 
@@ -171,12 +171,12 @@ fun NotificationSettingsScreen(
                         text = "How Long to Show Alert",
                         fontSize = 14.5.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = AuroraTokens.TextColor.primary
+                        color = AppTheme.colors.textPrimary
                     )
                     Text(
                         text = "Time the island remains visible before smoothly collapsing",
                         fontSize = 11.5.sp,
-                        color = AuroraTokens.TextColor.secondary
+                        color = AppTheme.colors.textSecondary
                     )
 
                     AppleSegmentedControl(

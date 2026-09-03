@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
 /**
@@ -47,8 +48,8 @@ fun AppleSegmentedControl(
             .fillMaxWidth()
             .height(44.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(Color(0xE615161A))
-            .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(14.dp))
+            .background(AppTheme.colors.surface)
+            .border(1.dp, AppTheme.colors.border, RoundedCornerShape(14.dp))
             .padding(3.dp)
     ) {
         val count = options.size.coerceAtLeast(1)
@@ -78,7 +79,7 @@ fun AppleSegmentedControl(
                 .clip(RoundedCornerShape(11.dp))
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0xFF34363D), Color(0xFF292B31))
+                        listOf(AppTheme.colors.surfaceElevated, AppTheme.colors.surfaceVariant)
                     )
                 )
                 .border(
@@ -111,7 +112,7 @@ fun AppleSegmentedControl(
                         text = title,
                         fontSize = 13.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                        color = if (isSelected) Color.White else AuroraTokens.TextColor.secondary
+                        color = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary
                     )
                 }
             }

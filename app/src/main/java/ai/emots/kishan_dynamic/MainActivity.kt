@@ -8,7 +8,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,19 +35,26 @@ class MainActivity : ComponentActivity() {
         setTurnScreenOn(true)
         window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         enableEdgeToEdge()
-        window.navigationBarColor = android.graphics.Color.BLACK
+        val initiallyDark = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
+        window.navigationBarColor = if (initiallyDark) android.graphics.Color.BLACK else android.graphics.Color.rgb(248, 249, 251)
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
         androidx.core.view.WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightNavigationBars = false
-            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = !initiallyDark
+            isAppearanceLightStatusBars = !initiallyDark
         }
 
         setContent {
-            // The product is intentionally an all-black spatial experience. Keeping one
-            // appearance also prevents a bright frame while overlays are being attached.
-            var isDarkTheme by remember { mutableStateOf(true) }
+            var isDarkTheme by remember { mutableStateOf(isSystemInDarkTheme()) }
+            SideEffect {
+                window.navigationBarColor = if (isDarkTheme) android.graphics.Color.BLACK else android.graphics.Color.rgb(248, 249, 251)
+                window.statusBarColor = android.graphics.Color.TRANSPARENT
+                androidx.core.view.WindowCompat.getInsetsController(window, window.decorView).apply {
+                    isAppearanceLightNavigationBars = !isDarkTheme
+                    isAppearanceLightStatusBars = !isDarkTheme
+                }
+            }
             var currentRoute by remember { mutableStateOf(AppNavigationRoute.MainHub) }
 
             AuroraIslandTheme(darkTheme = isDarkTheme) {

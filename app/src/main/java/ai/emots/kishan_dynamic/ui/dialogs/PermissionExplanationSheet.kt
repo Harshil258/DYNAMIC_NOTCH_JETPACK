@@ -34,6 +34,7 @@ import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.components.LuxuryCard
 import ai.emots.kishan_dynamic.ui.screens.PermissionItemData
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 
 @Composable
@@ -56,11 +57,11 @@ fun PermissionExplanationSheet(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .shadow(32.dp, RoundedCornerShape(28.dp), ambientColor = Color.Black, spotColor = AuroraTokens.Palette.primary.copy(alpha = 0.5f))
+                    .shadow(32.dp, RoundedCornerShape(28.dp), ambientColor = Color.Black, spotColor = AppTheme.colors.accent.copy(alpha = 0.5f))
                     .clip(RoundedCornerShape(28.dp))
                     .background(
                         Brush.verticalGradient(
-                            listOf(Color(0xFF1E1930), Color(0xFF110E1C))
+                            listOf(AppTheme.colors.surfaceElevated, AppTheme.colors.surface)
                         )
                     )
                     .border(1.dp, AuroraTokens.Border.hairlineSpecular, RoundedCornerShape(28.dp))
@@ -84,12 +85,12 @@ fun PermissionExplanationSheet(
                                 modifier = Modifier
                                     .size(44.dp)
                                     .clip(CircleShape)
-                                    .background(AuroraTokens.Palette.primary.copy(alpha = 0.25f)),
+                                    .background(AppTheme.colors.accent.copy(alpha = 0.25f)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 AppleIcon(
                                     glyph = permission.glyph,
-                                    tint = AuroraTokens.Palette.primaryLight,
+                                    tint = AppTheme.colors.accent,
                                     size = 22.dp
                                 )
                             }
@@ -99,12 +100,12 @@ fun PermissionExplanationSheet(
                                     text = permission.title,
                                     fontSize = 17.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = AppTheme.colors.textPrimary
                                 )
                                 Text(
                                     text = if (permission.isRequired) "Essential capability" else "Optional enhancement",
                                     fontSize = 12.sp,
-                                    color = AuroraTokens.TextColor.secondary
+                                    color = AppTheme.colors.textSecondary
                                 )
                             }
                         }
@@ -114,15 +115,15 @@ fun PermissionExplanationSheet(
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF202228))
-                                .border(1.dp, Color(0x20FFFFFF), CircleShape)
+                                .background(AppTheme.colors.surfaceVariant)
+                                .border(1.dp, AppTheme.colors.border, CircleShape)
                                 .clickable { onDismiss() },
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = "✕",
                                 fontSize = 13.sp,
-                                color = AuroraTokens.TextColor.secondary,
+                                color = AppTheme.colors.textSecondary,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -135,19 +136,19 @@ fun PermissionExplanationSheet(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                AppleIcon(glyph = AppleGlyph.Shield, tint = AuroraTokens.Palette.success, size = 16.dp)
+                                AppleIcon(glyph = AppleGlyph.Shield, tint = AppTheme.colors.success, size = 16.dp)
                                 Text(
                                     text = "Why this is required",
                                     fontSize = 13.5.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color.White
+                                    color = AppTheme.colors.textPrimary
                                 )
                             }
                             Text(
                                 text = permission.privacyDetail,
                                 fontSize = 12.5.sp,
                                 lineHeight = 18.sp,
-                                color = AuroraTokens.TextColor.secondary
+                                color = AppTheme.colors.textSecondary
                             )
                         }
                     }
@@ -157,18 +158,18 @@ fun PermissionExplanationSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(12.dp))
-                            .background(Color(0xFF13201B))
-                            .border(1.dp, Color(0x3310B981), RoundedCornerShape(12.dp))
+                            .background(AppTheme.colors.success.copy(alpha = 0.10f))
+                            .border(1.dp, AppTheme.colors.success.copy(alpha = 0.25f), RoundedCornerShape(12.dp))
                             .padding(horizontal = 12.dp, vertical = 10.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        AppleIcon(glyph = AppleGlyph.Check, tint = AuroraTokens.Palette.success, size = 16.dp)
+                        AppleIcon(glyph = AppleGlyph.Check, tint = AppTheme.colors.success, size = 16.dp)
                         Text(
                             text = "Strictly zero tracking. Data never leaves your device.",
                             fontSize = 11.5.sp,
                             fontWeight = FontWeight.Medium,
-                            color = AuroraTokens.Palette.success
+                            color = AppTheme.colors.success
                         )
                     }
 

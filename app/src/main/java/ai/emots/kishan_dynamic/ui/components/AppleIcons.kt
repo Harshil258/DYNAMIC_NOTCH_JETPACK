@@ -59,7 +59,17 @@ enum class AppleGlyph {
     Palette,
     Heart,
     Chat,
-    Camera
+    Camera,
+    ScreenMirroring,
+    PersonalHotspot,
+    TransitTrain,
+    FaceTimeVideo,
+    SharePlay,
+    Microphone,
+    EndCall,
+    Info,
+    NavigationLeft,
+    NavigationRight
 }
 
 /**
@@ -651,6 +661,183 @@ fun AppleIcon(
                 }
                 drawPath(body, tint, style = stroke)
                 drawCircle(tint, radius = r, center = Offset(w * 0.5f, h * 0.6f), style = stroke)
+            }
+
+            AppleGlyph.ScreenMirroring -> {
+                // Two overlapping displays from Dynamic Island-6.svg
+                drawRoundRect(
+                    color = tint,
+                    topLeft = Offset(w * 0.12f, h * 0.16f),
+                    size = Size(w * 0.56f, h * 0.48f),
+                    cornerRadius = CornerRadius(w * 0.08f, h * 0.08f),
+                    style = stroke
+                )
+                drawRoundRect(
+                    color = tint,
+                    topLeft = Offset(w * 0.32f, h * 0.36f),
+                    size = Size(w * 0.56f, h * 0.48f),
+                    cornerRadius = CornerRadius(w * 0.08f, h * 0.08f),
+                    style = stroke
+                )
+            }
+
+            AppleGlyph.PersonalHotspot -> {
+                // Central link mast with concentric transmission waves from Dynamic Island-7.svg
+                val cx = w * 0.5f
+                val cy = h * 0.5f
+                // Center dot
+                drawCircle(tint, radius = w * 0.09f, center = Offset(cx, cy), style = Fill)
+                // Inner waves
+                drawArc(tint, -55f, 110f, false, Offset(cx - w * 0.22f, cy - h * 0.22f), Size(w * 0.44f, h * 0.44f), style = stroke)
+                drawArc(tint, 125f, 110f, false, Offset(cx - w * 0.22f, cy - h * 0.22f), Size(w * 0.44f, h * 0.44f), style = stroke)
+                // Outer waves
+                drawArc(tint, -55f, 110f, false, Offset(cx - w * 0.38f, cy - h * 0.38f), Size(w * 0.76f, h * 0.76f), style = stroke)
+                drawArc(tint, 125f, 110f, false, Offset(cx - w * 0.38f, cy - h * 0.38f), Size(w * 0.76f, h * 0.76f), style = stroke)
+            }
+
+            AppleGlyph.TransitTrain -> {
+                // Front transit metro cabin from Dynamic Island-8.svg
+                val cabin = Path().apply {
+                    moveTo(w * 0.22f, h * 0.20f)
+                    lineTo(w * 0.78f, h * 0.20f)
+                    cubicTo(w * 0.86f, h * 0.20f, w * 0.88f, h * 0.26f, w * 0.88f, h * 0.34f)
+                    lineTo(w * 0.88f, h * 0.74f)
+                    cubicTo(w * 0.88f, h * 0.80f, w * 0.82f, h * 0.82f, w * 0.76f, h * 0.82f)
+                    lineTo(w * 0.24f, h * 0.82f)
+                    cubicTo(w * 0.18f, h * 0.82f, w * 0.12f, h * 0.80f, w * 0.12f, h * 0.74f)
+                    lineTo(w * 0.12f, h * 0.34f)
+                    cubicTo(w * 0.12f, h * 0.26f, w * 0.14f, h * 0.20f, w * 0.22f, h * 0.20f)
+                    close()
+                }
+                drawPath(cabin, tint, style = stroke)
+                // Windshield
+                drawRoundRect(
+                    color = tint,
+                    topLeft = Offset(w * 0.22f, h * 0.28f),
+                    size = Size(w * 0.56f, h * 0.26f),
+                    cornerRadius = CornerRadius(w * 0.04f, h * 0.04f),
+                    style = stroke
+                )
+                // Headlights
+                drawCircle(tint, radius = w * 0.05f, center = Offset(w * 0.28f, h * 0.68f), style = Fill)
+                drawCircle(tint, radius = w * 0.05f, center = Offset(w * 0.72f, h * 0.68f), style = Fill)
+                // Under-chassis track line
+                drawLine(tint, Offset(w * 0.24f, h * 0.88f), Offset(w * 0.76f, h * 0.88f), strokeWidth * 1.2f, StrokeCap.Round)
+            }
+
+            AppleGlyph.FaceTimeVideo -> {
+                // FaceTime Video camera body + trapezoid cone from Dynamic Island-2/3.svg
+                drawRoundRect(
+                    color = tint,
+                    topLeft = Offset(w * 0.12f, h * 0.28f),
+                    size = Size(w * 0.52f, h * 0.44f),
+                    cornerRadius = CornerRadius(w * 0.08f, h * 0.08f),
+                    style = Fill
+                )
+                val cone = Path().apply {
+                    moveTo(w * 0.66f, h * 0.40f)
+                    lineTo(w * 0.88f, h * 0.26f)
+                    lineTo(w * 0.88f, h * 0.74f)
+                    lineTo(w * 0.66f, h * 0.60f)
+                    close()
+                }
+                drawPath(cone, tint, style = Fill)
+            }
+
+            AppleGlyph.SharePlay -> {
+                // SharePlay screen and silhouette from Dynamic Island-2/3.svg
+                // Person head & shoulder
+                drawCircle(tint, radius = w * 0.12f, center = Offset(w * 0.38f, h * 0.36f), style = Fill)
+                val shoulder = Path().apply {
+                    moveTo(w * 0.20f, h * 0.72f)
+                    cubicTo(w * 0.20f, h * 0.54f, w * 0.56f, h * 0.54f, w * 0.56f, h * 0.72f)
+                    close()
+                }
+                drawPath(shoulder, tint, style = Fill)
+                // Screen outline on right
+                drawRoundRect(
+                    color = tint,
+                    topLeft = Offset(w * 0.52f, h * 0.22f),
+                    size = Size(w * 0.38f, h * 0.32f),
+                    cornerRadius = CornerRadius(w * 0.05f, h * 0.05f),
+                    style = stroke
+                )
+            }
+
+            AppleGlyph.Microphone -> {
+                // Capsule mic from Dynamic Island-2/3.svg
+                drawRoundRect(
+                    color = tint,
+                    topLeft = Offset(w * 0.38f, h * 0.18f),
+                    size = Size(w * 0.24f, h * 0.44f),
+                    cornerRadius = CornerRadius(w * 0.12f, h * 0.12f),
+                    style = Fill
+                )
+                // Cradle arc
+                drawArc(
+                    color = tint,
+                    startAngle = 0f,
+                    sweepAngle = 180f,
+                    useCenter = false,
+                    topLeft = Offset(w * 0.28f, h * 0.32f),
+                    size = Size(w * 0.44f, h * 0.38f),
+                    style = stroke
+                )
+                // Stem
+                drawLine(tint, Offset(w * 0.50f, h * 0.70f), Offset(w * 0.50f, h * 0.84f), strokeWidth * 1.2f, StrokeCap.Round)
+                // Base
+                drawLine(tint, Offset(w * 0.34f, h * 0.84f), Offset(w * 0.66f, h * 0.84f), strokeWidth * 1.2f, StrokeCap.Round)
+            }
+
+            AppleGlyph.EndCall -> {
+                // Downward curved phone receiver for hangup from Dynamic Island-2/3.svg
+                val phoneDown = Path().apply {
+                    moveTo(w * 0.18f, h * 0.60f)
+                    cubicTo(w * 0.24f, h * 0.36f, w * 0.76f, h * 0.36f, w * 0.82f, h * 0.60f)
+                    lineTo(w * 0.72f, h * 0.66f)
+                    cubicTo(w * 0.66f, h * 0.52f, w * 0.34f, h * 0.52f, w * 0.28f, h * 0.66f)
+                    close()
+                }
+                drawPath(phoneDown, tint, style = Fill)
+            }
+
+            AppleGlyph.Info -> {
+                // Circle with centered 'i' from Dynamic Island-2/3.svg
+                drawCircle(tint, radius = w * 0.42f, center = Offset(w * 0.5f, h * 0.5f), style = stroke)
+                drawCircle(tint, radius = w * 0.05f, center = Offset(w * 0.5f, h * 0.34f), style = Fill)
+                drawLine(tint, Offset(w * 0.5f, h * 0.46f), Offset(w * 0.5f, h * 0.68f), strokeWidth * 1.4f, StrokeCap.Round)
+            }
+
+            AppleGlyph.NavigationLeft -> {
+                val arrow = Path().apply {
+                    moveTo(w * 0.70f, h * 0.82f)
+                    lineTo(w * 0.70f, h * 0.45f)
+                    cubicTo(w * 0.70f, h * 0.35f, w * 0.62f, h * 0.30f, w * 0.50f, h * 0.30f)
+                    lineTo(w * 0.32f, h * 0.30f)
+                }
+                drawPath(arrow, tint, style = stroke)
+                val head = Path().apply {
+                    moveTo(w * 0.36f, h * 0.18f)
+                    lineTo(w * 0.20f, h * 0.30f)
+                    lineTo(w * 0.36f, h * 0.42f)
+                }
+                drawPath(head, tint, style = stroke)
+            }
+
+            AppleGlyph.NavigationRight -> {
+                val arrow = Path().apply {
+                    moveTo(w * 0.30f, h * 0.82f)
+                    lineTo(w * 0.30f, h * 0.45f)
+                    cubicTo(w * 0.30f, h * 0.35f, w * 0.38f, h * 0.30f, w * 0.50f, h * 0.30f)
+                    lineTo(w * 0.68f, h * 0.30f)
+                }
+                drawPath(arrow, tint, style = stroke)
+                val head = Path().apply {
+                    moveTo(w * 0.64f, h * 0.18f)
+                    lineTo(w * 0.80f, h * 0.30f)
+                    lineTo(w * 0.64f, h * 0.42f)
+                }
+                drawPath(head, tint, style = stroke)
             }
         }
     }

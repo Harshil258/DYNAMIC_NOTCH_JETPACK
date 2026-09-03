@@ -79,15 +79,19 @@ enum class IslandDemoState {
     SportsCompact,
     SportsExpanded,
     NavigationCompact,
-    // New states from Figma screenshots
-    TimerImage,           // Dynamic Island-1: Timer with image
-    NotificationImage,    // Dynamic Island-2: Notification with image
-    CallAvatars,          // Dynamic Island-3: Incoming call with two avatars
-    TransportActivity,    // Dynamic Island-4: Live activity with transport
-    FlightTrackerExpanded,// Dynamic Island-5: Flight route with gate
-    SubscriptionPricing,  // Dynamic Island-6: Annual/season pricing
-    MovieCard,            // Dynamic Island-7: Movie/show selection
-    ColorOptions          // Dynamic Island-8: Color/options picker
+    // Audited Figma prototypes
+    TimerImage,           // Timer with cyan-blue progress ring
+    NotificationImage,    // Notification card with thumbnail
+    CallAvatars,          // Incoming call with avatars
+    TransportActivity,    // Transport activity
+    FlightTrackerExpanded,// Flight route tracker
+    SubscriptionPricing,  // Pricing / mobile options
+    MovieCard,            // Transit card
+    ColorOptions,         // Route options
+    AirplaneAlert,        // Dynamic Island-5.svg: Turn Off Airplane Mode
+    ScreenMirroringAlert, // Dynamic Island-6.svg: Screen Mirroring MacBook Pro
+    MobileDataAlert,      // Dynamic Island-7.svg: Mobile Data to use Wi-Fi
+    TransitRouteAlert     // Dynamic Island-8.svg: Prague Main Train Station
 }
 
 /**
@@ -143,31 +147,34 @@ fun DynamicIslandPill(
     val maxExpanded = islandTokens.expandedWidth(screenWidth)
 
     val targetWidth: Dp = when (state) {
-        IslandDemoState.Minimal -> 126.dp
-        IslandDemoState.MusicCompact -> 134.dp
-        IslandDemoState.CallCompact -> 140.dp
+        IslandDemoState.Minimal -> 156.dp
+        IslandDemoState.MusicCompact -> 160.dp
+        IslandDemoState.CallCompact -> 152.dp
         IslandDemoState.ChargingCompact -> 132.dp
         IslandDemoState.NotificationCompact -> 152.dp
-        IslandDemoState.TimerCompact -> 132.dp
-        IslandDemoState.DeliveryCompact -> 140.dp
-        IslandDemoState.FlightCompact -> 146.dp
-        IslandDemoState.SportsCompact -> 144.dp
-        IslandDemoState.NavigationCompact -> 150.dp
-        IslandDemoState.TimerImage -> 152.dp
-        IslandDemoState.NotificationImage -> 152.dp
-        IslandDemoState.CallAvatars -> 152.dp
-        IslandDemoState.TransportActivity -> 152.dp
-        IslandDemoState.FlightTrackerExpanded -> maxExpanded
-        IslandDemoState.SubscriptionPricing -> maxExpanded
-        IslandDemoState.MovieCard -> maxExpanded
-        IslandDemoState.ColorOptions -> maxExpanded
+        IslandDemoState.TimerCompact -> 222.dp  // Compact.svg exact width
+        IslandDemoState.DeliveryCompact -> 160.dp
+        IslandDemoState.FlightCompact -> 160.dp
+        IslandDemoState.SportsCompact -> 156.dp
+        IslandDemoState.NavigationCompact -> 156.dp
+        IslandDemoState.TimerImage -> 222.dp
+        IslandDemoState.NotificationImage -> 160.dp
+        IslandDemoState.CallAvatars -> maxExpanded
         // Expanded sheets: the device width minus iOS side margins, capped.
         else -> maxExpanded
     }
 
-        // Exact Apple prototype heights per state type (from Figma):
-    // - Compact: 37.33dp (idle pill)
-    // - Capsule Expanded (Call, Silent/Alerts, Timer, Charging, Music): 96dp (phone context)
+    // Exact Apple prototype heights per state type (from Figma):
+    // - Compact / Minimal: 37.33dp (idle pill)
+    // - Capsule Expanded (Timer, Silent, Charging, Notification): 96dp
+    // - Full Activity Sheets (measured from Figma SVGs):
+    //   - Transit: 142dp
+    //   - Screen Mirroring: 144dp
+    //   - Airplane Alert: 148dp
+    //   - Mobile Data / Hotspot: 162dp
+    //   - Active Call (5 action buttons): 166dp
+    //   - Music Player (scrubber & controls): 177dp
+    //   - Turn-by-Turn Navigation: 185.3dp
     val targetHeight: Dp = when (state) {
         IslandDemoState.Minimal,
         IslandDemoState.MusicCompact,
@@ -180,34 +187,59 @@ fun DynamicIslandPill(
         IslandDemoState.SportsCompact,
         IslandDemoState.NavigationCompact -> 37.33.dp
 
-        IslandDemoState.CallExpanded,
         IslandDemoState.NotificationExpanded,
         IslandDemoState.TimerExpanded,
         IslandDemoState.ChargingExpanded,
-        IslandDemoState.MusicExpanded -> 96.dp  // Figma: 96pt in phone context
+        IslandDemoState.NotificationImage,
+        IslandDemoState.CallAvatars -> 96.dp
 
+        IslandDemoState.TransitRouteAlert,
+        IslandDemoState.MovieCard -> 142.dp
+
+        IslandDemoState.ScreenMirroringAlert,
+        IslandDemoState.FlightTrackerExpanded,
         IslandDemoState.DeliveryExpanded,
         IslandDemoState.FlightExpanded,
-        IslandDemoState.SportsExpanded -> 96.dp
+        IslandDemoState.SportsExpanded -> 144.dp
 
-        // New Figma states (compact-form expanded at 96dp)
-        IslandDemoState.TimerImage,
-        IslandDemoState.NotificationImage,
-        IslandDemoState.CallAvatars,
-        IslandDemoState.TransportActivity,
-        IslandDemoState.FlightTrackerExpanded,
-        IslandDemoState.SubscriptionPricing,
-        IslandDemoState.MovieCard,
-        IslandDemoState.ColorOptions -> 96.dp
+        IslandDemoState.AirplaneAlert,
+        IslandDemoState.TransportActivity -> 148.dp
+
+        IslandDemoState.MobileDataAlert,
+        IslandDemoState.SubscriptionPricing -> 162.dp
+
+        IslandDemoState.CallExpanded -> 166.dp
+
+        IslandDemoState.MusicExpanded -> 177.dp
+
+        IslandDemoState.ColorOptions -> 185.3.dp
+
+        else -> 96.dp
     }
 
-    // Curvature: For MusicExpanded use 44dp squircle corners (Figma spec); others use 50% capsule
+    // Corner curvature: Exact 42dp squircle for full sheets, 44dp for 96dp capsules, 50% for compact
     val cornerRadius = when (state) {
-        IslandDemoState.MusicExpanded -> RoundedCornerShape(44.dp)
-        else -> RoundedCornerShape(percent = 50)
+        IslandDemoState.Minimal,
+        IslandDemoState.MusicCompact,
+        IslandDemoState.CallCompact,
+        IslandDemoState.ChargingCompact,
+        IslandDemoState.NotificationCompact,
+        IslandDemoState.TimerCompact,
+        IslandDemoState.DeliveryCompact,
+        IslandDemoState.FlightCompact,
+        IslandDemoState.SportsCompact,
+        IslandDemoState.NavigationCompact -> RoundedCornerShape(percent = 50)
+
+        IslandDemoState.NotificationExpanded,
+        IslandDemoState.TimerExpanded,
+        IslandDemoState.ChargingExpanded,
+        IslandDemoState.NotificationImage,
+        IslandDemoState.CallAvatars -> RoundedCornerShape(44.dp)
+
+        else -> RoundedCornerShape(42.dp)
     }
 
-    val isSplit = state == IslandDemoState.CallCompact || state == IslandDemoState.TimerCompact
+    val isSplit = state == IslandDemoState.CallCompact || state == IslandDemoState.TimerCompact || state == IslandDemoState.Minimal
 
     // Apple Liquid Morphing Springs
     val animatedWidth by animateDpAsState(
@@ -235,19 +267,21 @@ fun DynamicIslandPill(
     )
 
     val auraColor = when (state) {
-        IslandDemoState.CallCompact, IslandDemoState.CallExpanded -> Color(0xFF10B981)
+        IslandDemoState.CallCompact, IslandDemoState.CallExpanded -> Color(0xFF37C058)
         IslandDemoState.ChargingCompact, IslandDemoState.ChargingExpanded -> Color(0xFF34C759)
         IslandDemoState.MusicCompact, IslandDemoState.MusicExpanded -> Color(0xFFFA2D48)
         IslandDemoState.NotificationCompact, IslandDemoState.NotificationExpanded -> Color(0xFF8E8E93)
-        IslandDemoState.TimerCompact, IslandDemoState.TimerExpanded -> Color(0xFFFF9500)
+        IslandDemoState.TimerCompact, IslandDemoState.TimerExpanded -> Color(0xFF2A86E6)
         IslandDemoState.DeliveryCompact, IslandDemoState.DeliveryExpanded -> Color(0xFFF59E0B)
         IslandDemoState.FlightCompact, IslandDemoState.FlightExpanded -> Color(0xFF00F5D4)
         IslandDemoState.SportsCompact, IslandDemoState.SportsExpanded -> Color(0xFF8B5CF6)
-        IslandDemoState.TimerImage -> Color(0xFFFF9500)
+        IslandDemoState.TimerImage -> Color(0xFF67EBF5)
         IslandDemoState.NotificationImage -> Color(0xFF8E8E93)
-        IslandDemoState.CallAvatars -> Color(0xFF10B981)
-        IslandDemoState.TransportActivity -> Color(0xFF00F5D4)
-        IslandDemoState.FlightTrackerExpanded -> Color(0xFF00F5D4)
+        IslandDemoState.CallAvatars -> Color(0xFF37C058)
+        IslandDemoState.TransportActivity, IslandDemoState.AirplaneAlert -> Color(0xFFFB8B28)
+        IslandDemoState.FlightTrackerExpanded, IslandDemoState.ScreenMirroringAlert -> Color(0xFF37A3DE)
+        IslandDemoState.SubscriptionPricing, IslandDemoState.MobileDataAlert -> Color(0xFF37C058)
+        IslandDemoState.MovieCard, IslandDemoState.TransitRouteAlert -> Color(0xFFFA3532)
         else -> Color(0xFF6D82FF)
     }
 
@@ -298,25 +332,43 @@ fun DynamicIslandPill(
                     )
                     .padding(
                         horizontal = when (state) {
-                            IslandDemoState.MusicExpanded -> 20.dp
-                            IslandDemoState.CallExpanded,
+                            IslandDemoState.MusicExpanded -> 18.dp
+                            IslandDemoState.CallExpanded -> 16.dp
                             IslandDemoState.NotificationExpanded,
                             IslandDemoState.TimerExpanded,
                             IslandDemoState.ChargingExpanded -> 18.dp
                             IslandDemoState.DeliveryExpanded,
                             IslandDemoState.FlightExpanded,
-                            IslandDemoState.SportsExpanded -> 16.dp
+                            IslandDemoState.SportsExpanded,
+                            IslandDemoState.AirplaneAlert,
+                            IslandDemoState.TransportActivity,
+                            IslandDemoState.ScreenMirroringAlert,
+                            IslandDemoState.FlightTrackerExpanded,
+                            IslandDemoState.MobileDataAlert,
+                            IslandDemoState.SubscriptionPricing,
+                            IslandDemoState.TransitRouteAlert,
+                            IslandDemoState.MovieCard,
+                            IslandDemoState.ColorOptions -> 16.dp
                             else -> 11.dp
                         },
                         vertical = when (state) {
                             IslandDemoState.MusicExpanded -> 16.dp
-                            IslandDemoState.CallExpanded,
+                            IslandDemoState.CallExpanded -> 14.dp
                             IslandDemoState.NotificationExpanded,
                             IslandDemoState.TimerExpanded,
                             IslandDemoState.ChargingExpanded -> 12.dp
                             IslandDemoState.DeliveryExpanded,
                             IslandDemoState.FlightExpanded,
-                            IslandDemoState.SportsExpanded -> 12.dp
+                            IslandDemoState.SportsExpanded,
+                            IslandDemoState.AirplaneAlert,
+                            IslandDemoState.TransportActivity,
+                            IslandDemoState.ScreenMirroringAlert,
+                            IslandDemoState.FlightTrackerExpanded,
+                            IslandDemoState.MobileDataAlert,
+                            IslandDemoState.SubscriptionPricing,
+                            IslandDemoState.TransitRouteAlert,
+                            IslandDemoState.MovieCard,
+                            IslandDemoState.ColorOptions -> 14.dp
                             else -> 0.dp
                         }
                     ),
@@ -334,7 +386,7 @@ fun DynamicIslandPill(
                         IslandDemoState.MusicCompact -> MusicCompactContent()
                         IslandDemoState.MusicExpanded -> MusicExpandedContent()
                         IslandDemoState.CallCompact -> CallCompactContent()
-                        IslandDemoState.CallExpanded -> CallExpandedContent()
+                        IslandDemoState.CallExpanded -> FaceTimeAudioExpandedContent()
                         IslandDemoState.NotificationCompact -> NotificationCompactContent()
                         IslandDemoState.NotificationExpanded -> NotificationExpandedContent()
                         IslandDemoState.ChargingCompact -> ChargingCompactContent()
@@ -350,20 +402,24 @@ fun DynamicIslandPill(
                         IslandDemoState.NavigationCompact -> NavigationCompactContent()
                         IslandDemoState.TimerImage -> TimerWithImageCompactContent()
                         IslandDemoState.NotificationImage -> NotificationImageCompactContent()
-                        IslandDemoState.CallAvatars -> IncomingCallTwoAvatarsContent()
-                        IslandDemoState.TransportActivity -> TransportLiveActivityCompactContent()
-                        IslandDemoState.FlightTrackerExpanded -> FlightTrackerDetailCompactContent()
-                        IslandDemoState.SubscriptionPricing -> DeliveryOrderCompactContent()
-                        IslandDemoState.MovieCard -> SportsScoreCompactContent()
-                        IslandDemoState.ColorOptions -> NavigationRouteCompactContent()
+                        IslandDemoState.CallAvatars -> CallExpandedContent()
+                        IslandDemoState.TransportActivity,
+                        IslandDemoState.AirplaneAlert -> AirplaneAlertContent()
+                        IslandDemoState.FlightTrackerExpanded,
+                        IslandDemoState.ScreenMirroringAlert -> ScreenMirroringContent()
+                        IslandDemoState.SubscriptionPricing,
+                        IslandDemoState.MobileDataAlert -> MobileDataContent()
+                        IslandDemoState.MovieCard,
+                        IslandDemoState.TransitRouteAlert -> TransitRouteContent()
+                        IslandDemoState.ColorOptions -> TurnByTurnNavigationContent()
                     }
                 }
             }
 
-            // Companion Split Bubble (media_1788455788286.png: 8dp gap + 37.33dp circular bubble)
+            // Companion Split Bubble (Minimal.svg: 11dp gap + 36.67dp circular bubble)
             AnimatedVisibility(visible = isSplit) {
                 Row {
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(11.dp))
                     Box(
                         modifier = Modifier
                             .size(37.dp)
@@ -384,10 +440,16 @@ fun DynamicIslandPill(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        if (state == IslandDemoState.CallCompact) {
-                            AppleIcon(glyph = AppleGlyph.Phone, tint = Color(0xFF10B981), size = 15.dp)
-                        } else if (state == IslandDemoState.TimerCompact) {
-                            AppleIcon(glyph = AppleGlyph.Timer, tint = Color(0xFFFF9500), size = 15.dp)
+                        when (state) {
+                            IslandDemoState.CallCompact -> {
+                                AppleIcon(glyph = AppleGlyph.Phone, tint = Color(0xFF37C058), size = 15.dp)
+                            }
+                            IslandDemoState.TimerCompact, IslandDemoState.Minimal -> {
+                                TimerProgressRing(progress = 0.72f, size = 21.dp, strokeWidth = 2.5.dp)
+                            }
+                            else -> {
+                                AppleIcon(glyph = AppleGlyph.Timer, tint = Color(0xFF2A86E6), size = 15.dp)
+                            }
                         }
                     }
                 }
@@ -838,24 +900,59 @@ private fun NotificationExpandedContent(
 }
 
 // -----------------------------------------------------------------------------
-// 4. TIMER - MATCHING media_1788458407179.png EXACTLY!
+// 4. TIMER - MATCHING Compact.svg & Expanded.svg EXACTLY!
 // -----------------------------------------------------------------------------
 @Composable
-private fun TimerCompactContent() {
-    CompactIslandLayout(
-        leading = {
-            AppleIcon(glyph = AppleGlyph.Timer, tint = Color(0xFFFF9500), size = 16.dp)
-        },
-        trailing = {
-            Text(
-                text = "3:35",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFFF9500),
-                fontFamily = FontFamily.Monospace
+fun TimerProgressRing(
+    progress: Float = 0.72f,
+    size: Dp = 21.dp,
+    strokeWidth: Dp = 3.dp,
+    modifier: Modifier = Modifier
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val strokePx = strokeWidth.toPx()
+        // Dark track
+        drawCircle(
+            color = Color(0xFF1B2F44),
+            radius = (this.size.minDimension - strokePx) / 2f,
+            style = Stroke(width = strokePx)
+        )
+        // Sweep gradient cyan to blue
+        val brush = Brush.sweepGradient(
+            listOf(
+                Color(0xFF67EBF5),
+                Color(0xFF2A86E6),
+                Color(0xFF67EBF5)
             )
-        }
-    )
+        )
+        drawArc(
+            brush = brush,
+            startAngle = -90f,
+            sweepAngle = 360f * progress,
+            useCenter = false,
+            style = Stroke(width = strokePx, cap = StrokeCap.Round)
+        )
+    }
+}
+
+@Composable
+private fun TimerCompactContent() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        TimerProgressRing(progress = 0.72f, size = 21.dp, strokeWidth = 3.dp)
+        Text(
+            text = "01:45",
+            fontSize = 13.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            fontFamily = FontFamily.Monospace
+        )
+    }
 }
 
 @Composable
@@ -865,56 +962,40 @@ private fun TimerExpandedContent() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // LEFT: Orange Pause Button (50dp) + Charcoal Cancel "X" Button (50dp)
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.weight(1f)
         ) {
-            // Orange Pause Circle
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF5C2B00)),
-                contentAlignment = Alignment.Center
-            ) {
-                AppleIcon(glyph = AppleGlyph.Pause, tint = Color(0xFFFF9500), size = 18.dp)
-            }
+            TimerProgressRing(progress = 0.72f, size = 56.dp, strokeWidth = 5.dp)
 
-            // Dark Charcoal Cancel Circle
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF3A3A3C)),
-                contentAlignment = Alignment.Center
-            ) {
-                AppleIcon(glyph = AppleGlyph.Close, tint = Color.White, size = 18.dp)
+            Column(verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Timer",
+                    color = Color(0xFF8E8D94),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "01:45",
+                    color = Color(0xFFEBEBF0),
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Monospace
+                )
             }
         }
 
-        // RIGHT: "Timer" + "3:35"
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.End
+        // Circular Pause Action Button from Expanded.svg
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(Color(0xFF2A292D)),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "Timer",
-                color = Color(0xFFFF9500),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(bottom = 3.dp)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = "3:35",
-                color = Color(0xFFFF9500),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace
-            )
+            AppleIcon(glyph = AppleGlyph.Pause, tint = Color.White, size = 18.dp)
         }
     }
 }
@@ -2003,6 +2084,334 @@ private fun NavigationRouteCompactContent() {
                         .size(5.dp)
                         .clip(CircleShape)
                         .background(Color(0xFF3B82F6).copy(alpha = 0.15f))
+                )
+            }
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// AUDITED FIGMA PROTOTYPE COMPOSABLES
+// -----------------------------------------------------------------------------
+
+@Composable
+private fun FaceTimeAudioExpandedContent() {
+    OngoingCallIslandExpanded(
+        name = "Tamia Castillo",
+        label = "FaceTime Audio",
+        duration = "02:45"
+    )
+}
+
+@Composable
+private fun AirplaneAlertContent() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFFB8B28).copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.Airplane, tint = Color(0xFFFB8B28), size = 22.dp)
+            }
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Turn Off Airplane Mode",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "to Access Data",
+                    color = Color(0xFF818383),
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(43.dp)
+                .clip(RoundedCornerShape(percent = 50))
+                .background(Color(0xFF2C2C2D)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Open Settings",
+                color = Color.White,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun ScreenMirroringContent() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF37A3DE).copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.ScreenMirroring, tint = Color(0xFF37A3DE), size = 22.dp)
+            }
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Screen Mirroring",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "MacBook Pro",
+                    color = Color(0xFF818383),
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+            AppleIcon(glyph = AppleGlyph.AirPlay, tint = Color(0xFF37A3DE), size = 22.dp)
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(43.dp)
+                .clip(RoundedCornerShape(percent = 50))
+                .background(Color(0xFF1A1C2D)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Stop Mirroring",
+                color = Color(0xFF37A3DE),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun MobileDataContent() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF37C058).copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.PersonalHotspot, tint = Color(0xFF37C058), size = 22.dp)
+            }
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Mobile Data",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Turn off Mobile Data to use Wi-Fi",
+                    color = Color(0xFF818383),
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(43.dp)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(Color(0xFF2C2C2D)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "OK", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(43.dp)
+                    .clip(RoundedCornerShape(percent = 50))
+                    .background(Color(0xFF1A1C2D)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = "Settings", color = Color(0xFF37A3DE), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TransitRouteContent() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.TransitTrain, tint = Color.White, size = 22.dp)
+            }
+            Spacer(modifier = Modifier.width(14.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Prague Main Train Station",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(
+                    text = "Arriving at Platform 3",
+                    color = Color(0xFF818383),
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(43.dp)
+                .clip(RoundedCornerShape(percent = 50))
+                .background(Color(0xFF1D1011)),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "End Route",
+                color = Color(0xFFFA3532),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+}
+
+@Composable
+private fun TurnByTurnNavigationContent() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        // TOP: Turn directions row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                AppleIcon(glyph = AppleGlyph.NavigationLeft, tint = Color(0xFF34C759), size = 24.dp)
+                AppleIcon(glyph = AppleGlyph.ChevronRight, tint = Color(0xFF8E8D94), size = 20.dp)
+                AppleIcon(glyph = AppleGlyph.NavigationRight, tint = Color(0xFF8E8D94), size = 24.dp)
+            }
+            Text(
+                text = "ETA 12m",
+                color = Color(0xFF34C759),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        // MIDDLE: Instruction
+        Column {
+            Text(
+                text = "In 90 ft • Turn Left",
+                color = Color.White,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = "North • San Francisco",
+                color = Color(0xFF8E8D94),
+                fontSize = 13.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        // BOTTOM: Route strip preview
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(38.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(0xFF1C1C1E))
+                .padding(horizontal = 12.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Market St & 4th Ave",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = "2.4 mi remaining",
+                    color = Color(0xFF8E8E93),
+                    fontSize = 11.sp
                 )
             }
         }

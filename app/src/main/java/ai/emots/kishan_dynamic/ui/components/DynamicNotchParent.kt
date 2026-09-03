@@ -124,7 +124,7 @@ fun DynamicNotchParent(
 
     val targetHeight = when (state) {
         is IslandState.Hidden -> 0.dp
-        is IslandState.Music -> if (state.isExpanded) 96.dp else compactHeight
+        is IslandState.Music -> if (state.isExpanded) tokens.musicExpandedHeight else compactHeight
         is IslandState.IncomingCall -> tokens.incomingCallHeight
         is IslandState.OngoingCall -> if (state.isExpanded) tokens.callExpandedHeight else compactHeight
         is IslandState.Notification -> if (state.isExpanded) tokens.notificationExpandedHeight else compactHeight

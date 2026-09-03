@@ -120,14 +120,14 @@ data class AppIslandTokens(
     val mediaCompactWidth: Dp = 134.dp,
     /** Trailing bubble used in split (live-activity) mode. */
     val sideSize: Dp = 37.33.dp,
-    /** Gap between the capsule and the trailing bubble (iOS uses 8pt). */
-    val splitGap: Dp = 8.dp,
+    /** Gap between the capsule and the trailing bubble (iOS Figma uses 11pt). */
+    val splitGap: Dp = 11.dp,
     /** Distance from the top edge of the display to the island. */
     val topInset: Dp = 11.dp,
     /** Capsule corner radius (exact half of the height = true capsule). */
     val compactCorner: Dp = 18.67.dp,
-    /** Expanded sheet corner radius, matching iOS continuous corners. */
-    val expandedCorner: Dp = 44.dp,
+    /** Expanded sheet corner radius (Figma uses 42pt for sheets, 44pt for 96dp capsules). */
+    val expandedCorner: Dp = 42.dp,
     /** Maximum expanded width on the reference device. */
     val expandedMaxWidth: Dp = 371.dp,
     /** Horizontal breathing room kept on each side when expanded. */
@@ -136,10 +136,10 @@ data class AppIslandTokens(
     val incomingCallHeight: Dp = 96.dp,
     /** Ringer / notification expanded height. */
     val ringerExpandedHeight: Dp = 96.dp,
-    /** Music expanded height (full sheet, 160pt in isolated view). */
-    val musicExpandedHeight: Dp = 96.dp,      // 96pt for phone-context consistency
-    /** Call expanded height (96pt in phone context, matches Figma). */
-    val callExpandedHeight: Dp = 96.dp,
+    /** Music expanded height (full sheet with scrubber and controls, from Figma Dynamic Island.svg). */
+    val musicExpandedHeight: Dp = 177.dp,
+    /** Call expanded height (full sheet with 5 action buttons, from Figma Dynamic Island-2/3.svg). */
+    val callExpandedHeight: Dp = 166.dp,
     /** Notification expanded height (96pt in phone context, matches Figma). */
     val notificationExpandedHeight: Dp = 96.dp,
     /** Reference device the geometry above was measured on. */

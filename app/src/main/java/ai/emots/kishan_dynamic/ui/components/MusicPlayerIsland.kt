@@ -67,70 +67,26 @@ fun MusicPlayerIsland(
     // Controls: ◀◀ ▶ ▶▶ AirPlay - solid white icons on black
     // Compact: album art + track title + waveform
 
-    val isCompact = ai.emots.kishan_dynamic.ui.theme.AppTheme.windowSize == ai.emots.kishan_dynamic.ui.theme.AppWindowSize.Compact
-    val hPad = if (isCompact) 11.dp else 20.dp
-    val vPad = if (isCompact) 13.dp else 16.dp
+    val hPad = 16.dp
+    val vPad = 14.dp
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = hPad, vertical = vPad),
-        verticalArrangement = if (isCompact) Arrangement.Center else Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        if (isCompact) {
-            // COMPACT: Album Art + Track Title + Waveform
+        // TOP ROW: Album Art Squircle + Title & Artist + Pink Equalizer
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.weight(1f)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    // 25dp Album Art Squircle
-                    Box(
-                        modifier = Modifier
-                            .size(25.dp)
-                            .clip(RoundedCornerShape(5.dp))
-                            .background(
-                                Brush.linearGradient(
-                                    listOf(Color(0xFFE879F9), Color(0xFF818CF8))
-                                )
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 10.dp)
-                    }
-
-                    Spacer(modifier = Modifier.width(10.dp))
-
-                    Text(
-                        text = title,
-                        color = Color.White,
-                        fontSize = 11.5.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.widthIn(max = 60.dp)
-                    )
-                }
-
-                // Neon Pink/Magenta Waveform
-                LiveEqualizerMini(color = Color(0xFFFA2D48))
-            }
-        } else {
-            // EXPANDED: Album Art + Title & Artist + Pink Equalizer
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    // 52dp Album Art Squircle
+                // 52dp Album Art Squircle
                     Box(
                         modifier = Modifier
                             .size(52.dp)
@@ -243,20 +199,31 @@ fun MusicPlayerIsland(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AppleIcon(glyph = AppleGlyph.Backward, tint = Color.White, size = 26.dp)
+                Box(
+                    modifier = Modifier.clickable(onClick = onPrevious)
+                ) {
+                    AppleIcon(glyph = AppleGlyph.Backward, tint = Color.White, size = 26.dp)
+                }
 
                 // Play/Pause icon
-                AppleIcon(
-                    glyph = if (isPlaying) AppleGlyph.Pause else AppleGlyph.Play,
-                    tint = Color.White,
-                    size = 32.dp
-                )
+                Box(
+                    modifier = Modifier.clickable(onClick = onPlayPause)
+                ) {
+                    AppleIcon(
+                        glyph = if (isPlaying) AppleGlyph.Pause else AppleGlyph.Play,
+                        tint = Color.White,
+                        size = 32.dp
+                    )
+                }
 
-                AppleIcon(glyph = AppleGlyph.Forward, tint = Color.White, size = 26.dp)
+                Box(
+                    modifier = Modifier.clickable(onClick = onNext)
+                ) {
+                    AppleIcon(glyph = AppleGlyph.Forward, tint = Color.White, size = 26.dp)
+                }
 
                 AppleIcon(glyph = AppleGlyph.AirPlay, tint = Color.White, size = 24.dp)
             }
-        }
     }
 }
 

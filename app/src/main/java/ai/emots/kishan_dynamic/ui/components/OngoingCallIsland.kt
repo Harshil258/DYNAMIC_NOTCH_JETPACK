@@ -80,27 +80,30 @@ fun OngoingCallIslandSide(modifier: Modifier = Modifier) {
 @Composable
 fun OngoingCallIslandExpanded(
     name: String = "Tamia Castillo",
-    label: String = "Phone",
+    label: String = "FaceTime Audio",
     duration: String = "02:45",
     onEndCall: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var isMuted by remember { mutableStateOf(false) }
     var isSpeaker by remember { mutableStateOf(false) }
+    var isVideoOn by remember { mutableStateOf(false) }
+    var isSharePlay by remember { mutableStateOf(false) }
 
     val isCompact = AppTheme.windowSize == AppWindowSize.Compact
-    val avatarSize = if (isCompact) 46.dp else 52.dp
-    val buttonSize = if (isCompact) 46.dp else 52.dp
+    val avatarSize = if (isCompact) 44.dp else 48.dp
+    val buttonSize = if (isCompact) 44.dp else 48.dp
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                start = AppTheme.spacing.xl,
-                end = AppTheme.spacing.xl,
-                top = AppTheme.spacing.lg,
-                bottom = AppTheme.spacing.lg
-            )
+                start = 16.dp,
+                end = 16.dp,
+                top = 14.dp,
+                bottom = 14.dp
+            ),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         // ROW 1: Avatar + Name + Subtitle + Info button
         Row(
@@ -129,7 +132,7 @@ fun OngoingCallIslandExpanded(
                 )
             }
 
-            Spacer(modifier = Modifier.width(AppTheme.spacing.md))
+            Spacer(modifier = Modifier.width(12.dp))
 
             Column(
                 modifier = Modifier.weight(1f),
@@ -144,79 +147,105 @@ fun OngoingCallIslandExpanded(
                 AppText(
                     text = "$label • $duration",
                     style = AppTheme.typography.islandSubtitle,
-                    color = iOSGreen,
+                    color = Color(0xFF838388),
                     maxLines = 1
                 )
             }
 
             Box(
                 modifier = Modifier
-                    .size(28.dp)
-                    .border(1.dp, Color(0xFF636366), CircleShape),
+                    .size(28.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Info,
-                    contentDescription = "Info",
-                    tint = Color(0xFF636366),
-                    modifier = Modifier.size(14.dp)
+                AppleIcon(
+                    glyph = AppleGlyph.Info,
+                    tint = Color(0xFF838388),
+                    size = 20.dp
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(if (isCompact) 14.dp else 18.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // ROW 2: Action buttons (Mute, Speaker, End Call)
+        // ROW 2: 5 Action buttons from Figma Dynamic Island-2 & 3:
+        // Speaker, Mic, Video, SharePlay, End Call
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Mute Button
-            IconButton(
-                onClick = { isMuted = !isMuted },
-                modifier = Modifier
-                    .size(buttonSize)
-                    .clip(CircleShape)
-                    .background(if (isMuted) Color.White else iOSDarkGray)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Mic,
-                    contentDescription = "Mute",
-                    tint = if (isMuted) Color.Black else Color.White,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            // Speaker Button
+            // 1. Speaker Button
             IconButton(
                 onClick = { isSpeaker = !isSpeaker },
                 modifier = Modifier
                     .size(buttonSize)
                     .clip(CircleShape)
-                    .background(if (isSpeaker) Color.White else iOSDarkGray)
+                    .background(if (isSpeaker) Color.White else Color(0xFF2A292D))
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.VolumeUp,
-                    contentDescription = "Speaker",
+                AppleIcon(
+                    glyph = AppleGlyph.Speaker,
                     tint = if (isSpeaker) Color.Black else Color.White,
-                    modifier = Modifier.size(22.dp)
+                    size = 20.dp
                 )
             }
 
-            // End Call Button
+            // 2. Mic Mute Button
+            IconButton(
+                onClick = { isMuted = !isMuted },
+                modifier = Modifier
+                    .size(buttonSize)
+                    .clip(CircleShape)
+                    .background(if (isMuted) Color.White else Color(0xFF2A292D))
+            ) {
+                AppleIcon(
+                    glyph = AppleGlyph.Microphone,
+                    tint = if (isMuted) Color.Black else Color.White,
+                    size = 20.dp
+                )
+            }
+
+            // 3. Video Camera Button
+            IconButton(
+                onClick = { isVideoOn = !isVideoOn },
+                modifier = Modifier
+                    .size(buttonSize)
+                    .clip(CircleShape)
+                    .background(if (isVideoOn) Color.White else Color(0xFF2A292D))
+            ) {
+                AppleIcon(
+                    glyph = AppleGlyph.FaceTimeVideo,
+                    tint = if (isVideoOn) Color.Black else Color.White,
+                    size = 20.dp
+                )
+            }
+
+            // 4. SharePlay Button
+            IconButton(
+                onClick = { isSharePlay = !isSharePlay },
+                modifier = Modifier
+                    .size(buttonSize)
+                    .clip(CircleShape)
+                    .background(if (isSharePlay) Color.White else Color(0xFF2A292D))
+            ) {
+                AppleIcon(
+                    glyph = AppleGlyph.SharePlay,
+                    tint = if (isSharePlay) Color.Black else Color.White,
+                    size = 20.dp
+                )
+            }
+
+            // 5. End Call Button (Apple Red #FA3532)
             IconButton(
                 onClick = onEndCall,
                 modifier = Modifier
                     .size(buttonSize)
                     .clip(CircleShape)
-                    .background(iOSRed)
+                    .background(Color(0xFFFA3532))
             ) {
-                Icon(
-                    imageVector = Icons.Default.CallEnd,
-                    contentDescription = "End Call",
+                AppleIcon(
+                    glyph = AppleGlyph.EndCall,
                     tint = Color.White,
-                    modifier = Modifier.size(24.dp)
+                    size = 22.dp
                 )
             }
         }

@@ -1,344 +1,188 @@
-# Dynamic Island Design System — Figma Audit & Rule Book
+# Dynamic Island Design System — Comprehensive Figma Audit & Rule Book
 
-## Reference: iOS 17 Dynamic Island Components (Community Figma)
-
-**Source:** https://www.figma.com/design/z7GyjPFoVfAlEgL3AhaYEr/iOS17-Dynamic-Island-Components--Community-
-
----
-
-## 1. CANVAS & DEVICE SPECS
-
-| Device | Canvas Size | Context |
-|--------|-------------|---------|
-| iPhone 15 Pro (Dark Mode) | 430 × 932 pt | Main reference for all states |
-| iPhone 15 Pro (Portrait) | 393 × 852 pt | Compact/Expanded isolated views |
-| Pro Max 430px | 430 × 932 pt | Same as iPhone 15 Pro sizing |
-
-**Key:** The island geometry is identical across all device frames — only the surrounding UI changes.
+## Reference: iOS 17 Dynamic Island Components (Figma Community)
+**Source:** https://www.figma.com/design/z7GyjPFoVfAlEgL3AhaYEr/iOS17-Dynamic-Island-Components--Community-  
+**Export Directory:** `islandfigmacomponentofios/`
 
 ---
 
-## 2. ISLAND GEOMETRY (Pixel-Perfect from Figma)
+## 1. DEVICE FRAMES & SENSOR CUTOUT GEOMETRY
 
-### 2.1 Compact State (Idle Pill)
+All measurements below are extracted directly from the Figma SVGs:
 
-| Dimension | Figma Value | Notes |
-|-----------|-------------|-------|
-| **Width** | 126pt | The standard idle pill width |
-| **Height** | 37.33pt | Exactly 1/3.375 of width — true capsule |
-| **Corner Radius** | 18.67pt | Exactly half the height = perfect capsule |
-| **Position (top)** | 11pt from top edge | Consistent across all states |
-| **Position (horizontal)** | Centered | Varies by state |
+| Frame / Component | Viewport (W × H) | Hardware Island Position | Island Size (Idle) | Corner Radius |
+|-------------------|------------------|--------------------------|-------------------|---------------|
+| **iPhone 15 Pro** | 393 × 852 pt | `x = 133.5, y = 11 pt` | 126 × 36.67 pt | 18.335 pt |
+| **iPhone 15 Pro Max** | 430 × 932 pt | `x = 152.0, y = 11 pt` | 126 × 36.67 pt | 18.335 pt |
+| **Hardware Sensor Cutout** | Sensor Ellipse + Camera | `w = 125 pt, h = 35.67 pt` | Centered at `y = 11 pt` | 17.835 pt |
 
-**Compact Split (Live Activity):**
-- Main capsule: shrinks to accommodate side bubble
-- Side bubble: 37.33pt diameter circle
-- Gap between capsule and bubble: **8pt** (NOT 11pt)
-- Total footprint: capsule + 8pt gap + 37.33pt bubble
-
-### 2.2 Minimal State
-
-| Dimension | Figma Value | Notes |
-|-----------|-------------|-------|
-| **Width** | 37.33pt | Same as side bubble — just a dot |
-| **Height** | 37.33pt | Perfect circle |
-| **Appearance** | Small breathing/status dot only | No text, no icons |
-
-The Minimal state is NOT an empty pill — it's a small circular indicator showing the system is alive.
-
-### 2.3 Expanded States
-
-#### Media (Music) Expanded
-| Dimension | Figma Value | Notes |
-|-----------|-------------|-------|
-| **Width** | 408pt (full width - margins) | Nearly full screen width |
-| **Height** | 96pt (in phone context) | 96pt consistently in phone frame context |
-| **Position** | 11pt from top | Same as compact |
-
-**Content Layout (from Expanded-1.svg / Expanded.svg):**
-- Left: 52dp album art (squircle, rx=13dp)
-- Center: Track title (bold white) + Artist name (gray) + [E] badge
-- Right: Neon equalizer waveform (magenta/pink)
-- Middle strip: Progress bar with elapsed/remaining time on SAME line
-- Bottom row: Previous ▶ Pause ▶ Next ▶ AirPlay (solid white, NO container circles)
-
-#### Call Expanded (Incoming Call)
-| Dimension | Figma Value | Notes |
-|-----------|-------------|-------|
-| **Width** | 408pt (full width - margins) | Same as media expanded |
-| **Height** | 96pt within phone frame | |
-| **Corner Radius** | 44pt | Squircle corners |
-
-**Content Layout (from Dynamic Island-3.svg):**
-- Left: 52dp circular avatar + "Mobile" label + Contact name
-- Right: Red Decline button (50dp circle, #FF3B30) + Green Accept button (50dp circle, #34C759)
-
-#### Silent Mode / Notification Expanded
-| Dimension | Figma Value | Notes |
-|-----------|-------------|-------|
-| **Width** | 408pt | Full width expanded |
-| **Height** | 96pt | |
-| **Corner Radius** | 44pt | |
-
-**Content Layout (from Dynamic Island-2.svg):**
-- Left: Bell slash icon + "SilentMode" + "On" label
-- Right: Charcoal pill button [Unmute] (#2C2C2E)
-
-#### Timer Expanded
-| Dimension | Figma Value | Notes |
-|-----------|-------------|-------|
-| **Width** | 408pt | Full width expanded |
-| **Height** | 96pt | |
-| **Corner Radius** | 44pt | |
-
-**Content Layout (from Dynamic Island-5.svg):**
-- Left: Orange Pause button (50dp, #5C2B00) + Charcoal Cancel "X" button (50dp, #3A3A3C)
-- Right: "Timer" label (orange) + "3:35" (large bold orange 32sp)
-
-### 2.4 Compact Variants (Live Activities)
-
-From the Figma file, compact states have these measured widths:
-
-| State | Width | Notes |
-|-------|-------|-------|
-| Music Compact | ~134pt | Wider for album art + waveform |
-| Call Compact | ~140pt | Avatar + duration |
-| Notification Compact | ~152pt | App icon + sender name |
-| Charging Compact | ~132pt | Battery icon + percentage |
-| Timer Compact | ~132pt | Timer icon + time |
-| Delivery Compact | ~140pt | Torch icon + ETA |
-| Flight Compact | ~146pt | Airplane icon + duration |
-| Sports Compact | ~144pt | Score + time |
-| NavigationCompact | ~150pt | Map icon + distance |
+> [!IMPORTANT]
+> **Key Metric:** The base height of all compact and minimal Dynamic Island capsules is **`36.67 pt`** (rendered as **`37.33 dp`** in Jetpack Compose). Corner radius is exactly **`50% of height (18.335 pt / 18.5 dp)`**, making it a mathematically perfect capsule.
 
 ---
 
-## 3. COLOR PALETTE (from Figma SVGs)
+## 2. STATE CLASSIFICATIONS & FIGMA AUDIT
 
-### 3.1 Background Colors
-- **Dark Mode Background:** `#333333` (not pure black!)
-- **Island Body:** `#000000` (pure black pill)
-- **Specular Border:** Gradient from `#38FFFFFF` (top) to `#06FFFFFF` (bottom) — 0.75pt hairline
-
-### 3.2 State Colors
-
-| State | Accent Color | Usage |
-|-------|-------------|-------|
-| Music | `#FA2D48` / `#FF2D55` | Pink/Magenta — equalizer, glow |
-| Call (Incoming) | `#10B981` / `#30D158` | Green — active call indicator |
-| Call (Decline) | `#FF3B30` / `#FF453A` | Red — decline button |
-| Call (Accept) | `#34C759` / `#30D158` | Green — accept button |
-| Timer | `#FF9500` / `#FF9F0A` | Orange — timer, pause button |
-| Charging | `#34C759` / `#30D158` | Green — battery, charging ring |
-| Notification | `#8E8E93` | Gray — bell icon, muted elements |
-| Delivery | `#F59E0B` / `#FFD60A` | Amber — torch, delivery status |
-| Flight | `#00F5D4` | Teal — airplane, flight status |
-| Sports | `#8B5CF6` / `#FBBF24` | Purple/Gold — sports scores |
-
-### 3.3 Gradient (Specular Glow)
-- **Start:** `#67EBF5` (cyan)
-- **End:** `#2A86E6` (blue)
-- Used for the ambient glow behind the island
-
-### 3.4 Typography Colors
-- **Primary Text:** `#FFFFFF` (white)
-- **Secondary Text:** `#8E8E93` (Apple System Gray)
-- **Tertiary Text:** `#55555A` (darker gray)
-- **Disabled/Background:** `#3A3A3C` (dark gray)
+### 2.1 Idle Pill State
+- **Audit Source:** `Pro Max 430px.svg`
+- **Width:** `126.0 dp`
+- **Height:** `37.33 dp`
+- **Corner Radius:** `18.67 dp` (Capsule 50%)
+- **Content:** Pure black pill obscuring the camera and TrueDepth sensors. Specular border `1dp` with 12% opacity white.
 
 ---
 
-## 4. TYPOGRAPHY (from Figma)
-
-| Element | Size | Weight | Color | Notes |
-|---------|------|--------|-------|-------|
-| Track Title | 17sp | Bold | White | Max 1 line, ellipsis |
-| Artist Name | 14sp | Medium | `#8E8E93` | Subtitle |
-| App Name (notification) | 13sp | Medium | `#8E8E93` | Caption style |
-| Notification Title | 17sp | Bold | White | Same as track title |
-| Notification Message | 14sp | Normal | White 80% | Body small |
-| Time Display (compact) | 12sp | Bold | State color | Monospace |
-| Time Display (expanded) | 32sp | Bold | State color | Monospace (Timer) |
-| "E" Badge | 10sp | Black | Black on `#8E8E93` | 16×16dp rounded |
-| Button Text | 14.5sp | Bold | White | Pill buttons |
-| Status Label | 13sp | Medium | `#8E8E93` | "Mobile", "Timer" etc. |
-| Large Time (expanded) | 18sp | Bold | White | "On", "3:35" etc. |
+### 2.2 Minimal State (Split Bubble)
+- **Audit Source:** `Minimal.svg`, `Pro Max 430px-1.svg`
+- **Left Capsule (Main Pill):**
+  - **Width:** `156.0 dp` (starts at `x = 122`, ends at `x = 278` in 430pt frame)
+  - **Height:** `36.67 dp`
+  - **Corner Radius:** `18.335 dp`
+- **Right Detached Bubble:**
+  - **Width × Height:** `36.67 × 36.67 dp` (starts at `x = 289`, ends at `x = 325.67`)
+  - **Corner Radius:** `18.335 dp` (Perfect circle)
+- **Separation Gap:** **`11.0 dp`** (exactly `289 - 278 = 11pt`!)
+- **Content:** Leading primary app status in main pill; secondary live activity glyph (e.g. Timer ring countdown) isolated inside the right bubble.
 
 ---
 
-## 5. SPECIFIC COMPONENT RULES
-
-### 5.1 Compact Music Island (Compact.svg reference)
-
-The Figma Compact.svg shows:
-- **Left:** Album art squircle (20dp in compact, 52dp in expanded) with music note icon
-- **Center:** Track title text
-- **Right:** Mini equalizer waveform (4-5 bars, magenta/pink)
-- The compact does NOT show: progress bar, playback controls, artist name
-- Height: 37.33pt (same as standard compact)
-
-### 5.2 Expanded Music Island (Expanded-1.svg reference)
-
-Layout (top to bottom):
-1. **Top Row:** Album art (52dp) + Title + [E] badge + Artist + Equalizer
-2. **Middle Row:** "0:50" + Progress scrubber + "-3:11" — ALL ON ONE LINE
-3. **Bottom Row:** ◀◀ (previous) ▶ (play/pause) ▶▶ (next) AirPlay — solid white, directly on black
-
-**Critical:** The playback controls are NOT in circles — they are solid white glyph shapes directly on the black background.
-
-### 5.3 Incoming Call Expanded (Dynamic Island-3.svg)
-
-- Avatar: 52dp circle with gradient background
-- Name: Bold white, 17sp
-- Label: "Mobile" in gray, 13sp
-- Buttons: 50dp circles, NOT pill-shaped
-- Decline: Red (#FF3B30) with rotated phone icon (135°)
-- Accept: Green (#34C759) with phone icon
-
-### 5.4 Timer Expanded (Dynamic Island-5.svg)
-
-- Pause button: 50dp circle, dark orange fill (#5C2B00), orange pause icon
-- Cancel button: 50dp circle, charcoal (#3A3A3C), white X icon
-- "Timer" label: Orange, 16sp, positioned above the time
-- Time: "3:35" in orange, 32sp, bold, monospace
-
-### 5.5 Charging Island
-
-- **Compact:** Battery icon + "85%" text, green color
-- **Side bubble:** Circular progress ring (2.6dp stroke) + power icon
-- Ring animation: Progress sweeps from -90° (top) clockwise
-
-### 5.6 Minimal State
-
-From Minimal.svg:
-- Just a small circular dot (37.33pt)
-- Contains a subtle breathing/status indicator
-- NO text, NO icons, NO split bubble
-- The dot should show system is active (green when everything normal)
+### 2.3 Compact States (Unified Live Activity Pill)
+- **Audit Source:** `Compact.svg`, `Pro Max 430px.svg`
+- **Width:** Dynamically sized to content:
+  - **Compact Timer:** `222.0 dp` (`Compact.svg`: `x = 104 to 326`)
+  - **Compact Media:** `180.0 - 220.0 dp`
+  - **Compact Call:** `160.0 - 190.0 dp`
+  - **Maximum Compact Width:** `250.0 dp` (`Pro Max 430px.svg`: `x = 90 to 340`)
+- **Height:** `37.33 dp`
+- **Corner Radius:** `18.67 dp` (Capsule 50%)
+- **Leading Element:**
+  - Timer: Circular countdown ring (diameter `21 dp`, stroke `3 dp`, cyan `#67EBF5` to blue `#2A86E6` gradient).
+  - Media: `24 × 24 dp` album art squircle (`rx = 6 dp`).
+  - Call: `24 × 24 dp` green phone / contact glyph.
+- **Trailing Element:**
+  - Timer: Digits `"01:45"` in SF Pro Display bold.
+  - Media: Live jumping equalizer (3 or 4 neon bars in `#FA2D48` or `#F84BAB`).
+  - Call: Live duration counter `"02:45"` in `#37C058`.
 
 ---
 
-## 6. ANIMATION SPECIFICATIONS
+### 2.4 Expanded States (Full Activity Sheets)
 
-### 6.1 State Transitions
+The Figma audit reveals that expanded states have different heights and internal structures depending on their functional domain:
 
-| Animation | Duration | Easing | Notes |
-|-----------|----------|--------|-------|
-| Island expand/collapse | 300-400ms | Spring (damping 0.78, stiffness 420) | Liquid morphing feel |
-| Content morph between states | 150-180ms | Fade in/out | Smooth crossfade |
-| Press feedback | 100ms | Spring (damping 0.62) | Scale to 0.965 on press |
-| Side bubble appear/disappear | Same as island | Coupled spring | Must animate with main capsule |
-| Ambient glow pulse | 2200ms | Slow out/in | Subtle alpha oscillation |
-| Equalizer bars | 310-530ms each | Fast out/slow in | Random-ish wave pattern |
-| Battery ring fill | 300ms | Settle spring (no bounce) | Smooth progress |
+```
+┌────────────────────────────────────────────────────────────┐
+│                    EXPANDED ISLAND BLUEPRINT               │
+│                                                            │
+│   ┌───────────────┐                  ┌─────────────────┐   │
+│   │ LEADING ZONE  │   CUTOUT ZONE    │  TRAILING ZONE  │   │
+│   │ (Avatar/Art)  │  (126 × 37 dp)   │ (Waveform/Ring) │   │
+│   └───────────────┘                  └─────────────────┘   │
+│                                                            │
+│   ┌────────────────────────────────────────────────────┐   │
+│   │                 CENTER / SCRUBBER ZONE             │   │
+│   │        Title, Subtitle, Progress Scrubber          │   │
+│   └────────────────────────────────────────────────────┘   │
+│                                                            │
+│   ┌────────────────────────────────────────────────────┐   │
+│   │                 BOTTOM ACTION ROW                  │   │
+│   │         Action Buttons (Pills / Circles)           │   │
+│   └────────────────────────────────────────────────────┘   │
+└────────────────────────────────────────────────────────────┘
+```
 
-### 6.2 Transform Origins
+#### Blueprint Breakdown by State:
 
-- **Island expansion:** Transform origin at TOP CENTER (0.5, 0) — grows downward like real cutout
-- **Press scale:** Transform origin at CENTER (0.5, 0.5) — uniform squeeze
-- **Side bubble:** Same top-anchored transform as main capsule
-
-### 6.3 Critical Animation Rules
-
-1. **Width, height, and corner radius MUST use the same spring** — they are physically coupled
-2. **Side bubble must animate in sync with the main capsule** — never lag behind
-3. **Content crossfade should be shorter than container morph** — content swaps feel snappier
-4. **No jumps or clipping** — the island should never extend beyond screen bounds
-5. **Minimal state should be a smooth transition** — not a sudden disappearance
-
----
-
-## 7. CURRENT IMPLEMENTATION AUDIT
-
-### 7.1 Implementation Audit - COMPLETE ✓
-
-All items in Section 7.1 verified and corrected this session. The implementation now achieves pixel-perfect matching to Figma prototypes.
-
-### 7.2 What Was Fixed (2026-09-03 Session) ✓
-
-1. ✅ Split gap: 11dp → 8dp in DynamicIslandPill.kt
-2. ✅ Expanded heights: All standardized to 96dp
-   - musicExpandedHeight: 176dp → 96dp
-   - callExpandedHeight: 168dp → 96dp  
-   - notificationExpandedHeight: 148dp → 96dp
-   - ringerExpandedHeight: 84dp → 96dp
-   - incomingCallHeight: 160dp → 96dp
-3. ✅ Minimal state: Split dot pattern → single 12dp breathing dot
-4. ✅ Music Compact: Added track title (Album art + Title + Waveform)
-5. ✅ Notification Expanded: Updated to Figma layout (BellSlash + SilentMode + pill button)
-6. ✅ Incoming Call: Updated avatar + label + buttons to Figma spec
-7. ✅ Music Expanded: Fixed Play icon, improved Album art bubdle, improved layout
-8. ✅ Charging Island Side: WaveformAnimation → Bubble with icon + progress ring
-9. ✅ DynamicIslandPill.kt: Corrected split bubble layout logic
-
-### 7.3 Remaining Items (if any)
-
-- Minimal state dot size is 12dp rather than full 37.33pt island size but it's a status indicator, not the full island
-- Music Compact state shows text but Figma Compact.svg uses just icon — acceptable variation
-- The Music Compact row has album art + text but Figma shows only icon (acceptable)
-
-All critical Figma measurements now matched. The implementation is pixel-perfect.
+| Expanded State | Figma SVG Reference | Width | Height | Corner Radius | Layout & Components |
+|---|---|---|---|---|---|
+| **Timer Expanded** | `Expanded.svg` | `367 - 408 dp` | **`96.0 dp`** | `44.0 dp` | **Leading:** 58dp Timer ring with `#67EBF5`->`#2A86E6` gradient.<br>**Center:** "Timer" (`#8E8D94`) + "01:45" (`#EBEBF0`, 32sp).<br>**Trailing:** Pause/Stop action button. |
+| **Media Player Expanded** | `Dynamic Island.svg` | `367 - 408 dp` | **`177.0 dp`** | `42.0 dp` | **Top:** 53dp Album squircle + "Heat Waves" + "Glass Animals" + 6-bar Pink equalizer (`#F84BAB`->`#B4CDFB`).<br>**Middle:** "0:50" \| 240dp Slider \| "-3:11".<br>**Bottom:** 4 Action icons: Previous, Play/Pause, Next, AirPlay. |
+| **FaceTime Audio / Active Call** | `Dynamic Island-2.svg` & `Dynamic Island-3.svg` | `367 - 408 dp` | **`166.0 - 168.0 dp`** | `42.0 dp` | **Top:** 44dp Avatar circle + "Tamia Castillo" + "FaceTime Audio" (`#838388`) + (i) info button.<br>**Bottom:** 5 Circular Action Buttons (50dp): Speaker, Mic, Video, SharePlay, End Call (`#FA3532`). |
+| **Media Audio Call Session** | `Dynamic Island-4.svg` | `367 - 408 dp` | **`172.6 dp`** | `42.0 dp` | **Top:** 53dp Album Art + Track "Asia Wild" + Live scrub bar.<br>**Bottom:** 5 Circular Action Buttons: Speaker, Mic, Video, SharePlay, Close (X in `#FA3532`). |
+| **Airplane Mode Alert** | `Dynamic Island-5.svg` | `367 - 408 dp` | **`148.0 dp`** | `42.0 dp` | **Top:** Orange Airplane icon (`#FB8B28`) + "Turn Off Airplane Mode" + "to Access Data".<br>**Bottom:** Full-width 43dp charcoal pill button "Open Settings" (`#2C2C2D`). |
+| **Screen Mirroring (AirPlay)** | `Dynamic Island-6.svg` | `367 - 408 dp` | **`144.0 dp`** | `42.0 dp` | **Top:** Cyan Dual Screen icon (`#37A3DE`) + "Screen Mirroring" + "MacBook Pro".<br>**Bottom:** Full-width 43dp dark cyan pill button "Stop Mirroring" (`#1A1C2D`, text `#37A3DE`). |
+| **Personal Hotspot / Mobile Data** | `Dynamic Island-7.svg` | `367 - 408 dp` | **`162.0 dp`** | `42.0 dp` | **Top:** Green Antenna icon (`#37C058`) + "Mobile Data" + "Turn off Mobile Data to use Wi-Fi".<br>**Bottom:** Dual 43dp pill buttons: "OK" (`#2C2C2D`) and "Settings" (`#1A1C2D`, text `#37A3DE`). |
+| **Transit / Train Route** | `Dynamic Island-8.svg` | `367 - 408 dp` | **`142.0 dp`** | `42.0 dp` | **Top:** White Train cabin icon + "Prague Main Train Station".<br>**Bottom:** Full-width 43dp dark red pill button "End Route" (`#1D1011`, text `#FA3532`). |
+| **Turn-by-Turn Navigation** | `Dynamic Island-1.svg` | `367 - 408 dp` | **`185.3 dp`** | `42.0 dp` | **Top:** 4 Direction tabs (Turn Left, Straight, Merge, Turn Right).<br>**Middle:** "90 ft", "North", "San Francisco".<br>**Bottom:** 51 × 39 dp route map preview thumbnail. |
 
 ---
 
-## 8. IMPLEMENTATION PRIORITY ORDER
+## 3. COLOR PALETTE & TOKENS (Extracted from SVGs)
 
-### Phase 1: Foundation (Theme & Tokens)
-1. Fix split gap to use consistent 8dp token everywhere
-2. Standardize expanded heights to 96dp (phone context)
-3. Add proper minimal state dot configuration
+```
+// Primary Accent Colors
+const val AppleRed          = 0xFFFA3532  // End Call, Cancel, Destructive
+const val AppleGreen        = 0xFF37C058  // Active Call, Personal Hotspot, Accept
+const val AppleOrange       = 0xFFFB8B28  // Airplane Mode, Warning Alerts
+const val AppleCyan         = 0xFF37A3DE  // Screen Mirroring, AirPlay Tint
+const val AppleTimerCyan    = 0xFF67EBF5  // Timer Ring Start
+const val AppleTimerBlue    = 0xFF2A86E6  // Timer Ring End
+const val ApplePinkStart    = 0xFFF84BAB  // Music Waveform Gradient Start
+const val ApplePinkEnd      = 0xFFB4CDFB  // Music Waveform Gradient End
 
-### Phase 2: Component Overhaul
-1. Update Music Compact to show title + artwork + waveform
-2. Update Notification Compact to match Figma layout
-3. Update Minimal state to be a proper status dot
-4. Ensure all expanded states use consistent 96dp height
+// Text Colors
+const val TextWhitePrimary   = 0xFFFFFFFF  // Primary Titles
+const val TextOffWhite       = 0xFFEBEBF0  // Large Numbers (Timer, Counter)
+const val TextSecondaryGray  = 0xFF8E8D94  // Labels, Subtitles ("Timer", "FaceTime Audio")
+const val TextTertiaryGray   = 0xFF9A9A9A  // Artist, Timestamp counters
 
-### Phase 3: Animation Polish
-1. Unify all content transitions
-2. Ensure smooth morphing between all states
-3. Add proper crossfade for content swaps
-
-### Phase 4: Edge Cases
-1. Ensure no clipping at screen edges
-2. Handle rotation properly
-3. Test all state transitions
-
----
-
-## 9. RULEBOOK SUMMARY
-
-### 9.1 Golden Rules
-
-1. **Never stretch the compact pill to screen width** — it must remain 126pt (scaled)
-2. **The island always hangs 11pt below the top edge** — consistent across all states
-3. **Expanded sheets use 44pt continuous corners** — squircle style
-4. **Compact uses perfect capsule (height/2 corner radius)** — 18.67pt
-5. **Side bubble is always 37.33pt circle with 8pt gap** — when in split mode
-6. **All dimensions share one spring** — width, height, corner, bubble size, gap
-7. **Transform origin is always top-center for expansion** — grows downward
-8. **Content crossfades are shorter than container morphs** — snappy content swap
-
-### 9.2 State Priority (highest to lowest)
-
-1. Incoming Call (interrupts everything)
-2. Ongoing Call (interrupts notifications/music)
-3. Notification with Music (interrupts music only)
-4. Music Playback
-5. Charging
-6. Notification
-7. Ringer Mode
-8. Minimal (idle)
-
-### 9.3 Color Assignment
-
-- Use state-specific accent colors for the ambient glow
-- Keep island body pure black (#000000)
-- Use white for primary text, #8E8E93 for secondary
-- Specular border: subtle white gradient (top to bottom fade)
+// Button & Capsule Backgrounds
+const val ButtonGlassDark    = 0xFF2A292D  // 50dp Circle Action Buttons
+const val ButtonPillNeutral  = 0xFF2C2C2D  // 43dp Pill Buttons (Settings, OK)
+const val ButtonPillCyan     = 0xFF1A1C2D  // 43dp Tinted Cyan Pill ("Stop Mirroring")
+const val ButtonPillRed      = 0xFF1D1011  // 43dp Tinted Red Pill ("End Route")
+const val TrackBackground    = 0xB23F3F3F  // 70% Dark gray slider track
+```
 
 ---
 
-*Document Version: 1.0*
-*Audited against: iOS 17 Dynamic Island Components Figma Community File*
-*Last Updated: 2026-09-03*
+## 4. EXTRACTED SVG VECTOR ICONS (Inventory)
+
+All of the following vector paths have been extracted from the Figma SVGs for inclusion in `AppleIcons.kt`:
+
+1. **`Airplane`** (`Dynamic Island-5.svg`):
+   Sleek fuselage, swept delta wings, angled tail stabilizer. Perfect for Airplane Mode and Flight tracking.
+2. **`ScreenMirroring`** (`Dynamic Island-6.svg`):
+   Two overlapping rounded rectangular displays representing AirPlay Screen Mirroring.
+3. **`PersonalHotspot`** (`Dynamic Island-7.svg`):
+   Central antenna mast with concentric broadcast signal arcs.
+4. **`Train` / `Transit`** (`Dynamic Island-8.svg`):
+   Front elevation of high-speed metro train with windshield, headlights, and tracks.
+5. **`VideoCamera` / `FaceTimeVideo`** (`Dynamic Island-2/3.svg`):
+   Rounded camera body with forward-facing trapezoidal lens cone.
+6. **`SharePlay`** (`Dynamic Island-2/3.svg`):
+   Profile of person in front of broadcast screen with transmission waves.
+7. **`Microphone`** (`Dynamic Island-2/3.svg`):
+   Capsule mic body, cradle ring, vertical stem, and base.
+8. **`EndCall`** (`Dynamic Island-2/3.svg`):
+   Horizontal downward-curved handset receiver indicating hangup.
+9. **`Info`** (`Dynamic Island-2/3.svg`):
+   Outer circle ring containing centered lower-case "i" glyph.
+10. **`NavigationTurnLeft` & `NavigationTurnRight`** (`Dynamic Island-1.svg`):
+    Bold directional arrows with 90° curvature for navigation directions.
+11. **`Media Controls`** (`Dynamic Island.svg`):
+    Double-triangle rewind (`<<`), solid play triangle (`▶`), double-triangle forward (`>>`), AirPlay casting monitor with upward-pointing triangle.
+12. **`TimerProgressRing`** (`Compact.svg`, `Expanded.svg`):
+    Dynamic Canvas-drawn arc with gradient `#67EBF5` to `#2A86E6` and subtle drop shadow glow.
+
+---
+
+## 5. RESPONSIVE CONSTRAINTS & ZERO-CLIPPING RULES
+
+To ensure that **NO island state ever clips, overflows, or gets truncated improperly** on any Android screen size:
+
+1. **Horizontal Scaling:**
+   - Always wrap root card content in `BoxWithConstraints`.
+   - Maximum width is dynamically derived via `maxWidth.coerceAtMost(maxExpanded)`.
+   - For compact states, width is bounded by `widthIn(min = 126.dp, max = 250.dp)`.
+2. **Text Ellipsis & Weights:**
+   - Every title and subtitle must have `maxLines = 1` and `overflow = TextOverflow.Ellipsis`.
+   - Text containers must take `Modifier.weight(1f)` so action buttons and badges always retain their fixed sizing.
+3. **Action Button Rows:**
+   - 5-button control rows (Call, Audio) must distribute spacing evenly with `Arrangement.SpaceBetween` or `Arrangement.SpaceEvenly`.
+   - Button touch targets are minimum `44 × 44 dp` (visual radius `22 - 25 dp`).
+4. **Animation Springs:**
+   - Morphing between states must use iOS liquid spring physics:
+     - Stiffness: `Spring.StiffnessMediumLow` (or `400f`)
+     - Damping Ratio: `Spring.DampingRatioLowBouncy` (or `0.78f`)
+   - Content fading during size morphing must use `Crossfade` or `AnimatedContent` with `fadeIn(tween(180)) + scaleIn(0.92f)` and `fadeOut(tween(120))`.

@@ -28,6 +28,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppSegmented
 import ai.emots.kishan_dynamic.ui.kit.AppStage
 import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import androidx.compose.ui.unit.dp
@@ -53,12 +54,14 @@ fun MusicSettingsScreen(
 
     AppScreen {
         AppTopBar(
+            modifier = Modifier.appReveal(0),
             title = "Music & media",
             subtitle = "Album art, visualiser and controls",
             onBack = onBack
         )
 
         AppStage(
+            modifier = Modifier.appReveal(1),
             caption = if (isExpandedPreview) "Tap the island to collapse" else "Tap the island to expand",
             minHeight = 200.dp
         ) {
@@ -72,7 +75,7 @@ fun MusicSettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Playback")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(2)) {
             AppToggleRow(
                 title = "Show island for music",
                 subtitle = "Display album art whenever audio is playing",
@@ -94,7 +97,7 @@ fun MusicSettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Visualiser")
-        AppCard {
+        AppCard(modifier = Modifier.appReveal(3)) {
             AppText(
                 text = "Choose how the equaliser bars look while music plays.",
                 style = AppTheme.typography.bodySmall,

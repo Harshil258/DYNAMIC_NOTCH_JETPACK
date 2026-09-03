@@ -28,6 +28,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppStage
 import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import androidx.compose.ui.unit.dp
 
@@ -45,12 +46,14 @@ fun CallSettingsScreen(
 
     AppScreen {
         AppTopBar(
+            modifier = Modifier.appReveal(0),
             title = "Phone calls",
             subtitle = "Caller HUD and live call timer",
             onBack = onBack
         )
 
         AppStage(
+            modifier = Modifier.appReveal(1),
             caption = if (isExpandedCall) "Tap the island to collapse" else "Tap the island to expand",
             minHeight = 190.dp
         ) {
@@ -63,7 +66,7 @@ fun CallSettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("During a call")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(2)) {
             AppToggleRow(
                 title = "Incoming call banner",
                 subtitle = "Caller name, photo, answer and decline",

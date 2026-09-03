@@ -53,7 +53,11 @@ enum class AppleGlyph {
     AirPlay,
     Speaker,
     BellSlash,
-    Close
+    Close,
+    Search,
+    Globe,
+    Palette,
+    Heart
 }
 
 /**
@@ -551,6 +555,59 @@ fun AppleIcon(
             AppleGlyph.Close -> {
                 drawLine(tint, Offset(w * 0.28f, h * 0.28f), Offset(w * 0.72f, h * 0.72f), strokeWidth * 1.4f, StrokeCap.Round)
                 drawLine(tint, Offset(w * 0.72f, h * 0.28f), Offset(w * 0.28f, h * 0.72f), strokeWidth * 1.4f, StrokeCap.Round)
+            }
+
+            AppleGlyph.Search -> {
+                // SF Symbols "magnifyingglass"
+                val r = w * 0.27f
+                drawCircle(
+                    color = tint,
+                    radius = r,
+                    center = Offset(w * 0.44f, h * 0.44f),
+                    style = stroke
+                )
+                drawLine(
+                    tint,
+                    Offset(w * 0.64f, h * 0.64f),
+                    Offset(w * 0.86f, h * 0.86f),
+                    strokeWidth,
+                    StrokeCap.Round
+                )
+            }
+
+            AppleGlyph.Globe -> {
+                val r = w * 0.36f
+                val cx = w * 0.5f
+                val cy = h * 0.5f
+                drawCircle(color = tint, radius = r, center = Offset(cx, cy), style = stroke)
+                // Meridian
+                val meridian = Path().apply {
+                    moveTo(cx, cy - r)
+                    cubicTo(cx - r * 0.62f, cy - r * 0.4f, cx - r * 0.62f, cy + r * 0.4f, cx, cy + r)
+                    cubicTo(cx + r * 0.62f, cy + r * 0.4f, cx + r * 0.62f, cy - r * 0.4f, cx, cy - r)
+                    close()
+                }
+                drawPath(meridian, tint, style = stroke)
+                // Equator
+                drawLine(tint, Offset(cx - r, cy), Offset(cx + r, cy), strokeWidth, StrokeCap.Round)
+            }
+
+            AppleGlyph.Palette -> {
+                val r = w * 0.36f
+                drawCircle(color = tint, radius = r, center = Offset(w * 0.5f, h * 0.5f), style = stroke)
+                drawCircle(color = tint, radius = w * 0.07f, center = Offset(w * 0.38f, h * 0.36f), style = Fill)
+                drawCircle(color = tint, radius = w * 0.07f, center = Offset(w * 0.64f, h * 0.44f), style = Fill)
+                drawCircle(color = tint, radius = w * 0.07f, center = Offset(w * 0.44f, h * 0.66f), style = Fill)
+            }
+
+            AppleGlyph.Heart -> {
+                val heart = Path().apply {
+                    moveTo(w * 0.5f, h * 0.82f)
+                    cubicTo(w * 0.05f, h * 0.55f, w * 0.16f, h * 0.16f, w * 0.5f, h * 0.34f)
+                    cubicTo(w * 0.84f, h * 0.16f, w * 0.95f, h * 0.55f, w * 0.5f, h * 0.82f)
+                    close()
+                }
+                drawPath(heart, tint, style = stroke)
             }
         }
     }

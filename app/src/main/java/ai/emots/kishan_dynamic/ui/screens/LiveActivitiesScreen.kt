@@ -61,6 +61,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppSegmented
 import ai.emots.kishan_dynamic.ui.kit.AppSlider
 import ai.emots.kishan_dynamic.ui.kit.AppStage
 import ai.emots.kishan_dynamic.ui.kit.AppStatusPill
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 /**
@@ -85,6 +86,7 @@ fun LiveActivitiesScreen() {
 
     AppScreen(bottomInset = BottomDockInset) {
         AppLargeTitle(
+            modifier = Modifier.appReveal(0),
             title = "Live Activity",
             subtitle = "Ongoing events that stay pinned to your island."
         )
@@ -98,6 +100,7 @@ fun LiveActivitiesScreen() {
         Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
 
         AppStage(
+            modifier = Modifier.appReveal(1),
             caption = if (selectedActivityIndex == 0) "Tap the island to play or pause" else null,
             minHeight = 200.dp
         ) {

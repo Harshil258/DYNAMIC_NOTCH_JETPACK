@@ -40,6 +40,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppSegmented
 import ai.emots.kishan_dynamic.ui.kit.AppSlider
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -65,6 +66,7 @@ fun DisplaySettingsScreen(
 
     AppScreen {
         AppTopBar(
+            modifier = Modifier.appReveal(0),
             title = "Notch alignment",
             subtitle = "Fit the island around your camera cutout",
             onBack = onBack
@@ -124,7 +126,7 @@ fun DisplaySettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Camera position")
-        AppCard {
+        AppCard(modifier = Modifier.appReveal(1)) {
             AppSegmented(
                 options = listOf("Left", "Centre", "Right"),
                 selectedIndex = selectedCutoutIndex,
@@ -135,7 +137,7 @@ fun DisplaySettingsScreen(
         AppSectionSpacer()
 
         AppSectionTitle("Fine tuning")
-        AppCard {
+        AppCard(modifier = Modifier.appReveal(2)) {
             AppSlider(
                 title = "Distance from top",
                 value = verticalOffset,

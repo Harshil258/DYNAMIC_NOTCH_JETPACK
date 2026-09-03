@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.data.model.AppLanguages
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
@@ -51,6 +52,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppScreen
 import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
 import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppStatusPill
+import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 
@@ -67,7 +69,8 @@ private data class PricingPlan(
  */
 @Composable
 fun SettingsVaultScreen(
-    onNavigatePermissions: () -> Unit = {}
+    onNavigatePermissions: () -> Unit = {},
+    onNavigateLanguage: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -82,19 +85,6 @@ fun SettingsVaultScreen(
     var showUpdate by remember { mutableStateOf(false) }
     var selectedPlanIndex by remember { mutableIntStateOf(2) }
 
-    val languages = remember {
-        listOf(
-            "en" to "English",
-            "hi" to "हिंदी",
-            "es" to "Español",
-            "pt" to "Português",
-            "ar" to "العربية",
-            "zh" to "中文",
-            "ja" to "日本語",
-            "fr" to "Français"
-        )
-    }
-
     val plans = remember {
         listOf(
             PricingPlan("weekly", "Weekly", "₹39"),
@@ -107,14 +97,15 @@ fun SettingsVaultScreen(
     AppScreen(bottomInset = BottomDockInset) {
         AppLargeTitle(
             title = "Settings",
-            subtitle = "Membership, language and support."
+            subtitle = "Membership, language and support.",
+            modifier = Modifier.appReveal(0)
         )
 
         // ---------------------------------------------------------------
         // Membership
         // ---------------------------------------------------------------
         AppSectionTitle("Membership")
-        AppCard {
+        AppCard(modifier = Modifier.appReveal(1)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -179,7 +170,7 @@ fun SettingsVaultScreen(
         // Appearance
         // ---------------------------------------------------------------
         AppSectionTitle("Appearance")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(3)) {
             AppInfoRow(
                 title = "Theme",
                 value = "Follows system",
@@ -195,18 +186,18 @@ fun SettingsVaultScreen(
         AppSectionSpacer()
 
         // ---------------------------------------------------------------
-        // Language
+        // Language — lives on its own screen so it can be searched properly.
         // ---------------------------------------------------------------
         AppSectionTitle("Language")
-        AppListCard {
-            languages.forEachIndexed { index, (code, name) ->
-                LanguageRow(
-                    name = name,
-                    selected = savedLanguage == code,
-                    onClick = { scope.launch { preferences.setLanguageCode(code) } }
-                )
-                if (index < languages.lastIndex) AppRowDivider()
-            }
+        AppListCard(modifier = Modifier.appReveal(4)) {
+            AppNavRow(
+                title = "App language",
+                subtitle = "Choose from ${AppLanguages.all.size} languages",
+                value = AppLanguages.displayName(savedLanguage),
+                glyph = AppleGlyph.Globe,
+                accent = AppTheme.colors.accent,
+                onClick = onNavigateLanguage
+            )
         }
 
         AppSectionSpacer()
@@ -215,7 +206,7 @@ fun SettingsVaultScreen(
         // Permissions & support
         // ---------------------------------------------------------------
         AppSectionTitle("Support")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(5)) {
             AppNavRow(
                 title = "Permissions",
                 subtitle = "Review what the island can access",
@@ -249,7 +240,7 @@ fun SettingsVaultScreen(
         AppSectionSpacer()
 
         AppSectionTitle("About")
-        AppListCard {
+        AppListCard(modifier = Modifier.appReveal(6)) {
             AppInfoRow(title = "Version", value = "1.0.0")
             AppRowDivider()
             AppNavRow(title = "Privacy policy", onClick = {})
@@ -333,41 +324,6 @@ private fun PlanCard(
                     maxLines = 1
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun LanguageRow(
-    name: String,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick
-            )
-            .heightIn(min = 52.dp)
-            .padding(horizontal = AppTheme.layout.cardPadding, vertical = AppTheme.spacing.md),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AppText(
-            text = name,
-            style = AppTheme.typography.body,
-            color = if (selected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary,
-            fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
-            modifier = Modifier.weight(1f)
-        )
-        if (selected) {
-            ai.emots.kishan_dynamic.ui.components.AppleIcon(
-                glyph = AppleGlyph.Check,
-                tint = AppTheme.colors.accent,
-                size = 16.dp
-            )
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,21 +17,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Send
-import androidx.compose.material.icons.rounded.BugReport
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Lightbulb
-import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.StarBorder
-import androidx.compose.material.icons.rounded.ThumbUp
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -41,31 +31,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SolidColor
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import ai.emots.kishan_dynamic.ui.components.AuroraBottomSheet
-import ai.emots.kishan_dynamic.ui.components.AuroraButton
-import ai.emots.kishan_dynamic.ui.components.AuroraIconButton
-import ai.emots.kishan_dynamic.ui.components.GlassCard
-import ai.emots.kishan_dynamic.ui.theme.AuroraIslandTheme
-import ai.emots.kishan_dynamic.ui.theme.AuroraTheme
+import ai.emots.kishan_dynamic.ui.components.AppText
+import ai.emots.kishan_dynamic.ui.components.AppleGlyph
+import ai.emots.kishan_dynamic.ui.components.AppleIcon
+import ai.emots.kishan_dynamic.ui.kit.AppButton
+import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
+import ai.emots.kishan_dynamic.ui.kit.AppSheet
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
-enum class FeedbackType(val label: String, val icon: ImageVector) {
-    BUG("Bug Report", Icons.Rounded.BugReport),
-    FEATURE("Feature Request", Icons.Rounded.Lightbulb),
-    GENERAL("General Praise", Icons.Rounded.ThumbUp)
+enum class FeedbackType(val label: String) {
+    BUG("Bug"),
+    FEATURE("Idea"),
+    GENERAL("Praise")
 }
 
-/**
- * Modern Frosted Glass Feedback Dialog with interactive star rating, categories, and email dispatch.
- */
 @Composable
 fun FeedbackDialog(
     onDismiss: () -> Unit
@@ -75,169 +58,128 @@ fun FeedbackDialog(
     var selectedCategory by remember { mutableStateOf(FeedbackType.FEATURE) }
     var feedbackComment by remember { mutableStateOf("") }
 
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+    AppSheet(
+        onDismiss = onDismiss,
+        title = "Send feedback",
+        subtitle = "Tell us what to improve next."
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = AuroraTheme.spacing.md),
-            contentAlignment = Alignment.BottomCenter
+        AppText(
+            text = "How would you rate the app?",
+            style = AppTheme.typography.bodySmall,
+            color = AppTheme.colors.textSecondary,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm, Alignment.CenterHorizontally)
         ) {
-            AuroraBottomSheet {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(AuroraTheme.spacing.md)
+            for (star in 1..5) {
+                val isSelected = star <= selectedRating
+                val scale by animateFloatAsState(
+                    targetValue = if (isSelected) 1.1f else 1f,
+                    animationSpec = spring(dampingRatio = 0.5f),
+                    label = "star_scale"
+                )
+                AppleIcon(
+                    glyph = AppleGlyph.Star,
+                    tint = if (isSelected) AppTheme.colors.gold else AppTheme.colors.disabled,
+                    size = 32.dp,
+                    modifier = Modifier
+                        .scale(scale)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { selectedRating = star }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+        ) {
+            FeedbackType.entries.forEach { category ->
+                val isSelected = selectedCategory == category
+                val shape = RoundedCornerShape(AppTheme.radius.md)
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(44.dp)
+                        .clip(shape)
+                        .background(
+                            if (isSelected) AppTheme.colors.accent.copy(alpha = 0.14f)
+                            else AppTheme.colors.surfaceVariant
+                        )
+                        .border(
+                            0.5.dp,
+                            if (isSelected) AppTheme.colors.accent.copy(alpha = 0.5f) else AppTheme.colors.border,
+                            shape
+                        )
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { selectedCategory = category },
+                    contentAlignment = Alignment.Center
                 ) {
-                    // Header Bar
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            text = "Send Feedback",
-                            style = AuroraTheme.typography.titleMedium,
-                            color = AuroraTheme.colors.textPrimary
-                        )
-                        AuroraIconButton(
-                            icon = Icons.Rounded.Close,
-                            onClick = onDismiss,
-                            size = 32.dp
-                        )
-                    }
-
-                    // 5-Star Rating Row
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "How would you rate Aurora Island?",
-                            style = AuroraTheme.typography.bodySmall,
-                            color = AuroraTheme.colors.textSecondary
-                        )
-
-                        Spacer(modifier = Modifier.height(AuroraTheme.spacing.sm))
-
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(AuroraTheme.spacing.sm),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            for (star in 1..5) {
-                                val isSelected = star <= selectedRating
-                                val starScale by animateFloatAsState(
-                                    targetValue = if (isSelected) 1.15f else 1.0f,
-                                    animationSpec = spring(dampingRatio = 0.5f),
-                                    label = "star_scale"
-                                )
-                                Icon(
-                                    imageVector = if (isSelected) Icons.Rounded.Star else Icons.Rounded.StarBorder,
-                                    contentDescription = "Rate $star",
-                                    tint = if (isSelected) AuroraTheme.colors.warning else AuroraTheme.colors.textTertiary,
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .scale(starScale)
-                                        .clickable { selectedRating = star }
-                                )
-                            }
-                        }
-                    }
-
-                    // 3 Category Chips
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(AuroraTheme.spacing.xs)
-                    ) {
-                        FeedbackType.values().forEach { category ->
-                            val isSelected = selectedCategory == category
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(42.dp)
-                                    .clip(AuroraTheme.shapes.cardSmall)
-                                    .background(
-                                        if (isSelected) AuroraTheme.colors.primary.copy(alpha = 0.22f)
-                                        else AuroraTheme.colors.glassSurfaceSubtle
-                                    )
-                                    .border(
-                                        width = if (isSelected) AuroraTheme.elevation.activeBorder else AuroraTheme.elevation.hairlineBorder,
-                                        brush = if (isSelected) AuroraTheme.colors.brandGradientBrush else AuroraTheme.colors.glassBorderBrush,
-                                        shape = AuroraTheme.shapes.cardSmall
-                                    )
-                                    .clickable { selectedCategory = category },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = category.icon,
-                                        contentDescription = null,
-                                        tint = if (isSelected) AuroraTheme.colors.primary else AuroraTheme.colors.textSecondary,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Text(
-                                        text = category.label.split(" ").first(),
-                                        style = AuroraTheme.typography.labelSmall,
-                                        color = if (isSelected) AuroraTheme.colors.textPrimary else AuroraTheme.colors.textSecondary
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    // Comment Input Box
-                    GlassCard(modifier = Modifier.fillMaxWidth(), contentPadding = AuroraTheme.spacing.sm) {
-                        Column {
-                            BasicTextField(
-                                value = feedbackComment,
-                                onValueChange = { if (it.length <= 500) feedbackComment = it },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(80.dp),
-                                textStyle = AuroraTheme.typography.bodySmall.copy(color = AuroraTheme.colors.textPrimary),
-                                cursorBrush = SolidColor(AuroraTheme.colors.primary),
-                                decorationBox = { innerTextField ->
-                                    if (feedbackComment.isEmpty()) {
-                                        Text(
-                                            text = "Tell us your thoughts, ideas, or report an issue...",
-                                            style = AuroraTheme.typography.bodySmall,
-                                            color = AuroraTheme.colors.textTertiary
-                                        )
-                                    }
-                                    innerTextField()
-                                }
-                            )
-                            Text(
-                                text = "${feedbackComment.length}/500",
-                                style = AuroraTheme.typography.labelSmall,
-                                color = AuroraTheme.colors.textTertiary,
-                                modifier = Modifier.align(Alignment.End)
-                            )
-                        }
-                    }
-
-                    // Submit Button
-                    AuroraButton(
-                        onClick = {
-                            sendFeedbackEmail(context, selectedRating, selectedCategory, feedbackComment)
-                            onDismiss()
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        trailingIcon = Icons.AutoMirrored.Rounded.Send
-                    ) {
-                        Text(
-                            text = "Submit Feedback",
-                            style = AuroraTheme.typography.labelLarge,
-                            color = Color.White
-                        )
-                    }
+                    AppText(
+                        text = category.label,
+                        style = AppTheme.typography.button,
+                        color = if (isSelected) AppTheme.colors.accent else AppTheme.colors.textSecondary
+                    )
                 }
             }
         }
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(AppTheme.radius.lg))
+                .background(AppTheme.colors.surfaceVariant)
+                .border(0.5.dp, AppTheme.colors.border, RoundedCornerShape(AppTheme.radius.lg))
+                .padding(AppTheme.spacing.lg)
+        ) {
+            if (feedbackComment.isEmpty()) {
+                AppText(
+                    text = "Add a note (optional)",
+                    style = AppTheme.typography.bodySmall,
+                    color = AppTheme.colors.textTertiary
+                )
+            }
+            BasicTextField(
+                value = feedbackComment,
+                onValueChange = { feedbackComment = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 72.dp),
+                textStyle = AppTheme.typography.bodySmall.copy(color = AppTheme.colors.textPrimary),
+                cursorBrush = SolidColor(AppTheme.colors.accent)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+
+        AppButton(
+            text = "Send feedback",
+            glyph = AppleGlyph.Sparkles,
+            onClick = {
+                sendFeedbackEmail(context, selectedRating, selectedCategory, feedbackComment)
+                onDismiss()
+            }
+        )
+        Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
+        AppButton(
+            text = "Cancel",
+            style = AppButtonStyle.Secondary,
+            onClick = onDismiss
+        )
     }
 }
 
@@ -247,18 +189,18 @@ private fun sendFeedbackEmail(
     category: FeedbackType,
     comment: String
 ) {
-    val subject = "[${category.label}] Aurora Island User Feedback"
+    val subject = "[${category.label}] Dynamic Island feedback"
     val body = buildString {
-        appendLine("Rating: ${"⭐".repeat(rating)} ($rating/5)")
+        appendLine("Rating: $rating/5")
         appendLine("Category: ${category.label}")
         appendLine()
         appendLine("Comment:")
         appendLine(comment.ifBlank { "No additional comment provided." })
         appendLine()
-        appendLine("--- Device Diagnostics ---")
+        appendLine("--- Device ---")
         appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
         appendLine("Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
-        appendLine("App: Aurora Island v1.0.0")
+        appendLine("App: v1.0.0")
     }
 
     val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -278,19 +220,8 @@ private fun sendFeedbackEmail(
             putExtra(Intent.EXTRA_TEXT, body)
         }
         try {
-            context.startActivity(Intent.createChooser(fallback, "Send Feedback"))
-        } catch (ignored: Exception) {}
-    }
-}
-
-// =============================================================================
-// PREVIEWS
-// =============================================================================
-
-@Preview(name = "Feedback Dialog - Dark", showBackground = true, backgroundColor = 0xFF0B0B12)
-@Composable
-private fun FeedbackDialogDarkPreview() {
-    AuroraIslandTheme(darkTheme = true) {
-        FeedbackDialog(onDismiss = {})
+            context.startActivity(Intent.createChooser(fallback, "Send feedback"))
+        } catch (ignored: Exception) {
+        }
     }
 }

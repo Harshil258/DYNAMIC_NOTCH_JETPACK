@@ -1,47 +1,36 @@
 package ai.emots.kishan_dynamic.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
-import ai.emots.kishan_dynamic.ui.components.AppleButton
-import ai.emots.kishan_dynamic.ui.components.AppleButtonStyle
+import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
-import ai.emots.kishan_dynamic.ui.components.AppleSegmentedControl
-import ai.emots.kishan_dynamic.ui.components.AtmosphericBackground
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
 import ai.emots.kishan_dynamic.ui.components.IslandDemoState
-import ai.emots.kishan_dynamic.ui.components.LuxuryCard
-import ai.emots.kishan_dynamic.ui.components.LuxurySwitch
-import ai.emots.kishan_dynamic.ui.components.LuxuryTopBar
+import ai.emots.kishan_dynamic.ui.kit.AppButton
+import ai.emots.kishan_dynamic.ui.kit.AppCard
+import ai.emots.kishan_dynamic.ui.kit.AppFootnote
+import ai.emots.kishan_dynamic.ui.kit.AppListCard
+import ai.emots.kishan_dynamic.ui.kit.AppRowDivider
+import ai.emots.kishan_dynamic.ui.kit.AppScreen
+import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
+import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
+import ai.emots.kishan_dynamic.ui.kit.AppSegmented
+import ai.emots.kishan_dynamic.ui.kit.AppStage
+import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
+import ai.emots.kishan_dynamic.ui.kit.AppTopBar
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
-import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 import kotlinx.coroutines.launch
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun MusicSettingsScreen(
@@ -52,141 +41,82 @@ fun MusicSettingsScreen(
     val preferences = remember { AuroraPreferences(context) }
 
     val savedWaveform by preferences.waveformStyle.collectAsState(initial = "Neon Cyan")
+
     var isExpandedPreview by remember { mutableStateOf(true) }
     var isMusicEnabled by remember { mutableStateOf(true) }
+    var showScrubber by remember { mutableStateOf(true) }
 
-    val waveformStyles = listOf("Neon Cyan", "Aurora", "Studio", "Minimal")
-    val selectedWaveformIndex = waveformStyles.indexOfFirst { savedWaveform.contains(it) }.coerceAtLeast(0)
+    val waveformStyles = listOf("Neon", "Aurora", "Studio", "Minimal")
+    val selectedWaveformIndex = waveformStyles
+        .indexOfFirst { savedWaveform.contains(it, ignoreCase = true) }
+        .coerceAtLeast(0)
 
-    AtmosphericBackground {
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .widthIn(max = 760.dp)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = AppTheme.layout.screenGutter)
-                .padding(bottom = AppTheme.spacing.xxxl),
-            verticalArrangement = Arrangement.spacedBy(AuroraTokens.Spacing.sectionGap)
+    AppScreen {
+        AppTopBar(
+            title = "Music & media",
+            subtitle = "Album art, visualiser and controls",
+            onBack = onBack
+        )
+
+        AppStage(
+            caption = if (isExpandedPreview) "Tap the island to collapse" else "Tap the island to expand",
+            minHeight = 200.dp
         ) {
-            // Top Bar
-            LuxuryTopBar(
-                title = "Music & Media Player",
-                subtitle = "Album disc, waveforms & track controls",
-                onBack = onBack
-            )
-
-            // Live Island Media Preview
-            LuxuryCard(padding = 20.dp) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    DynamicIslandPill(
-                        state = if (isExpandedPreview) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact,
-                        onTap = { isExpandedPreview = !isExpandedPreview }
-                    )
-
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    Text(
-                        text = if (isExpandedPreview) "Tap island to collapse to compact disc" else "Tap island to expand full music player",
-                        fontSize = 11.5.sp,
-                        color = AppTheme.colors.textSecondary
-                    )
-                }
-            }
-
-            // Toggles Card
-            LuxuryCard {
-                Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                            Text(
-                                text = "Show Island for Music",
-                                fontSize = 14.5.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AppTheme.colors.textPrimary
-                            )
-                            Text(
-                                text = "Automatically display spinning album art when songs play on Spotify, YouTube, etc.",
-                                fontSize = 11.5.sp,
-                                color = AppTheme.colors.textSecondary
-                            )
-                        }
-
-                        LuxurySwitch(
-                            checked = isMusicEnabled,
-                            onCheckedChange = { isMusicEnabled = it }
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                            Text(
-                                text = "Show Scrubbable Progress Bar",
-                                fontSize = 14.5.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = AppTheme.colors.textPrimary
-                            )
-                            Text(
-                                text = "Drag along the island timeline to fast-forward or rewind songs",
-                                fontSize = 11.5.sp,
-                                color = AppTheme.colors.textSecondary
-                            )
-                        }
-
-                        LuxurySwitch(
-                            checked = isExpandedPreview,
-                            onCheckedChange = { isExpandedPreview = it }
-                        )
-                    }
-                }
-            }
-
-            // Visualizer Style Palette with Apple Segmented Control
-            LuxuryCard {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        text = "Audio Waveform Visualizer Style",
-                        fontSize = 14.5.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = AppTheme.colors.textPrimary
-                    )
-                    Text(
-                        text = "Choose the look of the glowing dancing equalizer bars",
-                        fontSize = 11.5.sp,
-                        color = AppTheme.colors.textSecondary
-                    )
-
-                    AppleSegmentedControl(
-                        options = waveformStyles,
-                        selectedIndex = selectedWaveformIndex,
-                        onOptionSelected = { idx ->
-                            scope.launch { preferences.setWaveformStyle(waveformStyles[idx]) }
-                        }
-                    )
-                }
-            }
-
-            // Simulate Music Playback Apple Button
-            AppleButton(
-                text = "Test Spotify Media Playback",
-                onClick = { isExpandedPreview = true },
-                glyph = AppleGlyph.Play,
-                style = AppleButtonStyle.PRIMARY,
-                paddingVertical = 15.dp
+            DynamicIslandPill(
+                state = if (isExpandedPreview) IslandDemoState.MusicExpanded
+                else IslandDemoState.MusicCompact,
+                onTap = { isExpandedPreview = !isExpandedPreview }
             )
         }
+
+        AppSectionSpacer()
+
+        AppSectionTitle("Playback")
+        AppListCard {
+            AppToggleRow(
+                title = "Show island for music",
+                subtitle = "Display album art whenever audio is playing",
+                glyph = AppleGlyph.Music,
+                checked = isMusicEnabled,
+                onCheckedChange = { isMusicEnabled = it }
+            )
+            AppRowDivider()
+            AppToggleRow(
+                title = "Scrubbable progress bar",
+                subtitle = "Drag the timeline to seek through a track",
+                glyph = AppleGlyph.Timer,
+                checked = showScrubber,
+                enabled = isMusicEnabled,
+                onCheckedChange = { showScrubber = it }
+            )
+        }
+
+        AppSectionSpacer()
+
+        AppSectionTitle("Visualiser")
+        AppCard {
+            AppText(
+                text = "Choose how the equaliser bars look while music plays.",
+                style = AppTheme.typography.bodySmall,
+                color = AppTheme.colors.textSecondary
+            )
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+            AppSegmented(
+                options = waveformStyles,
+                selectedIndex = selectedWaveformIndex,
+                onOptionSelected = { index ->
+                    scope.launch { preferences.setWaveformStyle(waveformStyles[index]) }
+                }
+            )
+        }
+
+        AppSectionSpacer()
+
+        AppButton(
+            text = "Preview media playback",
+            glyph = AppleGlyph.Play,
+            onClick = { isExpandedPreview = true }
+        )
+        AppFootnote("Media info comes from the app that currently owns audio focus.")
     }
 }

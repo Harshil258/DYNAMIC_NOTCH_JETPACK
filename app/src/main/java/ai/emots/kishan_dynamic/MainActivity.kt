@@ -19,7 +19,7 @@ import ai.emots.kishan_dynamic.ui.gallery.ComponentGalleryScreen
 import ai.emots.kishan_dynamic.ui.screens.MainContainerScreen
 import ai.emots.kishan_dynamic.ui.screens.OnboardingScreen
 import ai.emots.kishan_dynamic.ui.screens.PermissionScreen
-import ai.emots.kishan_dynamic.ui.theme.AuroraIslandTheme
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 enum class AppNavigationRoute {
     MainHub,
@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
             }
             var currentRoute by remember { mutableStateOf(AppNavigationRoute.MainHub) }
 
-            AuroraIslandTheme(darkTheme = isDarkTheme) {
+            AppTheme(darkTheme = isDarkTheme) {
                 AnimatedContent(
                     targetState = currentRoute,
                     transitionSpec = { fadeIn() togetherWith fadeOut() },

@@ -3,7 +3,6 @@ package ai.emots.kishan_dynamic.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
@@ -51,7 +50,9 @@ fun AuroraIslandTheme(
     content: @Composable () -> Unit
 ) {
     AppTheme {
-        val colors = if (darkTheme) DarkAuroraColors else LightAuroraColors
+        // Aurora Island is a true-black spatial product, not a conventional light/dark app.
+        // One canonical palette prevents white flashes in overlays and keeps every route cohesive.
+        val colors = DarkAuroraColors
         val typography = AuroraTypography()
         val shapes = AuroraShapes()
         val spacing = AuroraSpacing()
@@ -59,33 +60,20 @@ fun AuroraIslandTheme(
         val motion = AuroraMotion()
 
         // Bridge into Material3 color scheme for system widgets
-        val materialColorScheme = if (darkTheme) {
-            darkColorScheme(
-                primary = colors.primary,
-                secondary = colors.lavender,
-                tertiary = colors.cyan,
-                background = colors.backgroundBase,
-                surface = colors.glassSurface,
-                onPrimary = Color.White,
-                onSecondary = Color.White,
-                onBackground = colors.textPrimary,
-                onSurface = colors.textPrimary,
-                error = colors.error
-            )
-        } else {
-            lightColorScheme(
-                primary = colors.primary,
-                secondary = colors.lavender,
-                tertiary = colors.cyan,
-                background = colors.backgroundBase,
-                surface = colors.glassSurface,
-                onPrimary = Color.White,
-                onSecondary = Color.White,
-                onBackground = colors.textPrimary,
-                onSurface = colors.textPrimary,
-                error = colors.error
-            )
-        }
+        val materialColorScheme = darkColorScheme(
+            primary = colors.primary,
+            secondary = colors.lavender,
+            tertiary = colors.cyan,
+            background = colors.backgroundBase,
+            surface = colors.glassSurface,
+            surfaceContainer = colors.glassSurfaceStrong,
+            onPrimary = Color.Black,
+            onSecondary = Color.Black,
+            onBackground = colors.textPrimary,
+            onSurface = colors.textPrimary,
+            outline = colors.glassBorder,
+            error = colors.error
+        )
 
         CompositionLocalProvider(
             LocalAuroraColors provides colors,

@@ -47,7 +47,7 @@ fun AppleSegmentedControl(
             .fillMaxWidth()
             .height(44.dp)
             .clip(RoundedCornerShape(14.dp))
-            .background(Color(0xFF141020))
+            .background(Color(0xE615161A))
             .border(1.dp, Color(0x18FFFFFF), RoundedCornerShape(14.dp))
             .padding(3.dp)
     ) {
@@ -73,18 +73,18 @@ fun AppleSegmentedControl(
                     elevation = 6.dp,
                     shape = RoundedCornerShape(11.dp),
                     ambientColor = Color.Black.copy(alpha = 0.5f),
-                    spotColor = AuroraTokens.Palette.primary.copy(alpha = 0.4f)
+                    spotColor = Color.Black.copy(alpha = 0.5f)
                 )
                 .clip(RoundedCornerShape(11.dp))
                 .background(
                     Brush.verticalGradient(
-                        listOf(Color(0xFF322352), Color(0xFF24183E))
+                        listOf(Color(0xFF34363D), Color(0xFF292B31))
                     )
                 )
                 .border(
                     width = 1.dp,
                     brush = Brush.verticalGradient(
-                        listOf(Color(0x55A78BFA), Color(0x15A78BFA))
+                        listOf(Color(0x35FFFFFF), Color(0x10FFFFFF))
                     ),
                     shape = RoundedCornerShape(11.dp)
                 )

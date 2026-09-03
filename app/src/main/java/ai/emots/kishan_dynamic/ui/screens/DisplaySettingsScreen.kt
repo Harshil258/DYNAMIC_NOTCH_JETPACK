@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -48,6 +50,7 @@ import ai.emots.kishan_dynamic.ui.components.IslandDemoState
 import ai.emots.kishan_dynamic.ui.components.LuxuryCard
 import ai.emots.kishan_dynamic.ui.components.LuxurySlider
 import ai.emots.kishan_dynamic.ui.components.LuxuryTopBar
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -72,11 +75,14 @@ fun DisplaySettingsScreen(
     AtmosphericBackground {
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
                 .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = AuroraTokens.Spacing.screenGutter)
-                .padding(bottom = 60.dp),
+                .padding(horizontal = AppTheme.layout.screenGutter)
+                .padding(bottom = AppTheme.spacing.xxxl),
             verticalArrangement = Arrangement.spacedBy(AuroraTokens.Spacing.sectionGap)
         ) {
             // Sleek Top Header

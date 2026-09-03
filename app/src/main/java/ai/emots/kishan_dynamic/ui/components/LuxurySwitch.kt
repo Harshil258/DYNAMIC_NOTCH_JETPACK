@@ -58,7 +58,7 @@ fun LuxurySwitch(
     )
 
     val trackBorderColor by animateColorAsState(
-        targetValue = if (checked) Color(0x40A78BFA) else Color(0x18FFFFFF),
+        targetValue = if (checked) Color(0x406D82FF) else Color(0x18FFFFFF),
         animationSpec = tween(200),
         label = "switch_track_border"
     )
@@ -71,11 +71,11 @@ fun LuxurySwitch(
             .background(
                 if (checked) {
                     Brush.horizontalGradient(
-                        listOf(AuroraTokens.Palette.primary, Color(0xFF9333EA))
+                        listOf(AuroraTokens.Palette.primary, Color(0xFF4D9CFF))
                     )
                 } else {
                     Brush.horizontalGradient(
-                        listOf(Color(0xFF1C182B), Color(0xFF161224))
+                        listOf(Color(0xFF25262B), Color(0xFF1A1B20))
                     )
                 }
             )

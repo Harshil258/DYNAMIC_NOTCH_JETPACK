@@ -1,8 +1,6 @@
 package ai.emots.kishan_dynamic.ui.components
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -25,11 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import ai.emots.kishan_dynamic.ui.theme.AuroraTokens
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
+/** Compact editorial navigation header with a 48dp accessible back target. */
 @Composable
 fun LuxuryTopBar(
     title: String,
@@ -38,65 +34,31 @@ fun LuxuryTopBar(
     modifier: Modifier = Modifier,
     trailingContent: (@Composable () -> Unit)? = null
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val animatedScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.90f else 1.0f,
-        animationSpec = spring(
-            dampingRatio = 0.65f,
-            stiffness = Spring.StiffnessMedium
-        ),
-        label = "back_btn_scale"
-    )
+    val source = remember { MutableInteractionSource() }
+    val pressed by source.collectIsPressedAsState()
+    val scale by animateFloatAsState(if (pressed) 0.92f else 1f, label = "back_press")
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 14.dp),
+        modifier = modifier.fillMaxWidth().padding(top = AppTheme.spacing.md, bottom = AppTheme.spacing.lg),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            modifier = Modifier.weight(1f, fill = false)
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .scale(scale)
+                .clip(CircleShape)
+                .background(Color(0xE61A1B1F))
+                .border(0.75.dp, Color(0x28FFFFFF), CircleShape)
+                .clickable(source, indication = null, onClick = onBack),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .scale(animatedScale)
-                    .clip(CircleShape)
-                    .background(Color(0xFF1E192D))
-                    .border(1.dp, Color(0x20FFFFFF), CircleShape)
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = null,
-                        onClick = onBack
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                AppleIcon(
-                    glyph = AppleGlyph.ChevronLeft,
-                    tint = Color.White,
-                    size = 20.dp
-                )
-            }
-
-            Column {
-                Text(
-                    text = title,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = AuroraTokens.TextColor.primary
-                )
-                Text(
-                    text = subtitle,
-                    fontSize = 12.sp,
-                    color = AuroraTokens.TextColor.secondary
-                )
-            }
+            AppleIcon(AppleGlyph.ChevronLeft, tint = AppTheme.colors.textPrimary, size = 19.dp)
         }
-
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+            AppText(title, style = AppTheme.typography.h2, color = AppTheme.colors.textPrimary, maxLines = 1)
+            AppText(subtitle, style = AppTheme.typography.caption, color = AppTheme.colors.textSecondary, maxLines = 2)
+        }
         trailingContent?.invoke()
     }
 }

@@ -8,7 +8,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,8 +43,9 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val systemDark = isSystemInDarkTheme()
-            var isDarkTheme by remember { mutableStateOf(systemDark) }
+            // The product is intentionally an all-black spatial experience. Keeping one
+            // appearance also prevents a bright frame while overlays are being attached.
+            var isDarkTheme by remember { mutableStateOf(true) }
             var currentRoute by remember { mutableStateOf(AppNavigationRoute.MainHub) }
 
             AuroraIslandTheme(darkTheme = isDarkTheme) {

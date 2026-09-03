@@ -153,23 +153,23 @@ private fun typographyFor(windowSize: AppWindowSize): AppTypographyTokens {
     return AppTypographyTokens(
         h1 = TextStyle(
             fontFamily = FontFamily.Default,
-            fontWeight = FontWeight.Bold,
-            fontSize = (20f * scaleFactor).sp,
-            lineHeight = (26f * scaleFactor).sp,
-            letterSpacing = (-0.3).sp
+            fontWeight = FontWeight.SemiBold,
+            fontSize = (30f * scaleFactor).sp,
+            lineHeight = (36f * scaleFactor).sp,
+            letterSpacing = (-0.7).sp
         ),
         h2 = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.SemiBold,
-            fontSize = (16f * scaleFactor).sp,
-            lineHeight = (22f * scaleFactor).sp,
-            letterSpacing = (-0.2).sp
+            fontSize = (20f * scaleFactor).sp,
+            lineHeight = (26f * scaleFactor).sp,
+            letterSpacing = (-0.35).sp
         ),
         h3 = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.SemiBold,
-            fontSize = (14f * scaleFactor).sp,
-            lineHeight = (19f * scaleFactor).sp
+            fontSize = (16f * scaleFactor).sp,
+            lineHeight = (22f * scaleFactor).sp
         ),
         body = TextStyle(
             fontFamily = FontFamily.Default,

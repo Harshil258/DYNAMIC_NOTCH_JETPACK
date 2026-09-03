@@ -114,7 +114,7 @@ fun PermissionExplanationSheet(
                             modifier = Modifier
                                 .size(32.dp)
                                 .clip(CircleShape)
-                                .background(Color(0xFF262038))
+                                .background(Color(0xFF202228))
                                 .border(1.dp, Color(0x20FFFFFF), CircleShape)
                                 .clickable { onDismiss() },
                             contentAlignment = Alignment.Center

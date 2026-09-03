@@ -10,24 +10,24 @@ import androidx.compose.ui.graphics.Color
 // =============================================================================
 
 // Root Dark Void & Atmospheric Nebula Blooms
-internal val RawBgBaseDark = Color(0xFF07060A)
-internal val RawBgGradientStartDark = Color(0xFF120B20)
-internal val RawBgGradientEndDark = Color(0xFF08070D)
-internal val RawBgRadialBloomDark = Color(0xFF3B1A62)
-internal val RawBgOceanicBloomDark = Color(0xFF09202E)
+internal val RawBgBaseDark = Color(0xFF000000)
+internal val RawBgGradientStartDark = Color(0xFF030407)
+internal val RawBgGradientEndDark = Color(0xFF000000)
+internal val RawBgRadialBloomDark = Color(0xFF183F74)
+internal val RawBgOceanicBloomDark = Color(0xFF063A4B)
 
 // Luxury Card Glass Surfaces (Matte Obsidian Glass)
-internal val RawCardSurfaceDark = Color(0xFF171522)
-internal val RawCardSurfaceSubtleDark = Color(0xFF13111C)
-internal val RawCardSurfaceHighlightDark = Color(0xFF1E1B2B)
-internal val RawCardBorderHighlightDark = Color(0x24FFFFFF)
+internal val RawCardSurfaceDark = Color(0xE6121317)
+internal val RawCardSurfaceSubtleDark = Color(0xD90C0D11)
+internal val RawCardSurfaceHighlightDark = Color(0xFF1A1C22)
+internal val RawCardBorderHighlightDark = Color(0x20FFFFFF)
 internal val RawCardBorderSubtleDark = Color(0x0AFFFFFF)
 
 // Luxury Brand & Nebula Glow Accents
-internal val RawBrandPrimary = Color(0xFF7C3AED)
-internal val RawBrandPrimarySoft = Color(0xFF6366F1)
-internal val RawBrandLavender = Color(0xFFA78BFA)
-internal val RawBrandAuraPink = Color(0xFFF472B6)
+internal val RawBrandPrimary = Color(0xFF7C8CFF)
+internal val RawBrandPrimarySoft = Color(0xFF4D9CFF)
+internal val RawBrandLavender = Color(0xFFB7C4FF)
+internal val RawBrandAuraPink = Color(0xFF74D7FF)
 internal val RawBrandGold = Color(0xFFFFAE19)
 
 // Accents
@@ -38,9 +38,9 @@ internal val RawAccentRose = Color(0xFFF43F5E)
 internal val RawAccentBlue = Color(0xFF3B82F6)
 
 // Text Hierarchy
-internal val RawTextPrimaryDark = Color(0xFFF8F7FC)
-internal val RawTextSecondaryDark = Color(0xFF9E98B0)
-internal val RawTextTertiaryDark = Color(0xFF645E75)
+internal val RawTextPrimaryDark = Color(0xFFF5F7FA)
+internal val RawTextSecondaryDark = Color(0xFFA4A8B2)
+internal val RawTextTertiaryDark = Color(0xFF686D78)
 
 // Root Light Palette (Titanium & Frosted Pearlescent)
 internal val RawBgBaseLight = Color(0xFFF7F5FC)
@@ -179,7 +179,7 @@ val DarkAuroraColors = AuroraColors(
     glassScrim = Color(0x66000000),
     
     islandBackground = Color(0xFF000000),
-    islandBorder = Color(0x24FFFFFF),
+    islandBorder = Color(0x20FFFFFF),
     islandCutoutRing = Color(0x337C3AED),
     
     primary = RawBrandPrimary,
@@ -198,7 +198,7 @@ val DarkAuroraColors = AuroraColors(
     textTertiary = RawTextTertiaryDark,
     textOnAccent = Color.White,
     
-    controlTrack = Color(0xFF1F1D2B),
+    controlTrack = Color(0xFF202228),
     controlThumb = Color.White,
     controlActive = RawBrandPrimary,
     divider = Color(0x14FFFFFF)

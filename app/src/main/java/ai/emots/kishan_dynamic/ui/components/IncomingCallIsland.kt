@@ -1,6 +1,7 @@
 package ai.emots.kishan_dynamic.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -10,22 +11,26 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.motion.rememberBreathing
 import ai.emots.kishan_dynamic.ui.motion.rememberPressScale
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
@@ -49,6 +54,10 @@ fun IncomingCallIsland(
     modifier: Modifier = Modifier
 ) {
     val pulse by rememberBreathing(min = 0.94f, max = 1.04f, durationMillis = 1400)
+    val declineInteraction = remember { MutableInteractionSource() }
+    val acceptInteraction = remember { MutableInteractionSource() }
+    val declineScale by rememberPressScale(declineInteraction)
+    val acceptScale by rememberPressScale(acceptInteraction)
 
     Column(
         modifier = modifier
@@ -116,11 +125,16 @@ fun IncomingCallIsland(
                 modifier = Modifier
                     .size(50.dp)
                     .graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
+                        scaleX = declineScale
+                        scaleY = declineScale
                     }
                     .clip(CircleShape)
-                    .background(Color(0xFFFF3B30)),
+                    .background(CallRed)
+                    .clickable(
+                        interactionSource = declineInteraction,
+                        indication = null,
+                        onClick = onDecline
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Box(modifier = Modifier.rotate(135f)) {
@@ -133,11 +147,16 @@ fun IncomingCallIsland(
                 modifier = Modifier
                     .size(50.dp)
                     .graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
+                        scaleX = acceptScale
+                        scaleY = acceptScale
                     }
                     .clip(CircleShape)
-                    .background(Color(0xFF34C759)),
+                    .background(CallGreen)
+                    .clickable(
+                        interactionSource = acceptInteraction,
+                        indication = null,
+                        onClick = onAccept
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Box(modifier = Modifier.rotate(0f)) {

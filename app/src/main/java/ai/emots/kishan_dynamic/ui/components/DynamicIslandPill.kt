@@ -16,9 +16,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +37,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -190,7 +195,10 @@ fun DynamicIslandPill(
         IslandDemoState.NotificationImage,
         IslandDemoState.CallAvatars,
         IslandDemoState.TransportActivity,
-        IslandDemoState.FlightTrackerExpanded -> 96.dp
+        IslandDemoState.FlightTrackerExpanded,
+        IslandDemoState.SubscriptionPricing,
+        IslandDemoState.MovieCard,
+        IslandDemoState.ColorOptions -> 96.dp
     }
 
     // Curvature: For MusicExpanded use 44dp squircle corners (Figma spec); others use 50% capsule
@@ -775,7 +783,10 @@ private fun NotificationCompactContent() {
 }
 
 @Composable
-private fun NotificationExpandedContent() {
+private fun NotificationExpandedContent(
+    appName: String = "SilentMode",
+    title: String = "On"
+) {
     Row(
         modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
@@ -1234,7 +1245,7 @@ private fun NavigationCompactContent() {
 // EQUALIZER
 // -----------------------------------------------------------------------------
 @Composable
-private fun LiveEqualizerMini(color: Color) {
+internal fun LiveEqualizerMini(color: Color) {
     val infiniteTransition = rememberInfiniteTransition(label = "eq_bars")
     val h1 by infiniteTransition.animateFloat(
         initialValue = 0.2f,

@@ -57,7 +57,9 @@ enum class AppleGlyph {
     Search,
     Globe,
     Palette,
-    Heart
+    Heart,
+    Chat,
+    Camera
 }
 
 /**
@@ -608,6 +610,47 @@ fun AppleIcon(
                     close()
                 }
                 drawPath(heart, tint, style = stroke)
+            }
+
+            AppleGlyph.Chat -> {
+                val bubble = Path().apply {
+                    moveTo(w * 0.2f, h * 0.25f)
+                    lineTo(w * 0.8f, h * 0.25f)
+                    cubicTo(w * 0.88f, h * 0.25f, w * 0.9f, h * 0.32f, w * 0.9f, h * 0.45f)
+                    lineTo(w * 0.9f, h * 0.6f)
+                    cubicTo(w * 0.9f, h * 0.72f, w * 0.88f, h * 0.75f, w * 0.8f, h * 0.75f)
+                    lineTo(w * 0.45f, h * 0.75f)
+                    lineTo(w * 0.3f, h * 0.88f)
+                    lineTo(w * 0.3f, h * 0.75f)
+                    lineTo(w * 0.2f, h * 0.75f)
+                    cubicTo(w * 0.12f, h * 0.75f, w * 0.1f, h * 0.72f, w * 0.1f, h * 0.6f)
+                    lineTo(w * 0.1f, h * 0.45f)
+                    cubicTo(w * 0.1f, h * 0.32f, w * 0.12f, h * 0.25f, w * 0.2f, h * 0.25f)
+                    close()
+                }
+                drawPath(bubble, tint, style = stroke)
+            }
+
+            AppleGlyph.Camera -> {
+                val r = w * 0.2f
+                val body = Path().apply {
+                    moveTo(w * 0.15f, h * 0.35f)
+                    lineTo(w * 0.32f, h * 0.35f)
+                    lineTo(w * 0.38f, h * 0.25f)
+                    lineTo(w * 0.62f, h * 0.25f)
+                    lineTo(w * 0.68f, h * 0.35f)
+                    lineTo(w * 0.85f, h * 0.35f)
+                    cubicTo(w * 0.9f, h * 0.35f, w * 0.92f, h * 0.38f, w * 0.92f, h * 0.45f)
+                    lineTo(w * 0.92f, h * 0.78f)
+                    cubicTo(w * 0.92f, h * 0.85f, w * 0.9f, h * 0.88f, w * 0.85f, h * 0.88f)
+                    lineTo(w * 0.15f, h * 0.88f)
+                    cubicTo(w * 0.1f, h * 0.88f, w * 0.08f, h * 0.85f, w * 0.08f, h * 0.78f)
+                    lineTo(w * 0.08f, h * 0.45f)
+                    cubicTo(w * 0.08f, h * 0.38f, w * 0.1f, h * 0.35f, w * 0.15f, h * 0.35f)
+                    close()
+                }
+                drawPath(body, tint, style = stroke)
+                drawCircle(tint, radius = r, center = Offset(w * 0.5f, h * 0.6f), style = stroke)
             }
         }
     }

@@ -219,7 +219,7 @@ fun PermissionScreen(
                             text = "$grantedCount of $totalCount Armed",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = AppTheme.colors.textPrimary
                         )
 
                         Text(
@@ -277,7 +277,7 @@ fun PermissionScreen(
                                 text = "${(animatedProgress * 100).toInt()}%",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.White
+                                color = AppTheme.colors.textPrimary
                             )
                         }
                     }
@@ -312,7 +312,7 @@ fun PermissionScreen(
                         text = "100% On-Device Processing",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White
+                        color = AppTheme.colors.textPrimary
                     )
                     Text(
                         text = "No personal data, notifications, or keystrokes ever leave your device.",
@@ -329,7 +329,7 @@ fun PermissionScreen(
                 text = "System Capabilities",
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.White
+                color = AppTheme.colors.textPrimary
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -376,7 +376,7 @@ fun PermissionScreen(
                                         text = item.title,
                                         fontSize = 14.5.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = Color.White
+                                        color = AppTheme.colors.textPrimary
                                     )
 
                                     if (item.isRequired) {

@@ -40,7 +40,9 @@ fun DynamicNotchParent(
 fun mapIslandStateToDemoState(state: IslandState): IslandDemoState {
     return when (state) {
         is IslandState.Hidden -> IslandDemoState.Idle
-        is IslandState.Minimal -> IslandDemoState.Idle
+        // Minimal is the two-part presentation from Minimal.svg: a compact
+        // main capsule plus the detached 36.67dp activity bubble.
+        is IslandState.Minimal -> IslandDemoState.Minimal
         is IslandState.Music -> if (state.isExpanded) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact
         is IslandState.IncomingCall -> IslandDemoState.CallAvatars
         is IslandState.OngoingCall -> if (state.isExpanded) IslandDemoState.CallExpanded else IslandDemoState.CallCompact
@@ -59,4 +61,3 @@ fun mapIslandStateToDemoState(state: IslandState): IslandDemoState {
         else -> IslandDemoState.Idle
     }
 }
-

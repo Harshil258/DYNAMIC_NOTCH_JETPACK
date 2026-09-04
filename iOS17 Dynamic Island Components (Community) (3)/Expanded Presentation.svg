@@ -1,0 +1,10 @@
+<svg width="959" height="1028" viewBox="0 0 959 1028" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 1.99997C0 0.8954 0.895431 0 2 0H957C958.105 0 959 0.895431 959 2V1026C959 1027.1 958.105 1028 957 1028H2C0.895432 1028 0 1027.1 0 1026V1.99997Z" fill="#404040"/>
+<path d="M2 0V1H957V0V-1H2V0ZM959 2H958V1026H959H960V2H959ZM957 1028V1027H2V1028V1029H957V1028ZM0 1026H1V1.99997H0H-1V1026H0ZM2 1028V1027C1.44772 1027 1 1026.55 1 1026H0H-1C-1 1027.66 0.343148 1029 2 1029V1028ZM959 1026H958C958 1026.55 957.552 1027 957 1027V1028V1029C958.657 1029 960 1027.66 960 1026H959ZM957 0V1C957.552 1 958 1.44772 958 2H959H960C960 0.343145 958.657 -1 957 -1V0ZM2 0V-1C0.343166 -1 -1 0.343095 -1 1.99997H0H1C1 1.4477 1.4477 1 2 1V0Z" fill="white" fill-opacity="0.1"/>
+<rect width="430" height="932" transform="translate(48 48)" fill="#333333"/>
+<rect x="59" y="48" width="408" height="160" rx="44" fill="black"/>
+<rect x="200" y="48.5" width="125" height="35.67" rx="17.835" fill="#FF2D55" fill-opacity="0.3" stroke="#FF2D55" stroke-dasharray="4 4"/>
+<rect width="393" height="852" transform="translate(518 48)" fill="#333333"/>
+<rect x="529" y="59" width="371" height="160" rx="44" fill="black"/>
+<rect x="652" y="59.5" width="125" height="35.67" rx="17.835" fill="#FF2D55" fill-opacity="0.3" stroke="#FF2D55" stroke-dasharray="4 4"/>
+</svg>

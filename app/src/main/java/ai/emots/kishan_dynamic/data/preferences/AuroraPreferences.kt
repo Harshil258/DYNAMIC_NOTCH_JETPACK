@@ -20,6 +20,10 @@ private val Context.auroraDataStore: DataStore<Preferences> by preferencesDataSt
 class AuroraPreferences(private val context: Context) {
 
     companion object {
+        const val DEFAULT_VERTICAL_OFFSET_DP = 11
+        const val DEFAULT_HORIZONTAL_OFFSET_DP = 0
+        const val DEFAULT_WIDTH_SCALE = 1.0f
+
         private val KEY_ISLAND_ENABLED = booleanPreferencesKey("island_enabled")
         private val KEY_ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         private val KEY_VERTICAL_OFFSET = intPreferencesKey("vertical_offset")
@@ -41,9 +45,9 @@ class AuroraPreferences(private val context: Context) {
     // Flows
     val islandEnabled: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_ISLAND_ENABLED] ?: true }
     val onboardingCompleted: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_ONBOARDING_COMPLETED] ?: false }
-    val verticalOffset: Flow<Int> = context.auroraDataStore.data.map { it[KEY_VERTICAL_OFFSET] ?: 12 }
-    val horizontalOffset: Flow<Int> = context.auroraDataStore.data.map { it[KEY_HORIZONTAL_OFFSET] ?: 0 }
-    val widthScale: Flow<Float> = context.auroraDataStore.data.map { it[KEY_WIDTH_SCALE] ?: 1.0f }
+    val verticalOffset: Flow<Int> = context.auroraDataStore.data.map { it[KEY_VERTICAL_OFFSET] ?: DEFAULT_VERTICAL_OFFSET_DP }
+    val horizontalOffset: Flow<Int> = context.auroraDataStore.data.map { it[KEY_HORIZONTAL_OFFSET] ?: DEFAULT_HORIZONTAL_OFFSET_DP }
+    val widthScale: Flow<Float> = context.auroraDataStore.data.map { it[KEY_WIDTH_SCALE] ?: DEFAULT_WIDTH_SCALE }
     val autoExpand: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_AUTO_EXPAND] ?: true }
     val displayDuration: Flow<Int> = context.auroraDataStore.data.map { it[KEY_DISPLAY_DURATION] ?: 5 }
     val swipeUpDismiss: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_SWIPE_UP_DISMISS] ?: true }

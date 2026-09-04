@@ -16,7 +16,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -94,9 +93,15 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             setContent {
                 val islandState by IslandStateManager.currentState.collectAsState()
                 val isEnabled by preferences.islandEnabled.collectAsState(initial = true)
-                val verticalOffset by preferences.verticalOffset.collectAsState(initial = 12)
-                val horizontalOffset by preferences.horizontalOffset.collectAsState(initial = 0)
-                val widthScale by preferences.widthScale.collectAsState(initial = 1.0f)
+                val verticalOffset by preferences.verticalOffset.collectAsState(
+                    initial = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP
+                )
+                val horizontalOffset by preferences.horizontalOffset.collectAsState(
+                    initial = AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP
+                )
+                val widthScale by preferences.widthScale.collectAsState(
+                    initial = AuroraPreferences.DEFAULT_WIDTH_SCALE
+                )
 
                 // The island drops out of the cutout rather than popping in.
                 androidx.compose.animation.AnimatedVisibility(
@@ -119,13 +124,13 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = verticalOffset.dp)
-                                .offset(x = horizontalOffset.dp)
-                                .scale(widthScale),
+                                .offset(x = horizontalOffset.dp),
                             contentAlignment = Alignment.TopCenter
                         ) {
                             val demoState = mapToDemoState(islandState)
                             DynamicIslandPill(
                                 state = demoState,
+                                horizontalScale = widthScale,
                                 onTap = {
                                     IslandStateManager.toggleExpansion()
                                 }

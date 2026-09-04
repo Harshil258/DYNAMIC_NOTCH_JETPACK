@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ai.emots.kishan_dynamic.ui.theme.AppIslandTokens
 
 enum class IslandDemoState {
     Idle,
@@ -99,6 +100,59 @@ enum class IslandDemoState {
     TransitRouteAlert     // Dynamic Island-8.svg: Prague Main Train Station
 }
 
+/** States that share the single canonical compact-island height. */
+internal fun IslandDemoState.isCompactPresentation(): Boolean = when (this) {
+    IslandDemoState.Idle,
+    IslandDemoState.Minimal,
+    IslandDemoState.MusicCompact,
+    IslandDemoState.CallCompact,
+    IslandDemoState.ChargingCompact,
+    IslandDemoState.LowBatteryCompact,
+    IslandDemoState.SilentModeCompact,
+    IslandDemoState.NotificationCompact,
+    IslandDemoState.TimerCompact,
+    IslandDemoState.DeliveryCompact,
+    IslandDemoState.FlightCompact,
+    IslandDemoState.SportsCompact,
+    IslandDemoState.NavigationCompact -> true
+    else -> false
+}
+
+/** One geometry resolver keeps state heights identical across every surface. */
+internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp {
+    if (isCompactPresentation()) return tokens.compactHeight
+
+    return when (this) {
+        IslandDemoState.NotificationExpanded,
+        IslandDemoState.SilentModeExpanded,
+        IslandDemoState.TimerExpanded,
+        IslandDemoState.ChargingExpanded,
+        IslandDemoState.LowBatteryExpanded,
+        IslandDemoState.NotificationImage,
+        IslandDemoState.CallAvatars -> tokens.standardExpandedHeight
+
+        IslandDemoState.TransitRouteAlert,
+        IslandDemoState.MovieCard -> 142.dp
+
+        IslandDemoState.ScreenMirroringAlert,
+        IslandDemoState.FlightTrackerExpanded,
+        IslandDemoState.DeliveryExpanded,
+        IslandDemoState.FlightExpanded,
+        IslandDemoState.SportsExpanded -> 144.dp
+
+        IslandDemoState.AirplaneAlert,
+        IslandDemoState.TransportActivity -> 148.dp
+
+        IslandDemoState.MobileDataAlert,
+        IslandDemoState.SubscriptionPricing -> 162.dp
+
+        IslandDemoState.CallExpanded -> tokens.callExpandedHeight
+        IslandDemoState.MusicExpanded -> tokens.musicExpandedHeight
+        IslandDemoState.ColorOptions -> 185.3.dp
+        else -> tokens.standardExpandedHeight
+    }
+}
+
 /**
  * Authentic Apple iOS Dynamic Island Components
  * Reconstructed 1:1 from official iOS reference screenshots:
@@ -108,27 +162,29 @@ enum class IslandDemoState {
  *    - Neon Magenta 5-bar Jumping Equalizer on right
  *    - Middle Scrubber Row: "0:50" | [==== progress ====] | "-3:11" all on ONE horizontal line!
  *    - Bottom Row: Solid white [ << ] [ ▶ ] [ >> ] [ AirPlay ] directly on black (NO container circles!)
- *    - Height: 192dp, Radius: 44dp squircle
+ *    - Height: 177dp, Radius: 42dp squircle
  *
  * 2. Incoming Call Expanded (media_1788458397515.png):
  *    - 52dp Circular Avatar + "Mobile" (gray) & "Tamia Castillo" (bold white)
  *    - Red Decline Button (#FF3B30, 50dp circle) + Green Accept Button (#34C759, 50dp circle)
- *    - Height: 96dp capsule
+ *    - Height: 86dp capsule
  *
  * 3. Silent Mode Expanded (media_1788458403251.png):
  *    - White BellSlash glyph + "SilentMode" & "On"
  *    - Apple Charcoal Pill [ Unmute ] (#2C2C2E)
- *    - Height: 96dp capsule
+ *    - Height: 86dp capsule
  *
  * 4. Timer Expanded (media_1788458407179.png):
  *    - Left: Orange Pause button (50dp, #5C2B00) + Charcoal Cancel "X" button (50dp, #3A3A3C)
  *    - Right: "Timer" (orange) + "3:35" (large bold orange 32sp)
- *    - Height: 96dp capsule
+ *    - Height: 86dp capsule
  */
 @Composable
 fun DynamicIslandPill(
     state: IslandDemoState,
     modifier: Modifier = Modifier,
+    /** Width calibration only. Height remains tied to the shared iOS token. */
+    horizontalScale: Float = 1f,
     onTap: () -> Unit = {}
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -150,17 +206,20 @@ fun DynamicIslandPill(
     val islandTokens = ai.emots.kishan_dynamic.ui.theme.AppTheme.island
     val screenWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp.dp
     val maxExpanded = islandTokens.expandedWidth(screenWidth)
+    val isSplit = state == IslandDemoState.Minimal
+    val isCompact = state.isCompactPresentation()
+    val safeHorizontalScale = horizontalScale.coerceIn(0.8f, 1.2f)
 
-    val targetWidth: Dp = when (state) {
-        IslandDemoState.Idle -> 126.dp
-        IslandDemoState.Minimal -> 156.dp
-        IslandDemoState.MusicCompact -> 190.dp  // iPhone 15 Pro-1.svg exact width
+    val baseWidth: Dp = when (state) {
+        IslandDemoState.Idle -> islandTokens.compactWidth
+        IslandDemoState.Minimal -> islandTokens.splitMainWidth
+        IslandDemoState.MusicCompact -> islandTokens.mediaCompactWidth
         IslandDemoState.CallCompact -> 152.dp
         IslandDemoState.ChargingCompact -> 132.dp
         IslandDemoState.LowBatteryCompact -> 132.dp
         IslandDemoState.SilentModeCompact -> 152.dp
         IslandDemoState.NotificationCompact -> 152.dp
-        IslandDemoState.TimerCompact -> 168.dp
+        IslandDemoState.TimerCompact -> islandTokens.timerCompactWidth
         IslandDemoState.DeliveryCompact -> 160.dp
         IslandDemoState.FlightCompact -> 160.dp
         IslandDemoState.SportsCompact -> 156.dp
@@ -171,10 +230,14 @@ fun DynamicIslandPill(
         // Expanded sheets: the device width minus iOS side margins, capped.
         else -> maxExpanded
     }
+    val splitExtras = if (isSplit) islandTokens.splitGap + islandTokens.sideSize else 0.dp
+    val maxMainWidth = (maxExpanded - splitExtras).coerceAtLeast(islandTokens.compactHeight)
+    val requestedWidth = if (isCompact) baseWidth * safeHorizontalScale else baseWidth
+    val targetWidth = requestedWidth.coerceAtMost(maxMainWidth)
 
     // Exact Apple prototype heights per state type (from Figma):
-    // - Compact / Minimal: 37.33dp (idle pill)
-    // - Capsule Expanded (Timer, Silent, Charging, Notification): 96dp
+    // - Compact / Minimal: 36.67dp (shared hardware-height token)
+    // - Standard Expanded (Timer, Silent, Call, Notification): 86dp
     // - Full Activity Sheets (measured from Figma SVGs):
     //   - Transit: 142dp
     //   - Screen Mirroring: 144dp
@@ -183,54 +246,9 @@ fun DynamicIslandPill(
     //   - Active Call (5 action buttons): 166dp
     //   - Music Player (scrubber & controls): 177dp
     //   - Turn-by-Turn Navigation: 185.3dp
-    val targetHeight: Dp = when (state) {
-        IslandDemoState.Idle,
-        IslandDemoState.Minimal,
-        IslandDemoState.MusicCompact,
-        IslandDemoState.CallCompact,
-        IslandDemoState.ChargingCompact,
-        IslandDemoState.LowBatteryCompact,
-        IslandDemoState.SilentModeCompact,
-        IslandDemoState.NotificationCompact,
-        IslandDemoState.TimerCompact,
-        IslandDemoState.DeliveryCompact,
-        IslandDemoState.FlightCompact,
-        IslandDemoState.SportsCompact,
-        IslandDemoState.NavigationCompact -> 37.33.dp
+    val targetHeight = state.resolvedHeight(islandTokens)
 
-        IslandDemoState.NotificationExpanded,
-        IslandDemoState.SilentModeExpanded,
-        IslandDemoState.TimerExpanded,
-        IslandDemoState.ChargingExpanded,
-        IslandDemoState.LowBatteryExpanded,
-        IslandDemoState.NotificationImage,
-        IslandDemoState.CallAvatars -> 96.dp
-
-        IslandDemoState.TransitRouteAlert,
-        IslandDemoState.MovieCard -> 142.dp
-
-        IslandDemoState.ScreenMirroringAlert,
-        IslandDemoState.FlightTrackerExpanded,
-        IslandDemoState.DeliveryExpanded,
-        IslandDemoState.FlightExpanded,
-        IslandDemoState.SportsExpanded -> 144.dp
-
-        IslandDemoState.AirplaneAlert,
-        IslandDemoState.TransportActivity -> 148.dp
-
-        IslandDemoState.MobileDataAlert,
-        IslandDemoState.SubscriptionPricing -> 162.dp
-
-        IslandDemoState.CallExpanded -> 166.dp
-
-        IslandDemoState.MusicExpanded -> 177.dp
-
-        IslandDemoState.ColorOptions -> 185.3.dp
-
-        else -> 96.dp
-    }
-
-    // Corner curvature: Exact 42dp squircle for full sheets, 44dp for 96dp capsules, 50% for compact
+    // Corner curvature: 42dp for full sheets, 43-44dp for 86dp capsules, 50% for compact
     val cornerRadius = when (state) {
         IslandDemoState.Idle,
         IslandDemoState.Minimal,
@@ -252,12 +270,10 @@ fun DynamicIslandPill(
         IslandDemoState.ChargingExpanded,
         IslandDemoState.LowBatteryExpanded,
         IslandDemoState.NotificationImage,
-        IslandDemoState.CallAvatars -> RoundedCornerShape(44.dp)
+        IslandDemoState.CallAvatars -> RoundedCornerShape(percent = 50)
 
-        else -> RoundedCornerShape(42.dp)
+        else -> RoundedCornerShape(islandTokens.expandedCorner)
     }
-
-    val isSplit = state == IslandDemoState.Minimal
 
     // Apple Liquid Morphing Springs
     val animatedWidth by animateDpAsState(
@@ -402,7 +418,8 @@ fun DynamicIslandPill(
                 AnimatedContent(
                     targetState = state,
                     transitionSpec = {
-                        fadeIn(tween(180)) togetherWith fadeOut(tween(150))
+                        fadeIn(tween(200, easing = ai.emots.kishan_dynamic.ui.motion.AppMotion.EaseIslandContent)) togetherWith
+                            fadeOut(tween(200, easing = ai.emots.kishan_dynamic.ui.motion.AppMotion.EaseIslandContent))
                     },
                     label = "island_content_morph"
                 ) { targetState ->
@@ -446,13 +463,13 @@ fun DynamicIslandPill(
                 }
             }
 
-            // Companion Split Bubble (Minimal.svg: 11dp gap + 36.67dp circular bubble)
+            // Companion split bubble: canonical 11dp gap + 36.67dp circular bubble.
             AnimatedVisibility(visible = isSplit) {
                 Row {
-                    Spacer(modifier = Modifier.width(11.dp))
+                    Spacer(modifier = Modifier.width(islandTokens.splitGap))
                     Box(
                         modifier = Modifier
-                            .size(37.dp)
+                            .size(islandTokens.sideSize)
                             .shadow(
                                 elevation = 12.dp,
                                 shape = CircleShape,
@@ -501,7 +518,7 @@ private fun CompactIslandLayout(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(37.33.dp),
+            .fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -526,7 +543,7 @@ private fun IdleCutoutContent() {
 
 @Composable
 private fun MinimalPillContent() {
-    // Figma Minimal.svg shows a single 37.33pt circular status indicator
+    // Figma Minimal.svg uses the shared 36.67pt compact height.
     // Not a split pill - just a breathing status dot
     val pulse by ai.emots.kishan_dynamic.ui.motion.rememberBreathing(
         min = 0.85f,
@@ -551,7 +568,7 @@ private fun MusicCompactContent() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(37.33.dp),
+            .fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -1610,7 +1627,7 @@ private fun AvatarCircle(initials: String, gradientColors: List<Color>) {
 
 // -----------------------------------------------------------------------------
 // DI-1: TIMER WITH IMAGE — Dynamic Island-1.svg
-// 96dp tall capsule.
+// 86dp standard expanded capsule.
 // Left: gradient image placeholder (square) + time label.
 // Right: Canvas clock-face graphic + Play/Pause toggle buttons.
 // Figma shows: image block, "15:30 — 30:00" timer label, circular clock with
@@ -1764,7 +1781,7 @@ private fun TimerWithImageCompactContent() {
 
 // -----------------------------------------------------------------------------
 // DI-2: NOTIFICATION WITH IMAGE — Dynamic Island-2.svg
-// 96dp tall capsule: compact notification card with image thumbnail,
+// 86dp standard expanded capsule with image thumbnail,
 // sender/labels, and message preview.
 // -----------------------------------------------------------------------------
 @Composable
@@ -1828,7 +1845,7 @@ private fun NotificationImageCompactContent() {
 
 // -----------------------------------------------------------------------------
 // DI-3: INCOMING CALL WITH TWO AVATARS — Dynamic Island-3.svg
-// 96dp tall capsule showing two gradient avatar circles (TM/OC) and
+// 86dp standard expanded capsule showing two gradient avatar circles (TM/OC) and
 // an "Incoming Call" label.
 // Figma shows: two 24dp circular gradient avatars + "Incoming Call" text.
 // -----------------------------------------------------------------------------
@@ -1864,7 +1881,7 @@ private fun IncomingCallTwoAvatarsContent() {
 
 // -----------------------------------------------------------------------------
 // DI-4: TRANSPORT LIVE ACTIVITY — Dynamic Island-4.svg
-// 96dp tall: airplane icon + "2h 15m" + route label.
+// 148dp activity sheet: airplane icon + "2h 15m" + route label.
 // Figma shows airplane glyph, duration, and "San Francisco → New York" route.
 // -----------------------------------------------------------------------------
 @Composable
@@ -1905,7 +1922,7 @@ private fun TransportLiveActivityCompactContent() {
 
 // -----------------------------------------------------------------------------
 // DI-5: FLIGHT TRACKER DETAIL — Dynamic Island-5.svg
-// 96dp tall: Delta flight info with ON TIME badge, SFO→JFK progress bar,
+// 144dp activity sheet: Delta flight info with ON TIME badge, SFO→JFK progress bar,
 // gate/altitude details.
 // Figma shows: airline label, ON TIME pill, route progress bar, gate +
 // altitude row, plus an airplane icon.
@@ -2017,7 +2034,7 @@ private fun FlightTrackerDetailCompactContent() {
 
 // -----------------------------------------------------------------------------
 // DI-6: DELIVERY ORDER — Dynamic Island-6.svg
-// 96dp tall: Chipotle-style order card with 70% progress bar, driver info,
+// 144dp activity sheet: Chipotle-style order card with 70% progress bar, driver info,
 // and phone button.
 // Figma shows: torch/logo icon, "Order #..." text, progress bar, "Picked up"
 // status, driver name + star rating + phone button.
@@ -2128,7 +2145,7 @@ private fun DeliveryOrderCompactContent() {
 
 // -----------------------------------------------------------------------------
 // DI-7: SPORTS SCORE — Dynamic Island-7.svg
-// 96dp tall: "UEFA Champions League" live match card with LIVE dot,
+// 144dp activity sheet: "UEFA Champions League" live match card with LIVE dot,
 // Real Madrid 2-1 Man City, match details.
 // Figma shows: league title, LIVE indicator, score, team names + scorers,
 // and "Quarter-Final • 2nd Leg" footer.
@@ -2222,7 +2239,7 @@ private fun SportsScoreCompactContent() {
 
 // -----------------------------------------------------------------------------
 // DI-8: NAVIGATION ROUTE — Dynamic Island-8.svg
-// 96dp tall: navigation guidance with location arrow, "200m" distance,
+// Shared 36.67dp compact height: location arrow, "200m" distance,
 // chevron, and route dots.
 // Figma shows: LocationArrow glyph, "200m" label, ChevronRight, and three
 // route-dot indicators.

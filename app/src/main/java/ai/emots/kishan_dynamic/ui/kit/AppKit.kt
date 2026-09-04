@@ -547,7 +547,7 @@ fun AppStatusPill(
  * framing the jet-black Dynamic Island with crisp contrast.
  *
  * Height smoothly and dynamically adapts to the active island presentation
- * (116dp for compact/idle, 156dp for 96dp capsules, 198dp for 144dp activities,
+ * (116dp for compact/idle, 156dp for 86dp capsules, 198dp for 144dp activities,
  * and 238dp for full sheets), completely eliminating empty black dead space.
  */
 @Composable

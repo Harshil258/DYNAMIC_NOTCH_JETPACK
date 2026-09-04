@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -53,8 +52,12 @@ fun DisplaySettingsScreen(
     val scope = rememberCoroutineScope()
     val preferences = remember { AuroraPreferences(context) }
 
-    val savedVerticalOffset by preferences.verticalOffset.collectAsState(initial = 14)
-    val savedWidthScale by preferences.widthScale.collectAsState(initial = 1.0f)
+    val savedVerticalOffset by preferences.verticalOffset.collectAsState(
+        initial = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP
+    )
+    val savedWidthScale by preferences.widthScale.collectAsState(
+        initial = AuroraPreferences.DEFAULT_WIDTH_SCALE
+    )
 
     var verticalOffset by remember(savedVerticalOffset) {
         mutableFloatStateOf(savedVerticalOffset.toFloat())
@@ -109,9 +112,11 @@ fun DisplaySettingsScreen(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .offset { IntOffset(x = 0, y = verticalOffset.roundToInt()) }
-                        .scale(widthScale / 100f)
                 ) {
-                    DynamicIslandPill(state = IslandDemoState.Minimal)
+                    DynamicIslandPill(
+                        state = IslandDemoState.Minimal,
+                        horizontalScale = widthScale / 100f
+                    )
                 }
             }
 
@@ -168,12 +173,12 @@ fun DisplaySettingsScreen(
             glyph = AppleGlyph.Reset,
             style = AppButtonStyle.Secondary,
             onClick = {
-                verticalOffset = 14f
+                verticalOffset = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP.toFloat()
                 widthScale = 100f
                 selectedCutoutIndex = 1
                 scope.launch {
-                    preferences.setVerticalOffset(14)
-                    preferences.setWidthScale(1.0f)
+                    preferences.setVerticalOffset(AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP)
+                    preferences.setWidthScale(AuroraPreferences.DEFAULT_WIDTH_SCALE)
                 }
             }
         )

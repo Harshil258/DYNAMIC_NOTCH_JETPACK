@@ -105,66 +105,61 @@ data class AppLayoutTokens(
  * Every number below is a real iOS point value — do NOT round them to
  * "nice" numbers, the authenticity of the island depends on them:
  *
- *   idle pill          126.0 x 37.33   corner 18.67 (perfect capsule)
- *   compact split      ~ pill + 8pt gap + 37.33 bubble
- *   minimal bubble     37.33 diameter
- *   expanded sheet     371.0 wide, corner 44
+ *   idle pill          126.0 x 36.67   corner 18.335 (perfect capsule)
+ *   compact split      156pt pill + 11pt gap + 36.67pt bubble
+ *   minimal bubble     36.67 diameter
+ *   expanded sheet     371.0 wide, corner 42 (160pt template uses 44)
  *   top inset          11.0 from the top edge of the display
  */
 data class AppIslandTokens(
-    /** True iOS capsule height. */
-    val compactHeight: Dp = 37.33.dp,
+    /**
+     * Canonical height for every idle, minimal, and compact presentation.
+     *
+     * Both device frames in Compact Presentation.svg specify 36.67pt. Some
+     * rendered activity exports round that physical height to 37pt or 38pt,
+     * but they all consume this one token in the app.
+     */
+    val compactHeight: Dp = 36.67.dp,
     /** True iOS idle capsule width — never stretch this to the screen. */
     val compactWidth: Dp = 126.dp,
     /** Compact media capsule: from iPhone 15 Pro-1.svg (190pt x 38pt). */
     val mediaCompactWidth: Dp = 190.dp,
+    /** Compact timer width from Prototype.svg (222pt x 37pt). */
+    val timerCompactWidth: Dp = 222.dp,
+    /** Main capsule width in the split minimal presentation. */
+    val splitMainWidth: Dp = 156.dp,
     /** Trailing bubble used in split (live-activity) mode (Minimal.svg: 36.67pt circle). */
     val sideSize: Dp = 36.67.dp,
-    /** Gap between the capsule and the trailing bubble (iOS Figma uses 11pt in Minimal.svg). */
+    /** Canonical gap; repeated presentation exports use 11pt (one concrete export uses 6pt). */
     val splitGap: Dp = 11.dp,
     /** Distance from the top edge of the display to the island (Figma: 10-11pt). */
     val topInset: Dp = 11.dp,
-    /** Capsule corner radius (exact half of the height = true capsule). */
-    val compactCorner: Dp = 18.67.dp,
-    /** Expanded sheet corner radius (Figma uses 42pt for sheets, 44pt for 96dp/160dp capsules). */
+    /** Expanded sheet corner radius (Figma uses 42pt for sheets, 43-44pt for capsules). */
     val expandedCorner: Dp = 42.dp,
     /** Maximum expanded width from Pro Max 430px-2.svg (408pt on 430pt screen). */
     val expandedMaxWidth: Dp = 408.dp,
-    /** Horizontal breathing room kept on each side when expanded (11pt on Pro Max, 13pt on 15 Pro). */
+    /** Maximum shell margin: 11pt on both device frames; some content states are narrower. */
     val expandedSideMargin: Dp = 11.dp,
-    /** Incoming call expanded height (96pt in phone context, matches Figma). */
-    val incomingCallHeight: Dp = 96.dp,
-    /** Ringer / notification expanded height. */
-    val ringerExpandedHeight: Dp = 96.dp,
+    /** Repeated notification/call capsule height in Dynamic Island-0...10.svg. */
+    val standardExpandedHeight: Dp = 86.dp,
     /** Music expanded height (full sheet with scrubber and controls, from iPhone 15 Pro.svg). */
     val musicExpandedHeight: Dp = 177.dp,
     /** Call expanded height (full sheet with 5 action buttons, from Figma Dynamic Island-2/3.svg). */
     val callExpandedHeight: Dp = 166.dp,
-    /** Notification expanded height (96pt in phone context, matches Figma). */
-    val notificationExpandedHeight: Dp = 96.dp,
     /** Reference device the geometry above was measured on (iPhone 15 Pro). */
     val referenceScreenWidth: Dp = 393.dp
 ) {
     /**
      * Expanded width for the current display.
      *
-     * The island grows to the device width minus the iOS side margins, but is
-     * hard-capped at [expandedMaxWidth] so it never becomes an edge-to-edge
-     * banner on tablets or foldables.
+     * The island grows to the current window width minus the iOS side margins,
+     * but is hard-capped at [expandedMaxWidth] so it never becomes an
+     * edge-to-edge banner on tablets or foldables. There is deliberately no
+     * minimum width: a minimum wider than a small window would clip the island.
      */
     fun expandedWidth(screenWidth: Dp): Dp {
-        val available = screenWidth - expandedSideMargin * 2
-        return available.coerceIn(300.dp, expandedMaxWidth)
-    }
-
-    /**
-     * Scale factor to keep the island physically correct on displays that are
-     * narrower than the reference device (small phones), so a 126pt pill still
-     * reads as a 126pt pill relative to the screen.
-     */
-    fun deviceScale(screenWidth: Dp): Float {
-        val raw = screenWidth / referenceScreenWidth
-        return raw.coerceIn(0.86f, 1f)
+        val available = (screenWidth - expandedSideMargin * 2).coerceAtLeast(0.dp)
+        return available.coerceAtMost(expandedMaxWidth)
     }
 }
 

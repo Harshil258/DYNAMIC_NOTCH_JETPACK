@@ -66,6 +66,9 @@ object AppMotion {
     /** Symmetrical curve for state changes that are neither entering nor leaving. */
     val EaseInOut: Easing = CubicBezierEasing(0.4f, 0f, 0.2f, 1f)
 
+    /** Lovable/iOS content curve: quick reveal with a soft settle. */
+    val EaseIslandContent: Easing = CubicBezierEasing(0.32f, 0.72f, 0f, 1f)
+
     /** Slow, ambient curve used by background blooms and shimmers. */
     val EaseAmbient: Easing = CubicBezierEasing(0.45f, 0f, 0.55f, 1f)
 
@@ -82,10 +85,14 @@ object AppMotion {
     // Springs
     // -------------------------------------------------------------------------
 
-    /** The island morph: heavy, liquid, slightly overshooting. */
+    /**
+     * The island morph, calibrated to the Lovable reference spring
+     * (stiffness 460, damping 32, mass 1.05). Compose exposes damping ratio
+     * rather than a raw damping coefficient; 0.73 is the equivalent ratio.
+     */
     fun <T> islandSpring(): SpringSpec<T> = spring(
-        dampingRatio = 0.78f,
-        stiffness = 420f
+        dampingRatio = 0.73f,
+        stiffness = 460f
     )
 
     /** Content appearing inside the island: snappier than the container. */

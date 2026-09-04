@@ -179,7 +179,7 @@ fun PlaygroundScreen(
             PlaygroundStateItem(
                 label = "Idle",
                 headline = "Idle island",
-                detail = "126pt × 37.33pt hardware cutout, exactly as iOS draws it",
+                detail = "126pt × 36.67pt hardware cutout, exactly as the two device references draw it",
                 supportsExpand = false,
                 compactState = IslandDemoState.Idle,
                 expandedState = IslandDemoState.Idle
@@ -602,4 +602,3 @@ private fun AppPillToggle(
         )
     }
 }
-

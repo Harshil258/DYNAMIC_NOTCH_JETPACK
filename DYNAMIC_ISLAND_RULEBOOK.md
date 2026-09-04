@@ -2,8 +2,15 @@
 
 ## Reference: iOS 17 Dynamic Island Components (Figma Community)
 **Source:** https://www.figma.com/design/z7GyjPFoVfAlEgL3AhaYEr/iOS17-Dynamic-Island-Components--Community-  
-**Export Directory:** `islandfigmacomponentofios/`
-**Extended Export Directory:** `iOS17 Dynamic Island Components (Community) (3)/`
+**Primary export directory:** `design/reference/ios17-dynamic-island/`
+**Secondary export directory:** `design/reference/ios17-dynamic-island-alt/`
+**Extracted asset set:** `design/icons/` (see `design/ASSETS.md`)
+
+> The two Figma export folders previously sat in the repository root as
+> `iOS17 Dynamic Island Components (Community) (3)/` and
+> `islandfigmacomponentofios/`. They now live under `design/reference/` with the
+> twelve byte-identical duplicates removed; every original filename is
+> unchanged, so all references below still resolve.
 
 ---
 
@@ -68,7 +75,7 @@ mirrored by `AppMotion` with the equivalent Compose damping ratio and easing.
 ## 2. STATE CLASSIFICATIONS & FIGMA AUDIT
 
 ### 2.1 Idle Pill State
-- **Audit Source:** `Pro Max 430px.svg`
+- **Audit Source:** `ios17-dynamic-island-alt/Pro Max 430px.svg`
 - **Width:** `126.0 dp`
 - **Height:** `36.67 dp`
 - **Corner Radius:** `18.335 dp` (Capsule 50%)
@@ -77,7 +84,7 @@ mirrored by `AppMotion` with the equivalent Compose damping ratio and easing.
 ---
 
 ### 2.2 Minimal State (Split Bubble)
-- **Audit Source:** `Minimal.svg`, `Pro Max 430px-1.svg`
+- **Audit Source:** `Dynamic Island/Minimal.svg`, `ios17-dynamic-island-alt/Pro Max 430px-1.svg`
 - **Left Capsule (Main Pill):**
   - **Width:** `156.0 dp` (starts at `x = 122`, ends at `x = 278` in 430pt frame)
   - **Height:** `36.67 dp`
@@ -91,7 +98,7 @@ mirrored by `AppMotion` with the equivalent Compose damping ratio and easing.
 ---
 
 ### 2.3 Compact States (Unified Live Activity Pill)
-- **Audit Source:** `Compact.svg`, `Pro Max 430px.svg`
+- **Audit Source:** `ios17-dynamic-island-alt/Compact.svg`, `ios17-dynamic-island-alt/Pro Max 430px.svg`
 - **Width:** Dynamically sized to content:
   - **Compact Timer:** `222.0 dp` (`Compact.svg`: `x = 104 to 326`)
   - **Compact Media:** `180.0 - 220.0 dp`
@@ -166,7 +173,7 @@ must not be used to size the runtime capsule.
 ### 2.5 Extended 30-SVG corpus map
 
 The following filenames are scoped to
-`iOS17 Dynamic Island Components (Community) (3)/Dynamic Island/`. This matters
+`design/reference/ios17-dynamic-island/Dynamic Island/`. This matters
 because the older export folder reuses some filenames for different states.
 All measurements describe the black body only and exclude the SVG canvas and
 its 8pt blurred drop-shadow padding.

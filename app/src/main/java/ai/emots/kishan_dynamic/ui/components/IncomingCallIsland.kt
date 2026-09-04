@@ -34,9 +34,10 @@ import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.motion.rememberBreathing
 import ai.emots.kishan_dynamic.ui.motion.rememberPressScale
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
-private val CallGreen = Color(0xFF34C759)
-private val CallRed = Color(0xFFFF3B30)
+private val CallGreen = IslandColors.Green
+private val CallRed = IslandColors.Red
 
 /**
  * INCOMING CALL sheet.
@@ -80,7 +81,7 @@ fun IncomingCallIsland(
                     .clip(CircleShape)
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFFFF6B35), Color(0xFFFF8C42))
+                            listOf(IslandColors.Orange, IslandColors.Yellow)
                         )
                     )
                     .border(1.dp, Color(0x33FFFFFF), CircleShape),
@@ -99,7 +100,7 @@ fun IncomingCallIsland(
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "Mobile",
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
                 )

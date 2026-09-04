@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.theme.AppIslandTokens
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 enum class IslandDemoState {
     Idle,
@@ -159,7 +160,7 @@ internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp {
  *
  * 1. Music Expanded (media_1788458385303.png):
  *    - 52dp Album Art Squircle (Heat Waves) + [E] Explicit Badge + "Grass Animals"
- *    - Neon Magenta 5-bar Jumping Equalizer on right
+ *    - Reference 6-bar equalizer on the right
  *    - Middle Scrubber Row: "0:50" | [==== progress ====] | "-3:11" all on ONE horizontal line!
  *    - Bottom Row: Solid white [ << ] [ ▶ ] [ >> ] [ AirPlay ] directly on black (NO container circles!)
  *    - Height: 177dp, Radius: 42dp squircle
@@ -301,25 +302,25 @@ fun DynamicIslandPill(
     )
 
     val auraColor = when (state) {
-        IslandDemoState.Idle -> Color(0xFF4C6FFF)
-        IslandDemoState.CallCompact, IslandDemoState.CallExpanded -> Color(0xFF37C058)
-        IslandDemoState.ChargingCompact, IslandDemoState.ChargingExpanded -> Color(0xFF34C759)
-        IslandDemoState.LowBatteryCompact, IslandDemoState.LowBatteryExpanded -> Color(0xFFFF453A)
-        IslandDemoState.MusicCompact, IslandDemoState.MusicExpanded -> Color(0xFFFA2D48)
-        IslandDemoState.SilentModeCompact, IslandDemoState.SilentModeExpanded -> Color(0xFFFF453A)
+        IslandDemoState.Idle -> IslandColors.Blue
+        IslandDemoState.CallCompact, IslandDemoState.CallExpanded -> IslandColors.CapsuleGreen
+        IslandDemoState.ChargingCompact, IslandDemoState.ChargingExpanded -> IslandColors.Green
+        IslandDemoState.LowBatteryCompact, IslandDemoState.LowBatteryExpanded -> IslandColors.Red
+        IslandDemoState.MusicCompact, IslandDemoState.MusicExpanded -> IslandColors.Red
+        IslandDemoState.SilentModeCompact, IslandDemoState.SilentModeExpanded -> IslandColors.Red
         IslandDemoState.NotificationCompact, IslandDemoState.NotificationExpanded -> Color(0xFF25D366)
-        IslandDemoState.TimerCompact, IslandDemoState.TimerExpanded -> Color(0xFF2A86E6)
-        IslandDemoState.DeliveryCompact, IslandDemoState.DeliveryExpanded -> Color(0xFFF59E0B)
-        IslandDemoState.FlightCompact, IslandDemoState.FlightExpanded -> Color(0xFF00F5D4)
-        IslandDemoState.SportsCompact, IslandDemoState.SportsExpanded -> Color(0xFF8B5CF6)
-        IslandDemoState.TimerImage -> Color(0xFF67EBF5)
-        IslandDemoState.NotificationImage -> Color(0xFF8E8E93)
-        IslandDemoState.CallAvatars -> Color(0xFF37C058)
-        IslandDemoState.TransportActivity, IslandDemoState.AirplaneAlert -> Color(0xFFFB8B28)
-        IslandDemoState.FlightTrackerExpanded, IslandDemoState.ScreenMirroringAlert -> Color(0xFF37A3DE)
-        IslandDemoState.SubscriptionPricing, IslandDemoState.MobileDataAlert -> Color(0xFF37C058)
-        IslandDemoState.MovieCard, IslandDemoState.TransitRouteAlert -> Color(0xFFFA3532)
-        else -> Color(0xFF6D82FF)
+        IslandDemoState.TimerCompact, IslandDemoState.TimerExpanded -> IslandColors.TimerBlue
+        IslandDemoState.DeliveryCompact, IslandDemoState.DeliveryExpanded -> IslandColors.Orange
+        IslandDemoState.FlightCompact, IslandDemoState.FlightExpanded -> IslandColors.CapsuleCyan
+        IslandDemoState.SportsCompact, IslandDemoState.SportsExpanded -> IslandColors.Purple
+        IslandDemoState.TimerImage -> IslandColors.TimerCyan
+        IslandDemoState.NotificationImage -> IslandColors.Gray
+        IslandDemoState.CallAvatars -> IslandColors.CapsuleGreen
+        IslandDemoState.TransportActivity, IslandDemoState.AirplaneAlert -> IslandColors.CapsuleOrange
+        IslandDemoState.FlightTrackerExpanded, IslandDemoState.ScreenMirroringAlert -> IslandColors.CapsuleCyan
+        IslandDemoState.SubscriptionPricing, IslandDemoState.MobileDataAlert -> IslandColors.CapsuleGreen
+        IslandDemoState.MovieCard, IslandDemoState.TransitRouteAlert -> IslandColors.CapsuleRed
+        else -> IslandColors.Indigo
     }
 
     Box(contentAlignment = Alignment.Center) {
@@ -359,7 +360,7 @@ fun DynamicIslandPill(
                         spotColor = Color.Black.copy(alpha = 0.9f)
                     )
                     .clip(cornerRadius)
-                    .background(Color(0xFF000000))
+                    .background(Color.Black)
                     .border(
                         width = 0.75.dp,
                         brush = Brush.verticalGradient(
@@ -477,7 +478,7 @@ fun DynamicIslandPill(
                                 spotColor = auraColor.copy(alpha = 0.5f)
                             )
                             .clip(CircleShape)
-                            .background(Color(0xFF000000))
+                            .background(Color.Black)
                             .border(
                                 width = 0.75.dp,
                                 brush = Brush.verticalGradient(
@@ -489,13 +490,13 @@ fun DynamicIslandPill(
                     ) {
                         when (state) {
                             IslandDemoState.CallCompact -> {
-                                AppleIcon(glyph = AppleGlyph.Phone, tint = Color(0xFF37C058), size = 15.dp)
+                                AppleIcon(glyph = AppleGlyph.Phone, tint = IslandColors.CapsuleGreen, size = 15.dp)
                             }
                             IslandDemoState.TimerCompact, IslandDemoState.Minimal -> {
                                 TimerProgressRing(progress = 0.72f, size = 21.dp, strokeWidth = 2.5.dp)
                             }
                             else -> {
-                                AppleIcon(glyph = AppleGlyph.Timer, tint = Color(0xFF2A86E6), size = 15.dp)
+                                AppleIcon(glyph = AppleGlyph.Timer, tint = IslandColors.TimerBlue, size = 15.dp)
                             }
                         }
                     }
@@ -555,7 +556,7 @@ private fun MinimalPillContent() {
         modifier = Modifier
             .size(12.dp)
             .clip(CircleShape)
-            .background(Color(0xFF34C759).copy(alpha = pulse))
+            .background(IslandColors.Green.copy(alpha = pulse))
     )
 }
 
@@ -583,7 +584,7 @@ private fun MusicCompactContent() {
                     .clip(RoundedCornerShape(5.dp))
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFFE0A8FF), Color(0xFF818CF8), Color(0xFF38BDF8))
+                            listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.Cyan)
                         )
                     ),
                 contentAlignment = Alignment.Center
@@ -605,8 +606,8 @@ private fun MusicCompactContent() {
             )
         }
 
-        // Neon Magenta 5-bar Equalizer (matches Figma Compact.svg exactly)
-        LiveEqualizerMini(color = Color(0xFFFA2D48))
+        // Reference equalizer (geometry measured off Minimal.svg / DI-11)
+        LiveEqualizerMini()
     }
 }
 
@@ -633,7 +634,7 @@ private fun MusicExpandedContent() {
                     .clip(RoundedCornerShape(13.dp))
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFFE879F9), Color(0xFF818CF8), Color(0xFF38BDF8))
+                            listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.Cyan)
                         )
                     )
                     .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(13.dp)),
@@ -665,12 +666,12 @@ private fun MusicExpandedContent() {
                             modifier = Modifier
                                 .size(16.dp)
                                 .clip(RoundedCornerShape(3.5.dp))
-                                .background(Color(0xFF8E8E93)),
+                                .background(IslandColors.Gray),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = "E",
-                                color = Color(0xFF000000),
+                                color = Color.Black,
                                 fontSize = 7.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -681,7 +682,7 @@ private fun MusicExpandedContent() {
 
                     Text(
                         text = "Glass Animals",
-                        color = Color(0xFF8E8E93),
+                        color = IslandColors.Gray,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.SemiBold,
                         maxLines = 1,
@@ -691,8 +692,8 @@ private fun MusicExpandedContent() {
 
                 Spacer(modifier = Modifier.width(14.dp))
 
-                // Neon Pink/Magenta Waveform
-                LiveEqualizerMini(color = Color(0xFFFA2D48))
+                // Reference equalizer (Minimal.svg paint0_linear: #F84BAB -> #B4CDFB)
+                LiveEqualizerMini()
             }
         }
     }
@@ -706,7 +707,7 @@ private fun MusicExpandedContent() {
             Text(
                 text = "0:50",
                 fontSize = 12.sp,
-                color = Color(0xFF8E8E93),
+                color = IslandColors.Gray,
                 fontWeight = FontWeight.Medium,
                 fontFamily = FontFamily.Monospace
             )
@@ -717,7 +718,7 @@ private fun MusicExpandedContent() {
                     .weight(1f)
                     .height(5.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF3A3A3C))
+                    .background(IslandColors.Gray4)
             ) {
                 Box(
                     modifier = Modifier
@@ -731,7 +732,7 @@ private fun MusicExpandedContent() {
             Text(
                 text = "-3:11",
                 fontSize = 12.sp,
-                color = Color(0xFF8E8E93),
+                color = IslandColors.Gray,
                 fontWeight = FontWeight.Medium,
                 fontFamily = FontFamily.Monospace
             )
@@ -772,7 +773,7 @@ private fun CallCompactContent() {
                 modifier = Modifier
                     .size(20.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF10B981)),
+                    .background(IslandColors.Green),
                 contentAlignment = Alignment.Center
             ) {
                 AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 11.dp)
@@ -783,7 +784,7 @@ private fun CallCompactContent() {
                 text = "02:45",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF10B981),
+                color = IslandColors.Green,
                 fontFamily = FontFamily.Monospace
             )
         }
@@ -808,7 +809,7 @@ private fun CallExpandedContent() {
                     .clip(CircleShape)
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFFEA580C), Color(0xFF9A3412))
+                            listOf(IslandColors.Orange, IslandColors.Brown)
                         )
                     )
                     .border(1.dp, Color(0x33FFFFFF), CircleShape),
@@ -827,7 +828,7 @@ private fun CallExpandedContent() {
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "Mobile",
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -853,7 +854,7 @@ private fun CallExpandedContent() {
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFF3B30)),
+                    .background(IslandColors.Red),
                 contentAlignment = Alignment.Center
             ) {
                 Box(modifier = Modifier.rotate(135f)) {
@@ -866,7 +867,7 @@ private fun CallExpandedContent() {
                 modifier = Modifier
                     .size(50.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF34C759)),
+                    .background(IslandColors.Green),
                 contentAlignment = Alignment.Center
             ) {
                 AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 22.dp)
@@ -936,7 +937,7 @@ private fun NotificationExpandedContent(
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
                     text = appName,
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 11.5.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -952,7 +953,7 @@ private fun NotificationExpandedContent(
                 Spacer(modifier = Modifier.height(1.dp))
                 Text(
                     text = message,
-                    color = Color(0xFFC7C7CC),
+                    color = IslandColors.TextTertiary,
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -965,7 +966,7 @@ private fun NotificationExpandedContent(
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(percent = 50))
-                .background(Color(0xFF2C2C2E))
+                .background(IslandColors.Gray5)
                 .padding(horizontal = 18.dp, vertical = 8.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -986,14 +987,14 @@ private fun NotificationExpandedContent(
 private fun SilentModeCompactContent() {
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.BellSlash, tint = Color(0xFFFF453A), size = 13.dp)
+            AppleIcon(glyph = AppleGlyph.BellSlash, tint = IslandColors.Red, size = 13.dp)
         },
         trailing = {
             Text(
                 text = "Silent",
                 fontSize = 11.5.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFFFF453A)
+                color = IslandColors.Red
             )
         }
     )
@@ -1012,7 +1013,7 @@ private fun SilentModeExpandedContent(
         Row(verticalAlignment = Alignment.CenterVertically) {
             AppleIcon(
                 glyph = AppleGlyph.BellSlash,
-                tint = Color(0xFFFF453A),
+                tint = IslandColors.Red,
                 size = 28.dp
             )
 
@@ -1021,7 +1022,7 @@ private fun SilentModeExpandedContent(
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
                     text = appName,
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
                 )
@@ -1038,7 +1039,7 @@ private fun SilentModeExpandedContent(
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(percent = 50))
-                .background(Color(0xFF2C2C2E))
+                .background(IslandColors.Gray5)
                 .padding(horizontal = 22.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -1066,16 +1067,16 @@ fun TimerProgressRing(
         val strokePx = strokeWidth.toPx()
         // Dark track
         drawCircle(
-            color = Color(0xFF1B2F44),
+            color = IslandColors.Gray6,
             radius = (this.size.minDimension - strokePx) / 2f,
             style = Stroke(width = strokePx)
         )
         // Sweep gradient cyan to blue
         val brush = Brush.sweepGradient(
             listOf(
-                Color(0xFF67EBF5),
-                Color(0xFF2A86E6),
-                Color(0xFF67EBF5)
+                IslandColors.TimerCyan,
+                IslandColors.TimerBlue,
+                IslandColors.TimerCyan
             )
         )
         drawArc(
@@ -1125,14 +1126,14 @@ private fun TimerExpandedContent() {
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
                     text = "Timer",
-                    color = Color(0xFF8E8D94),
+                    color = IslandColors.TextSecondary,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "01:45",
-                    color = Color(0xFFEBEBF0),
+                    color = IslandColors.TextPrimary,
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
@@ -1145,7 +1146,7 @@ private fun TimerExpandedContent() {
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color(0xFF2A292D)),
+                .background(IslandColors.ButtonGlass),
             contentAlignment = Alignment.Center
         ) {
             AppleIcon(glyph = AppleGlyph.Pause, tint = Color.White, size = 18.dp)
@@ -1160,10 +1161,20 @@ private fun TimerExpandedContent() {
 private fun ChargingCompactContent() {
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.Battery, tint = Color(0xFF34C759), size = 18.dp)
+            AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.Green, size = 18.dp)
         },
         trailing = {
-            Text(text = "85% ⚡", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF34C759), fontFamily = FontFamily.Monospace)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "85%",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = IslandColors.Green,
+                    fontFamily = FontFamily.Monospace
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                AppleIcon(glyph = AppleGlyph.Charging, tint = IslandColors.Green, size = 11.dp)
+            }
         }
     )
 }
@@ -1180,10 +1191,10 @@ private fun ChargingExpandedContent() {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF34C759).copy(alpha = 0.2f)),
+                    .background(IslandColors.Green.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                AppleIcon(glyph = AppleGlyph.Battery, tint = Color(0xFF34C759), size = 26.dp)
+                AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.Green, size = 26.dp)
             }
 
             Spacer(modifier = Modifier.width(14.dp))
@@ -1191,7 +1202,7 @@ private fun ChargingExpandedContent() {
             Column(verticalArrangement = Arrangement.Center) {
                 Text(text = "Fast Warp Charging", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(text = "65W • 14 min until full", color = Color(0xFF34C759), fontSize = 12.sp)
+                Text(text = "65W • 14 min until full", color = IslandColors.Green, fontSize = 12.sp)
             }
         }
 
@@ -1199,7 +1210,7 @@ private fun ChargingExpandedContent() {
             text = "85%",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF34C759),
+            color = IslandColors.Green,
             fontFamily = FontFamily.Monospace
         )
     }
@@ -1212,14 +1223,14 @@ private fun ChargingExpandedContent() {
 private fun LowBatteryCompactContent() {
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.Battery, tint = Color(0xFFFF453A), size = 18.dp)
+            AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.Red, size = 18.dp)
         },
         trailing = {
             Text(
                 text = "14% !",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFFF453A),
+                color = IslandColors.Red,
                 fontFamily = FontFamily.Monospace
             )
         }
@@ -1238,10 +1249,10 @@ private fun LowBatteryExpandedContent() {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFF453A).copy(alpha = 0.2f)),
+                    .background(IslandColors.Red.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                AppleIcon(glyph = AppleGlyph.Battery, tint = Color(0xFFFF453A), size = 26.dp)
+                AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.Red, size = 26.dp)
             }
 
             Spacer(modifier = Modifier.width(14.dp))
@@ -1249,7 +1260,7 @@ private fun LowBatteryExpandedContent() {
             Column(verticalArrangement = Arrangement.Center) {
                 Text(text = "Low Battery", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(2.dp))
-                Text(text = "14% remaining • Connect charger", color = Color(0xFFFF453A), fontSize = 12.sp)
+                Text(text = "14% remaining • Connect charger", color = IslandColors.Red, fontSize = 12.sp)
             }
         }
 
@@ -1257,7 +1268,7 @@ private fun LowBatteryExpandedContent() {
             text = "14%",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFFFF453A),
+            color = IslandColors.Red,
             fontFamily = FontFamily.Monospace
         )
     }
@@ -1274,14 +1285,14 @@ private fun DeliveryCompactContent() {
                 modifier = Modifier
                     .size(20.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFF59E0B)),
+                    .background(IslandColors.Orange),
                 contentAlignment = Alignment.Center
             ) {
                 AppleIcon(glyph = AppleGlyph.Torch, tint = Color.Black, size = 11.dp)
             }
         },
         trailing = {
-            Text(text = "12m", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFFF59E0B))
+            Text(text = "12m", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = IslandColors.Orange)
         }
     )
 }
@@ -1302,26 +1313,26 @@ private fun DeliveryExpandedContent() {
                     modifier = Modifier
                         .size(44.dp)
                         .clip(RoundedCornerShape(11.dp))
-                        .background(Color(0xFFF59E0B).copy(alpha = 0.2f)),
+                        .background(IslandColors.Orange.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(glyph = AppleGlyph.Torch, tint = Color(0xFFF59E0B), size = 22.dp)
+                    AppleIcon(glyph = AppleGlyph.Torch, tint = IslandColors.Orange, size = 22.dp)
                 }
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(text = "Chipotle Mexican Grill", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "Order #8492 • 2 items", color = Color(0xFF8E8E93), fontSize = 12.sp)
+                    Text(text = "Order #8492 • 2 items", color = IslandColors.Gray, fontSize = 12.sp)
                 }
             }
 
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFFF59E0B).copy(alpha = 0.2f))
-                    .border(1.dp, Color(0xFFF59E0B).copy(alpha = 0.4f), RoundedCornerShape(percent = 50))
+                    .background(IslandColors.Orange.copy(alpha = 0.2f))
+                    .border(1.dp, IslandColors.Orange.copy(alpha = 0.4f), RoundedCornerShape(percent = 50))
                 .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Text(text = "ON THE WAY", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color(0xFFF59E0B))
+                Text(text = "ON THE WAY", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = IslandColors.Orange)
             }
         }
 
@@ -1331,14 +1342,14 @@ private fun DeliveryExpandedContent() {
                     .fillMaxWidth()
                     .height(4.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF3A3A3C))
+                    .background(IslandColors.Gray4)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.70f)
                         .fillMaxHeight()
                         .clip(CircleShape)
-                        .background(Color(0xFFF59E0B))
+                        .background(IslandColors.Orange)
                 )
             }
             Spacer(modifier = Modifier.height(4.dp))
@@ -1346,8 +1357,8 @@ private fun DeliveryExpandedContent() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Picked up", fontSize = 10.sp, color = Color(0xFF8E8E93))
-                Text(text = "Arriving in 12 mins", fontSize = 10.sp, color = Color(0xFFF59E0B), fontWeight = FontWeight.Bold)
+                Text(text = "Picked up", fontSize = 10.sp, color = IslandColors.Gray)
+                Text(text = "Arriving in 12 mins", fontSize = 10.sp, color = IslandColors.Orange, fontWeight = FontWeight.Bold)
             }
         }
 
@@ -1356,12 +1367,16 @@ private fun DeliveryExpandedContent() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Marco • Vespa Sprint • 4.9 ★", fontSize = 12.sp, color = Color.White)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Marco • Vespa Sprint • 4.9", fontSize = 12.sp, color = Color.White)
+                Spacer(modifier = Modifier.width(3.dp))
+                AppleIcon(glyph = AppleGlyph.Star, tint = IslandColors.Yellow, size = 11.dp)
+            }
             Box(
                 modifier = Modifier
                     .size(30.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF34C759)),
+                    .background(IslandColors.Green),
                 contentAlignment = Alignment.Center
             ) {
                 AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 14.dp)
@@ -1377,10 +1392,10 @@ private fun DeliveryExpandedContent() {
 private fun FlightCompactContent() {
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.Airplane, tint = Color(0xFF00F5D4), size = 16.dp)
+            AppleIcon(glyph = AppleGlyph.Airplane, tint = IslandColors.CapsuleCyan, size = 16.dp)
         },
         trailing = {
-            Text(text = "2h 15m", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF00F5D4))
+            Text(text = "2h 15m", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = IslandColors.CapsuleCyan)
         }
     )
 }
@@ -1398,16 +1413,27 @@ private fun FlightExpandedContent() {
         ) {
             Column {
                 Text(text = "Delta Air Lines • DL 492", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                Text(text = "San Francisco ➔ New York", fontSize = 11.5.sp, color = Color(0xFF8E8E93))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Text(text = "San Francisco", fontSize = 11.5.sp, color = IslandColors.Gray)
+                    AppleIcon(
+                        glyph = AppleGlyph.NavigationRight,
+                        tint = IslandColors.Gray,
+                        size = 10.dp
+                    )
+                    Text(text = "New York", fontSize = 11.5.sp, color = IslandColors.Gray)
+                }
             }
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFF10B981).copy(alpha = 0.2f))
-                    .border(1.dp, Color(0xFF10B981).copy(alpha = 0.4f), RoundedCornerShape(percent = 50))
+                    .background(IslandColors.Green.copy(alpha = 0.2f))
+                    .border(1.dp, IslandColors.Green.copy(alpha = 0.4f), RoundedCornerShape(percent = 50))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
-                Text(text = "ON TIME", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = Color(0xFF10B981))
+                Text(text = "ON TIME", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = IslandColors.Green)
             }
         }
 
@@ -1422,13 +1448,13 @@ private fun FlightExpandedContent() {
                     .weight(1f)
                     .padding(horizontal = 12.dp)
                     .height(3.dp)
-                    .background(Color(0xFF3A3A3C))
+                    .background(IslandColors.Gray4)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.65f)
                         .fillMaxHeight()
-                        .background(Color(0xFF00F5D4))
+                        .background(IslandColors.CapsuleCyan)
                 )
             }
             Text(text = "JFK", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
@@ -1438,8 +1464,8 @@ private fun FlightExpandedContent() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Gate B14 • Terminal 2", fontSize = 11.sp, color = Color(0xFF8E8E93))
-            Text(text = "Alt: 36,000 ft • 2h 15m left", fontSize = 11.sp, color = Color(0xFF00F5D4), fontWeight = FontWeight.SemiBold)
+            Text(text = "Gate B14 • Terminal 2", fontSize = 11.sp, color = IslandColors.Gray)
+            Text(text = "Alt: 36,000 ft • 2h 15m left", fontSize = 11.sp, color = IslandColors.CapsuleCyan, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -1455,9 +1481,9 @@ private fun SportsCompactContent() {
         },
         trailing = {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(text = "1 MCI", fontSize = 11.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFBBF24))
-                Box(modifier = Modifier.size(5.dp).clip(CircleShape).background(Color(0xFF10B981)))
-                Text(text = "78'", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF10B981))
+                Text(text = "1 MCI", fontSize = 11.5.sp, fontWeight = FontWeight.Bold, color = IslandColors.Yellow)
+                Box(modifier = Modifier.size(5.dp).clip(CircleShape).background(IslandColors.Green))
+                Text(text = "78'", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = IslandColors.Green)
             }
         }
     )
@@ -1476,8 +1502,8 @@ private fun SportsExpandedContent() {
         ) {
             Text(text = "UEFA Champions League", fontSize = 13.5.sp, fontWeight = FontWeight.Bold, color = Color.White)
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(Color(0xFF10B981)))
-                Text(text = "78' LIVE", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = Color(0xFF10B981))
+                Box(modifier = Modifier.size(6.dp).clip(CircleShape).background(IslandColors.Green))
+                Text(text = "78' LIVE", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = IslandColors.Green)
             }
         }
 
@@ -1488,20 +1514,20 @@ private fun SportsExpandedContent() {
         ) {
             Column(horizontalAlignment = Alignment.Start) {
                 Text(text = "Real Madrid", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                Text(text = "Vini Jr 34', Jude 67'", fontSize = 10.sp, color = Color(0xFF8E8E93))
+                Text(text = "Vini Jr 34', Jude 67'", fontSize = 10.sp, color = IslandColors.Gray)
             }
 
             Text(
                 text = "2  -  1",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFFFBBF24),
+                color = IslandColors.Yellow,
                 fontFamily = FontFamily.Monospace
             )
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(text = "Man City", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
-                Text(text = "De Bruyne 51'", fontSize = 10.sp, color = Color(0xFF8E8E93))
+                Text(text = "De Bruyne 51'", fontSize = 10.sp, color = IslandColors.Gray)
             }
         }
 
@@ -1509,11 +1535,11 @@ private fun SportsExpandedContent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFF1C182A))
+                .background(IslandColors.Gray6)
                 .padding(vertical = 4.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = "Quarter-Final • 2nd Leg (Agg: 4 - 4)", fontSize = 10.5.sp, color = Color(0xFF8E8E93))
+            Text(text = "Quarter-Final • 2nd Leg (Agg: 4 - 4)", fontSize = 10.5.sp, color = IslandColors.Gray)
         }
     }
 }
@@ -1525,10 +1551,10 @@ private fun SportsExpandedContent() {
 private fun NavigationCompactContent() {
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.Maps, tint = Color(0xFF3B82F6), size = 16.dp)
+            AppleIcon(glyph = AppleGlyph.Maps, tint = IslandColors.Blue, size = 16.dp)
         },
         trailing = {
-            Text(text = "200m", fontSize = 11.5.sp, fontWeight = FontWeight.Bold, color = Color(0xFF3B82F6))
+            Text(text = "200m", fontSize = 11.5.sp, fontWeight = FontWeight.Bold, color = IslandColors.Blue)
         }
     )
 }
@@ -1537,70 +1563,22 @@ private fun NavigationCompactContent() {
 // EQUALIZER
 // -----------------------------------------------------------------------------
 @Composable
-internal fun LiveEqualizerMini(color: Color) {
-    val infiniteTransition = rememberInfiniteTransition(label = "eq_bars")
-    val h1 by infiniteTransition.animateFloat(
-        initialValue = 0.2f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(420, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "h1"
+internal fun LiveEqualizerMini(
+    modifier: Modifier = Modifier,
+    color: Color? = null,
+    width: Dp = 20.dp,
+    height: Dp = 18.dp,
+) {
+    // Single source of truth: the equalizer measured off Minimal.svg / DI-11.
+    WaveformAnimation(
+        modifier = modifier.size(width = width, height = height),
+        color = color,
     )
-    val h2 by infiniteTransition.animateFloat(
-        initialValue = 0.6f,
-        targetValue = 0.3f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(310, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "h2"
-    )
-    val h3 by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.9f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(530, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "h3"
-    )
-    val h4 by infiniteTransition.animateFloat(
-        initialValue = 0.7f,
-        targetValue = 0.4f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(380, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "h4"
-    )
-    val h5 by infiniteTransition.animateFloat(
-        initialValue = 0.4f,
-        targetValue = 1.0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(470, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "h5"
-    )
-
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(2.5.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.height(18.dp)
-    ) {
-        Box(modifier = Modifier.width(3.dp).height((18 * h1).dp).clip(CircleShape).background(color))
-        Box(modifier = Modifier.width(3.dp).height((18 * h2).dp).clip(CircleShape).background(color))
-        Box(modifier = Modifier.width(3.dp).height((18 * h3).dp).clip(CircleShape).background(color))
-        Box(modifier = Modifier.width(3.dp).height((18 * h4).dp).clip(CircleShape).background(color))
-        Box(modifier = Modifier.width(3.dp).height((18 * h5).dp).clip(CircleShape).background(color))
-    }
 }
 
 // =============================================================================
 // NEW FIGMA DYNAMIC ISLAND STATES (1-8)
-// Extracted from Figma SVGs: islandfigmacomponentofios/Dynamic Island-*.svg
+// Extracted from Figma SVGs: design/reference/ios17-dynamic-island/Dynamic Island/*.svg
 // =============================================================================
 
 // -----------------------------------------------------------------------------
@@ -1654,7 +1632,7 @@ private fun TimerWithImageCompactContent() {
                     .clip(RoundedCornerShape(8.dp))
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFF667781), Color(0xFF8B99A1))
+                            listOf(IslandColors.Gray, IslandColors.Gray)
                         )
                     ),
                 contentAlignment = Alignment.Center
@@ -1669,14 +1647,14 @@ private fun TimerWithImageCompactContent() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "15:30",
-                    color = Color(0xFFFF9500),
+                    color = IslandColors.Orange,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 )
                 Text(
                     text = " — 30:00",
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 10.sp,
                     fontFamily = FontFamily.Monospace
                 )
@@ -1752,12 +1730,12 @@ private fun TimerWithImageCompactContent() {
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF3A3A3C)),
+                        .background(IslandColors.Gray4),
                     contentAlignment = Alignment.Center
                 ) {
                     AppleIcon(
                         glyph = AppleGlyph.Pause,
-                        tint = Color(0xFFFF9500),
+                        tint = IslandColors.Orange,
                         size = 12.dp
                     )
                 }
@@ -1765,7 +1743,7 @@ private fun TimerWithImageCompactContent() {
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF3A3A3C)),
+                        .background(IslandColors.Gray4),
                     contentAlignment = Alignment.Center
                 ) {
                     AppleIcon(
@@ -1798,7 +1776,7 @@ private fun NotificationImageCompactContent() {
             modifier = Modifier
                 .size(36.dp, 20.dp)
                 .clip(RoundedCornerShape(4.dp))
-                .background(Brush.linearGradient(listOf(Color(0xFF2B599A), Color(0xFF5B8DEF)))),
+                .background(Brush.linearGradient(listOf(IslandColors.Blue, IslandColors.Blue))),
             contentAlignment = Alignment.Center
         ) {
             AppleIcon(
@@ -1812,16 +1790,15 @@ private fun NotificationImageCompactContent() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = "Messages",
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 8.5.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = "△",
-                    color = Color(0xFF30D158),
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Bold
+                AppleIcon(
+                    glyph = AppleGlyph.Check,
+                    tint = IslandColors.Green,
+                    size = 8.dp
                 )
             }
             Spacer(modifier = Modifier.height(1.dp))
@@ -1834,7 +1811,7 @@ private fun NotificationImageCompactContent() {
             Spacer(modifier = Modifier.height(1.dp))
             Text(
                 text = "Almost there! Don't forget to bring...",
-                color = Color(0xFF8E8E93),
+                color = IslandColors.Gray,
                 fontSize = 9.5.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -1861,18 +1838,18 @@ private fun IncomingCallTwoAvatarsContent() {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AvatarCircle(
                 initials = "TM",
-                gradientColors = listOf(Color(0xFFFF6B35), Color(0xFFFF8C42))
+                gradientColors = listOf(IslandColors.Orange, IslandColors.Yellow)
             )
             Spacer(modifier = Modifier.width(8.dp))
             AvatarCircle(
                 initials = "OC",
-                gradientColors = listOf(Color(0xFF30D158), Color(0xFF0AC4B0))
+                gradientColors = listOf(IslandColors.Green, IslandColors.Mint)
             )
         }
 
         Text(
             text = "Incoming Call",
-            color = Color(0xFF8E8E93),
+            color = IslandColors.Gray,
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium
         )
@@ -1896,27 +1873,45 @@ private fun TransportLiveActivityCompactContent() {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AppleIcon(
                 glyph = AppleGlyph.Airplane,
-                tint = Color(0xFF00F5D4),
+                tint = IslandColors.CapsuleCyan,
                 size = 14.dp
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "2h 15m",
-                color = Color(0xFF00F5D4),
+                color = IslandColors.CapsuleCyan,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace
             )
         }
 
-        Text(
-            text = "San Francisco ➔ New York",
-            color = Color.White,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Text(
+                text = "San Francisco",
+                color = Color.White,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            AppleIcon(
+                glyph = AppleGlyph.NavigationRight,
+                tint = Color.White,
+                size = 9.dp
+            )
+            Text(
+                text = "New York",
+                color = Color.White,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
@@ -1957,17 +1952,17 @@ private fun FlightTrackerDetailCompactContent() {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFF10B981).copy(alpha = 0.2f))
+                    .background(IslandColors.Green.copy(alpha = 0.2f))
                     .border(
                         1.dp,
-                        Color(0xFF10B981).copy(alpha = 0.4f),
+                        IslandColors.Green.copy(alpha = 0.4f),
                         RoundedCornerShape(percent = 50)
                     )
                     .padding(horizontal = 7.dp, vertical = 3.dp)
             ) {
                 Text(
                     text = "ON TIME",
-                    color = Color(0xFF10B981),
+                    color = IslandColors.Green,
                     fontSize = 8.5.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -1993,13 +1988,13 @@ private fun FlightTrackerDetailCompactContent() {
                     .weight(1f)
                     .height(3.dp)
                     .padding(horizontal = 6.dp)
-                    .background(Color(0xFF3A3A3C))
+                    .background(IslandColors.Gray4)
             ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(0.6f)
                         .fillMaxHeight()
-                        .background(Color(0xFF00F5D4))
+                        .background(IslandColors.CapsuleCyan)
                 )
             }
             Text(
@@ -2019,12 +2014,12 @@ private fun FlightTrackerDetailCompactContent() {
         ) {
             Text(
                 text = "Gate B14 • Terminal 2",
-                color = Color(0xFF8E8E93),
+                color = IslandColors.Gray,
                 fontSize = 9.5.sp
             )
             Text(
                 text = "Alt: 36,000 ft",
-                color = Color(0xFF00F5D4),
+                color = IslandColors.CapsuleCyan,
                 fontSize = 9.5.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -2057,7 +2052,7 @@ private fun DeliveryOrderCompactContent() {
                     modifier = Modifier
                         .size(28.dp)
                         .clip(RoundedCornerShape(7.dp))
-                        .background(Color(0xFFF59E0B)),
+                        .background(IslandColors.Orange),
                     contentAlignment = Alignment.Center
                 ) {
                     AppleIcon(
@@ -2078,17 +2073,17 @@ private fun DeliveryOrderCompactContent() {
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFFF59E0B).copy(alpha = 0.2f))
+                    .background(IslandColors.Orange.copy(alpha = 0.2f))
                     .border(
                         1.dp,
-                        Color(0xFFF59E0B).copy(alpha = 0.4f),
+                        IslandColors.Orange.copy(alpha = 0.4f),
                         RoundedCornerShape(percent = 50)
                     )
                     .padding(horizontal = 6.dp, vertical = 3.dp)
             ) {
                 Text(
                     text = "PICKED UP",
-                    color = Color(0xFFF59E0B),
+                    color = IslandColors.Orange,
                     fontSize = 8.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -2102,13 +2097,13 @@ private fun DeliveryOrderCompactContent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(3.dp)
-                .background(Color(0xFF3A3A3C))
+                .background(IslandColors.Gray4)
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .fillMaxHeight()
-                    .background(Color(0xFFF59E0B))
+                    .background(IslandColors.Orange)
             )
         }
 
@@ -2120,17 +2115,21 @@ private fun DeliveryOrderCompactContent() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Marco • Vespa Sprint • 4.9★",
-                color = Color.White,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Medium
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Marco • Vespa Sprint • 4.9",
+                    color = Color.White,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.width(3.dp))
+                AppleIcon(glyph = AppleGlyph.Star, tint = IslandColors.Yellow, size = 9.dp)
+            }
             Box(
                 modifier = Modifier
                     .size(26.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF34C759)),
+                    .background(IslandColors.Green),
                 contentAlignment = Alignment.Center
             ) {
                 AppleIcon(
@@ -2171,12 +2170,12 @@ private fun SportsScoreCompactContent() {
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier.size(5.dp).clip(CircleShape).background(Color(0xFF10B981))
+                    modifier = Modifier.size(5.dp).clip(CircleShape).background(IslandColors.Green)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "78'",
-                    color = Color(0xFF10B981),
+                    color = IslandColors.Green,
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Bold
                 )
@@ -2200,13 +2199,13 @@ private fun SportsScoreCompactContent() {
                 )
                 Text(
                     text = "Vini Jr 34', Jude 67'",
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 8.5.sp
                 )
             }
             Text(
                 text = "2 - 1",
-                color = Color(0xFFFBBF24),
+                color = IslandColors.Yellow,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace
@@ -2220,7 +2219,7 @@ private fun SportsScoreCompactContent() {
                 )
                 Text(
                     text = "De Bruyne 51'",
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 8.5.sp
                 )
             }
@@ -2231,7 +2230,7 @@ private fun SportsScoreCompactContent() {
         // FOOTER
         Text(
             text = "Quarter-Final • 2nd Leg (Agg: 4 - 4)",
-            color = Color(0xFF8E8E93),
+            color = IslandColors.Gray,
             fontSize = 9.sp
         )
     }
@@ -2256,13 +2255,13 @@ private fun NavigationRouteCompactContent() {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AppleIcon(
                 glyph = AppleGlyph.Location,
-                tint = Color(0xFF3B82F6),
+                tint = IslandColors.Blue,
                 size = 16.dp
             )
             Spacer(modifier = Modifier.width(6.dp))
             Text(
                 text = "200m",
-                color = Color(0xFF3B82F6),
+                color = IslandColors.Blue,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace
@@ -2272,7 +2271,7 @@ private fun NavigationRouteCompactContent() {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AppleIcon(
                 glyph = AppleGlyph.ChevronRight,
-                tint = Color(0xFF3B82F6),
+                tint = IslandColors.Blue,
                 size = 14.dp
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -2282,19 +2281,19 @@ private fun NavigationRouteCompactContent() {
                     modifier = Modifier
                         .size(5.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF3B82F6).copy(alpha = 0.4f))
+                        .background(IslandColors.Blue.copy(alpha = 0.4f))
                 )
                 Box(
                     modifier = Modifier
                         .size(5.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF3B82F6).copy(alpha = 0.25f))
+                        .background(IslandColors.Blue.copy(alpha = 0.25f))
                 )
                 Box(
                     modifier = Modifier
                         .size(5.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF3B82F6).copy(alpha = 0.15f))
+                        .background(IslandColors.Blue.copy(alpha = 0.15f))
                 )
             }
         }
@@ -2328,10 +2327,10 @@ private fun AirplaneAlertContent() {
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFFB8B28).copy(alpha = 0.2f)),
+                    .background(IslandColors.CapsuleOrange.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                AppleIcon(glyph = AppleGlyph.Airplane, tint = Color(0xFFFB8B28), size = 22.dp)
+                AppleIcon(glyph = AppleGlyph.Airplane, tint = IslandColors.CapsuleOrange, size = 22.dp)
             }
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -2346,7 +2345,7 @@ private fun AirplaneAlertContent() {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "to Access Data",
-                    color = Color(0xFF818383),
+                    color = IslandColors.Gray,
                     fontSize = 13.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -2358,7 +2357,7 @@ private fun AirplaneAlertContent() {
                 .fillMaxWidth()
                 .height(43.dp)
                 .clip(RoundedCornerShape(percent = 50))
-                .background(Color(0xFF2C2C2D)),
+                .background(IslandColors.ButtonNeutral),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -2385,10 +2384,10 @@ private fun ScreenMirroringContent() {
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF37A3DE).copy(alpha = 0.2f)),
+                    .background(IslandColors.CapsuleCyan.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                AppleIcon(glyph = AppleGlyph.ScreenMirroring, tint = Color(0xFF37A3DE), size = 22.dp)
+                AppleIcon(glyph = AppleGlyph.ScreenMirroring, tint = IslandColors.CapsuleCyan, size = 22.dp)
             }
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -2403,25 +2402,25 @@ private fun ScreenMirroringContent() {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "MacBook Pro",
-                    color = Color(0xFF818383),
+                    color = IslandColors.Gray,
                     fontSize = 13.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            AppleIcon(glyph = AppleGlyph.AirPlay, tint = Color(0xFF37A3DE), size = 22.dp)
+            AppleIcon(glyph = AppleGlyph.AirPlay, tint = IslandColors.CapsuleCyan, size = 22.dp)
         }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(43.dp)
                 .clip(RoundedCornerShape(percent = 50))
-                .background(Color(0xFF1A1C2D)),
+                .background(IslandColors.ButtonCyan),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Stop Mirroring",
-                color = Color(0xFF37A3DE),
+                color = IslandColors.CapsuleCyan,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -2443,10 +2442,10 @@ private fun MobileDataContent() {
                 modifier = Modifier
                     .size(42.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFF37C058).copy(alpha = 0.2f)),
+                    .background(IslandColors.CapsuleGreen.copy(alpha = 0.2f)),
                 contentAlignment = Alignment.Center
             ) {
-                AppleIcon(glyph = AppleGlyph.PersonalHotspot, tint = Color(0xFF37C058), size = 22.dp)
+                AppleIcon(glyph = AppleGlyph.PersonalHotspot, tint = IslandColors.CapsuleGreen, size = 22.dp)
             }
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
@@ -2461,7 +2460,7 @@ private fun MobileDataContent() {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "Turn off Mobile Data to use Wi-Fi",
-                    color = Color(0xFF818383),
+                    color = IslandColors.Gray,
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -2477,7 +2476,7 @@ private fun MobileDataContent() {
                     .weight(1f)
                     .height(43.dp)
                     .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFF2C2C2D)),
+                    .background(IslandColors.ButtonNeutral),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = "OK", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
@@ -2487,10 +2486,10 @@ private fun MobileDataContent() {
                     .weight(1f)
                     .height(43.dp)
                     .clip(RoundedCornerShape(percent = 50))
-                    .background(Color(0xFF1A1C2D)),
+                    .background(IslandColors.ButtonCyan),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Settings", color = Color(0xFF37A3DE), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Text(text = "Settings", color = IslandColors.CapsuleCyan, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -2528,7 +2527,7 @@ private fun TransitRouteContent() {
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = "Arriving at Platform 3",
-                    color = Color(0xFF818383),
+                    color = IslandColors.Gray,
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -2540,12 +2539,12 @@ private fun TransitRouteContent() {
                 .fillMaxWidth()
                 .height(43.dp)
                 .clip(RoundedCornerShape(percent = 50))
-                .background(Color(0xFF1D1011)),
+                .background(IslandColors.ButtonRed),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "End Route",
-                color = Color(0xFFFA3532),
+                color = IslandColors.CapsuleRed,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold
             )
@@ -2566,13 +2565,13 @@ private fun TurnByTurnNavigationContent() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                AppleIcon(glyph = AppleGlyph.NavigationLeft, tint = Color(0xFF34C759), size = 24.dp)
-                AppleIcon(glyph = AppleGlyph.ChevronRight, tint = Color(0xFF8E8D94), size = 20.dp)
-                AppleIcon(glyph = AppleGlyph.NavigationRight, tint = Color(0xFF8E8D94), size = 24.dp)
+                AppleIcon(glyph = AppleGlyph.NavigationLeft, tint = IslandColors.Green, size = 24.dp)
+                AppleIcon(glyph = AppleGlyph.ChevronRight, tint = IslandColors.TextSecondary, size = 20.dp)
+                AppleIcon(glyph = AppleGlyph.NavigationRight, tint = IslandColors.TextSecondary, size = 24.dp)
             }
             Text(
                 text = "ETA 12m",
-                color = Color(0xFF34C759),
+                color = IslandColors.Green,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -2591,7 +2590,7 @@ private fun TurnByTurnNavigationContent() {
             Spacer(modifier = Modifier.height(2.dp))
             Text(
                 text = "North • San Francisco",
-                color = Color(0xFF8E8D94),
+                color = IslandColors.TextSecondary,
                 fontSize = 13.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -2604,7 +2603,7 @@ private fun TurnByTurnNavigationContent() {
                 .fillMaxWidth()
                 .height(38.dp)
                 .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFF1C1C1E))
+                .background(IslandColors.Gray6)
                 .padding(horizontal = 12.dp),
             contentAlignment = Alignment.CenterStart
         ) {
@@ -2621,7 +2620,7 @@ private fun TurnByTurnNavigationContent() {
                 )
                 Text(
                     text = "2.4 mi remaining",
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontSize = 11.sp
                 )
             }

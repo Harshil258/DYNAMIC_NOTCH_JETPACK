@@ -168,14 +168,14 @@ data class AppIslandTokens(
 // =============================================================================
 
 val DarkColorTokens = AppColorTokens(
-    background = Color(0xFF000000),         // Pure True Black (Gemini-Grade Minimalism)
+    background = Color.Black,         // Pure True Black (Gemini-Grade Minimalism)
     surface = Color(0xFF101012),            // Restrained Minimal Surface
     surfaceVariant = Color(0xFF18181C),     // Elevated System Surface
     surfaceElevated = Color(0xFF202024),    // Floating Island/Control Surface
-    primary = Color(0xFFFFFFFF),            // Clean Monochrome Primary
+    primary = Color.White,            // Clean Monochrome Primary
     secondary = Color(0xFF8E8E93),          // Apple System Gray
     accent = Color(0xFF0A84FF),             // System Accent Blue
-    textPrimary = Color(0xFFFFFFFF),        // High Contrast Pure White
+    textPrimary = Color.White,        // High Contrast Pure White
     textSecondary = Color(0xFF8E8E93),      // Calm Editorial Muted Gray
     textTertiary = Color(0xFF55555A),       // Quiet Caption
     border = Color(0x14FFFFFF),             // Ultra-Minimal Hairline
@@ -192,7 +192,7 @@ val LightColorTokens = AppColorTokens(
     background = Color(0xFFF8F9FB),
     surface = Color(0xEFFFFFFF),
     surfaceVariant = Color(0xFFF0F2F5),
-    surfaceElevated = Color(0xFFFFFFFF),
+    surfaceElevated = Color.White,
     primary = Color(0xFF111318),
     secondary = Color(0xFF646870),
     accent = Color(0xFF0B57D0),

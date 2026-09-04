@@ -24,11 +24,12 @@ import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.ui.motion.AppMotion
 import ai.emots.kishan_dynamic.ui.motion.rememberBreathing
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 internal fun batteryColorFor(percentage: Int): Color = when {
-    percentage >= 20 -> Color(0xFF30D158)
-    percentage >= 10 -> Color(0xFFFF9F0A)
-    else -> Color(0xFFFF453A)
+    percentage >= 20 -> IslandColors.Green
+    percentage >= 10 -> IslandColors.Orange
+    else -> IslandColors.Red
 }
 
 /**

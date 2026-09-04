@@ -1,0 +1,578 @@
+[
+  {
+    "name": "play",
+    "category": "media",
+    "note": "Music player transport \u2013 play triangle",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-11.svg",
+    "cluster": 8,
+    "contours": 1
+  },
+  {
+    "name": "pause",
+    "category": "media",
+    "note": "Timer activity \u2013 pause bars",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-1.svg",
+    "cluster": 0,
+    "contours": 1
+  },
+  {
+    "name": "backward",
+    "category": "media",
+    "note": "Music player transport \u2013 rewind",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-11.svg",
+    "cluster": 7,
+    "contours": 1
+  },
+  {
+    "name": "forward",
+    "category": "media",
+    "note": "Music player transport \u2013 fast forward",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-11.svg",
+    "cluster": 9,
+    "contours": 1
+  },
+  {
+    "name": "skip_back_15",
+    "category": "media",
+    "note": "Remote video \u2013 back 15 seconds",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-16.svg",
+    "cluster": 7,
+    "contours": 1
+  },
+  {
+    "name": "skip_forward_15",
+    "category": "media",
+    "note": "Remote video \u2013 forward 15 seconds",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-16.svg",
+    "cluster": 9,
+    "contours": 1
+  },
+  {
+    "name": "airplay_audio",
+    "category": "media",
+    "note": "Music player \u2013 AirPlay routing",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-11.svg",
+    "cluster": 10,
+    "contours": 1
+  },
+  {
+    "name": "equalizer",
+    "category": "media",
+    "note": "Now-playing animated equalizer bars",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-11.svg",
+    "cluster": 2,
+    "contours": 1
+  },
+  {
+    "name": "waveform",
+    "category": "media",
+    "note": "Minimal sheet \u2013 audio waveform",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 20,
+    "contours": 1
+  },
+  {
+    "name": "waveform_recording",
+    "category": "media",
+    "note": "Minimal sheet \u2013 live recording trace",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 10,
+    "contours": 13
+  },
+  {
+    "name": "speaker",
+    "category": "media",
+    "note": "Call controls \u2013 speaker / audio route",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-14.svg",
+    "cluster": 4,
+    "contours": 1
+  },
+  {
+    "name": "airpods",
+    "category": "media",
+    "note": "Call controls \u2013 AirPods audio route",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-13.svg",
+    "cluster": 4,
+    "contours": 1
+  },
+  {
+    "name": "phone",
+    "category": "call",
+    "note": "Minimal sheet \u2013 phone handset",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 2,
+    "contours": 1
+  },
+  {
+    "name": "phone_down",
+    "category": "call",
+    "note": "Call controls \u2013 end call",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-13.svg",
+    "cluster": 8,
+    "contours": 1
+  },
+  {
+    "name": "microphone",
+    "category": "call",
+    "note": "Call controls \u2013 microphone",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-13.svg",
+    "cluster": 5,
+    "contours": 1
+  },
+  {
+    "name": "video",
+    "category": "call",
+    "note": "Call controls \u2013 FaceTime video",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-13.svg",
+    "cluster": 6,
+    "contours": 1
+  },
+  {
+    "name": "shareplay",
+    "category": "call",
+    "note": "Call controls \u2013 SharePlay",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-13.svg",
+    "cluster": 7,
+    "contours": 1
+  },
+  {
+    "name": "info",
+    "category": "call",
+    "note": "FaceTime header \u2013 info button",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-13.svg",
+    "cluster": 2,
+    "contours": 1
+  },
+  {
+    "name": "chat",
+    "category": "call",
+    "note": "Satellite activity \u2013 message button",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-7.svg",
+    "cluster": 1,
+    "contours": 1
+  },
+  {
+    "name": "close",
+    "category": "call",
+    "note": "Shared session \u2013 dismiss",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-15.svg",
+    "cluster": 7,
+    "contours": 1
+  },
+  {
+    "name": "bell",
+    "category": "status",
+    "note": "Minimal sheet \u2013 notification bell",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 12,
+    "contours": 1
+  },
+  {
+    "name": "bell_slash",
+    "category": "status",
+    "note": "Silent mode activity \u2013 bell slash",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-9.svg",
+    "cluster": 1,
+    "contours": 1
+  },
+  {
+    "name": "timer",
+    "category": "status",
+    "note": "Minimal sheet \u2013 timer dial",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 4,
+    "contours": 1
+  },
+  {
+    "name": "record",
+    "category": "status",
+    "note": "Minimal sheet \u2013 recording dot",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 11,
+    "contours": 1
+  },
+  {
+    "name": "stop_circle",
+    "category": "status",
+    "note": "Screen recording \u2013 stop control",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-4.svg",
+    "cluster": 0,
+    "contours": 2
+  },
+  {
+    "name": "lock",
+    "category": "status",
+    "note": "Minimal sheet \u2013 locked",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 14,
+    "contours": 1
+  },
+  {
+    "name": "unlock",
+    "category": "status",
+    "note": "Minimal sheet \u2013 unlocked",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 15,
+    "contours": 1
+  },
+  {
+    "name": "link",
+    "category": "status",
+    "note": "Minimal sheet \u2013 link / handoff",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 16,
+    "contours": 1
+  },
+  {
+    "name": "moon",
+    "category": "status",
+    "note": "Minimal sheet \u2013 Focus",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 17,
+    "contours": 1
+  },
+  {
+    "name": "car",
+    "category": "status",
+    "note": "Minimal sheet \u2013 driving Focus",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 18,
+    "contours": 1
+  },
+  {
+    "name": "face_id",
+    "category": "status",
+    "note": "Minimal sheet \u2013 Face ID",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 7,
+    "contours": 1
+  },
+  {
+    "name": "airdrop",
+    "category": "status",
+    "note": "Minimal sheet \u2013 AirDrop",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Minimal.svg",
+    "cluster": 1,
+    "contours": 4
+  },
+  {
+    "name": "shortcut",
+    "category": "status",
+    "note": "Shortcut activity \u2013 stacked shortcut mark",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-5.svg",
+    "cluster": 0,
+    "contours": 2
+  },
+  {
+    "name": "undo",
+    "category": "status",
+    "note": "Moved-to-iPhone activity \u2013 undo",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-10.svg",
+    "cluster": 1,
+    "contours": 1
+  },
+  {
+    "name": "airplane",
+    "category": "system",
+    "note": "Airplane-mode alert",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-17.svg",
+    "cluster": 0,
+    "contours": 1
+  },
+  {
+    "name": "screen_mirroring",
+    "category": "system",
+    "note": "Screen mirroring alert",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-18.svg",
+    "cluster": 0,
+    "contours": 1
+  },
+  {
+    "name": "laptop",
+    "category": "system",
+    "note": "Screen mirroring \u2013 target device",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-18.svg",
+    "cluster": 2,
+    "contours": 1
+  },
+  {
+    "name": "personal_hotspot",
+    "category": "system",
+    "note": "Mobile-data alert \u2013 antenna",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-19.svg",
+    "cluster": 1,
+    "contours": 1
+  },
+  {
+    "name": "transit_train",
+    "category": "system",
+    "note": "Transit route \u2013 train",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-20.svg",
+    "cluster": 0,
+    "contours": 1
+  },
+  {
+    "name": "navigation_left",
+    "category": "system",
+    "note": "Turn-by-turn \u2013 turn left",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-12.svg",
+    "cluster": 2,
+    "contours": 1
+  },
+  {
+    "name": "navigation_right",
+    "category": "system",
+    "note": "Turn-by-turn \u2013 turn right",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-12.svg",
+    "cluster": 3,
+    "contours": 1
+  },
+  {
+    "name": "navigation_straight",
+    "category": "system",
+    "note": "Turn-by-turn \u2013 continue straight",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-12.svg",
+    "cluster": 0,
+    "contours": 1
+  },
+  {
+    "name": "satellite",
+    "category": "status",
+    "note": "Satellite / Find My beacon, in the language of the reference locator glyph",
+    "source": null,
+    "cluster": null,
+    "contours": 5
+  },
+  {
+    "name": "notch",
+    "category": "system",
+    "note": "App mark \u2013 Dynamic Island capsule at the reference 126 x 36.67 ratio (r = 18.335) with the TrueDepth camera and Face ID sensor punched out",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "chevron_left",
+    "category": "system",
+    "note": "iOS navigation chevron",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "chevron_right",
+    "category": "system",
+    "note": "iOS navigation chevron",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "check",
+    "category": "status",
+    "note": "SF-style checkmark",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "battery",
+    "category": "status",
+    "note": "SF battery.100 proportions",
+    "source": null,
+    "cluster": null,
+    "contours": 3
+  },
+  {
+    "name": "bolt",
+    "category": "status",
+    "note": "SF bolt.fill \u2013 charging",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "wifi",
+    "category": "system",
+    "note": "SF wifi \u2013 three arcs and a dot",
+    "source": null,
+    "cluster": null,
+    "contours": 4
+  },
+  {
+    "name": "bluetooth",
+    "category": "system",
+    "note": "Bluetooth rune",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "torch",
+    "category": "system",
+    "note": "SF flashlight.on.fill",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "location",
+    "category": "status",
+    "note": "SF location.north.fill",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "globe",
+    "category": "system",
+    "note": "SF globe",
+    "source": null,
+    "cluster": null,
+    "contours": 4
+  },
+  {
+    "name": "search",
+    "category": "system",
+    "note": "SF magnifyingglass",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "settings",
+    "category": "system",
+    "note": "SF gearshape.fill",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "power",
+    "category": "system",
+    "note": "SF power",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "shield",
+    "category": "system",
+    "note": "SF shield.fill",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "rotate",
+    "category": "system",
+    "note": "SF arrow.clockwise",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "reset",
+    "category": "system",
+    "note": "SF arrow.counterclockwise",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "expand",
+    "category": "system",
+    "note": "SF arrow.up.left.and.arrow.down.right",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "history",
+    "category": "system",
+    "note": "SF clock.arrow.circlepath",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "star",
+    "category": "system",
+    "note": "SF star.fill",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "sparkles",
+    "category": "system",
+    "note": "SF sparkles",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "crown",
+    "category": "system",
+    "note": "Pro badge \u2013 crown",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "heart",
+    "category": "system",
+    "note": "SF heart.fill",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "palette",
+    "category": "system",
+    "note": "Appearance \u2013 palette with colour wells",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "camera",
+    "category": "system",
+    "note": "SF camera.fill",
+    "source": null,
+    "cluster": null,
+    "contours": 1
+  },
+  {
+    "name": "controls",
+    "category": "system",
+    "note": "SF slider.horizontal.3",
+    "source": null,
+    "cluster": null,
+    "contours": 6
+  },
+  {
+    "name": "music_note",
+    "category": "media",
+    "note": "SF music.note",
+    "source": null,
+    "cluster": null,
+    "contours": 3
+  },
+  {
+    "name": "speaker_slash",
+    "category": "media",
+    "note": "SF speaker.slash.fill \u2013 ringer muted",
+    "source": null,
+    "cluster": null,
+    "contours": 2
+  },
+  {
+    "name": "maps",
+    "category": "system",
+    "note": "Maps live activity \u2013 folded map",
+    "source": null,
+    "cluster": null,
+    "contours": 3
+  }
+]

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Themed-icon (monochrome) layer: the Dynamic Island silhouette with the
+  TrueDepth lens punched out, so the launcher can tint it freely.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillType="evenOdd"
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M33.44 45.56H74.56A8.44,8.44 0 0 1 83,54A8.44,8.44 0 0 1 74.56,62.44H33.44A8.44,8.44 0 0 1 25,54A8.44,8.44 0 0 1 33.44,45.56ZM74.21,54A2.65,2.65 0 1 0 79.5,54A2.65,2.65 0 1 0 74.21,54Z" />
+</vector>

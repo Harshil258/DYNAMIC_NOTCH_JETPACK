@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +94,7 @@ fun MusicPlayerIsland(
                             .clip(RoundedCornerShape(13.dp))
                             .background(
                                 Brush.linearGradient(
-                                    listOf(Color(0xFFE879F9), Color(0xFF818CF8), Color(0xFF38BDF8))
+                                    listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.Cyan)
                                 )
                             )
                             .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(13.dp)),
@@ -122,12 +123,12 @@ fun MusicPlayerIsland(
                                 modifier = Modifier
                                     .size(16.dp)
                                     .clip(RoundedCornerShape(3.5.dp))
-                                    .background(Color(0xFF8E8E93)),
+                                    .background(IslandColors.Gray),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = "E",
-                                    color = Color(0xFF000000),
+                                    color = Color.Black,
                                     fontSize = 7.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -138,7 +139,7 @@ fun MusicPlayerIsland(
 
                         Text(
                             text = artist,
-                            color = Color(0xFF8E8E93),
+                            color = IslandColors.Gray,
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
@@ -147,8 +148,8 @@ fun MusicPlayerIsland(
                     }
                 }
 
-                // Neon Pink/Magenta Warm-up Waveform
-                LiveEqualizerMini(color = Color(0xFFFA2D48))
+                // Reference equalizer (Minimal.svg paint0_linear: #F84BAB -> #B4CDFB)
+                LiveEqualizerMini()
             }
 
             // MIDDLE ROW: Scrubber Slider with Time
@@ -160,7 +161,7 @@ fun MusicPlayerIsland(
                 Text(
                     text = currentTime,
                     fontSize = 12.sp,
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily.Monospace
                 )
@@ -171,7 +172,7 @@ fun MusicPlayerIsland(
                         .weight(1f)
                         .height(5.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF3A3A3C))
+                        .background(IslandColors.Gray4)
                 ) {
                     Box(
                         modifier = Modifier
@@ -185,7 +186,7 @@ fun MusicPlayerIsland(
                 Text(
                     text = remainingTime,
                     fontSize = 12.sp,
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily.Monospace
                 )

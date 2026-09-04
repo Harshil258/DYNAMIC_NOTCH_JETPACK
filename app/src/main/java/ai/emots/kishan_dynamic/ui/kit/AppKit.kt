@@ -57,6 +57,7 @@ import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 // =============================================================================
 // APP KIT — one single, consistent visual language for every screen.
@@ -588,11 +589,13 @@ fun AppStage(
                 .clip(stageShape)
                 .background(
                     Brush.verticalGradient(
+                        // Neutral graphite so the island stays the brightest
+                        // thing on the stage, the way it reads on-device.
                         listOf(
-                            Color(0xFF0A0C1A),
-                            Color(0xFF121736),
-                            Color(0xFF1B163B),
-                            Color(0xFF090A14)
+                            Color(0xFF0C0C0F),
+                            Color(0xFF131317),
+                            Color(0xFF17171B),
+                            Color(0xFF0A0A0C)
                         )
                     )
                 )
@@ -608,24 +611,24 @@ fun AppStage(
                 ),
             contentAlignment = Alignment.TopCenter
         ) {
-            // Authentic Apple iOS 17 wallpaper bloom
+            // iOS 17 spectrum wallpaper bloom. Both hues are sampled from the
+            // wallpaper raster embedded in the reference iPhone 15 Pro frames
+            // and held far back so the island keeps all the contrast.
             Canvas(modifier = Modifier.fillMaxSize()) {
-                // Sapphire / Indigo atmospheric glow (left)
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFF2E5BFF).copy(alpha = 0.38f),
+                            IslandColors.WallpaperCrimson.copy(alpha = 0.30f),
                             Color.Transparent
                         ),
                         center = Offset(size.width * 0.22f, size.height * 0.25f),
                         radius = size.width * 0.65f
                     )
                 )
-                // Magenta / Violet silk bloom (right)
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            Color(0xFFB328FF).copy(alpha = 0.32f),
+                            IslandColors.WallpaperCyan.copy(alpha = 0.14f),
                             Color.Transparent
                         ),
                         center = Offset(size.width * 0.82f, size.height * 0.38f),
@@ -779,7 +782,6 @@ private fun IosStatusBattery(modifier: Modifier = Modifier) {
 }
 
 /** Wallpaper tint used behind the island inside [AppStage]. */
-private val StageBloom = Color(0xFF4C6FFF)
 
 /** Short explanatory paragraph shown under a card group. */
 @Composable

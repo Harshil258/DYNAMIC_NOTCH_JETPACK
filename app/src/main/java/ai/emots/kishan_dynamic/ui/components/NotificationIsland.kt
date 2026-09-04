@@ -18,6 +18,7 @@ import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.components.AppText
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 /**
  * Compact stacked notification main pill
@@ -98,7 +99,7 @@ fun NotificationIslandExpanded(
                 AppText(
                     text = appName,
                     style = AppTheme.typography.caption,
-                    color = Color(0xFF8E8E93),
+                    color = IslandColors.Gray,
                     fontWeight = FontWeight.Medium
                 )
                 Spacer(modifier = Modifier.height(2.dp))
@@ -115,7 +116,7 @@ fun NotificationIslandExpanded(
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(percent = 50))
-                .background(Color(0xFF2C2C2E))
+                .background(IslandColors.Gray5)
                 .padding(horizontal = 22.dp, vertical = 10.dp),
             contentAlignment = Alignment.Center
         ) {

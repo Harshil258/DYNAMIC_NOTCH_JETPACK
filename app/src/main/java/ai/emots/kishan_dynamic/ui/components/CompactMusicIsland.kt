@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 /**
  * COMPACT MUSIC — leading capsule.
@@ -82,18 +83,9 @@ fun CompactMusicIslandSide(modifier: Modifier = Modifier) {
     }
 }
 
-/** Deterministic two-colour gradient so a given track always looks the same. */
+/** Deterministic gradient from the system palette, so a track always looks the same. */
 internal fun artworkPalette(seed: String): List<Color> {
-    val palettes = listOf(
-        listOf(Color(0xFFB18CFD), Color(0xFFF095FF)),
-        listOf(Color(0xFFFF6F61), Color(0xFFFFB88C)),
-        listOf(Color(0xFF3AC0F5), Color(0xFF5C7CFA)),
-        listOf(Color(0xFF30D158), Color(0xFF0AC4B0)),
-        listOf(Color(0xFFFF9F0A), Color(0xFFFFD60A)),
-        listOf(Color(0xFFFF2D55), Color(0xFFFF7EB3))
-    )
-    val index = (seed.hashCode().let { if (it == Int.MIN_VALUE) 0 else it }).let {
-        kotlin.math.abs(it) % palettes.size
-    }
-    return palettes[index]
+    val palettes = IslandColors.AvatarGradients
+    val hash = seed.hashCode().let { if (it == Int.MIN_VALUE) 0 else it }
+    return palettes[kotlin.math.abs(hash) % palettes.size]
 }

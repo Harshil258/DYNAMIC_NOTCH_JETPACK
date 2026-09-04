@@ -10,3 +10,8 @@
 local.properties
 .kotlin/
 *.zip
+
+# scratch renders produced by the asset tooling in tools/
+.cache/
+__pycache__/
+*.pyc

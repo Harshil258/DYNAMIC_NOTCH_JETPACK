@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 /**
  * RINGER HUD.
@@ -25,7 +26,7 @@ fun RingerModeIsland(
     onToggle: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val accent = if (isSilent) Color(0xFFFF453A) else Color(0xFFFFFFFF)
+    val accent = if (isSilent) IslandColors.Red else Color.White
 
     Row(
         modifier = modifier

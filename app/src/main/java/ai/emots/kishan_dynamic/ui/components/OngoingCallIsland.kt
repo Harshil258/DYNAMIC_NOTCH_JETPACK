@@ -4,13 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CallEnd
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Mic
-import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,10 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AppWindowSize
+import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
-private val iOSGreen = Color(0xFF30D158)
-private val iOSRed = Color(0xFFFF453A)
-private val iOSDarkGray = Color(0xFF3A3A3C)
+private val iOSGreen = IslandColors.Green
+private val iOSRed = IslandColors.Red
+private val iOSDarkGray = IslandColors.Gray4
 
 /**
  * Ongoing call compact main pill
@@ -69,7 +63,7 @@ fun OngoingCallIslandSide(modifier: Modifier = Modifier) {
     ) {
         WaveformAnimation(
             modifier = Modifier.size(width = 17.dp, height = 14.dp),
-            gradient = listOf(Color(0xFF5CE07E), iOSGreen)
+            gradient = listOf(IslandColors.Mint, iOSGreen)
         )
     }
 }
@@ -117,8 +111,8 @@ fun OngoingCallIslandExpanded(
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
-                                Color(0xFFFF6B35),
-                                Color(0xFFE63946)
+                                IslandColors.Orange,
+                                IslandColors.Red
                             )
                         )
                     ),
@@ -147,7 +141,7 @@ fun OngoingCallIslandExpanded(
                 AppText(
                     text = "$label • $duration",
                     style = AppTheme.typography.islandSubtitle,
-                    color = Color(0xFF838388),
+                    color = IslandColors.Gray,
                     maxLines = 1
                 )
             }
@@ -159,7 +153,7 @@ fun OngoingCallIslandExpanded(
             ) {
                 AppleIcon(
                     glyph = AppleGlyph.Info,
-                    tint = Color(0xFF838388),
+                    tint = IslandColors.Gray,
                     size = 20.dp
                 )
             }
@@ -180,7 +174,7 @@ fun OngoingCallIslandExpanded(
                 modifier = Modifier
                     .size(buttonSize)
                     .clip(CircleShape)
-                    .background(if (isSpeaker) Color.White else Color(0xFF2A292D))
+                    .background(if (isSpeaker) Color.White else IslandColors.ButtonGlass)
             ) {
                 AppleIcon(
                     glyph = AppleGlyph.Speaker,
@@ -195,7 +189,7 @@ fun OngoingCallIslandExpanded(
                 modifier = Modifier
                     .size(buttonSize)
                     .clip(CircleShape)
-                    .background(if (isMuted) Color.White else Color(0xFF2A292D))
+                    .background(if (isMuted) Color.White else IslandColors.ButtonGlass)
             ) {
                 AppleIcon(
                     glyph = AppleGlyph.Microphone,
@@ -210,7 +204,7 @@ fun OngoingCallIslandExpanded(
                 modifier = Modifier
                     .size(buttonSize)
                     .clip(CircleShape)
-                    .background(if (isVideoOn) Color.White else Color(0xFF2A292D))
+                    .background(if (isVideoOn) Color.White else IslandColors.ButtonGlass)
             ) {
                 AppleIcon(
                     glyph = AppleGlyph.FaceTimeVideo,
@@ -225,7 +219,7 @@ fun OngoingCallIslandExpanded(
                 modifier = Modifier
                     .size(buttonSize)
                     .clip(CircleShape)
-                    .background(if (isSharePlay) Color.White else Color(0xFF2A292D))
+                    .background(if (isSharePlay) Color.White else IslandColors.ButtonGlass)
             ) {
                 AppleIcon(
                     glyph = AppleGlyph.SharePlay,
@@ -240,7 +234,7 @@ fun OngoingCallIslandExpanded(
                 modifier = Modifier
                     .size(buttonSize)
                     .clip(CircleShape)
-                    .background(Color(0xFFFA3532))
+                    .background(IslandColors.CapsuleRed)
             ) {
                 AppleIcon(
                     glyph = AppleGlyph.EndCall,

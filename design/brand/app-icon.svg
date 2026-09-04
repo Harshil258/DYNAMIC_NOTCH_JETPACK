@@ -1,0 +1,43 @@
+<!--
+  App mark master — Dynamic Island for Android.
+
+  108 x 108 adaptive-icon canvas. The capsule uses the reference Dynamic Island
+  proportions from design/reference/ios17-dynamic-island (126 x 36.67, corner
+  radius = 50% of the height) and the wash behind it matches the iOS 17
+  wallpaper in the reference device frames.
+
+  The Android vector drawables in app/src/main/res/drawable/ic_launcher_*.xml
+  are the same artwork; tools/build_launcher.py rasterises this file into the
+  legacy mipmap bitmaps.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="108" height="108" viewBox="0 0 108 108" fill="none">
+  <defs>
+    <linearGradient id="wallpaper" x1="20" y1="6" x2="88" y2="102" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#B3122A"/>
+      <stop offset="0.22" stop-color="#FF3B30"/>
+      <stop offset="0.44" stop-color="#FF9F0A"/>
+      <stop offset="0.68" stop-color="#FF2D92"/>
+      <stop offset="1" stop-color="#32ADE6"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="30" cy="20" r="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="lens" cx="76.3" cy="53" r="2.3" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2E6FA8"/>
+      <stop offset="1" stop-color="#0B1622"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="108" height="108" fill="url(#wallpaper)"/>
+  <rect width="108" height="108" fill="url(#sheen)"/>
+
+  <path d="M34.64 48.46H73.36A8.44,8.44 0 0 1 81.8,56.9A8.44,8.44 0 0 1 73.36,65.34H34.64A8.44,8.44 0 0 1 26.2,56.9A8.44,8.44 0 0 1 34.64,48.46Z" fill="#000000" fill-opacity="0.18"/>
+  <path d="M33.44 45.56H74.56A8.44,8.44 0 0 1 83,54A8.44,8.44 0 0 1 74.56,62.44H33.44A8.44,8.44 0 0 1 25,54A8.44,8.44 0 0 1 33.44,45.56Z" fill="#000000"/>
+  <path d="M33.44 45.56H74.56A8.44,8.44 0 0 1 83,54A8.44,8.44 0 0 1 74.56,62.44H33.44A8.44,8.44 0 0 1 25,54A8.44,8.44 0 0 1 33.44,45.56Z" stroke="#FFFFFF" stroke-opacity="0.12" stroke-width="0.8"/>
+
+  <path d="M74.21,54A2.65,2.65 0 1 0 79.5,54A2.65,2.65 0 1 0 74.21,54Z" fill="#121216"/>
+  <path d="M75.16,54A1.69,1.69 0 1 0 78.55,54A1.69,1.69 0 1 0 75.16,54Z" fill="url(#lens)"/>
+  <path d="M75.59,52.95A0.71,0.71 0 1 0 77.02,52.95A0.71,0.71 0 1 0 75.59,52.95Z" fill="#EAF4FF" fill-opacity="0.7"/>
+  <path d="M29.28,54A1.32,1.32 0 1 0 31.92,54A1.32,1.32 0 1 0 29.28,54Z" fill="#141418"/>
+</svg>

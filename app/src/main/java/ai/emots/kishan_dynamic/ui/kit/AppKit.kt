@@ -1,8 +1,13 @@
 package ai.emots.kishan_dynamic.ui.kit
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -36,10 +41,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -532,80 +541,240 @@ fun AppStatusPill(
 /**
  * The stage that showcases a live Dynamic Island.
  *
- * Rather than floating the island on a flat card, we draw a scaled-down phone:
- * rounded 46dp bezel, a hairline aluminium rim and a wallpaper wash. That
- * context is what makes a 126pt pill read as a real hardware cutout instead of
- * a black rectangle — and it is how the reference design presents it too.
+ * Designed as an authentic full-bleed Apple iOS 17 device viewport:
+ * Spans full width (edge-to-edge), styled with an authentic multi-layered
+ * iOS 17 wallpaper (midnight blue, twilight sapphire, and ambient violet bloom),
+ * framing the jet-black Dynamic Island with crisp contrast.
+ *
+ * Height smoothly and dynamically adapts to the active island presentation
+ * (116dp for compact/idle, 156dp for 96dp capsules, 198dp for 144dp activities,
+ * and 238dp for full sheets), completely eliminating empty black dead space.
  */
 @Composable
 fun AppStage(
     modifier: Modifier = Modifier,
     caption: String? = null,
-    minHeight: Dp = 240.dp,
+    targetHeight: Dp = 116.dp,
+    minHeight: Dp? = null,
+    showStatusBar: Boolean = true,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val outerShape = RoundedCornerShape(AppTheme.radius.card)
-    val deviceShape = RoundedCornerShape(46.dp)
+    val effectiveTargetHeight = minHeight ?: targetHeight
+    val animatedStageHeight by animateDpAsState(
+        targetValue = effectiveTargetHeight,
+        animationSpec = spring(
+            dampingRatio = 0.82f,
+            stiffness = 380f
+        ),
+        label = "stage_height"
+    )
+
+    val stageShape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(outerShape)
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        AppTheme.colors.surfaceVariant,
-                        AppTheme.colors.surface
-                    )
-                )
-            )
-            .border(0.5.dp, AppTheme.colors.border, outerShape)
-            .padding(AppTheme.spacing.lg),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = minHeight)
-                // The device body.
-                .clip(deviceShape)
+                .height(animatedStageHeight)
+                .shadow(
+                    elevation = 14.dp,
+                    shape = stageShape,
+                    ambientColor = Color.Black.copy(alpha = 0.40f),
+                    spotColor = Color.Black.copy(alpha = 0.60f)
+                )
+                .clip(stageShape)
                 .background(
                     Brush.verticalGradient(
                         listOf(
-                            Color(0xFF14151A),
-                            Color(0xFF07070A)
+                            Color(0xFF0A0C1A),
+                            Color(0xFF121736),
+                            Color(0xFF1B163B),
+                            Color(0xFF090A14)
                         )
                     )
                 )
-                .border(1.dp, Color.White.copy(alpha = 0.10f), deviceShape)
-                .padding(vertical = AppTheme.spacing.md),
+                .border(
+                    width = 1.dp,
+                    brush = Brush.verticalGradient(
+                        listOf(
+                            Color.White.copy(alpha = 0.16f),
+                            Color.White.copy(alpha = 0.04f)
+                        )
+                    ),
+                    shape = stageShape
+                ),
             contentAlignment = Alignment.TopCenter
         ) {
-            // A soft wallpaper bloom behind the island, so the black pill has
-            // something to sit against.
+            // Authentic Apple iOS 17 wallpaper bloom
             Canvas(modifier = Modifier.fillMaxSize()) {
-                drawRect(
+                // Sapphire / Indigo atmospheric glow (left)
+                drawCircle(
                     brush = Brush.radialGradient(
                         colors = listOf(
-                            StageBloom.copy(alpha = 0.30f),
+                            Color(0xFF2E5BFF).copy(alpha = 0.38f),
                             Color.Transparent
                         ),
-                        center = Offset(size.width * 0.5f, size.height * 0.1f),
-                        radius = size.width * 0.9f
+                        center = Offset(size.width * 0.22f, size.height * 0.25f),
+                        radius = size.width * 0.65f
+                    )
+                )
+                // Magenta / Violet silk bloom (right)
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            Color(0xFFB328FF).copy(alpha = 0.32f),
+                            Color.Transparent
+                        ),
+                        center = Offset(size.width * 0.82f, size.height * 0.38f),
+                        radius = size.width * 0.70f
+                    )
+                )
+                // Soft top specular rim
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.08f),
+                            Color.Transparent
+                        ),
+                        startY = 0f,
+                        endY = size.height * 0.45f
                     )
                 )
             }
-            content()
+
+            // Authentic Apple iOS Status Bar framing the island (fades out when expanded)
+            val statusBarAlpha by animateFloatAsState(
+                targetValue = if (showStatusBar) 1f else 0f,
+                animationSpec = tween(180),
+                label = "status_bar_alpha"
+            )
+            if (statusBarAlpha > 0.01f) {
+                IosStatusBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 14.dp)
+                        .graphicsLayer { alpha = statusBarAlpha }
+                )
+            }
+
+            // The island sits 11dp below the top edge of the display, exactly as on iPhone
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 11.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                content()
+            }
         }
 
         if (caption != null) {
-            Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+            Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
             AppText(
                 text = caption,
                 style = AppTheme.typography.caption,
                 color = AppTheme.colors.textTertiary
             )
         }
+    }
+}
+
+/**
+ * Authentic Apple iOS Status Bar: "9:41" on the left, Signal bars + Battery on the right.
+ * Omit carrier text ("5G") during active island presentation to match iOS 17 HIG.
+ */
+@Composable
+fun IosStatusBar(
+    modifier: Modifier = Modifier,
+    time: String = "9:41"
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Left: Time (9:41 in SF Pro bold weight)
+        AppText(
+            text = time,
+            style = AppTheme.typography.islandSubtitle.copy(fontSize = 14.sp),
+            fontWeight = FontWeight.Bold,
+            color = Color.White.copy(alpha = 0.92f)
+        )
+
+        // Right: Signal Bars + iOS Battery
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            // 4 Signal Bars
+            SignalBars(modifier = Modifier.size(width = 17.dp, height = 11.5.dp))
+
+            // iOS Battery Glyph
+            IosStatusBattery(modifier = Modifier.size(width = 24.dp, height = 11.5.dp))
+        }
+    }
+}
+
+@Composable
+private fun SignalBars(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier) {
+        val barWidth = size.width / 7f
+        val gap = barWidth
+        val heights = listOf(0.35f, 0.55f, 0.78f, 1.0f)
+        for (i in 0..3) {
+            val barHeight = size.height * heights[i]
+            val x = i * (barWidth + gap)
+            val y = size.height - barHeight
+            drawRoundRect(
+                color = Color.White.copy(alpha = 0.9f),
+                topLeft = Offset(x, y),
+                size = Size(barWidth, barHeight),
+                cornerRadius = CornerRadius(1.5.dp.toPx(), 1.5.dp.toPx())
+            )
+        }
+    }
+}
+
+@Composable
+private fun IosStatusBattery(modifier: Modifier = Modifier) {
+    Canvas(modifier = modifier) {
+        val stroke = 1.2.dp.toPx()
+        val bodyWidth = size.width - 2.5.dp.toPx()
+        val bodyHeight = size.height
+        val corner = 3.dp.toPx()
+
+        // Shell
+        drawRoundRect(
+            color = Color.White.copy(alpha = 0.35f),
+            topLeft = Offset(0f, 0f),
+            size = Size(bodyWidth, bodyHeight),
+            cornerRadius = CornerRadius(corner, corner),
+            style = Stroke(width = stroke)
+        )
+
+        // Inner solid fill
+        val innerPad = stroke + 1.2.dp.toPx()
+        val innerWidth = (bodyWidth - innerPad * 2) * 0.92f
+        val innerHeight = bodyHeight - innerPad * 2
+        drawRoundRect(
+            color = Color.White.copy(alpha = 0.95f),
+            topLeft = Offset(innerPad, innerPad),
+            size = Size(innerWidth, innerHeight),
+            cornerRadius = CornerRadius(1.5.dp.toPx(), 1.5.dp.toPx())
+        )
+
+        // Positive Terminal Nub
+        val nubWidth = 1.5.dp.toPx()
+        val nubHeight = bodyHeight * 0.40f
+        drawRoundRect(
+            color = Color.White.copy(alpha = 0.45f),
+            topLeft = Offset(bodyWidth + 1.dp.toPx(), (bodyHeight - nubHeight) / 2f),
+            size = Size(nubWidth, nubHeight),
+            cornerRadius = CornerRadius(1.dp.toPx(), 1.dp.toPx())
+        )
     }
 }
 

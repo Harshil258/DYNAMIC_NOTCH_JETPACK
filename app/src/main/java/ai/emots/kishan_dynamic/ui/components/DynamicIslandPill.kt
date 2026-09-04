@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 enum class IslandDemoState {
+    Idle,
     Minimal,
     MusicCompact,
     MusicExpanded,
@@ -68,8 +69,12 @@ enum class IslandDemoState {
     CallExpanded,
     NotificationCompact,
     NotificationExpanded,
+    SilentModeCompact,
+    SilentModeExpanded,
     ChargingCompact,
     ChargingExpanded,
+    LowBatteryCompact,
+    LowBatteryExpanded,
     TimerCompact,
     TimerExpanded,
     DeliveryCompact,
@@ -147,17 +152,20 @@ fun DynamicIslandPill(
     val maxExpanded = islandTokens.expandedWidth(screenWidth)
 
     val targetWidth: Dp = when (state) {
+        IslandDemoState.Idle -> 126.dp
         IslandDemoState.Minimal -> 156.dp
         IslandDemoState.MusicCompact -> 190.dp  // iPhone 15 Pro-1.svg exact width
         IslandDemoState.CallCompact -> 152.dp
         IslandDemoState.ChargingCompact -> 132.dp
+        IslandDemoState.LowBatteryCompact -> 132.dp
+        IslandDemoState.SilentModeCompact -> 152.dp
         IslandDemoState.NotificationCompact -> 152.dp
-        IslandDemoState.TimerCompact -> 222.dp  // Compact.svg exact width
+        IslandDemoState.TimerCompact -> 168.dp
         IslandDemoState.DeliveryCompact -> 160.dp
         IslandDemoState.FlightCompact -> 160.dp
         IslandDemoState.SportsCompact -> 156.dp
         IslandDemoState.NavigationCompact -> 156.dp
-        IslandDemoState.TimerImage -> 222.dp
+        IslandDemoState.TimerImage -> 168.dp
         IslandDemoState.NotificationImage -> 160.dp
         IslandDemoState.CallAvatars -> maxExpanded
         // Expanded sheets: the device width minus iOS side margins, capped.
@@ -176,10 +184,13 @@ fun DynamicIslandPill(
     //   - Music Player (scrubber & controls): 177dp
     //   - Turn-by-Turn Navigation: 185.3dp
     val targetHeight: Dp = when (state) {
+        IslandDemoState.Idle,
         IslandDemoState.Minimal,
         IslandDemoState.MusicCompact,
         IslandDemoState.CallCompact,
         IslandDemoState.ChargingCompact,
+        IslandDemoState.LowBatteryCompact,
+        IslandDemoState.SilentModeCompact,
         IslandDemoState.NotificationCompact,
         IslandDemoState.TimerCompact,
         IslandDemoState.DeliveryCompact,
@@ -188,8 +199,10 @@ fun DynamicIslandPill(
         IslandDemoState.NavigationCompact -> 37.33.dp
 
         IslandDemoState.NotificationExpanded,
+        IslandDemoState.SilentModeExpanded,
         IslandDemoState.TimerExpanded,
         IslandDemoState.ChargingExpanded,
+        IslandDemoState.LowBatteryExpanded,
         IslandDemoState.NotificationImage,
         IslandDemoState.CallAvatars -> 96.dp
 
@@ -219,10 +232,13 @@ fun DynamicIslandPill(
 
     // Corner curvature: Exact 42dp squircle for full sheets, 44dp for 96dp capsules, 50% for compact
     val cornerRadius = when (state) {
+        IslandDemoState.Idle,
         IslandDemoState.Minimal,
         IslandDemoState.MusicCompact,
         IslandDemoState.CallCompact,
         IslandDemoState.ChargingCompact,
+        IslandDemoState.LowBatteryCompact,
+        IslandDemoState.SilentModeCompact,
         IslandDemoState.NotificationCompact,
         IslandDemoState.TimerCompact,
         IslandDemoState.DeliveryCompact,
@@ -231,15 +247,17 @@ fun DynamicIslandPill(
         IslandDemoState.NavigationCompact -> RoundedCornerShape(percent = 50)
 
         IslandDemoState.NotificationExpanded,
+        IslandDemoState.SilentModeExpanded,
         IslandDemoState.TimerExpanded,
         IslandDemoState.ChargingExpanded,
+        IslandDemoState.LowBatteryExpanded,
         IslandDemoState.NotificationImage,
         IslandDemoState.CallAvatars -> RoundedCornerShape(44.dp)
 
         else -> RoundedCornerShape(42.dp)
     }
 
-    val isSplit = state == IslandDemoState.CallCompact || state == IslandDemoState.TimerCompact || state == IslandDemoState.Minimal
+    val isSplit = state == IslandDemoState.Minimal
 
     // Apple Liquid Morphing Springs
     val animatedWidth by animateDpAsState(
@@ -267,10 +285,13 @@ fun DynamicIslandPill(
     )
 
     val auraColor = when (state) {
+        IslandDemoState.Idle -> Color(0xFF4C6FFF)
         IslandDemoState.CallCompact, IslandDemoState.CallExpanded -> Color(0xFF37C058)
         IslandDemoState.ChargingCompact, IslandDemoState.ChargingExpanded -> Color(0xFF34C759)
+        IslandDemoState.LowBatteryCompact, IslandDemoState.LowBatteryExpanded -> Color(0xFFFF453A)
         IslandDemoState.MusicCompact, IslandDemoState.MusicExpanded -> Color(0xFFFA2D48)
-        IslandDemoState.NotificationCompact, IslandDemoState.NotificationExpanded -> Color(0xFF8E8E93)
+        IslandDemoState.SilentModeCompact, IslandDemoState.SilentModeExpanded -> Color(0xFFFF453A)
+        IslandDemoState.NotificationCompact, IslandDemoState.NotificationExpanded -> Color(0xFF25D366)
         IslandDemoState.TimerCompact, IslandDemoState.TimerExpanded -> Color(0xFF2A86E6)
         IslandDemoState.DeliveryCompact, IslandDemoState.DeliveryExpanded -> Color(0xFFF59E0B)
         IslandDemoState.FlightCompact, IslandDemoState.FlightExpanded -> Color(0xFF00F5D4)
@@ -335,8 +356,10 @@ fun DynamicIslandPill(
                             IslandDemoState.MusicExpanded -> 18.dp
                             IslandDemoState.CallExpanded -> 16.dp
                             IslandDemoState.NotificationExpanded,
+                            IslandDemoState.SilentModeExpanded,
                             IslandDemoState.TimerExpanded,
-                            IslandDemoState.ChargingExpanded -> 18.dp
+                            IslandDemoState.ChargingExpanded,
+                            IslandDemoState.LowBatteryExpanded -> 18.dp
                             IslandDemoState.DeliveryExpanded,
                             IslandDemoState.FlightExpanded,
                             IslandDemoState.SportsExpanded,
@@ -355,8 +378,10 @@ fun DynamicIslandPill(
                             IslandDemoState.MusicExpanded -> 16.dp
                             IslandDemoState.CallExpanded -> 14.dp
                             IslandDemoState.NotificationExpanded,
+                            IslandDemoState.SilentModeExpanded,
                             IslandDemoState.TimerExpanded,
-                            IslandDemoState.ChargingExpanded -> 12.dp
+                            IslandDemoState.ChargingExpanded,
+                            IslandDemoState.LowBatteryExpanded -> 12.dp
                             IslandDemoState.DeliveryExpanded,
                             IslandDemoState.FlightExpanded,
                             IslandDemoState.SportsExpanded,
@@ -382,6 +407,7 @@ fun DynamicIslandPill(
                     label = "island_content_morph"
                 ) { targetState ->
                     when (targetState) {
+                        IslandDemoState.Idle -> IdleCutoutContent()
                         IslandDemoState.Minimal -> MinimalPillContent()
                         IslandDemoState.MusicCompact -> MusicCompactContent()
                         IslandDemoState.MusicExpanded -> MusicExpandedContent()
@@ -389,8 +415,12 @@ fun DynamicIslandPill(
                         IslandDemoState.CallExpanded -> FaceTimeAudioExpandedContent()
                         IslandDemoState.NotificationCompact -> NotificationCompactContent()
                         IslandDemoState.NotificationExpanded -> NotificationExpandedContent()
+                        IslandDemoState.SilentModeCompact -> SilentModeCompactContent()
+                        IslandDemoState.SilentModeExpanded -> SilentModeExpandedContent()
                         IslandDemoState.ChargingCompact -> ChargingCompactContent()
                         IslandDemoState.ChargingExpanded -> ChargingExpandedContent()
+                        IslandDemoState.LowBatteryCompact -> LowBatteryCompactContent()
+                        IslandDemoState.LowBatteryExpanded -> LowBatteryExpandedContent()
                         IslandDemoState.TimerCompact -> TimerCompactContent()
                         IslandDemoState.TimerExpanded -> TimerExpandedContent()
                         IslandDemoState.DeliveryCompact -> DeliveryCompactContent()
@@ -487,6 +517,12 @@ private fun CompactIslandLayout(
 // =============================================================================
 // AUTHENTIC EXPANDED & COMPACT ISLAND IMPLEMENTATIONS
 // =============================================================================
+
+@Composable
+private fun IdleCutoutContent() {
+    // Pure Apple hardware cutout: 126pt OLED black, completely clean.
+    Box(modifier = Modifier.fillMaxSize())
+}
 
 @Composable
 private fun MinimalPillContent() {
@@ -823,22 +859,31 @@ private fun CallExpandedContent() {
 }
 
 // -----------------------------------------------------------------------------
-// 3. SILENT MODE / NOTIFICATION - MATCHING Dynamic Island-2.svg EXACTLY!
+// 3. NOTIFICATION ALERT (WHATSAPP / MESSAGES)
 // -----------------------------------------------------------------------------
 @Composable
 private fun NotificationCompactContent() {
-    // Figma Dynamic Island-2.svg: Bell slash icon + "Silent" label in compact
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.BellSlash, tint = Color.White, size = 13.dp)
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF25D366)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.Bell, tint = Color.White, size = 11.dp)
+            }
         },
         trailing = {
             Text(
-                text = "Silent",
+                text = "Tamia · 2 msgs",
                 fontSize = 11.5.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF8E8E93),
-                modifier = Modifier.widthIn(max = 55.dp)
+                color = Color.White,
+                modifier = Modifier.widthIn(max = 100.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     )
@@ -846,7 +891,100 @@ private fun NotificationCompactContent() {
 
 @Composable
 private fun NotificationExpandedContent(
-    appName: String = "SilentMode",
+    appName: String = "WhatsApp",
+    sender: String = "Tamia Castillo",
+    message: String = "Hey, are you free tonight? 🍕"
+) {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF25D366)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.Bell, tint = Color.White, size = 22.dp)
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = appName,
+                    color = Color(0xFF8E8E93),
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.height(1.dp))
+                Text(
+                    text = sender,
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(1.dp))
+                Text(
+                    text = message,
+                    color = Color(0xFFC7C7CC),
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Box(
+            modifier = Modifier
+                .clip(RoundedCornerShape(percent = 50))
+                .background(Color(0xFF2C2C2E))
+                .padding(horizontal = 18.dp, vertical = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Reply",
+                color = Color.White,
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 3B. SILENT MODE ALERT - MATCHING Dynamic Island-2.svg EXACTLY!
+// -----------------------------------------------------------------------------
+@Composable
+private fun SilentModeCompactContent() {
+    CompactIslandLayout(
+        leading = {
+            AppleIcon(glyph = AppleGlyph.BellSlash, tint = Color(0xFFFF453A), size = 13.dp)
+        },
+        trailing = {
+            Text(
+                text = "Silent",
+                fontSize = 11.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFFFF453A)
+            )
+        }
+    )
+}
+
+@Composable
+private fun SilentModeExpandedContent(
+    appName: String = "Silent Mode",
     title: String = "On"
 ) {
     Row(
@@ -854,11 +992,10 @@ private fun NotificationExpandedContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // LEFT: Slash Bell + "SilentMode" & "On"
         Row(verticalAlignment = Alignment.CenterVertically) {
             AppleIcon(
                 glyph = AppleGlyph.BellSlash,
-                tint = Color.White,
+                tint = Color(0xFFFF453A),
                 size = 28.dp
             )
 
@@ -881,7 +1018,6 @@ private fun NotificationExpandedContent(
             }
         }
 
-        // RIGHT: Apple Dark Charcoal Glass Pill Button [ Unmute ]
         Box(
             modifier = Modifier
                 .clip(RoundedCornerShape(percent = 50))
@@ -1047,6 +1183,64 @@ private fun ChargingExpandedContent() {
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = Color(0xFF34C759),
+            fontFamily = FontFamily.Monospace
+        )
+    }
+}
+
+// -----------------------------------------------------------------------------
+// 5B. LOW BATTERY ALERT
+// -----------------------------------------------------------------------------
+@Composable
+private fun LowBatteryCompactContent() {
+    CompactIslandLayout(
+        leading = {
+            AppleIcon(glyph = AppleGlyph.Battery, tint = Color(0xFFFF453A), size = 18.dp)
+        },
+        trailing = {
+            Text(
+                text = "14% !",
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFFFF453A),
+                fontFamily = FontFamily.Monospace
+            )
+        }
+    )
+}
+
+@Composable
+private fun LowBatteryExpandedContent() {
+    Row(
+        modifier = Modifier.fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFFF453A).copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.Battery, tint = Color(0xFFFF453A), size = 26.dp)
+            }
+
+            Spacer(modifier = Modifier.width(14.dp))
+
+            Column(verticalArrangement = Arrangement.Center) {
+                Text(text = "Low Battery", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.height(2.dp))
+                Text(text = "14% remaining • Connect charger", color = Color(0xFFFF453A), fontSize = 12.sp)
+            }
+        }
+
+        Text(
+            text = "14%",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFFFF453A),
             fontFamily = FontFamily.Monospace
         )
     }

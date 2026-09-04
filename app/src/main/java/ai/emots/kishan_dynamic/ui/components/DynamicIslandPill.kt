@@ -148,7 +148,7 @@ fun DynamicIslandPill(
 
     val targetWidth: Dp = when (state) {
         IslandDemoState.Minimal -> 156.dp
-        IslandDemoState.MusicCompact -> 160.dp
+        IslandDemoState.MusicCompact -> 190.dp  // iPhone 15 Pro-1.svg exact width
         IslandDemoState.CallCompact -> 152.dp
         IslandDemoState.ChargingCompact -> 132.dp
         IslandDemoState.NotificationCompact -> 152.dp

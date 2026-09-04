@@ -116,33 +116,33 @@ data class AppIslandTokens(
     val compactHeight: Dp = 37.33.dp,
     /** True iOS idle capsule width — never stretch this to the screen. */
     val compactWidth: Dp = 126.dp,
-    /** Compact media capsule: slightly wider to host the artwork + waveform. */
-    val mediaCompactWidth: Dp = 134.dp,
-    /** Trailing bubble used in split (live-activity) mode. */
-    val sideSize: Dp = 37.33.dp,
-    /** Gap between the capsule and the trailing bubble (iOS Figma uses 11pt). */
+    /** Compact media capsule: from iPhone 15 Pro-1.svg (190pt x 38pt). */
+    val mediaCompactWidth: Dp = 190.dp,
+    /** Trailing bubble used in split (live-activity) mode (Minimal.svg: 36.67pt circle). */
+    val sideSize: Dp = 36.67.dp,
+    /** Gap between the capsule and the trailing bubble (iOS Figma uses 11pt in Minimal.svg). */
     val splitGap: Dp = 11.dp,
-    /** Distance from the top edge of the display to the island. */
+    /** Distance from the top edge of the display to the island (Figma: 10-11pt). */
     val topInset: Dp = 11.dp,
     /** Capsule corner radius (exact half of the height = true capsule). */
     val compactCorner: Dp = 18.67.dp,
-    /** Expanded sheet corner radius (Figma uses 42pt for sheets, 44pt for 96dp capsules). */
+    /** Expanded sheet corner radius (Figma uses 42pt for sheets, 44pt for 96dp/160dp capsules). */
     val expandedCorner: Dp = 42.dp,
-    /** Maximum expanded width on the reference device. */
-    val expandedMaxWidth: Dp = 371.dp,
-    /** Horizontal breathing room kept on each side when expanded. */
+    /** Maximum expanded width from Pro Max 430px-2.svg (408pt on 430pt screen). */
+    val expandedMaxWidth: Dp = 408.dp,
+    /** Horizontal breathing room kept on each side when expanded (11pt on Pro Max, 13pt on 15 Pro). */
     val expandedSideMargin: Dp = 11.dp,
     /** Incoming call expanded height (96pt in phone context, matches Figma). */
     val incomingCallHeight: Dp = 96.dp,
     /** Ringer / notification expanded height. */
     val ringerExpandedHeight: Dp = 96.dp,
-    /** Music expanded height (full sheet with scrubber and controls, from Figma Dynamic Island.svg). */
+    /** Music expanded height (full sheet with scrubber and controls, from iPhone 15 Pro.svg). */
     val musicExpandedHeight: Dp = 177.dp,
     /** Call expanded height (full sheet with 5 action buttons, from Figma Dynamic Island-2/3.svg). */
     val callExpandedHeight: Dp = 166.dp,
     /** Notification expanded height (96pt in phone context, matches Figma). */
     val notificationExpandedHeight: Dp = 96.dp,
-    /** Reference device the geometry above was measured on. */
+    /** Reference device the geometry above was measured on (iPhone 15 Pro). */
     val referenceScreenWidth: Dp = 393.dp
 ) {
     /**

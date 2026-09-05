@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
+import ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicy
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
@@ -35,17 +36,24 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun MusicSettingsScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToPremium: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferences = remember { AuroraPreferences(context) }
 
     val savedWaveform by preferences.waveformStyle.collectAsState(initial = "Neon Cyan")
+    val musicIslandEnabled by preferences.musicIslandEnabled.collectAsState(initial = true)
+    val musicScrubberEnabled by preferences.musicScrubberEnabled.collectAsState(initial = true)
+    val compactMusicControls by preferences.compactMusicControls.collectAsState(initial = false)
+    val isProActive by preferences.isProActive.collectAsState(initial = false)
+    val compactMusicControlsEnabled = PremiumFeaturePolicy.compactMusicControlsEnabled(
+        isProActive = isProActive,
+        requested = compactMusicControls
+    )
 
     var isExpandedPreview by remember { mutableStateOf(true) }
-    var isMusicEnabled by remember { mutableStateOf(true) }
-    var showScrubber by remember { mutableStateOf(true) }
 
     val waveformStyles = listOf("Neon", "Aurora", "Studio", "Minimal")
     val selectedWaveformIndex = waveformStyles
@@ -62,13 +70,16 @@ fun MusicSettingsScreen(
 
         AppStage(
             modifier = Modifier.appReveal(1),
-            caption = if (isExpandedPreview) "Tap the island to collapse" else "Tap the island to expand",
+            caption = if (compactMusicControlsEnabled) "Compact controls enabled"
+            else if (isExpandedPreview) "Tap the island to collapse" else "Tap the island to expand",
             minHeight = 200.dp
         ) {
             DynamicIslandPill(
-                state = if (isExpandedPreview) IslandDemoState.MusicExpanded
+                state = if (isExpandedPreview && !compactMusicControlsEnabled) IslandDemoState.MusicExpanded
                 else IslandDemoState.MusicCompact,
-                onTap = { isExpandedPreview = !isExpandedPreview }
+                onTap = {
+                    if (!compactMusicControlsEnabled) isExpandedPreview = !isExpandedPreview
+                }
             )
         }
 
@@ -80,17 +91,37 @@ fun MusicSettingsScreen(
                 title = "Show island for music",
                 subtitle = "Display album art whenever audio is playing",
                 glyph = AppleGlyph.Music,
-                checked = isMusicEnabled,
-                onCheckedChange = { isMusicEnabled = it }
+                checked = musicIslandEnabled,
+                onCheckedChange = { scope.launch { preferences.setMusicIslandEnabled(it) } }
             )
             AppRowDivider()
             AppToggleRow(
                 title = "Scrubbable progress bar",
                 subtitle = "Drag the timeline to seek through a track",
                 glyph = AppleGlyph.Timer,
-                checked = showScrubber,
-                enabled = isMusicEnabled,
-                onCheckedChange = { showScrubber = it }
+                checked = musicScrubberEnabled,
+                enabled = musicIslandEnabled,
+                onCheckedChange = { scope.launch { preferences.setMusicScrubberEnabled(it) } }
+            )
+            AppRowDivider()
+            AppToggleRow(
+                title = "Compact music controls",
+                subtitle = if (isProActive) {
+                    "Keep playback in the smaller island presentation"
+                } else {
+                    "Pro · Keep playback in the smaller island presentation"
+                },
+                glyph = AppleGlyph.Expand,
+                checked = compactMusicControlsEnabled,
+                enabled = musicIslandEnabled,
+                trailingLabel = if (isProActive) null else "PRO",
+                onCheckedChange = {
+                    if (isProActive) {
+                        scope.launch { preferences.setCompactMusicControls(it) }
+                    } else {
+                        onNavigateToPremium()
+                    }
+                }
             )
         }
 

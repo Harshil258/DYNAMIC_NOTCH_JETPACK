@@ -29,34 +29,35 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
+import androidx.compose.ui.layout.ContentScale
+import ai.emots.kishan_dynamic.R
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun MusicPlayerIsland(
     title: String = "Heat Waves",
-    artist: String = "Glass Animals",
+    artist: String = "Grass Animals",
+    albumArtUri: String? = null,
     isPlaying: Boolean = true,
     currentTime: String = "0:50",
     remainingTime: String = "-3:11",
-    initialProgress: Float = 0.21f,
+    initialProgress: Float = 0.34f,
     onPlayPause: () -> Unit = {},
     onPrevious: () -> Unit = {},
     onNext: () -> Unit = {},
-    onSeek: (Float) -> Unit = {}
+    onAirPlay: () -> Unit = {},
+    onSeek: (Float) -> Unit = {},
+    showScrubber: Boolean = true
 ) {
     var progress by remember { mutableFloatStateOf(initialProgress) }
     var isDragging by remember { mutableStateOf(false) }
+    var playing by remember(isPlaying) { mutableStateOf(isPlaying) }
+    var isAirPlayConnected by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isPlaying) {
-        if (isPlaying) {
-            while (true) {
-                delay(1000)
-                if (!isDragging) {
-                    progress = (progress + 0.004f).coerceAtMost(1f)
-                }
-            }
+    LaunchedEffect(initialProgress) {
+        if (!isDragging) {
+            progress = initialProgress.coerceIn(0f, 1f)
         }
     }
 
@@ -68,163 +69,231 @@ fun MusicPlayerIsland(
     // Controls: ◀◀ ▶ ▶▶ AirPlay - solid white icons on black
     // Compact: album art + track title + waveform
 
-    val hPad = 16.dp
-    val vPad = 14.dp
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
+        val albumArtSize = (53.dp * scale)
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = hPad, vertical = vPad),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        // TOP ROW: Album Art Squircle + Title & Artist + Pink Equalizer
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 32.dp * scale, bottom = 12.dp * scale),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
+            // TOP ROW: 53dp Album Art (rx=8dp) at X=24dp + Title/Artist + Live Equalizer (rx=35.1dp from right edge)
             Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp * scale, end = 35.dp * scale),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // 52dp Album Art Squircle
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    // 53dp Album Art (rx=8dp matching Dynamic Island-11.svg at X=24dp, Y=32dp)
                     Box(
                         modifier = Modifier
-                            .size(52.dp)
-                            .clip(RoundedCornerShape(13.dp))
-                            .background(
-                                Brush.linearGradient(
-                                    listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.Cyan)
-                                )
-                            )
-                            .border(1.dp, Color(0x22FFFFFF), RoundedCornerShape(13.dp)),
+                            .size(albumArtSize)
+                            .clip(RoundedCornerShape(8.dp * scale))
+                            .background(Color.Black)
+                            .border(0.75.dp, Color(0x33FFFFFF), RoundedCornerShape(8.dp * scale)),
                         contentAlignment = Alignment.Center
                     ) {
-                        AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 20.dp)
+                        UriArtwork(
+                            uri = albumArtUri,
+                            fallbackRes = R.drawable.music_album_art,
+                            contentDescription = "Album art",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.FillBounds
+                        )
                     }
 
-                    Spacer(modifier = Modifier.width(14.dp))
+                    // Gap between Album Art right edge (77dp) and Title left edge (98.4dp) = 21.4dp
+                    Spacer(modifier = Modifier.width(21.4.dp * scale))
 
-                    Column(verticalArrangement = Arrangement.Center) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = title,
                                 color = Color.White,
-                                fontSize = 17.sp,
+                                fontSize = (16f * scale).sp,
                                 fontWeight = FontWeight.Bold,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
 
-                            Spacer(modifier = Modifier.width(7.dp))
+                            Spacer(modifier = Modifier.width(6.2.dp * scale))
 
-                            // Apple [E] Explicit Badge
+                            // Apple [E] Explicit Badge (15x15, rx=3.5 matching Dynamic Island-11.svg)
                             Box(
                                 modifier = Modifier
-                                    .size(16.dp)
-                                    .clip(RoundedCornerShape(3.5.dp))
-                                    .background(IslandColors.Gray),
+                                    .size(15.dp * scale)
+                                    .clip(RoundedCornerShape(3.5.dp * scale))
+                                    .background(Color.White),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = "E",
                                     color = Color.Black,
-                                    fontSize = 7.sp,
+                                    fontSize = (8f * scale).sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(2.dp))
+                        // Gap between Title bottom (54.5dp) and Artist top (63.1dp) = 8.6dp (Spacer 5dp)
+                        Spacer(modifier = Modifier.height(5.dp * scale))
 
                         Text(
                             text = artist,
-                            color = IslandColors.Gray,
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold,
+                            color = Color(0xFF9A9A9A),
+                            fontSize = (13.5f * scale).sp,
+                            fontWeight = FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
-                // Reference equalizer (Minimal.svg paint0_linear: #F84BAB -> #B4CDFB)
-                LiveEqualizerMini()
+                Spacer(modifier = Modifier.width(12.dp * scale))
+
+                // Reference equalizer (Minimal.svg / Dynamic Island-11.svg: 19.8x22.4dp at X=312..332dp)
+                LiveEqualizerMini(
+                    width = 20.dp * scale,
+                    height = 22.dp * scale,
+                    animated = playing
+                )
             }
 
-            // MIDDLE ROW: Scrubber Slider with Time
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            // MIDDLE ROW: Scrubber Slider with Time (Dynamic Island-11: 240x6.5 bar, rx=3.25, 25dp side padding)
+            if (showScrubber) Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 25.dp * scale),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = currentTime,
-                    fontSize = 12.sp,
-                    color = IslandColors.Gray,
+                    fontSize = (11f * scale).sp,
+                    color = Color(0xFF9A9A9A),
                     fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily.Monospace
                 )
 
-                // Linear Progress Track
-                Box(
+                // Exact 14.25dp gap from time to track
+                Spacer(modifier = Modifier.width(14.dp * scale))
+
+                // Linear Progress Track (6.5dp height with 3.25dp radius)
+                AppleAudioScrubber(
+                    progress = progress,
+                    onProgressChange = { value ->
+                        isDragging = true
+                        progress = value
+                        onSeek(value)
+                    },
+                    onProgressChangeFinished = {
+                        isDragging = false
+                        onSeek(progress)
+                    },
                     modifier = Modifier
                         .weight(1f)
-                        .height(5.dp)
-                        .clip(CircleShape)
-                        .background(IslandColors.Gray4)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(0.32f)
-                            .fillMaxHeight()
-                            .clip(CircleShape)
-                            .background(Color.White)
-                    )
-                }
+                        .height(18.dp * scale)
+                )
+
+                // Exact 14.24dp gap from track to time
+                Spacer(modifier = Modifier.width(14.dp * scale))
 
                 Text(
                     text = remainingTime,
-                    fontSize = 12.sp,
-                    color = IslandColors.Gray,
+                    fontSize = (11f * scale).sp,
+                    color = Color(0xFF9A9A9A),
                     fontWeight = FontWeight.Medium,
                     fontFamily = FontFamily.Monospace
                 )
             }
 
-            // BOTTOM ROW: Media Controls (Backward, Play Pause, Forward, AirPlay)
-            Row(
+            // BOTTOM ROW: Authentic iOS Transport Trio (Play centered at X=192.3dp with +8.8dp optical offset) + AirPlay Pinned at X=315dp
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 14.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .height(44.dp * scale)
             ) {
-                Box(
-                    modifier = Modifier.clickable(onClick = onPrevious)
+                // Centered 3-button playback controls
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .offset(x = 8.8.dp * scale),
+                    horizontalArrangement = Arrangement.spacedBy(27.dp * scale),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AppleIcon(glyph = AppleGlyph.Backward, tint = Color.White, size = 26.dp)
+                    // Previous (size 36dp renders 28.3x16dp vector matching Dynamic Island-11.svg)
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp * scale)
+                            .clickable {
+                                progress = 0f
+                                onPrevious()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(glyph = AppleGlyph.Backward, tint = Color.White, size = 36.dp * scale)
+                    }
+
+                    // Play/Pause icon (size 40dp renders 25x28dp vector matching Dynamic Island-11.svg)
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp * scale)
+                            .clickable {
+                                playing = !playing
+                                onPlayPause()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
+                            tint = Color.White,
+                            size = 40.dp * scale
+                        )
+                    }
+
+                    // Next (size 36dp renders 28.3x16dp vector matching Dynamic Island-11.svg)
+                    Box(
+                        modifier = Modifier
+                            .size(40.dp * scale)
+                            .clickable {
+                                progress = (progress + 0.05f).coerceAtMost(1f)
+                                onNext()
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(glyph = AppleGlyph.Forward, tint = Color.White, size = 36.dp * scale)
+                    }
                 }
 
-                // Play/Pause icon
+                // AirPlay / Route Picker Icon pinned to center at X=315dp (end padding = 32dp * scale, size = 25.5dp)
                 Box(
-                    modifier = Modifier.clickable(onClick = onPlayPause)
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                    .padding(end = 32.dp * scale)
+                    .size(40.dp * scale)
+                        .clickable {
+                            isAirPlayConnected = !isAirPlayConnected
+                            onAirPlay()
+                        },
+                    contentAlignment = Alignment.Center
                 ) {
                     AppleIcon(
-                        glyph = if (isPlaying) AppleGlyph.Pause else AppleGlyph.Play,
-                        tint = Color.White,
-                        size = 32.dp
+                        glyph = AppleGlyph.AirPlay,
+                        tint = if (isAirPlayConnected) Color(0xFF37A3DE) else Color.White,
+                        size = 25.5.dp * scale
                     )
                 }
-
-                Box(
-                    modifier = Modifier.clickable(onClick = onNext)
-                ) {
-                    AppleIcon(glyph = AppleGlyph.Forward, tint = Color.White, size = 26.dp)
-                }
-
-                AppleIcon(glyph = AppleGlyph.AirPlay, tint = Color.White, size = 24.dp)
             }
+        }
     }
 }
 
@@ -295,4 +364,3 @@ fun AppleAudioScrubber(
         )
     }
 }
-

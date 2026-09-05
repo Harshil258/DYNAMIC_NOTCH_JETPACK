@@ -36,6 +36,7 @@ fun StudioScreen(
     onNavigateMusic: () -> Unit,
     onNavigateCalls: () -> Unit,
     onNavigateBattery: () -> Unit,
+    onNavigateSound: () -> Unit,
     onNavigateQuickControl: () -> Unit
 ) {
     val colors = AppTheme.colors
@@ -73,6 +74,14 @@ fun StudioScreen(
                 glyph = AppleGlyph.Battery,
                 accent = colors.warning,
                 onClick = onNavigateBattery
+            ),
+            FeatureEntry(
+                title = "Sound & haptics",
+                description = "Ringer indicators, volume HUD and pulse tuning",
+                status = "On",
+                glyph = AppleGlyph.Speaker,
+                accent = colors.secondary,
+                onClick = onNavigateSound
             )
         )
     }

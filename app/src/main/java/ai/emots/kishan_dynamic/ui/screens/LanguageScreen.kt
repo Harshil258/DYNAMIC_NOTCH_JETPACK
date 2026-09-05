@@ -58,10 +58,12 @@ import ai.emots.kishan_dynamic.ui.kit.AppScreen
 import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
 import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
+import ai.emots.kishan_dynamic.ui.localization.AppLocalization
 import ai.emots.kishan_dynamic.ui.motion.AppMotion
 import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.motion.rememberPressScale
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 import kotlinx.coroutines.launch
 
 /**
@@ -73,7 +75,8 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun LanguageScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onComplete: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -94,6 +97,7 @@ fun LanguageScreen(
             title = "Language",
             subtitle = "Choose how the app speaks to you.",
             onBack = onBack,
+            showBack = onComplete == null,
             modifier = Modifier.appReveal(0)
         )
 
@@ -157,9 +161,26 @@ fun LanguageScreen(
         }
 
         AppFootnote(
-            "Island text, dialogs and live activities all follow this setting. " +
-                "Some system-provided names stay in their original language."
+            if (AppLocalization.translatedLocaleCodes.contains(savedLanguage)) {
+                "Core interface copy follows this setting. Some system-provided names stay in their original language."
+            } else {
+                "This locale is saved for future copy expansion; untranslated interface copy currently falls back to English."
+            }
         )
+
+        if (onComplete != null) {
+            AppSectionSpacer()
+            AppButton(
+                text = "Continue",
+                glyph = AppleGlyph.Check,
+                onClick = {
+                    scope.launch {
+                        preferences.setLanguageSelectionCompleted(true)
+                        onComplete()
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -320,7 +341,7 @@ private fun LanguageSearchField(
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .clip(shape)
-            .background(AppTheme.colors.surfaceVariant)
+            .background(AppTheme.colors.surfaceGradient())
             .border(0.5.dp, AppTheme.colors.border, shape)
             .padding(horizontal = AppTheme.spacing.lg),
         verticalAlignment = Alignment.CenterVertically
@@ -357,7 +378,7 @@ private fun LanguageSearchField(
                 modifier = Modifier
                     .size(22.dp)
                     .clip(CircleShape)
-                    .background(AppTheme.colors.surfaceElevated)
+                    .background(AppTheme.colors.surfaceGradient())
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null
@@ -469,7 +490,7 @@ private fun EmptyLanguageState(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(AppTheme.colors.surface)
+            .background(AppTheme.colors.surfaceGradient())
             .border(0.5.dp, AppTheme.colors.border, shape)
             .padding(AppTheme.layout.cardPadding * 1.4f),
         horizontalAlignment = Alignment.CenterHorizontally,

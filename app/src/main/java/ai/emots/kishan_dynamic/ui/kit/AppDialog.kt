@@ -29,6 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -36,6 +38,7 @@ import androidx.compose.ui.window.DialogProperties
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 
 /**
  * Centre modal used for short, focused decisions.
@@ -64,6 +67,7 @@ fun AppDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(AppTheme.colors.scrim)
                 .statusBarsPadding()
                 .navigationBarsPadding()
                 .padding(AppTheme.spacing.xl),
@@ -73,8 +77,17 @@ fun AppDialog(
                 modifier = modifier
                     .widthIn(max = 420.dp)
                     .fillMaxWidth()
+                    .shadow(
+                        elevation = AppTheme.elevation.dialog,
+                        shape = RoundedCornerShape(AppTheme.radius.card),
+                        ambientColor = AppTheme.colors.shadow.copy(alpha = 0.50f),
+                        spotColor = AppTheme.colors.shadowStrong.copy(alpha = 0.60f)
+                    )
                     .clip(RoundedCornerShape(AppTheme.radius.card))
-                    .background(AppTheme.colors.surfaceElevated)
+                    .background(
+                        brush = AppTheme.colors.surfaceGradient(),
+                        shape = RoundedCornerShape(AppTheme.radius.card)
+                    )
                     .border(
                         0.5.dp,
                         AppTheme.colors.border,
@@ -117,6 +130,7 @@ fun AppSheet(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(AppTheme.colors.scrim)
                 .statusBarsPadding(),
             contentAlignment = Alignment.BottomCenter
         ) {
@@ -124,13 +138,28 @@ fun AppSheet(
                 modifier = modifier
                     .widthIn(max = 520.dp)
                     .fillMaxWidth()
+                    .shadow(
+                        elevation = AppTheme.elevation.sheet,
+                        shape = RoundedCornerShape(
+                            topStart = AppTheme.radius.card + 6.dp,
+                            topEnd = AppTheme.radius.card + 6.dp
+                        ),
+                        ambientColor = AppTheme.colors.shadow.copy(alpha = 0.38f),
+                        spotColor = AppTheme.colors.shadowStrong.copy(alpha = 0.50f)
+                    )
                     .clip(
                         RoundedCornerShape(
                             topStart = AppTheme.radius.card + 6.dp,
                             topEnd = AppTheme.radius.card + 6.dp
                         )
                     )
-                    .background(AppTheme.colors.surfaceElevated)
+                    .background(
+                        brush = AppTheme.colors.surfaceGradient(),
+                        shape = RoundedCornerShape(
+                            topStart = AppTheme.radius.card + 6.dp,
+                            topEnd = AppTheme.radius.card + 6.dp
+                        )
+                    )
                     .navigationBarsPadding()
                     .padding(
                         start = AppTheme.spacing.xxl,
@@ -212,24 +241,12 @@ private fun DialogHeader(
 
         if (onClose != null) {
             Spacer(modifier = Modifier.width(AppTheme.spacing.sm))
-            Box(
-                modifier = Modifier
-                    .size(34.dp)
-                    .clip(CircleShape)
-                    .background(AppTheme.colors.surfaceVariant)
-                    .clickable(
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null,
-                        onClick = onClose
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                ai.emots.kishan_dynamic.ui.components.AppleIcon(
-                    glyph = AppleGlyph.Close,
-                    tint = AppTheme.colors.textSecondary,
-                    size = 13.dp
-                )
-            }
+            AppIconButton(
+                glyph = AppleGlyph.Close,
+                onClick = onClose,
+                contentDescription = "Close",
+                tint = AppTheme.colors.textSecondary
+            )
         }
     }
 }

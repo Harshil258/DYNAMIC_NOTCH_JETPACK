@@ -10,6 +10,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.localization.appString
 
 /**
  * Universal token-driven Text composable.
@@ -21,6 +22,7 @@ fun AppText(
     text: String,
     modifier: Modifier = Modifier,
     style: TextStyle = AppTheme.typography.body,
+    fontSize: TextUnit = TextUnit.Unspecified,
     color: Color = Color.Unspecified,
     textAlign: TextAlign? = null,
     maxLines: Int = Int.MAX_VALUE,
@@ -33,6 +35,9 @@ fun AppText(
     val resolvedColor = if (color != Color.Unspecified) color else AppTheme.colors.textPrimary
     var finalStyle = style.copy(color = resolvedColor)
 
+    if (fontSize != TextUnit.Unspecified) {
+        finalStyle = finalStyle.copy(fontSize = fontSize)
+    }
     if (textAlign != null) {
         finalStyle = finalStyle.copy(textAlign = textAlign)
     }
@@ -50,7 +55,7 @@ fun AppText(
     }
 
     BasicText(
-        text = text,
+        text = appString(text),
         modifier = modifier,
         style = finalStyle,
         maxLines = maxLines,

@@ -1,6 +1,8 @@
 package ai.emots.kishan_dynamic.ui.screens
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +24,12 @@ import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
 import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
+import ai.emots.kishan_dynamic.service.AutoStartSettings
+import ai.emots.kishan_dynamic.service.PermissionUtils
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.Modifier
 
@@ -29,8 +37,12 @@ import androidx.compose.ui.Modifier
 fun BatterySettingsScreen(
     onBack: () -> Unit
 ) {
-    var isChargingAnimationEnabled by remember { mutableStateOf(true) }
-    var isLowBatteryAlertEnabled by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val preferences = remember { AuroraPreferences(context) }
+    val showBatteryNotifications by preferences.showBatteryNotifications.collectAsState(initial = true)
+    val isChargingAnimationEnabled by preferences.chargingAnimationEnabled.collectAsState(initial = true)
+    val isLowBatteryAlertEnabled by preferences.lowBatteryAlertEnabled.collectAsState(initial = true)
     var isExpandedCharging by remember { mutableStateOf(true) }
     var showOptimizationDialog by remember { mutableStateOf(false) }
 
@@ -59,11 +71,19 @@ fun BatterySettingsScreen(
         AppSectionTitle("Alerts")
         AppListCard(modifier = Modifier.appReveal(2)) {
             AppToggleRow(
+                title = "Show battery notifications",
+                subtitle = "Allow charging and low-battery events in the island",
+                glyph = AppleGlyph.Battery,
+                checked = showBatteryNotifications,
+                onCheckedChange = { scope.launch { preferences.setShowBatteryNotifications(it) } }
+            )
+            AppRowDivider()
+            AppToggleRow(
                 title = "Charging animation",
                 subtitle = "Show a pulsing ring and wattage when plugged in",
                 glyph = AppleGlyph.Battery,
                 checked = isChargingAnimationEnabled,
-                onCheckedChange = { isChargingAnimationEnabled = it }
+                onCheckedChange = { scope.launch { preferences.setChargingAnimationEnabled(it) } }
             )
             AppRowDivider()
             AppToggleRow(
@@ -71,7 +91,7 @@ fun BatterySettingsScreen(
                 subtitle = "Heads-up reminder at 15% and 10%",
                 glyph = AppleGlyph.Power,
                 checked = isLowBatteryAlertEnabled,
-                onCheckedChange = { isLowBatteryAlertEnabled = it }
+                onCheckedChange = { scope.launch { preferences.setLowBatteryAlertEnabled(it) } }
             )
         }
 
@@ -99,6 +119,10 @@ fun BatterySettingsScreen(
     }
 
     if (showOptimizationDialog) {
-        BatteryOptimizationDialog(onDismiss = { showOptimizationDialog = false })
+        BatteryOptimizationDialog(
+            onDismiss = { showOptimizationDialog = false },
+            onOpenBatterySettings = { PermissionUtils.openBatteryOptimizationSettings(context) },
+            onOpenAutoStartSettings = { AutoStartSettings.open(context) }
+        )
     }
 }

@@ -58,6 +58,7 @@ import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 
 // =============================================================================
 // APP KIT — one single, consistent visual language for every screen.
@@ -82,15 +83,33 @@ fun AppBackground(
             .background(colors.background)
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val bloom = Brush.radialGradient(
+            val topBloom = Brush.radialGradient(
                 colors = listOf(
-                    colors.accent.copy(alpha = 0.10f),
+                    colors.glowPrimary,
                     Color.Transparent
                 ),
-                center = Offset(size.width * 0.5f, size.height * 0.02f),
-                radius = size.width * 0.95f
+                center = Offset(size.width * 0.86f, size.height * 0.02f),
+                radius = size.width * 0.90f
             )
-            drawRect(brush = bloom, size = Size(size.width, size.height))
+            val lowerBloom = Brush.radialGradient(
+                colors = listOf(
+                    colors.glowSecondary,
+                    Color.Transparent
+                ),
+                center = Offset(size.width * 0.08f, size.height * 0.72f),
+                radius = size.width * 0.80f
+            )
+            drawRect(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        colors.surfaceVariant.copy(alpha = 0.28f),
+                        Color.Transparent
+                    )
+                ),
+                size = Size(size.width, size.height * 0.62f)
+            )
+            drawRect(brush = topBloom, size = Size(size.width, size.height))
+            drawRect(brush = lowerBloom, size = Size(size.width, size.height))
         }
         content()
     }
@@ -136,7 +155,7 @@ fun AppLargeTitle(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = AppTheme.spacing.xxl, bottom = AppTheme.spacing.xxl),
+            .padding(top = AppTheme.spacing.xxl, bottom = AppTheme.spacing.xl),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -168,7 +187,8 @@ fun AppTopBar(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     subtitle: String? = null,
-    trailing: (@Composable () -> Unit)? = null
+    trailing: (@Composable () -> Unit)? = null,
+    showBack: Boolean = true
 ) {
     Row(
         modifier = modifier
@@ -176,11 +196,15 @@ fun AppTopBar(
             .padding(top = AppTheme.spacing.md, bottom = AppTheme.spacing.xl),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AppIconButton(
-            glyph = AppleGlyph.ChevronLeft,
-            onClick = onBack,
-            contentDescription = "Back"
-        )
+        if (showBack) {
+            AppIconButton(
+                glyph = AppleGlyph.ChevronLeft,
+                onClick = onBack,
+                contentDescription = "Back"
+            )
+        } else {
+            Spacer(modifier = Modifier.size(44.dp))
+        }
         Spacer(modifier = Modifier.size(AppTheme.spacing.md))
         Column(modifier = Modifier.weight(1f)) {
             AppText(
@@ -285,8 +309,17 @@ fun AppCard(
         modifier = modifier
             .fillMaxWidth()
             .scale(scale)
+            .shadow(
+                elevation = AppTheme.elevation.card,
+                shape = shape,
+                ambientColor = AppTheme.colors.shadow.copy(alpha = 0.14f),
+                spotColor = AppTheme.colors.shadow.copy(alpha = 0.26f)
+            )
             .clip(shape)
-            .background(AppTheme.colors.surface)
+            .background(
+                brush = AppTheme.colors.surfaceGradient(),
+                shape = shape
+            )
             .border(0.5.dp, AppTheme.colors.border, shape)
             .then(
                 if (onClick != null) {
@@ -312,8 +345,17 @@ fun AppListCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .shadow(
+                elevation = AppTheme.elevation.card,
+                shape = shape,
+                ambientColor = AppTheme.colors.shadow.copy(alpha = 0.10f),
+                spotColor = AppTheme.colors.shadow.copy(alpha = 0.20f)
+            )
             .clip(shape)
-            .background(AppTheme.colors.surface)
+            .background(
+                brush = AppTheme.colors.surfaceGradient(),
+                shape = shape
+            )
             .border(0.5.dp, AppTheme.colors.border, shape)
             .padding(vertical = AppTheme.spacing.xs),
         content = content
@@ -408,7 +450,8 @@ fun AppToggleRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     glyph: AppleGlyph? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    trailingLabel: String? = null
 ) {
     Row(
         modifier = modifier
@@ -443,6 +486,14 @@ fun AppToggleRow(
                     color = AppTheme.colors.textSecondary
                 )
             }
+        }
+        if (trailingLabel != null) {
+            AppStatusPill(
+                text = trailingLabel,
+                color = AppTheme.colors.gold,
+                showDot = false,
+                modifier = Modifier.padding(end = AppTheme.spacing.sm)
+            )
         }
         AppSwitch(
             checked = checked,
@@ -572,6 +623,10 @@ fun AppStage(
 
     val stageShape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp)
 
+    // Detect dark vs light theme from the current color tokens
+    val isDark = AppTheme.isDark
+    val stageHighlight = AppTheme.colors.textPrimary.copy(alpha = 0.08f)
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -581,71 +636,86 @@ fun AppStage(
                 .fillMaxWidth()
                 .height(animatedStageHeight)
                 .shadow(
-                    elevation = 14.dp,
+                    elevation = if (isDark) AppTheme.elevation.dialog else AppTheme.elevation.stage,
                     shape = stageShape,
-                    ambientColor = Color.Black.copy(alpha = 0.40f),
-                    spotColor = Color.Black.copy(alpha = 0.60f)
+                    ambientColor = AppTheme.colors.shadow.copy(alpha = if (isDark) 0.52f else 0.12f),
+                    spotColor = AppTheme.colors.shadowStrong.copy(alpha = if (isDark) 0.70f else 0.20f)
                 )
                 .clip(stageShape)
                 .background(
-                    Brush.verticalGradient(
-                        // Neutral graphite so the island stays the brightest
-                        // thing on the stage, the way it reads on-device.
-                        listOf(
-                            Color(0xFF0C0C0F),
-                            Color(0xFF131317),
-                            Color(0xFF17171B),
-                            Color(0xFF0A0A0C)
+                    if (isDark) {
+                        Brush.verticalGradient(
+                            listOf(
+                                AppTheme.colors.stageTop,
+                                AppTheme.colors.stageMid,
+                                AppTheme.colors.surfaceVariant,
+                                AppTheme.colors.stageBottom
+                            )
                         )
-                    )
+                    } else {
+                        Brush.verticalGradient(
+                            listOf(
+                                AppTheme.colors.stageTop,
+                                AppTheme.colors.surfaceElevated,
+                                AppTheme.colors.stageMid,
+                                AppTheme.colors.stageBottom
+                            )
+                        )
+                    }
                 )
                 .border(
-                    width = 1.dp,
+                    width = if (isDark) 1.dp else 0.5.dp,
                     brush = Brush.verticalGradient(
-                        listOf(
-                            Color.White.copy(alpha = 0.16f),
-                            Color.White.copy(alpha = 0.04f)
-                        )
+                        if (isDark) {
+                            listOf(
+                                AppTheme.colors.stageStroke,
+                                AppTheme.colors.stageStroke.copy(alpha = 0.18f)
+                            )
+                        } else {
+                            listOf(
+                                AppTheme.colors.stageStroke,
+                                AppTheme.colors.stageStroke.copy(alpha = 0.45f)
+                            )
+                        }
                     ),
                     shape = stageShape
                 ),
             contentAlignment = Alignment.TopCenter
         ) {
-            // iOS 17 spectrum wallpaper bloom. Both hues are sampled from the
-            // wallpaper raster embedded in the reference iPhone 15 Pro frames
-            // and held far back so the island keeps all the contrast.
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            IslandColors.WallpaperCrimson.copy(alpha = 0.30f),
-                            Color.Transparent
-                        ),
-                        center = Offset(size.width * 0.22f, size.height * 0.25f),
-                        radius = size.width * 0.65f
+            // Wallpaper bloom only in dark mode; in light mode, keep it clean white
+            if (isDark) {
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                IslandColors.WallpaperCrimson.copy(alpha = 0.30f),
+                                Color.Transparent
+                            ),
+                            center = Offset(size.width * 0.22f, size.height * 0.25f),
+                            radius = size.width * 0.65f
+                        )
                     )
-                )
-                drawCircle(
-                    brush = Brush.radialGradient(
-                        colors = listOf(
-                            IslandColors.WallpaperCyan.copy(alpha = 0.14f),
-                            Color.Transparent
-                        ),
-                        center = Offset(size.width * 0.82f, size.height * 0.38f),
-                        radius = size.width * 0.70f
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                IslandColors.WallpaperCyan.copy(alpha = 0.14f),
+                                Color.Transparent
+                            ),
+                            center = Offset(size.width * 0.82f, size.height * 0.38f),
+                            radius = size.width * 0.70f
+                        )
                     )
-                )
-                // Soft top specular rim
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.White.copy(alpha = 0.08f),
-                            Color.Transparent
-                        ),
-                        startY = 0f,
-                        endY = size.height * 0.45f
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                stageHighlight,
+                                Color.Transparent
+                            ),
+                            startY = 0f,
+                            endY = size.height * 0.45f
+                        )
                     )
-                )
+                }
             }
 
             // Authentic Apple iOS Status Bar framing the island (fades out when expanded)
@@ -656,6 +726,7 @@ fun AppStage(
             )
             if (statusBarAlpha > 0.01f) {
                 IosStatusBar(
+                    isDarkBackground = isDark,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp, vertical = 14.dp)
@@ -692,8 +763,14 @@ fun AppStage(
 @Composable
 fun IosStatusBar(
     modifier: Modifier = Modifier,
+    isDarkBackground: Boolean = true,
     time: String = "9:41"
 ) {
+    val contentColor = if (isDarkBackground) {
+        AppTheme.colors.textPrimary.copy(alpha = 0.92f)
+    } else {
+        AppTheme.colors.textPrimary
+    }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -704,7 +781,7 @@ fun IosStatusBar(
             text = time,
             style = AppTheme.typography.islandSubtitle.copy(fontSize = 14.sp),
             fontWeight = FontWeight.Bold,
-            color = Color.White.copy(alpha = 0.92f)
+            color = contentColor
         )
 
         // Right: Signal Bars + iOS Battery
@@ -713,16 +790,25 @@ fun IosStatusBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // 4 Signal Bars
-            SignalBars(modifier = Modifier.size(width = 17.dp, height = 11.5.dp))
+            SignalBars(
+                contentColor = contentColor,
+                modifier = Modifier.size(width = 17.dp, height = 11.5.dp)
+            )
 
             // iOS Battery Glyph
-            IosStatusBattery(modifier = Modifier.size(width = 24.dp, height = 11.5.dp))
+            IosStatusBattery(
+                contentColor = contentColor,
+                modifier = Modifier.size(width = 24.dp, height = 11.5.dp)
+            )
         }
     }
 }
 
 @Composable
-private fun SignalBars(modifier: Modifier = Modifier) {
+private fun SignalBars(
+    contentColor: Color = AppTheme.colors.onAccent.copy(alpha = 0.9f),
+    modifier: Modifier = Modifier
+) {
     Canvas(modifier = modifier) {
         val barWidth = size.width / 7f
         val gap = barWidth
@@ -732,7 +818,7 @@ private fun SignalBars(modifier: Modifier = Modifier) {
             val x = i * (barWidth + gap)
             val y = size.height - barHeight
             drawRoundRect(
-                color = Color.White.copy(alpha = 0.9f),
+                color = contentColor,
                 topLeft = Offset(x, y),
                 size = Size(barWidth, barHeight),
                 cornerRadius = CornerRadius(1.5.dp.toPx(), 1.5.dp.toPx())
@@ -742,7 +828,10 @@ private fun SignalBars(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun IosStatusBattery(modifier: Modifier = Modifier) {
+private fun IosStatusBattery(
+    contentColor: Color = AppTheme.colors.onAccent,
+    modifier: Modifier = Modifier
+) {
     Canvas(modifier = modifier) {
         val stroke = 1.2.dp.toPx()
         val bodyWidth = size.width - 2.5.dp.toPx()
@@ -751,7 +840,7 @@ private fun IosStatusBattery(modifier: Modifier = Modifier) {
 
         // Shell
         drawRoundRect(
-            color = Color.White.copy(alpha = 0.35f),
+            color = contentColor.copy(alpha = 0.35f),
             topLeft = Offset(0f, 0f),
             size = Size(bodyWidth, bodyHeight),
             cornerRadius = CornerRadius(corner, corner),
@@ -763,7 +852,7 @@ private fun IosStatusBattery(modifier: Modifier = Modifier) {
         val innerWidth = (bodyWidth - innerPad * 2) * 0.92f
         val innerHeight = bodyHeight - innerPad * 2
         drawRoundRect(
-            color = Color.White.copy(alpha = 0.95f),
+            color = contentColor.copy(alpha = 0.95f),
             topLeft = Offset(innerPad, innerPad),
             size = Size(innerWidth, innerHeight),
             cornerRadius = CornerRadius(1.5.dp.toPx(), 1.5.dp.toPx())
@@ -773,7 +862,7 @@ private fun IosStatusBattery(modifier: Modifier = Modifier) {
         val nubWidth = 1.5.dp.toPx()
         val nubHeight = bodyHeight * 0.40f
         drawRoundRect(
-            color = Color.White.copy(alpha = 0.45f),
+            color = contentColor.copy(alpha = 0.45f),
             topLeft = Offset(bodyWidth + 1.dp.toPx(), (bodyHeight - nubHeight) / 2f),
             size = Size(nubWidth, nubHeight),
             cornerRadius = CornerRadius(1.dp.toPx(), 1.dp.toPx())

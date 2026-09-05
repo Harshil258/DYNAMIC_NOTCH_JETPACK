@@ -24,11 +24,13 @@ import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppDialog
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 
 @Composable
 fun BatteryOptimizationDialog(
     onDismiss: () -> Unit,
-    onOpenBatterySettings: () -> Unit = {}
+    onOpenBatterySettings: () -> Unit = {},
+    onOpenAutoStartSettings: () -> Unit = {}
 ) {
     val steps = listOf(
         "Set battery usage to Unrestricted",
@@ -47,7 +49,7 @@ fun BatteryOptimizationDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(AppTheme.radius.lg))
-                .background(AppTheme.colors.surfaceVariant)
+                .background(AppTheme.colors.surfaceGradient())
                 .padding(AppTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
@@ -76,6 +78,16 @@ fun BatteryOptimizationDialog(
             glyph = AppleGlyph.Power,
             onClick = {
                 onOpenBatterySettings()
+                onDismiss()
+            }
+        )
+        Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
+        AppButton(
+            text = "Open auto-start settings",
+            glyph = AppleGlyph.Settings,
+            style = AppButtonStyle.Secondary,
+            onClick = {
+                onOpenAutoStartSettings()
                 onDismiss()
             }
         )

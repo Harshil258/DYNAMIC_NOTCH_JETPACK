@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
@@ -20,6 +21,19 @@ enum class AppWindowSize {
     Compact,   // Phones < 380dp width (e.g. Small / standard devices)
     Medium,    // Phones 380dp - 600dp (e.g. Pixel, Galaxy S series, Pro Max)
     Expanded   // Tablets / Foldables unfolded > 600dp
+}
+
+/** User-selectable appearance mode. The system option follows Android settings. */
+enum class AppThemeMode(val storageValue: String, val label: String) {
+    System("system", "System"),
+    Light("light", "Light"),
+    Dark("dark", "Dark");
+
+    companion object {
+        fun fromStorage(value: String): AppThemeMode = entries.firstOrNull {
+            it.storageValue == value
+        } ?: System
+    }
 }
 
 // =============================================================================
@@ -44,7 +58,50 @@ data class AppColorTokens(
     val error: Color,
     val info: Color,
     val gold: Color,
-    val disabled: Color
+    val disabled: Color,
+    val onAccent: Color,
+    val controlTrack: Color,
+    val controlThumb: Color,
+    val scrim: Color,
+    val shadow: Color,
+    val shadowStrong: Color,
+    val glowPrimary: Color,
+    val glowSecondary: Color,
+    val stageTop: Color,
+    val stageMid: Color,
+    val stageBottom: Color,
+    val stageStroke: Color
+)
+
+/** Font roles shared by every app-owned surface. */
+data class AppFontTokens(
+    val display: FontFamily = FontFamily.SansSerif,
+    val body: FontFamily = FontFamily.SansSerif,
+    val mono: FontFamily = FontFamily.Monospace
+)
+
+/** Shared gradient roles; screens should consume these instead of inventing brushes. */
+fun AppColorTokens.surfaceGradient(): Brush = Brush.verticalGradient(
+    listOf(surfaceElevated, surface, surfaceVariant.copy(alpha = 0.92f))
+)
+
+fun AppColorTokens.accentGradient(): Brush = Brush.linearGradient(
+    listOf(accent, info)
+)
+
+data class AppElevationTokens(
+    val none: Dp = 0.dp,
+    val card: Dp = 3.dp,
+    val raised: Dp = 8.dp,
+    val dialog: Dp = 18.dp,
+    val sheet: Dp = 14.dp,
+    val stage: Dp = 6.dp
+)
+
+data class AppMotionTokens(
+    val fastMillis: Int = 160,
+    val standardMillis: Int = 240,
+    val emphasisMillis: Int = 320
 )
 
 data class AppTypographyTokens(
@@ -168,13 +225,13 @@ data class AppIslandTokens(
 // =============================================================================
 
 val DarkColorTokens = AppColorTokens(
-    background = Color.Black,         // Pure True Black (Gemini-Grade Minimalism)
-    surface = Color(0xFF101012),            // Restrained Minimal Surface
-    surfaceVariant = Color(0xFF18181C),     // Elevated System Surface
-    surfaceElevated = Color(0xFF202024),    // Floating Island/Control Surface
-    primary = Color.White,            // Clean Monochrome Primary
+    background = Color(0xFF02030A),         // Near-black with a blue ambient floor
+    surface = Color(0xFF0C0E17),            // Restrained dark surface
+    surfaceVariant = Color(0xFF151927),     // Elevated system surface
+    surfaceElevated = Color(0xFF202638),    // Floating island/control surface
+    primary = Color.White,
     secondary = Color(0xFF8E8E93),          // Apple System Gray
-    accent = Color(0xFF0A84FF),             // System Accent Blue
+    accent = Color(0xFF8AB4F8),             // Gemini-inspired dark-mode blue
     textPrimary = Color.White,        // High Contrast Pure White
     textSecondary = Color(0xFF8E8E93),      // Calm Editorial Muted Gray
     textTertiary = Color(0xFF55555A),       // Quiet Caption
@@ -183,19 +240,31 @@ val DarkColorTokens = AppColorTokens(
     success = Color(0xFF30D158),            // Apple System Green (Active)
     warning = Color(0xFFFF9F0A),            // Amber (Battery/Charging)
     error = Color(0xFFFF453A),              // System Red (Critical)
-    info = Color(0xFF0A84FF),               // System Blue
+    info = Color(0xFF7AA7FF),               // Soft gradient partner blue
     gold = Color(0xFFFFD60A),               // System Yellow
-    disabled = Color(0xFF3A3A3C)
+    disabled = Color(0xFF3A3A3C),
+    onAccent = Color.White,
+    controlTrack = Color(0xFF2C2C2E),
+    controlThumb = Color.White,
+    scrim = Color(0x99000000),
+    shadow = Color(0x66000000),
+    shadowStrong = Color(0xB3000000),
+    glowPrimary = Color(0x241D4ED8),
+    glowSecondary = Color(0x3B214DCE),
+    stageTop = Color(0xFF0C0C0F),
+    stageMid = Color(0xFF131317),
+    stageBottom = Color(0xFF0A0A0C),
+    stageStroke = Color(0x26FFFFFF)
 )
 
 val LightColorTokens = AppColorTokens(
-    background = Color(0xFFF8F9FB),
-    surface = Color(0xEFFFFFFF),
-    surfaceVariant = Color(0xFFF0F2F5),
+    background = Color(0xFFFAF9FE),
+    surface = Color(0xF5FFFFFF),
+    surfaceVariant = Color(0xFFF1F3F8),
     surfaceElevated = Color.White,
     primary = Color(0xFF111318),
     secondary = Color(0xFF646870),
-    accent = Color(0xFF0B57D0),
+    accent = Color(0xFF1A73E8),
     textPrimary = Color(0xFF111318),
     textSecondary = Color(0xFF5F6368),
     textTertiary = Color(0xFF858A92),
@@ -204,16 +273,28 @@ val LightColorTokens = AppColorTokens(
     success = Color(0xFF17833D),
     warning = Color(0xFFB85C00),
     error = Color(0xFFBA1A1A),
-    info = Color(0xFF0B57D0),
+    info = Color(0xFF4285F4),
     gold = Color(0xFF9A6700),
-    disabled = Color(0xFFD5D8DE)
+    disabled = Color(0xFFD5D8DE),
+    onAccent = Color.White,
+    controlTrack = Color(0xFFE3E6EB),
+    controlThumb = Color.White,
+    scrim = Color(0x99000000),
+    shadow = Color(0x18000000),
+    shadowStrong = Color(0x32000000),
+    glowPrimary = Color(0x101A73E8),
+    glowSecondary = Color(0x3B66B7F1),
+    stageTop = Color.White,
+    stageMid = Color(0xFFF4F5F7),
+    stageBottom = Color(0xFFF8F9FB),
+    stageStroke = Color(0x14000000)
 )
 
 // =============================================================================
 // 4. ADAPTIVE TYPOGRAPHY BUILDER (DEVICE-SCALED)
 // =============================================================================
 
-private fun typographyFor(windowSize: AppWindowSize): AppTypographyTokens {
+private fun typographyFor(windowSize: AppWindowSize, fonts: AppFontTokens): AppTypographyTokens {
     val scaleFactor = when (windowSize) {
         AppWindowSize.Compact -> 0.92f
         AppWindowSize.Medium -> 1.0f
@@ -222,75 +303,75 @@ private fun typographyFor(windowSize: AppWindowSize): AppTypographyTokens {
 
     return AppTypographyTokens(
         h1 = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.display,
             fontWeight = FontWeight.SemiBold,
             fontSize = (30f * scaleFactor).sp,
             lineHeight = (36f * scaleFactor).sp,
             letterSpacing = (-0.7).sp
         ),
         h2 = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.display,
             fontWeight = FontWeight.SemiBold,
             fontSize = (20f * scaleFactor).sp,
             lineHeight = (26f * scaleFactor).sp,
             letterSpacing = (-0.35).sp
         ),
         h3 = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.display,
             fontWeight = FontWeight.SemiBold,
             fontSize = (16f * scaleFactor).sp,
             lineHeight = (22f * scaleFactor).sp
         ),
         body = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.body,
             fontWeight = FontWeight.Normal,
             fontSize = (14f * scaleFactor).sp,
             lineHeight = (20f * scaleFactor).sp
         ),
         bodySmall = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.body,
             fontWeight = FontWeight.Normal,
             fontSize = (12.5f * scaleFactor).sp,
             lineHeight = (17f * scaleFactor).sp
         ),
         button = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.body,
             fontWeight = FontWeight.SemiBold,
             fontSize = (13.5f * scaleFactor).sp,
             lineHeight = (18f * scaleFactor).sp
         ),
         caption = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.body,
             fontWeight = FontWeight.Medium,
             fontSize = (11f * scaleFactor).sp,
             lineHeight = (15f * scaleFactor).sp
         ),
         islandTitle = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.display,
             fontWeight = FontWeight.Bold,
             fontSize = (17.5f * scaleFactor).sp,
             lineHeight = (22f * scaleFactor).sp
         ),
         islandSubtitle = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.body,
             fontWeight = FontWeight.Normal,
             fontSize = (13.5f * scaleFactor).sp,
             lineHeight = (18f * scaleFactor).sp
         ),
         islandTime = TextStyle(
-            fontFamily = FontFamily.Monospace,
+            fontFamily = fonts.mono,
             fontWeight = FontWeight.Medium,
             fontSize = (11.5f * scaleFactor).sp,
             lineHeight = (15f * scaleFactor).sp
         ),
         islandBadge = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.body,
             fontWeight = FontWeight.Bold,
             fontSize = (9.5f * scaleFactor).sp,
             lineHeight = (12f * scaleFactor).sp
         ),
         badge = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fonts.display,
             fontWeight = FontWeight.Bold,
             fontSize = (10.5f * scaleFactor).sp,
             letterSpacing = 0.6.sp
@@ -345,12 +426,16 @@ private fun layoutFor(windowSize: AppWindowSize): AppLayoutTokens {
 // =============================================================================
 
 val LocalAppColors = staticCompositionLocalOf { DarkColorTokens }
-val LocalAppTypography = staticCompositionLocalOf { typographyFor(AppWindowSize.Medium) }
+val LocalAppFonts = staticCompositionLocalOf { AppFontTokens() }
+val LocalAppTypography = staticCompositionLocalOf { typographyFor(AppWindowSize.Medium, AppFontTokens()) }
 val LocalAppSpacing = staticCompositionLocalOf { AppSpacingTokens() }
 val LocalAppRadius = staticCompositionLocalOf { AppRadiusTokens() }
 val LocalAppLayout = staticCompositionLocalOf { layoutFor(AppWindowSize.Medium) }
 val LocalAppIsland = staticCompositionLocalOf { AppIslandTokens() }
 val LocalAppWindowSize = staticCompositionLocalOf { AppWindowSize.Medium }
+val LocalAppElevation = staticCompositionLocalOf { AppElevationTokens() }
+val LocalAppMotion = staticCompositionLocalOf { AppMotionTokens() }
+val LocalAppDarkTheme = staticCompositionLocalOf { true }
 
 // =============================================================================
 // 7. SINGLE SOURCE OF TRUTH ACCESSOR: AppTheme
@@ -366,6 +451,11 @@ object AppTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAppTypography.current
+
+    val fonts: AppFontTokens
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppFonts.current
 
     val spacing: AppSpacingTokens
         @Composable
@@ -391,6 +481,21 @@ object AppTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAppWindowSize.current
+
+    val elevation: AppElevationTokens
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppElevation.current
+
+    val motion: AppMotionTokens
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppMotion.current
+
+    val isDark: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAppDarkTheme.current
 }
 
 // =============================================================================
@@ -412,20 +517,27 @@ fun AppTheme(
     }
 
     val colors = if (darkTheme) DarkColorTokens else LightColorTokens
-    val typography = typographyFor(windowSize)
+    val fonts = AppFontTokens()
+    val typography = typographyFor(windowSize, fonts)
     val layout = layoutFor(windowSize)
     val spacing = AppSpacingTokens()
     val radius = AppRadiusTokens()
     val island = AppIslandTokens()
+    val elevation = AppElevationTokens()
+    val motion = AppMotionTokens()
 
     CompositionLocalProvider(
         LocalAppColors provides colors,
+        LocalAppFonts provides fonts,
         LocalAppTypography provides typography,
         LocalAppSpacing provides spacing,
         LocalAppRadius provides radius,
         LocalAppLayout provides layout,
         LocalAppIsland provides island,
         LocalAppWindowSize provides windowSize,
+        LocalAppElevation provides elevation,
+        LocalAppMotion provides motion,
+        LocalAppDarkTheme provides darkTheme,
         content = content
     )
 }

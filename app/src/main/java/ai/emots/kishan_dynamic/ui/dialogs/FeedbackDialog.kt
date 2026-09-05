@@ -42,6 +42,8 @@ import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppSheet
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
+import ai.emots.kishan_dynamic.data.support.FeedbackPolicy
 
 enum class FeedbackType(val label: String) {
     BUG("Bug"),
@@ -54,9 +56,11 @@ fun FeedbackDialog(
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
-    var selectedRating by remember { mutableIntStateOf(5) }
+    var selectedRating by remember { mutableIntStateOf(0) }
     var selectedCategory by remember { mutableStateOf(FeedbackType.FEATURE) }
     var feedbackComment by remember { mutableStateOf("") }
+    var composerUnavailable by remember { mutableStateOf(false) }
+    val canSubmit = FeedbackPolicy.canSubmit(selectedRating, feedbackComment)
 
     AppSheet(
         onDismiss = onDismiss,
@@ -142,7 +146,7 @@ fun FeedbackDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(AppTheme.radius.lg))
-                .background(AppTheme.colors.surfaceVariant)
+                .background(AppTheme.colors.surfaceGradient())
                 .border(0.5.dp, AppTheme.colors.border, RoundedCornerShape(AppTheme.radius.lg))
                 .padding(AppTheme.spacing.lg)
         ) {
@@ -155,7 +159,7 @@ fun FeedbackDialog(
             }
             BasicTextField(
                 value = feedbackComment,
-                onValueChange = { feedbackComment = it },
+                onValueChange = { feedbackComment = FeedbackPolicy.trimComment(it) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 72.dp),
@@ -164,14 +168,34 @@ fun FeedbackDialog(
             )
         }
 
+        AppText(
+            text = "${feedbackComment.length}/${FeedbackPolicy.maxCommentLength}",
+            style = AppTheme.typography.caption,
+            color = AppTheme.colors.textTertiary,
+            textAlign = TextAlign.End,
+            modifier = Modifier.fillMaxWidth().padding(top = AppTheme.spacing.xs)
+        )
+
+        if (composerUnavailable) {
+            Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
+            AppText(
+                text = "No email app is available. Install or enable one to send feedback.",
+                style = AppTheme.typography.caption,
+                color = AppTheme.colors.warning,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
         Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
 
         AppButton(
             text = "Send feedback",
             glyph = AppleGlyph.Sparkles,
+            enabled = canSubmit,
             onClick = {
-                sendFeedbackEmail(context, selectedRating, selectedCategory, feedbackComment)
-                onDismiss()
+                composerUnavailable = !sendFeedbackEmail(context, selectedRating, selectedCategory, feedbackComment)
+                if (!composerUnavailable) onDismiss()
             }
         )
         Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
@@ -188,7 +212,7 @@ private fun sendFeedbackEmail(
     rating: Int,
     category: FeedbackType,
     comment: String
-) {
+): Boolean {
     val subject = "[${category.label}] Dynamic Island feedback"
     val body = buildString {
         appendLine("Rating: $rating/5")
@@ -200,7 +224,7 @@ private fun sendFeedbackEmail(
         appendLine("--- Device ---")
         appendLine("Device: ${Build.MANUFACTURER} ${Build.MODEL}")
         appendLine("Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
-        appendLine("App: v1.0.0")
+        appendLine("App: Aurora Dynamic Island")
     }
 
     val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -212,6 +236,7 @@ private fun sendFeedbackEmail(
 
     try {
         context.startActivity(intent)
+        return true
     } catch (e: Exception) {
         val fallback = Intent(Intent.ACTION_SEND).apply {
             type = "message/rfc822"
@@ -221,7 +246,9 @@ private fun sendFeedbackEmail(
         }
         try {
             context.startActivity(Intent.createChooser(fallback, "Send feedback"))
+            return true
         } catch (ignored: Exception) {
+            return false
         }
     }
 }

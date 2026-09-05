@@ -30,8 +30,9 @@ import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppSheet
 import ai.emots.kishan_dynamic.ui.kit.AppStatusPill
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 
-data class CallSummaryMockData(
+data class CallSummaryData(
     val contactName: String,
     val phoneNumber: String,
     val durationFormatted: String,
@@ -39,21 +40,28 @@ data class CallSummaryMockData(
     val timestamp: String
 )
 
+@Deprecated("Use CallSummaryData for production call records")
+typealias CallSummaryMockData = CallSummaryData
+
 @Composable
 fun CallSummaryDialog(
-    mockData: CallSummaryMockData,
-    onDismiss: () -> Unit
+    data: CallSummaryData,
+    onDismiss: () -> Unit,
+    onRedial: () -> Unit = {},
+    onMessage: () -> Unit = {},
+    onSave: () -> Unit = {},
+    onCopy: () -> Unit = {}
 ) {
     AppSheet(
         onDismiss = onDismiss,
         title = "Call summary",
-        subtitle = mockData.callType
+        subtitle = data.callType
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(AppTheme.radius.lg))
-                .background(AppTheme.colors.surfaceVariant)
+                .background(AppTheme.colors.surfaceGradient())
                 .padding(AppTheme.spacing.lg),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -65,7 +73,7 @@ fun CallSummaryDialog(
                 contentAlignment = Alignment.Center
             ) {
                 AppText(
-                    text = mockData.contactName.take(1).uppercase(),
+                    text = data.contactName.take(1).uppercase(),
                     style = AppTheme.typography.h2,
                     color = AppTheme.colors.accent
                 )
@@ -75,26 +83,26 @@ fun CallSummaryDialog(
 
             Column(modifier = Modifier.weight(1f)) {
                 AppText(
-                    text = mockData.contactName,
+                    text = data.contactName,
                     style = AppTheme.typography.h3,
                     color = AppTheme.colors.textPrimary,
                     maxLines = 1
                 )
                 AppText(
-                    text = mockData.phoneNumber,
+                    text = data.phoneNumber,
                     style = AppTheme.typography.bodySmall,
                     color = AppTheme.colors.textSecondary
                 )
                 Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
                 AppText(
-                    text = mockData.timestamp,
+                    text = data.timestamp,
                     style = AppTheme.typography.caption,
                     color = AppTheme.colors.textTertiary
                 )
             }
 
             AppStatusPill(
-                text = mockData.durationFormatted,
+                text = data.durationFormatted,
                 color = AppTheme.colors.success,
                 showDot = false
             )
@@ -106,10 +114,10 @@ fun CallSummaryDialog(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
         ) {
-            CallActionItem(glyph = AppleGlyph.Phone, label = "Redial", onClick = onDismiss, modifier = Modifier.weight(1f))
-            CallActionItem(glyph = AppleGlyph.Bell, label = "Message", onClick = onDismiss, modifier = Modifier.weight(1f))
-            CallActionItem(glyph = AppleGlyph.Star, label = "Save", onClick = onDismiss, modifier = Modifier.weight(1f))
-            CallActionItem(glyph = AppleGlyph.History, label = "Copy", onClick = onDismiss, modifier = Modifier.weight(1f))
+            CallActionItem(glyph = AppleGlyph.Phone, label = "Redial", onClick = { onRedial(); onDismiss() }, modifier = Modifier.weight(1f))
+            CallActionItem(glyph = AppleGlyph.Bell, label = "Message", onClick = { onMessage(); onDismiss() }, modifier = Modifier.weight(1f))
+            CallActionItem(glyph = AppleGlyph.Star, label = "Save", onClick = { onSave(); onDismiss() }, modifier = Modifier.weight(1f))
+            CallActionItem(glyph = AppleGlyph.History, label = "Copy", onClick = { onCopy(); onDismiss() }, modifier = Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
@@ -132,7 +140,7 @@ private fun CallActionItem(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(AppTheme.radius.lg))
-            .background(AppTheme.colors.surfaceVariant)
+            .background(AppTheme.colors.surfaceGradient())
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,

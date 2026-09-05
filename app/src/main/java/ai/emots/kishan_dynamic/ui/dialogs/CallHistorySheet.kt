@@ -16,10 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +30,12 @@ import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppSheet
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
+import ai.emots.kishan_dynamic.data.model.CallDirection
+import ai.emots.kishan_dynamic.data.model.CallRecord
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 enum class CallLogType {
     INCOMING,
@@ -52,18 +55,11 @@ data class CallLogItem(
 @Composable
 fun CallHistorySheet(
     onDismiss: () -> Unit,
-    onCallClick: (String) -> Unit = {}
+    onCallClick: (String) -> Unit = {},
+    records: List<CallRecord> = emptyList(),
+    onClearHistory: () -> Unit = {}
 ) {
-    var callLogs by remember {
-        mutableStateOf(
-            listOf(
-                CallLogItem("1", "Sarah Jenkins", "+1 555 392 8411", "04:18", "Today, 10:45", CallLogType.INCOMING),
-                CallLogItem("2", "Marcus Vance", "+1 555 831 2940", "01:02", "Today, 09:12", CallLogType.OUTGOING),
-                CallLogItem("3", "Unknown", "+1 555 664 0021", "—", "Yesterday, 21:04", CallLogType.MISSED),
-                CallLogItem("4", "Tamia Castillo", "+1 555 019 8834", "12:40", "Yesterday, 17:20", CallLogType.INCOMING)
-            )
-        )
-    }
+    val callLogs = records.map(CallRecord::toLogItem)
 
     AppSheet(
         onDismiss = onDismiss,
@@ -98,10 +94,26 @@ fun CallHistorySheet(
             glyph = AppleGlyph.Reset,
             style = AppButtonStyle.Secondary,
             enabled = callLogs.isNotEmpty(),
-            onClick = { callLogs = emptyList() }
+            onClick = onClearHistory
         )
     }
 }
+
+private fun CallRecord.toLogItem(): CallLogItem = CallLogItem(
+    id = id,
+    contactName = contactName,
+    phoneNumber = phoneNumber,
+    durationFormatted = if (direction == CallDirection.MISSED) "—" else formatDuration(durationSeconds),
+    timestamp = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault()).format(Date(startedAtMillis)),
+    type = when (direction) {
+        CallDirection.INCOMING -> CallLogType.INCOMING
+        CallDirection.OUTGOING -> CallLogType.OUTGOING
+        CallDirection.MISSED -> CallLogType.MISSED
+    }
+)
+
+private fun formatDuration(seconds: Long): String =
+    "%02d:%02d".format(seconds / 60L, seconds % 60L)
 
 @Composable
 private fun CallLogRow(
@@ -118,7 +130,7 @@ private fun CallLogRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(AppTheme.radius.lg))
-            .background(AppTheme.colors.surfaceVariant)
+            .background(AppTheme.colors.surfaceGradient())
             .padding(AppTheme.spacing.md),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -35,6 +35,8 @@ import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppSheet
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.accentGradient
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 
 private data class PaywallPlan(
     val id: String,
@@ -78,7 +80,7 @@ fun ProPaywallSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(AppTheme.radius.lg))
-                .background(AppTheme.colors.surfaceVariant)
+                .background(AppTheme.colors.surfaceGradient())
                 .padding(AppTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
@@ -149,10 +151,7 @@ private fun PlanRow(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(
-                if (selected) AppTheme.colors.accent.copy(alpha = 0.12f)
-                else AppTheme.colors.surfaceVariant
-            )
+                .background(if (selected) AppTheme.colors.accentGradient() else AppTheme.colors.surfaceGradient())
             .border(
                 if (selected) 1.dp else 0.5.dp,
                 if (selected) AppTheme.colors.accent.copy(alpha = 0.6f) else AppTheme.colors.border,
@@ -177,7 +176,7 @@ private fun PlanRow(
             contentAlignment = Alignment.Center
         ) {
             if (selected) {
-                AppleIcon(glyph = AppleGlyph.Check, tint = Color.White, size = 11.dp)
+                        AppleIcon(glyph = AppleGlyph.Check, tint = AppTheme.colors.onAccent, size = 11.dp)
             }
         }
 

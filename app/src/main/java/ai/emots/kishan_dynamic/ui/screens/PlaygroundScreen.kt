@@ -35,11 +35,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import androidx.core.content.ContextCompat
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.service.PermissionUtils
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
+import ai.emots.kishan_dynamic.ui.components.IslandControlAction
 import ai.emots.kishan_dynamic.ui.components.IslandDemoState
 import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppCard
@@ -58,6 +64,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppStatusPill
 import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 import kotlinx.coroutines.launch
 
 private data class PlaygroundStateItem(
@@ -68,6 +75,14 @@ private data class PlaygroundStateItem(
     val compactState: IslandDemoState,
     val expandedState: IslandDemoState
 )
+
+private fun PlaygroundStateItem.experienceCategory(): String = when (label) {
+    "Music", "Video remote" -> "Media"
+    "Incoming call", "Active call", "FaceTime alt", "Shared call", "Call banner" -> "Calls"
+    "Delivery", "Flight", "Sports", "Navigation" -> "Live"
+    "Voice memo", "Screen rec", "Shortcuts" -> "Capture"
+    else -> "System"
+}
 
 /**
  * Island tab — the live preview hub.
@@ -80,6 +95,7 @@ fun PlaygroundScreen(
     onNavigateMusicSettings: () -> Unit,
     onNavigateCallSettings: () -> Unit,
     onNavigateBatterySettings: () -> Unit,
+    onNavigateSoundSettings: () -> Unit,
     onNavigateQuickControl: () -> Unit,
     onNavigatePermissions: () -> Unit,
     onNavigateVault: () -> Unit
@@ -94,15 +110,37 @@ fun PlaygroundScreen(
     var hasAccessibility by remember { mutableStateOf(false) }
     var hasNotification by remember { mutableStateOf(false) }
 
-    DisposableEffect(lifecycleOwner) {
+    fun refreshHealth() {
+        hasAccessibility = PermissionUtils.isAccessibilityServiceWorking(context)
+        hasNotification = PermissionUtils.isNotificationListenerWorking(context)
+    }
+
+    DisposableEffect(lifecycleOwner, context) {
+        refreshHealth()
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                hasAccessibility = PermissionUtils.isAccessibilityServiceEnabled(context)
-                hasNotification = PermissionUtils.isNotificationListenerEnabled(context)
+                refreshHealth()
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(c: Context?, intent: Intent?) {
+                refreshHealth()
+            }
+        }
+        val filter = IntentFilter(PermissionUtils.ACTION_PERMISSIONS_CHANGED)
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            filter,
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            runCatching { context.unregisterReceiver(receiver) }
+        }
     }
 
     val permissionsGranted = hasAccessibility && hasNotification
@@ -115,7 +153,7 @@ fun PlaygroundScreen(
             PlaygroundStateItem(
                 label = "Music",
                 headline = "Now playing",
-                detail = "Glass Animals · Heat Waves",
+                detail = "Grass Animals · Heat Waves",
                 supportsExpand = true,
                 compactState = IslandDemoState.MusicCompact,
                 expandedState = IslandDemoState.MusicExpanded
@@ -135,6 +173,22 @@ fun PlaygroundScreen(
                 supportsExpand = true,
                 compactState = IslandDemoState.CallCompact,
                 expandedState = IslandDemoState.CallExpanded
+            ),
+            PlaygroundStateItem(
+                label = "FaceTime alt",
+                headline = "FaceTime Audio variant",
+                detail = "Alternate active-call control layout",
+                supportsExpand = true,
+                compactState = IslandDemoState.CallCompact,
+                expandedState = IslandDemoState.FaceTimeCallExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Shared call",
+                headline = "Shared media call",
+                detail = "Asia Wild Nature · For me",
+                supportsExpand = true,
+                compactState = IslandDemoState.CallCompact,
+                expandedState = IslandDemoState.SharedMediaCallExpanded
             ),
             PlaygroundStateItem(
                 label = "Alerts",
@@ -231,6 +285,110 @@ fun PlaygroundScreen(
                 supportsExpand = false,
                 compactState = IslandDemoState.TransitRouteAlert,
                 expandedState = IslandDemoState.TransitRouteAlert
+            ),
+            PlaygroundStateItem(
+                label = "Voice memo",
+                headline = "Recording memo",
+                detail = "0:12 · Live waveform trace",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.VoiceMemoExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Screen rec",
+                headline = "Screen recording",
+                detail = "0:03 · Recording screen session",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.ScreenRecordingExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Shortcuts",
+                headline = "Running shortcut",
+                detail = "Daily Summary · Automation in progress",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.ShortcutExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Call banner",
+                headline = "Ongoing call",
+                detail = "Tamia Castillo · 02:45",
+                supportsExpand = true,
+                compactState = IslandDemoState.CallCompact,
+                expandedState = IslandDemoState.OngoingCallBanner
+            ),
+            PlaygroundStateItem(
+                label = "Focus / DND",
+                headline = "Do Not Disturb",
+                detail = "Focus mode turned on",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.FocusModeExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Video remote",
+                headline = "WWDC23 Keynote",
+                detail = "Apple · 15s skip transport controls",
+                supportsExpand = true,
+                compactState = IslandDemoState.MusicCompact,
+                expandedState = IslandDemoState.VideoRemoteExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Airplane mode",
+                headline = "Airplane mode alert",
+                detail = "Turn off airplane mode to access data",
+                supportsExpand = false,
+                compactState = IslandDemoState.AirplaneAlert,
+                expandedState = IslandDemoState.AirplaneAlert
+            ),
+            PlaygroundStateItem(
+                label = "Mobile data",
+                headline = "Mobile data alert",
+                detail = "Turn off mobile data to use Wi-Fi",
+                supportsExpand = false,
+                compactState = IslandDemoState.MobileDataAlert,
+                expandedState = IslandDemoState.MobileDataAlert
+            ),
+            PlaygroundStateItem(
+                label = "AirDrop",
+                headline = "AirDrop activity",
+                detail = "3 Photos · Receiving from Chris",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.AirDropActivity
+            ),
+            PlaygroundStateItem(
+                label = "AirPods",
+                headline = "AirPods connected",
+                detail = "Ladislav's AirPods · 75% battery",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.AirPodsConnected
+            ),
+            PlaygroundStateItem(
+                label = "Satellite",
+                headline = "Satellite connection",
+                detail = "Connected · Keep pointing at Satellite",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.SatelliteConnected
+            ),
+            PlaygroundStateItem(
+                label = "Find My",
+                headline = "Find My iPhone alert",
+                detail = "Target radar pulse locator",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.FindMyAlert
+            ),
+            PlaygroundStateItem(
+                label = "Moved to iPhone",
+                headline = "AirPods hand-off",
+                detail = "Audio moved to iPhone · Undo",
+                supportsExpand = true,
+                compactState = IslandDemoState.Idle,
+                expandedState = IslandDemoState.MovedToIPhone
             )
         )
     }
@@ -284,7 +442,17 @@ fun PlaygroundScreen(
         IslandDemoState.ChargingExpanded,
         IslandDemoState.LowBatteryExpanded,
         IslandDemoState.NotificationImage,
-        IslandDemoState.CallAvatars -> 156.dp
+        IslandDemoState.CallAvatars,
+        IslandDemoState.OngoingCallBanner,
+        IslandDemoState.VoiceMemoExpanded,
+        IslandDemoState.ScreenRecordingExpanded,
+        IslandDemoState.ShortcutExpanded,
+        IslandDemoState.FocusModeExpanded,
+        IslandDemoState.AirDropActivity,
+        IslandDemoState.AirPodsConnected,
+        IslandDemoState.SatelliteConnected,
+        IslandDemoState.FindMyAlert,
+        IslandDemoState.MovedToIPhone -> 156.dp
 
         IslandDemoState.DeliveryExpanded,
         IslandDemoState.FlightExpanded,
@@ -300,7 +468,11 @@ fun PlaygroundScreen(
 
         IslandDemoState.CallExpanded -> 218.dp
 
-        IslandDemoState.MusicExpanded -> 238.dp
+        IslandDemoState.FaceTimeCallExpanded,
+        IslandDemoState.SharedMediaCallExpanded -> 224.dp
+
+        IslandDemoState.MusicExpanded,
+        IslandDemoState.VideoRemoteExpanded -> 238.dp
 
         IslandDemoState.ColorOptions -> 248.dp
 
@@ -308,13 +480,29 @@ fun PlaygroundScreen(
     }
 
     val serviceRunning = isIslandEnabled && permissionsGranted
+    val categories = remember { listOf("All", "Media", "Calls", "Live", "Capture", "System") }
+    var selectedCategory by remember { mutableStateOf("All") }
+    val visibleStates = states.filter { item ->
+        selectedCategory == "All" || item.experienceCategory() == selectedCategory
+    }
 
     AppScreen(
-        bottomInset = BottomDockInset,
-        horizontalGutter = 0.dp
+        bottomInset = BottomDockInset
     ) {
+        AppLargeTitle(
+            title = "Island",
+            subtitle = "Live status, controls, and device previews",
+            trailing = {
+                AppIconButton(
+                    glyph = AppleGlyph.Settings,
+                    onClick = onNavigateVault,
+                    contentDescription = "Open settings"
+                )
+            }
+        )
+
         // ---------------------------------------------------------------
-        // Live stage (Authentic Full-Bleed Apple iOS 17 Viewport)
+        // Live stage — the island itself remains unchanged.
         // ---------------------------------------------------------------
         AppStage(
             modifier = Modifier.appReveal(0),
@@ -330,130 +518,184 @@ fun PlaygroundScreen(
                     if (currentItem.supportsExpand) {
                         isExpanded = !isExpanded
                     }
+                },
+                onControlAction = { action ->
+                    when (action) {
+                        IslandControlAction.CallAccept -> {
+                            selectedIndex = states.indexOfFirst { it.label == "Active call" }.coerceAtLeast(0)
+                            isExpanded = true
+                        }
+                        IslandControlAction.CallDecline,
+                        IslandControlAction.CallEnd,
+                        IslandControlAction.TimerCancel,
+                        IslandControlAction.VoiceMemoStop,
+                        IslandControlAction.ScreenRecordingStop,
+                        IslandControlAction.ScreenMirroringStop,
+                        IslandControlAction.MobileDataOk,
+                        IslandControlAction.TransitEndRoute -> {
+                            selectedIndex = states.indexOfFirst { it.label == "Idle" }.coerceAtLeast(0)
+                            isExpanded = true
+                        }
+                        IslandControlAction.MovedUndo -> {
+                            selectedIndex = states.indexOfFirst { it.label == "AirPods" }.coerceAtLeast(0)
+                            isExpanded = true
+                        }
+                        IslandControlAction.OpenSettings,
+                        IslandControlAction.MobileDataSettings,
+                        IslandControlAction.ShortcutOpen,
+                        IslandControlAction.AirPodsOpen,
+                        IslandControlAction.SatelliteMessage -> onNavigateQuickControl()
+                        else -> Unit
+                    }
                 }
             )
         }
 
-        // Padded controls deck
-        Column(
+        Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+
+        // Calm summary row: the selected experience is visible without repeating
+        // the large page title or adding another heavy card.
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = AppTheme.layout.cardPadding),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // Title Row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        text = "Dynamic Island",
-                        style = AppTheme.typography.h2,
-                        color = AppTheme.colors.textPrimary
-                    )
-                    AppText(
-                        text = "Preview every state with iOS 17 fidelity.",
-                        style = AppTheme.typography.bodySmall,
-                        color = AppTheme.colors.textSecondary
-                    )
-                }
-                AppIconButton(
-                    glyph = AppleGlyph.Settings,
-                    onClick = onNavigateVault,
-                    contentDescription = "Settings"
+            Column(modifier = Modifier.weight(1f)) {
+                AppText(
+                    text = "Now previewing",
+                    style = AppTheme.typography.caption,
+                    color = AppTheme.colors.textTertiary
+                )
+                Spacer(modifier = Modifier.height(AppTheme.spacing.xxs))
+                AppText(
+                    text = currentItem.label,
+                    style = AppTheme.typography.h3,
+                    color = AppTheme.colors.textPrimary
                 )
             }
+            AppStatusPill(
+                text = if (serviceRunning) "Ready" else "Setup needed",
+                color = if (serviceRunning) AppTheme.colors.success else AppTheme.colors.warning
+            )
+        }
 
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(AppTheme.spacing.md))
 
-            // Interactive state headline & controls
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AppText(
-                    text = currentItem.headline,
-                    style = AppTheme.typography.h3,
-                    color = AppTheme.colors.textPrimary,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(3.dp))
-                AppText(
-                    text = currentItem.detail,
-                    style = AppTheme.typography.bodySmall,
-                    color = AppTheme.colors.textSecondary,
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Stable Compact / Expanded Toggle Row (height 38dp, no jumping)
-                Box(
-                    modifier = Modifier.height(38.dp),
-                    contentAlignment = Alignment.Center
+        // Stable Compact / Expanded control. This only changes the surrounding
+        // playground state; the island implementation itself is untouched.
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = AppTheme.spacing.zero),
+            contentAlignment = Alignment.Center
+        ) {
+            if (currentItem.supportsExpand) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(percent = 50))
+                        .background(AppTheme.colors.surfaceGradient())
+                        .padding(3.dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
-                    if (currentItem.supportsExpand) {
-                        Row(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(percent = 50))
-                                .background(AppTheme.colors.surfaceVariant)
-                                .padding(3.dp),
-                            horizontalArrangement = Arrangement.spacedBy(2.dp)
-                        ) {
-                            AppPillToggle(
-                                label = "Compact",
-                                selected = !isExpanded,
-                                onClick = { isExpanded = false }
-                            )
-                            AppPillToggle(
-                                label = "Expanded",
-                                selected = isExpanded,
-                                onClick = { isExpanded = true }
-                            )
-                        }
-                    } else {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(percent = 50))
-                                .background(AppTheme.colors.surfaceVariant.copy(alpha = 0.6f))
-                                .padding(horizontal = 14.dp, vertical = 6.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppText(
-                                text = if (currentItem.compactState == IslandDemoState.Idle) "Hardware Cutout" else "Full Alert Sheet",
-                                style = AppTheme.typography.caption,
-                                fontWeight = FontWeight.Medium,
-                                color = AppTheme.colors.textSecondary
-                            )
-                        }
+                    AppPillToggle(
+                        label = "Compact",
+                        selected = !isExpanded,
+                        onClick = { isExpanded = false },
+                        modifier = Modifier.weight(1f)
+                    )
+                    AppPillToggle(
+                        label = "Expanded",
+                        selected = isExpanded,
+                        onClick = { isExpanded = true },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            } else {
+                AppText(
+                    text = if (currentItem.compactState == IslandDemoState.Idle) "Hardware cutout" else "Full alert sheet",
+                    style = AppTheme.typography.caption,
+                    fontWeight = FontWeight.Medium,
+                    color = AppTheme.colors.textSecondary
+                )
+            }
+        }
+
+        AppSectionSpacer()
+
+        // ---------------------------------------------------------------
+        // Experience browser — category filtering keeps the home screen calm
+        // while every audited island remains one tap away.
+        // ---------------------------------------------------------------
+        AppSectionTitle("Preview")
+        AppListCard(modifier = Modifier.appReveal(1)) {
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = AppTheme.layout.cardPadding,
+                    vertical = AppTheme.spacing.md
+                )
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        AppText(
+                            text = "Choose an experience",
+                            style = AppTheme.typography.body,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AppTheme.colors.textPrimary
+                        )
+                        AppText(
+                            text = "${states.size} reference states available",
+                            style = AppTheme.typography.caption,
+                            color = AppTheme.colors.textTertiary
+                        )
+                    }
+                    AppText(
+                        text = currentItem.label,
+                        style = AppTheme.typography.caption,
+                        fontWeight = FontWeight.Medium,
+                        color = AppTheme.colors.accent
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+                ) {
+                    categories.forEach { category ->
+                        AppChip(
+                            label = category,
+                            selected = selectedCategory == category,
+                            onClick = { selectedCategory = category }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+                ) {
+                    visibleStates.forEach { item ->
+                        val index = states.indexOf(item)
+                        AppChip(
+                            label = item.label,
+                            selected = selectedIndex == index,
+                            onClick = {
+                                selectedIndex = index
+                                isExpanded = true
+                            }
+                        )
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Horizontal Chip Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-            ) {
-                states.forEachIndexed { index, item ->
-                    AppChip(
-                        label = item.label,
-                        selected = selectedIndex == index,
-                        onClick = {
-                            selectedIndex = index
-                            isExpanded = true
-                        }
-                    )
-                }
-            }
+        }
 
         AppSectionSpacer()
 
@@ -466,30 +708,27 @@ fun PlaygroundScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    AppText(
-                        text = if (serviceRunning) "Island is active" else "Setup required",
-                        style = AppTheme.typography.h3,
-                        color = AppTheme.colors.textPrimary
-                    )
-                    Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
-                    AppText(
-                        text = if (serviceRunning) {
-                            "The island is running above your apps."
-                        } else {
-                            "Grant accessibility and notification access so the island can appear over your apps."
-                        },
-                        style = AppTheme.typography.bodySmall,
-                        color = AppTheme.colors.textSecondary
-                    )
-                }
-                Spacer(modifier = Modifier.width(AppTheme.spacing.md))
+                AppText(
+                    text = if (serviceRunning) "Island is active" else "Setup required",
+                    style = AppTheme.typography.h3,
+                    color = AppTheme.colors.textPrimary,
+                    modifier = Modifier.weight(1f)
+                )
                 AppStatusPill(
                     text = if (serviceRunning) "Ready" else "Action needed",
                     color = if (serviceRunning) AppTheme.colors.success else AppTheme.colors.warning
                 )
             }
-
+            Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
+            AppText(
+                text = if (serviceRunning) {
+                    "The island is running above your apps."
+                } else {
+                    "Grant accessibility and notification access so the island can appear over your apps."
+                },
+                style = AppTheme.typography.bodySmall,
+                color = AppTheme.colors.textSecondary
+            )
             if (!permissionsGranted) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
                 AppButton(
@@ -503,9 +742,9 @@ fun PlaygroundScreen(
         AppSectionSpacer()
 
         // ---------------------------------------------------------------
-        // Shortcuts
+        // Settings grouped like an iOS Settings page.
         // ---------------------------------------------------------------
-        AppSectionTitle("Experiences")
+        AppSectionTitle("Customize")
         AppListCard(modifier = Modifier.appReveal(3)) {
             AppNavRow(
                 title = "Notifications",
@@ -540,6 +779,14 @@ fun PlaygroundScreen(
             )
             AppRowDivider()
             AppNavRow(
+                title = "Sound & haptics",
+                subtitle = "Ringer, volume HUD, and pulse animation",
+                glyph = AppleGlyph.Speaker,
+                accent = AppTheme.colors.secondary,
+                onClick = onNavigateSoundSettings
+            )
+            AppRowDivider()
+            AppNavRow(
                 title = "Quick controls",
                 subtitle = "System toggles and shortcuts",
                 glyph = AppleGlyph.Controls,
@@ -558,9 +805,6 @@ fun PlaygroundScreen(
 
         AppSectionSpacer()
 
-        // ---------------------------------------------------------------
-        // Service switch
-        // ---------------------------------------------------------------
         AppSectionTitle("Service")
         AppListCard(modifier = Modifier.appReveal(4)) {
             AppToggleRow(
@@ -574,7 +818,6 @@ fun PlaygroundScreen(
             )
         }
         AppFootnote("Turning the service off keeps your settings but hides the island everywhere.")
-        }
     }
 }
 
@@ -582,12 +825,13 @@ fun PlaygroundScreen(
 private fun AppPillToggle(
     label: String,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val bg = if (selected) AppTheme.colors.surface else Color.Transparent
     val textColor = if (selected) AppTheme.colors.textPrimary else AppTheme.colors.textTertiary
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(percent = 50))
             .background(bg)
             .clickable(onClick = onClick)

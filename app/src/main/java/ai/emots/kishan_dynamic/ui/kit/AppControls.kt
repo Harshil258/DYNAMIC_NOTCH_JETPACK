@@ -49,6 +49,7 @@ import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.accentGradient
 
 // =============================================================================
 // APP KIT CONTROLS — fully token driven, correct touch targets, light+dark safe.
@@ -76,7 +77,7 @@ fun AppSwitch(
         targetValue = when {
             !enabled -> AppTheme.colors.disabled
             checked -> AppTheme.colors.success
-            else -> AppTheme.colors.surfaceElevated
+            else -> AppTheme.colors.controlTrack
         },
         label = "switch_track"
     )
@@ -100,7 +101,7 @@ fun AppSwitch(
                 .offset(x = thumbOffset)
                 .size(thumbSize)
                 .clip(CircleShape)
-                .background(if (enabled) Color.White else AppTheme.colors.textTertiary)
+                .background(if (enabled) AppTheme.colors.controlThumb else AppTheme.colors.textTertiary)
         )
     }
 }
@@ -134,18 +135,23 @@ fun AppButton(
     }
     val content = when {
         !enabled -> AppTheme.colors.textTertiary
-        style == AppButtonStyle.Primary || style == AppButtonStyle.Destructive -> Color.White
+        style == AppButtonStyle.Primary || style == AppButtonStyle.Destructive -> AppTheme.colors.onAccent
         style == AppButtonStyle.Tonal -> AppTheme.colors.accent
         else -> AppTheme.colors.textPrimary
     }
     val shape = RoundedCornerShape(AppTheme.radius.lg)
+    val containerBrush = if (enabled && style == AppButtonStyle.Primary) {
+        AppTheme.colors.accentGradient()
+    } else {
+        androidx.compose.ui.graphics.Brush.linearGradient(listOf(container, container))
+    }
 
     Row(
         modifier = modifier
             .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
             .scale(scale)
             .clip(shape)
-            .background(container)
+            .background(containerBrush, shape)
             .then(
                 if (style == AppButtonStyle.Secondary) {
                     Modifier.border(0.5.dp, AppTheme.colors.border, shape)
@@ -244,7 +250,10 @@ fun AppSlider(
     valueRange: ClosedFloatingPointRange<Float>,
     onValueChange: (Float) -> Unit,
     modifier: Modifier = Modifier,
-    valueFormatter: (Float) -> String = { it.toInt().toString() }
+    valueFormatter: (Float) -> String = { it.toInt().toString() },
+    enabled: Boolean = true,
+    trailingLabel: String? = null,
+    onLockedInteraction: (() -> Unit)? = null
 ) {
     val density = LocalDensity.current
     var trackWidthPx by remember { mutableFloatStateOf(0f) }
@@ -252,6 +261,10 @@ fun AppSlider(
     val fraction = ((value - valueRange.start) / span).coerceIn(0f, 1f)
 
     fun emitFromX(x: Float) {
+        if (!enabled) {
+            onLockedInteraction?.invoke()
+            return
+        }
         if (trackWidthPx <= 0f) return
         val f = (x / trackWidthPx).coerceIn(0f, 1f)
         onValueChange(valueRange.start + f * span)
@@ -271,12 +284,22 @@ fun AppSlider(
                 style = AppTheme.typography.body,
                 color = AppTheme.colors.textPrimary
             )
-            AppText(
-                text = valueFormatter(value),
-                style = AppTheme.typography.bodySmall,
-                fontWeight = FontWeight.Medium,
-                color = AppTheme.colors.accent
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (trailingLabel != null) {
+                    AppStatusPill(
+                        text = trailingLabel,
+                        color = AppTheme.colors.gold,
+                        showDot = false,
+                        modifier = Modifier.padding(end = AppTheme.spacing.sm)
+                    )
+                }
+                AppText(
+                    text = valueFormatter(value),
+                    style = AppTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium,
+                    color = if (enabled) AppTheme.colors.accent else AppTheme.colors.textTertiary
+                )
+            }
         }
 
         Box(
@@ -298,14 +321,18 @@ fun AppSlider(
                     .fillMaxWidth()
                     .height(6.dp)
                     .clip(CircleShape)
-                    .background(AppTheme.colors.surfaceElevated)
+                    .background(
+                        if (enabled) AppTheme.colors.controlTrack else AppTheme.colors.disabled
+                    )
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth(fraction)
                     .height(6.dp)
                     .clip(CircleShape)
-                    .background(AppTheme.colors.accent)
+                    .background(
+                        if (enabled) AppTheme.colors.accent else AppTheme.colors.textTertiary
+                    )
             )
             Box(
                 modifier = Modifier
@@ -320,7 +347,9 @@ fun AppSlider(
                     .offset(x = thumbOffset)
                     .size(22.dp)
                     .clip(CircleShape)
-                    .background(Color.White)
+                    .background(
+                        if (enabled) AppTheme.colors.controlThumb else AppTheme.colors.disabled
+                    )
                     .border(0.5.dp, AppTheme.colors.border, CircleShape)
             )
         }
@@ -351,8 +380,19 @@ fun AppTile(
             .scale(scale)
             .clip(shape)
             .background(
-                if (selected) AppTheme.colors.accent.copy(alpha = 0.14f)
-                else AppTheme.colors.surfaceVariant
+                if (selected) {
+                    androidx.compose.ui.graphics.Brush.linearGradient(
+                        listOf(
+                            AppTheme.colors.accent.copy(alpha = 0.18f),
+                            AppTheme.colors.info.copy(alpha = 0.10f)
+                        )
+                    )
+                } else {
+                    androidx.compose.ui.graphics.Brush.linearGradient(
+                        listOf(AppTheme.colors.surfaceVariant, AppTheme.colors.surfaceVariant)
+                    )
+                },
+                shape
             )
             .border(
                 0.5.dp,
@@ -388,7 +428,16 @@ fun AppChip(
         modifier = modifier
             .clip(shape)
             .background(
-                if (selected) AppTheme.colors.textPrimary else AppTheme.colors.surfaceVariant
+                if (selected) {
+                    androidx.compose.ui.graphics.Brush.linearGradient(
+                        listOf(AppTheme.colors.textPrimary, AppTheme.colors.textPrimary)
+                    )
+                } else {
+                    androidx.compose.ui.graphics.Brush.linearGradient(
+                        listOf(AppTheme.colors.surfaceVariant, AppTheme.colors.surfaceVariant)
+                    )
+                },
+                shape
             )
             .border(
                 0.5.dp,

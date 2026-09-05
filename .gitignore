@@ -15,3 +15,6 @@ local.properties
 .cache/
 __pycache__/
 *.pyc
+graphify-out/
+svg_*.json
+iOS17 Dynamic Island Components (Community) (3)/

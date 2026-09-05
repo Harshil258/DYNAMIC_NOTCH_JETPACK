@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dynamic Island Pixel QA"
+  short_description: "Compare every island directly to supplied SVGs"
+  default_prompt: "Use $dynamic-island-pixel-perfect to compare and fix every Dynamic Island state against the supplied SVG references."

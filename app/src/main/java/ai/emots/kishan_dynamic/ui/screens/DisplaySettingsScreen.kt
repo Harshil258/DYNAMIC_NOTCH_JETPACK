@@ -22,9 +22,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
+import ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicy
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
@@ -46,14 +46,20 @@ import kotlin.math.roundToInt
 
 @Composable
 fun DisplaySettingsScreen(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onNavigateToPremium: () -> Unit
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferences = remember { AuroraPreferences(context) }
+    val isProActive by preferences.isProActive.collectAsState(initial = false)
+    val horizontalOffsetEnabled = PremiumFeaturePolicy.horizontalOffsetEnabled(isProActive)
 
     val savedVerticalOffset by preferences.verticalOffset.collectAsState(
         initial = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP
+    )
+    val savedHorizontalOffset by preferences.horizontalOffset.collectAsState(
+        initial = AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP
     )
     val savedWidthScale by preferences.widthScale.collectAsState(
         initial = AuroraPreferences.DEFAULT_WIDTH_SCALE
@@ -61,6 +67,9 @@ fun DisplaySettingsScreen(
 
     var verticalOffset by remember(savedVerticalOffset) {
         mutableFloatStateOf(savedVerticalOffset.toFloat())
+    }
+    var horizontalOffset by remember(savedHorizontalOffset) {
+        mutableFloatStateOf(savedHorizontalOffset.toFloat())
     }
     var widthScale by remember(savedWidthScale) {
         mutableFloatStateOf(savedWidthScale * 100f)
@@ -111,7 +120,10 @@ fun DisplaySettingsScreen(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .offset { IntOffset(x = 0, y = verticalOffset.roundToInt()) }
+                    .offset(
+                        x = if (horizontalOffsetEnabled) horizontalOffset.dp else AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP.dp,
+                        y = verticalOffset.dp
+                    )
                 ) {
                     DynamicIslandPill(
                         state = IslandDemoState.Minimal,
@@ -155,6 +167,20 @@ fun DisplaySettingsScreen(
             )
             Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
             AppSlider(
+                title = "Horizontal offset",
+                value = horizontalOffset,
+                valueRange = -200f..200f,
+                enabled = horizontalOffsetEnabled,
+                trailingLabel = if (!horizontalOffsetEnabled) "PRO" else null,
+                onLockedInteraction = onNavigateToPremium,
+                valueFormatter = { "${it.roundToInt()} dp" },
+                onValueChange = { value ->
+                    horizontalOffset = value
+                    scope.launch { preferences.setHorizontalOffset(value.roundToInt()) }
+                }
+            )
+            Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+            AppSlider(
                 title = "Island width",
                 value = widthScale,
                 valueRange = 80f..120f,
@@ -174,10 +200,14 @@ fun DisplaySettingsScreen(
             style = AppButtonStyle.Secondary,
             onClick = {
                 verticalOffset = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP.toFloat()
+                horizontalOffset = AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP.toFloat()
                 widthScale = 100f
                 selectedCutoutIndex = 1
                 scope.launch {
                     preferences.setVerticalOffset(AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP)
+                    if (horizontalOffsetEnabled) {
+                        preferences.setHorizontalOffset(AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP)
+                    }
                     preferences.setWidthScale(AuroraPreferences.DEFAULT_WIDTH_SCALE)
                 }
             }

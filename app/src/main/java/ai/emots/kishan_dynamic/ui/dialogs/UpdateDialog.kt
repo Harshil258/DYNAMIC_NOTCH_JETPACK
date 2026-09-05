@@ -24,23 +24,28 @@ import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppDialog
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 
 /** Blocking update prompt: cannot be dismissed. */
 @Composable
 fun ForceUpdateDialog(
-    onUpdateClick: () -> Unit
+    onUpdateClick: () -> Unit,
+    versionCode: Int? = null,
+    notes: List<String> = emptyList()
 ) {
     AppDialog(
         onDismiss = {},
         title = "Update required",
-        subtitle = "Version 1.1.0 is needed to continue.",
+        subtitle = versionCode?.let { "Version $it is needed to continue." }
+            ?: "A newer version is needed to continue.",
         glyph = AppleGlyph.Sparkles,
         accent = AppTheme.colors.error,
         dismissOnOutsideTap = false,
         showClose = false
     ) {
         AppText(
-            text = "This release fixes overlay behaviour on the newest Android versions. Please update to keep the island working.",
+            text = notes.firstOrNull()
+                ?: "This release includes important compatibility and reliability improvements. Please update to keep the island working.",
             style = AppTheme.typography.bodySmall,
             color = AppTheme.colors.textSecondary
         )
@@ -59,18 +64,22 @@ fun ForceUpdateDialog(
 @Composable
 fun SoftUpdateDialog(
     onUpdateClick: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    versionCode: Int? = null,
+    changes: List<String> = emptyList()
 ) {
-    val changes = listOf(
+    val visibleChanges = changes.ifEmpty {
+        listOf(
         "Redesigned interface across every screen",
         "Smoother island expand and collapse",
         "Fixes for notification previews"
-    )
+        )
+    }
 
     AppDialog(
         onDismiss = onDismiss,
         title = "Update available",
-        subtitle = "Version 1.1.0",
+        subtitle = versionCode?.let { "Version $it" } ?: "A new version is available",
         glyph = AppleGlyph.Sparkles,
         accent = AppTheme.colors.accent
     ) {
@@ -78,11 +87,11 @@ fun SoftUpdateDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(AppTheme.radius.lg))
-                .background(AppTheme.colors.surfaceVariant)
+                .background(AppTheme.colors.surfaceGradient())
                 .padding(AppTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
-            changes.forEach { change ->
+            visibleChanges.forEach { change ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier

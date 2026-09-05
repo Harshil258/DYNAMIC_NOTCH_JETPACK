@@ -36,132 +36,147 @@ import ai.emots.kishan_dynamic.ui.motion.rememberPressScale
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
-private val CallGreen = IslandColors.Green
-private val CallRed = IslandColors.Red
+private val CallGreen = IslandColors.CapsuleGreen
+private val CallRed = IslandColors.CapsuleRed
 
 /**
- * INCOMING CALL sheet.
+ * INCOMING CALL banner (86dp capsule).
  *
- * Matches the iOS layout: identity on top (avatar, label, name), a full-width
- * pair of circular actions underneath. The avatar breathes gently while the
- * phone rings, which is what makes the state feel alive.
+ * 1:1 implementation matching iOS 17 Figma reference `Dynamic Island-6.svg`:
+ * - 56dp circular caller avatar
+ * - Subtitle "iPhone" / "Mobile" (#A4A4A9, 12sp) + Caller Name (white bold 17sp)
+ * - 52dp Red Decline button (#FA3532) + 52dp Green Accept button (#37C058)
  */
 @Composable
 fun IncomingCallIsland(
     name: String = "Tamia Castillo",
-    label: String = "Mobile",
+    label: String = "iPhone",
+    avatarUri: String? = null,
     onAccept: () -> Unit = {},
     onDecline: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val pulse by rememberBreathing(min = 0.94f, max = 1.04f, durationMillis = 1400)
+    val pulse by rememberBreathing(min = 0.96f, max = 1.03f, durationMillis = 1400)
     val declineInteraction = remember { MutableInteractionSource() }
     val acceptInteraction = remember { MutableInteractionSource() }
     val declineScale by rememberPressScale(declineInteraction)
     val acceptScale by rememberPressScale(acceptInteraction)
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        // LEFT: Avatar + "Mobile" & "Tamia Castillo"
+    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
+        val avatarSize = (56.dp * scale)
+        val buttonSize = (52.dp * scale)
+        val startPad = (24.dp * scale)
+        val endPad = (25.dp * scale)
+        val vPad = (15.dp * scale)
+
         Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(start = startPad, end = endPad, top = vPad, bottom = vPad),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(
-                modifier = Modifier
-                    .size(52.dp)
-                    .graphicsLayer {
-                        scaleX = pulse
-                        scaleY = pulse
-                    }
-                    .clip(CircleShape)
-                    .background(
-                        Brush.linearGradient(
-                            listOf(IslandColors.Orange, IslandColors.Yellow)
+            // LEFT: 56dp Avatar + Label & Name
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(avatarSize)
+                        .graphicsLayer {
+                            scaleX = pulse
+                            scaleY = pulse
+                        }
+                        .clip(CircleShape)
+                        .background(
+                            Brush.linearGradient(
+                                listOf(IslandColors.Orange, IslandColors.Yellow)
+                            )
                         )
+                        .border(0.75.dp, Color(0x33FFFFFF), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ContactAvatar(
+                        name = name,
+                        avatarUri = avatarUri,
+                        modifier = Modifier.fillMaxSize(),
+                        contentDescription = name
                     )
-                    .border(1.dp, Color(0x33FFFFFF), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                AppText(
-                    text = name.take(2).uppercase(),
-                    style = AppTheme.typography.h2,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+                }
 
-            Spacer(modifier = Modifier.width(14.dp))
+                Spacer(modifier = Modifier.width(9.dp * scale))
 
-            Column(verticalArrangement = Arrangement.Center) {
-                Text(
-                    text = "Mobile",
-                    color = IslandColors.Gray,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = name,
-                    color = Color.White,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-
-        // RIGHT: Red Decline Button + Green Accept Button
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            // Red Decline Button (50dp circle)
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .graphicsLayer {
-                        scaleX = declineScale
-                        scaleY = declineScale
-                    }
-                    .clip(CircleShape)
-                    .background(CallRed)
-                    .clickable(
-                        interactionSource = declineInteraction,
-                        indication = null,
-                        onClick = onDecline
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(modifier = Modifier.rotate(135f)) {
-                    AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 22.dp)
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = label,
+                        color = Color(0xFFA4A4A9),
+                        fontSize = (12f * scale).sp,
+                        fontWeight = FontWeight.Medium,
+                        letterSpacing = (-0.1).sp
+                    )
+                    Spacer(modifier = Modifier.height(2.dp * scale))
+                    Text(
+                        text = name,
+                        color = Color.White,
+                        fontSize = (17f * scale).sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.3).sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
 
-            // Green Accept Button (50dp circle)
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .graphicsLayer {
-                        scaleX = acceptScale
-                        scaleY = acceptScale
-                    }
-                    .clip(CircleShape)
-                    .background(CallGreen)
-                    .clickable(
-                        interactionSource = acceptInteraction,
-                        indication = null,
-                        onClick = onAccept
-                    ),
-                contentAlignment = Alignment.Center
+            Spacer(modifier = Modifier.width(10.dp * scale))
+
+            // RIGHT: Red Decline Button (52dp) + Green Accept Button (52dp)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
             ) {
-                Box(modifier = Modifier.rotate(0f)) {
-                    AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 22.dp)
+                // Red Decline Button (52dp circle)
+                Box(
+                    modifier = Modifier
+                        .size(buttonSize)
+                        .graphicsLayer {
+                            scaleX = declineScale
+                            scaleY = declineScale
+                        }
+                        .clip(CircleShape)
+                        .background(CallRed)
+                        .clickable(
+                            interactionSource = declineInteraction,
+                            indication = null,
+                            onClick = onDecline
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = 35.dp * scale)
+                }
+
+                // Green Accept Button (52dp circle)
+                Box(
+                    modifier = Modifier
+                        .size(buttonSize)
+                        .graphicsLayer {
+                            scaleX = acceptScale
+                            scaleY = acceptScale
+                        }
+                        .clip(CircleShape)
+                        .background(CallGreen)
+                        .clickable(
+                            interactionSource = acceptInteraction,
+                            indication = null,
+                            onClick = onAccept
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 30.dp * scale)
                 }
             }
         }

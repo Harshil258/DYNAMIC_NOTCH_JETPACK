@@ -98,10 +98,37 @@ object AppMotion {
         stiffness = 460f
     )
 
+    /**
+     * Bubble split spring: slightly bouncier (damping 0.62, stiffness 380)
+     * creating the organic "blob pop" when the companion bubble buds from the main pill.
+     */
+    fun <T> bubbleSplitSpring(): SpringSpec<T> = spring(
+        dampingRatio = 0.62f,
+        stiffness = 380f
+    )
+
+    /**
+     * Bubble merge spring: firmer damping (damping 0.82, stiffness 500)
+     * creating the quick liquid suction when the companion bubble merges back into the pill.
+     */
+    fun <T> bubbleMergeSpring(): SpringSpec<T> = spring(
+        dampingRatio = 0.82f,
+        stiffness = 500f
+    )
+
+    /**
+     * Corner radius morph spring: smoothly interpolates from pill radius
+     * (18.33dp) to expanded continuous squircle (42dp).
+     */
+    fun <T> cornerMorphSpring(): SpringSpec<T> = spring(
+        dampingRatio = 0.74f,
+        stiffness = 460f
+    )
+
     /** Content appearing inside the island: snappier than the container. */
     fun <T> islandContentSpring(): SpringSpec<T> = spring(
-        dampingRatio = 0.85f,
-        stiffness = 700f
+        dampingRatio = 0.80f,
+        stiffness = 650f
     )
 
     /** Buttons, cards, rows — immediate tactile feedback. */
@@ -121,6 +148,48 @@ object AppMotion {
         dampingRatio = 0.7f,
         stiffness = 500f
     )
+
+    // -------------------------------------------------------------------------
+    // Island Content Transitions (Authentic iOS 17 Choreography)
+    // -------------------------------------------------------------------------
+
+    val TopCenterTransform = TransformOrigin(0.5f, 0f)
+
+    /** Authentic iOS island content enter: subtle pop from 0.92x top-center + fade. */
+    fun islandContentEnter(): EnterTransition =
+        fadeIn(tween(180, delayMillis = 25, easing = EaseIslandContent)) +
+            scaleIn(
+                initialScale = 0.92f,
+                transformOrigin = TopCenterTransform,
+                animationSpec = islandContentSpring()
+            )
+
+    /** Authentic iOS island content exit: quick shrink to 0.95x + fade. */
+    fun islandContentExit(): ExitTransition =
+        fadeOut(tween(110, easing = EaseInOut)) +
+            scaleOut(
+                targetScale = 0.95f,
+                transformOrigin = TopCenterTransform,
+                animationSpec = tween(110, easing = EaseInOut)
+            )
+
+    /** Authentic iOS companion bubble enter: bubbly pop from 0.82x + fade. */
+    fun bubbleContentEnter(): EnterTransition =
+        fadeIn(tween(150, delayMillis = 20, easing = EaseIslandContent)) +
+            scaleIn(
+                initialScale = 0.82f,
+                transformOrigin = TopCenterTransform,
+                animationSpec = bubbleSplitSpring()
+            )
+
+    /** Authentic iOS companion bubble exit: rapid shrink into liquid + fade. */
+    fun bubbleContentExit(): ExitTransition =
+        fadeOut(tween(90, easing = EaseInOut)) +
+            scaleOut(
+                targetScale = 0.80f,
+                transformOrigin = TopCenterTransform,
+                animationSpec = tween(90, easing = EaseInOut)
+            )
 
     // -------------------------------------------------------------------------
     // Shared transitions

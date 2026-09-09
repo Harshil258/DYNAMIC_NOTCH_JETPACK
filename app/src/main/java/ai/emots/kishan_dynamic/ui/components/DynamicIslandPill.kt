@@ -13,9 +13,13 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import ai.emots.kishan_dynamic.ui.motion.AppMotion
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -414,6 +418,10 @@ fun DynamicIslandPill(
     val islandStiffness = if (fastAnimations) 760f else 460f
     val contentDuration = if (reduceMotion) 80 else if (fastAnimations) 130 else 200
 
+    // Interactive upward drag dismissal with Apple rubber-band physics
+    val dragOffsetY = remember { Animatable(0f) }
+    val coroutineScope = rememberCoroutineScope()
+
     // -------------------------------------------------------------------------
     // TRUE iOS GEOMETRY
     //
@@ -483,8 +491,11 @@ fun DynamicIslandPill(
         state.resolvedHeight(islandTokens)
     }
 
-    // Corner curvature: 42dp for full sheets, 43-44dp for 86dp capsules, 50% for compact
-    val cornerRadius = when (state) {
+    // Authentic Apple continuous squircle corner morphing:
+    // - Compact / Split states: half of compact height (36.67 / 2 = 18.33dp) for full pill capsule
+    // - 86dp Alert states: 43dp (86 / 2) for standard iOS alert capsule
+    // - Expanded Activity Sheets (140-240dp): 42dp Apple continuous squircle
+    val targetCornerRadiusDp: Dp = when (state) {
         IslandDemoState.Idle,
         IslandDemoState.Minimal,
         IslandDemoState.MusicCompact,
@@ -505,7 +516,7 @@ fun DynamicIslandPill(
         IslandDemoState.DeliveryCompact,
         IslandDemoState.FlightCompact,
         IslandDemoState.SportsCompact,
-        IslandDemoState.NavigationCompact -> RoundedCornerShape(percent = 50)
+        IslandDemoState.NavigationCompact -> islandTokens.compactHeight / 2
 
         IslandDemoState.NotificationExpanded,
         IslandDemoState.SilentModeExpanded,
@@ -524,12 +535,21 @@ fun DynamicIslandPill(
         IslandDemoState.AirPodsConnected,
         IslandDemoState.SatelliteConnected,
         IslandDemoState.FindMyAlert,
-        IslandDemoState.MovedToIPhone -> RoundedCornerShape(percent = 50)
+        IslandDemoState.MovedToIPhone -> 43.dp
 
-        else -> RoundedCornerShape(islandTokens.expandedCorner)
+        else -> islandTokens.expandedCorner
     }
 
-    // Apple Liquid Morphing Springs
+    val animatedCornerRadiusDp by animateDpAsState(
+        targetValue = targetCornerRadiusDp,
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
+            else AppMotion.cornerMorphSpring(),
+        label = "island_corner_radius"
+    )
+
+    val cornerRadius = RoundedCornerShape(animatedCornerRadiusDp)
+
+    // Apple Liquid Morphing Springs for Dimensions
     val animatedWidth by animateDpAsState(
         targetValue = targetWidth,
         animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
@@ -542,6 +562,24 @@ fun DynamicIslandPill(
         animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
             else spring(dampingRatio = 0.73f, stiffness = islandStiffness),
         label = "island_height"
+    )
+
+    // Dynamic Island Split Companion Bubble Springs (Blob separation & liquid merge)
+    val targetGap = if (isSplit) islandTokens.splitGap else 0.dp
+    val targetSideSize = if (isSplit) islandTokens.sideSize else 0.dp
+
+    val animatedGap by animateDpAsState(
+        targetValue = targetGap,
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
+            else if (isSplit) AppMotion.bubbleSplitSpring() else AppMotion.bubbleMergeSpring(),
+        label = "bubble_gap"
+    )
+
+    val animatedSideSize by animateDpAsState(
+        targetValue = targetSideSize,
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
+            else if (isSplit) AppMotion.bubbleSplitSpring() else AppMotion.bubbleMergeSpring(),
+        label = "bubble_side_size"
     )
 
     // Breathing Ambient Specular Aura (iOS Dynamic Island glow)
@@ -610,6 +648,9 @@ fun DynamicIslandPill(
             modifier = Modifier
                 .width(animatedWidth + 8.dp)
                 .height(animatedHeight + 8.dp)
+                .graphicsLayer {
+                    translationY = dragOffsetY.value
+                }
                 .clip(cornerRadius)
                 .background(auraColor.copy(alpha = auraAlpha * 0.22f))
         )
@@ -617,20 +658,47 @@ fun DynamicIslandPill(
         Row(
             modifier = modifier
                 .pointerInput(onSwipeDismiss) {
-                    var totalDrag = 0f
                     detectVerticalDragGestures(
+                        onDragStart = { },
                         onVerticalDrag = { change, dragAmount ->
-                            totalDrag += dragAmount
+                            coroutineScope.launch {
+                                val current = dragOffsetY.value
+                                // Apple iOS rubber-band drag resistance (55% tracking coefficient)
+                                val updated = (current + dragAmount * 0.55f).coerceAtMost(0f)
+                                dragOffsetY.snapTo(updated)
+                            }
                             change.consume()
                         },
                         onDragEnd = {
-                            if (totalDrag < -32f) {
+                            if (dragOffsetY.value < -36f) {
                                 if (hapticEnabled) {
                                     islandView.performHapticFeedback(
                                         android.view.HapticFeedbackConstants.KEYBOARD_TAP
                                     )
                                 }
+                                coroutineScope.launch {
+                                    dragOffsetY.animateTo(
+                                        targetValue = -100f,
+                                        animationSpec = AppMotion.islandSpring()
+                                    )
+                                    dragOffsetY.snapTo(0f)
+                                }
                                 onSwipeDismiss()
+                            } else {
+                                coroutineScope.launch {
+                                    dragOffsetY.animateTo(
+                                        targetValue = 0f,
+                                        animationSpec = AppMotion.islandSpring()
+                                    )
+                                }
+                            }
+                        },
+                        onDragCancel = {
+                            coroutineScope.launch {
+                                dragOffsetY.animateTo(
+                                    targetValue = 0f,
+                                    animationSpec = AppMotion.islandSpring()
+                                )
                             }
                         }
                     )
@@ -644,7 +712,12 @@ fun DynamicIslandPill(
                     .height(animatedHeight)
                     .graphicsLayer {
                         scaleX = pressScale
-                        scaleY = pressScale
+                        // Tactile squeeze during upward drag
+                        val dragSqueeze = if (dragOffsetY.value < 0f) {
+                            (1f - (-dragOffsetY.value / 350f)).coerceIn(0.88f, 1f)
+                        } else 1f
+                        scaleY = pressScale * dragSqueeze
+                        translationY = dragOffsetY.value
                         transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0f)
                     }
                     .shadow(
@@ -772,8 +845,11 @@ fun DynamicIslandPill(
                 AnimatedContent(
                     targetState = state,
                     transitionSpec = {
-                        fadeIn(tween(contentDuration, easing = ai.emots.kishan_dynamic.ui.motion.AppMotion.EaseIslandContent)) togetherWith
-                            fadeOut(tween(contentDuration, easing = ai.emots.kishan_dynamic.ui.motion.AppMotion.EaseIslandContent))
+                        if (reduceMotion) {
+                            fadeIn(tween(contentDuration)) togetherWith fadeOut(tween(contentDuration))
+                        } else {
+                            AppMotion.islandContentEnter() togetherWith AppMotion.islandContentExit()
+                        }
                     },
                     label = "island_content_morph"
                 ) { targetState ->
@@ -977,61 +1053,76 @@ fun DynamicIslandPill(
                 }
             }
 
-            // Companion split bubble: canonical 11dp gap + 36.67dp circular bubble.
-            AnimatedVisibility(visible = isSplit) {
-                Row {
-                    Spacer(modifier = Modifier.width(islandTokens.splitGap))
-                    Box(
-                        modifier = Modifier
-                            .size(islandTokens.sideSize)
-                            .graphicsLayer {
-                                scaleX = companionPressScale
-                                scaleY = companionPressScale
-                            }
-                            .shadow(
-                                elevation = 12.dp,
-                                shape = CircleShape,
-                                ambientColor = Color.Black,
-                                spotColor = auraColor.copy(alpha = 0.5f)
-                            )
-                            .clip(CircleShape)
-                            .semantics {
-                                contentDescription = companionContentDescription
-                                role = Role.Button
-                            }
-                            .combinedClickable(
-                                interactionSource = companionInteractionSource,
-                                indication = null,
-                                onClick = {
-                                    if (hapticEnabled) {
-                                        islandView.performHapticFeedback(
-                                            android.view.HapticFeedbackConstants.KEYBOARD_TAP
-                                        )
-                                    }
-                                    onCompanionTap()
-                                },
-                                onLongClick = {
-                                    if (hapticEnabled) {
-                                        islandView.performHapticFeedback(
-                                            android.view.HapticFeedbackConstants.LONG_PRESS
-                                        )
-                                    }
-                                    onCompanionLongPress()
+            // Companion split bubble with authentic Apple liquid separation and merge springs
+            if (animatedGap > 0.5.dp) {
+                Spacer(modifier = Modifier.width(animatedGap))
+            }
+            if (animatedSideSize > 0.5.dp) {
+                val bubbleProgress = (animatedSideSize / islandTokens.sideSize).coerceIn(0f, 1f)
+                Box(
+                    modifier = Modifier
+                        .size(animatedSideSize)
+                        .graphicsLayer {
+                            scaleX = companionPressScale * bubbleProgress
+                            scaleY = companionPressScale * bubbleProgress
+                            alpha = bubbleProgress
+                            translationY = dragOffsetY.value
+                        }
+                        .shadow(
+                            elevation = (12 * bubbleProgress).dp,
+                            shape = CircleShape,
+                            ambientColor = Color.Black,
+                            spotColor = auraColor.copy(alpha = 0.5f * bubbleProgress)
+                        )
+                        .clip(CircleShape)
+                        .semantics {
+                            contentDescription = companionContentDescription
+                            role = Role.Button
+                        }
+                        .combinedClickable(
+                            interactionSource = companionInteractionSource,
+                            indication = null,
+                            onClick = {
+                                if (hapticEnabled) {
+                                    islandView.performHapticFeedback(
+                                        android.view.HapticFeedbackConstants.KEYBOARD_TAP
+                                    )
                                 }
-                            )
-                            .background(Color.Black)
-                            .border(
-                                width = 0.75.dp,
-                                brush = Brush.verticalGradient(
-                                    listOf(Color(0x38FFFFFF), Color(0x06FFFFFF))
-                                ),
-                                shape = CircleShape
+                                onCompanionTap()
+                            },
+                            onLongClick = {
+                                if (hapticEnabled) {
+                                    islandView.performHapticFeedback(
+                                        android.view.HapticFeedbackConstants.LONG_PRESS
+                                    )
+                                }
+                                onCompanionLongPress()
+                            }
+                        )
+                        .background(Color.Black)
+                        .border(
+                            width = 0.75.dp,
+                            brush = Brush.verticalGradient(
+                                listOf(Color(0x38FFFFFF), Color(0x06FFFFFF))
                             ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        when (state) {
+                            shape = CircleShape
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AnimatedContent(
+                        targetState = state,
+                        transitionSpec = {
+                            if (reduceMotion) {
+                                fadeIn(tween(contentDuration)) togetherWith fadeOut(tween(contentDuration))
+                            } else {
+                                AppMotion.bubbleContentEnter() togetherWith AppMotion.bubbleContentExit()
+                            }
+                        },
+                        label = "bubble_content_morph"
+                    ) { bubbleState ->
+                        when (bubbleState) {
                             IslandDemoState.CallCompact -> {
-                                AppleIcon(glyph = AppleGlyph.Phone, tint = IslandColors.CapsuleGreen, size = 15.dp)
+                                OngoingCallIslandSide()
                             }
                             IslandDemoState.TimerCompact -> {
                                 TimerProgressRing(progress = 0.72f, size = 21.dp, strokeWidth = 2.5.dp)
@@ -1727,45 +1818,67 @@ private fun NotificationExpandedContent(
     onNotificationSelect: (String) -> Unit,
     onNotificationDismiss: (String) -> Unit
 ) {
-    if (notifications.isEmpty()) return
-    val currentIndex = activeIndex.coerceIn(0, notifications.lastIndex)
-    val notification = notifications[currentIndex]
-    NotificationIslandExpanded(
-        appName = notification.appName,
-        appPackageName = notification.packageName,
-        imagePath = notification.imagePath,
-        sender = notification.title.ifBlank { notification.appName },
-        message = listOfNotNull(
-            notification.inboxLines.takeIf { it.isNotEmpty() }?.joinToString("\n"),
-            notification.subText,
-            notification.expandedText.takeIf { it.isNotBlank() }
-        ).distinct().joinToString(" · "),
-        actionLabel = notification.actions.firstOrNull()?.label.orEmpty(),
-        onAction = { notification.actions.firstOrNull()?.let { onNotificationAction(notification, it) } },
-        actions = notification.actions,
-        onActionSelected = { action -> onNotificationAction(notification, action) },
-        pagerLabel = if (notifications.size > 1) "${currentIndex + 1}/${notifications.size}" else null,
-        onPrevious = if (currentIndex > 0) {
-            {
-                onNotificationSelect(notifications[currentIndex - 1].id)
-            }
-        } else null,
-        onNext = if (currentIndex < notifications.lastIndex) {
-            {
-                onNotificationSelect(notifications[currentIndex + 1].id)
-            }
-        } else null,
-        onDismiss = if (notification.isClearable) {
-            { onNotificationDismiss(notification.id) }
-        } else null,
-                progress = if (notification.progressMax > 0) {
-                    notification.progress.toFloat() / notification.progressMax.toFloat()
-                } else null,
-                isProgressIndeterminate = notification.isProgressIndeterminate,
-                showChronometer = notification.showChronometer,
-                chronometerBaseElapsedRealtime = notification.chronometerBaseElapsedRealtime,
-                chronometerCountDown = notification.chronometerCountDown
+    val displayList = remember(notifications) {
+        if (notifications.isNotEmpty()) {
+            notifications
+        } else {
+            listOf(
+                NotificationInfo(
+                    id = "demo_chat",
+                    packageName = "com.whatsapp",
+                    appName = "WhatsApp",
+                    title = "Tamia Castillo",
+                    text = "Hey, are you free tonight? 🍕",
+                    actions = listOf(NotificationActionInfo(id = "reply", label = "Reply", isReply = true))
+                ),
+                NotificationInfo(
+                    id = "demo_nav",
+                    packageName = "com.google.android.apps.maps",
+                    appName = "Maps",
+                    title = "In 500 ft, Turn right on Market St",
+                    text = "4.2 mi remaining · 14 min ETA",
+                    category = "navigation",
+                    actions = listOf(NotificationActionInfo(id = "route", label = "Route"))
+                ),
+                NotificationInfo(
+                    id = "demo_transport",
+                    packageName = "com.ubercab",
+                    appName = "Uber",
+                    title = "Michael · Toyota Camry",
+                    text = "Arriving in 3 min · Plate 7XYZ89",
+                    category = "transport",
+                    actions = listOf(NotificationActionInfo(id = "contact", label = "Contact"))
+                ),
+                NotificationInfo(
+                    id = "demo_progress",
+                    packageName = "com.android.chrome",
+                    appName = "Chrome",
+                    title = "Presentation_Deck_2026.pdf",
+                    text = "14.2 MB / 19.5 MB · 2.4 MB/s",
+                    category = "progress",
+                    progress = 74,
+                    progressMax = 100,
+                    actions = listOf(NotificationActionInfo(id = "cancel", label = "Cancel"))
+                )
             )
+        }
+    }
+
+    NotificationIslandExpandedPager(
+        notifications = displayList,
+        activeIndex = activeIndex,
+        onPageChanged = { newIdx ->
+            if (newIdx in 0..displayList.lastIndex) {
+                onNotificationSelect(displayList[newIdx].id)
+            }
+        },
+        onActionSelected = { notif, action ->
+            onNotificationAction(notif, action)
+        },
+        onDismiss = { notif ->
+            onNotificationDismiss(notif.id)
+        }
+    )
 }
 
 // -----------------------------------------------------------------------------

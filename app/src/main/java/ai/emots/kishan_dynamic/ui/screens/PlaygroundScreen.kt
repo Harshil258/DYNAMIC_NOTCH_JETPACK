@@ -42,6 +42,12 @@ import android.content.IntentFilter
 import androidx.core.content.ContextCompat
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.service.PermissionUtils
+import ai.emots.kishan_dynamic.data.model.CallRecord
+import ai.emots.kishan_dynamic.data.model.CallDirection
+import ai.emots.kishan_dynamic.data.model.NotificationInfo
+import ai.emots.kishan_dynamic.data.model.NotificationActionInfo
+import ai.emots.kishan_dynamic.data.model.ActionCustomShortcut
+import ai.emots.kishan_dynamic.data.model.ActionAppShortcut
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
@@ -77,10 +83,12 @@ private data class PlaygroundStateItem(
 )
 
 private fun PlaygroundStateItem.experienceCategory(): String = when (label) {
-    "Music", "Video remote" -> "Media"
-    "Incoming call", "Active call", "FaceTime alt", "Shared call", "Call banner" -> "Calls"
+    "Music", "Music (Paused)", "Video remote" -> "Media"
+    "Incoming call", "Active call", "Dialing call", "Call summary", "FaceTime alt", "Shared call", "Call banner" -> "Calls"
+    "Alerts", "Stacked alerts", "Alerts + Music" -> "Alerts"
     "Delivery", "Flight", "Sports", "Navigation" -> "Live"
     "Voice memo", "Screen rec", "Shortcuts" -> "Capture"
+    "Quick Controls" -> "Controls"
     else -> "System"
 }
 
@@ -159,6 +167,14 @@ fun PlaygroundScreen(
                 expandedState = IslandDemoState.MusicExpanded
             ),
             PlaygroundStateItem(
+                label = "Music (Paused)",
+                headline = "Media paused",
+                detail = "Album art split bubble · Paused",
+                supportsExpand = true,
+                compactState = IslandDemoState.MusicCompact,
+                expandedState = IslandDemoState.MusicExpanded
+            ),
+            PlaygroundStateItem(
                 label = "Incoming call",
                 headline = "Incoming call",
                 detail = "Tamia Castillo · Mobile",
@@ -167,12 +183,28 @@ fun PlaygroundScreen(
                 expandedState = IslandDemoState.CallAvatars
             ),
             PlaygroundStateItem(
-                label = "Active call",
-                headline = "Call in progress",
-                detail = "02:45 · HD voice",
+                label = "Dialing call",
+                headline = "Outgoing call",
+                detail = "Calling… · Tamia Castillo",
                 supportsExpand = true,
                 compactState = IslandDemoState.CallCompact,
                 expandedState = IslandDemoState.CallExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Active call",
+                headline = "Call in progress",
+                detail = "02:45 · HD voice & audio waveform bubble",
+                supportsExpand = true,
+                compactState = IslandDemoState.CallCompact,
+                expandedState = IslandDemoState.CallExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Call summary",
+                headline = "Call ended",
+                detail = "04:12 · Redial & Message options",
+                supportsExpand = false,
+                compactState = IslandDemoState.CallSummaryExpanded,
+                expandedState = IslandDemoState.CallSummaryExpanded
             ),
             PlaygroundStateItem(
                 label = "FaceTime alt",
@@ -192,11 +224,35 @@ fun PlaygroundScreen(
             ),
             PlaygroundStateItem(
                 label = "Alerts",
-                headline = "New notification",
-                detail = "WhatsApp · Tamia Castillo",
+                headline = "Notification Pager",
+                detail = "Horizontal swipeable cards · Maps, Uber, Chrome, Chat",
                 supportsExpand = true,
                 compactState = IslandDemoState.NotificationCompact,
                 expandedState = IslandDemoState.NotificationExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Stacked alerts",
+                headline = "3 pending notifications",
+                detail = "Queue indicator bubble · Multi-card swipe",
+                supportsExpand = true,
+                compactState = IslandDemoState.NotificationStacked,
+                expandedState = IslandDemoState.NotificationExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Alerts + Music",
+                headline = "Coexistence split",
+                detail = "Track in pill · Alert count badge in bubble",
+                supportsExpand = true,
+                compactState = IslandDemoState.NotificationWithMusicCompact,
+                expandedState = IslandDemoState.NotificationExpanded
+            ),
+            PlaygroundStateItem(
+                label = "Quick Controls",
+                headline = "Action Control Center",
+                detail = "Wi-Fi, Bluetooth, Flashlight, Sliders & Shortcuts",
+                supportsExpand = true,
+                compactState = IslandDemoState.Minimal,
+                expandedState = IslandDemoState.ActionControlExpanded
             ),
             PlaygroundStateItem(
                 label = "Charging",
@@ -413,6 +469,14 @@ fun PlaygroundScreen(
         IslandDemoState.LowBatteryCompact,
         IslandDemoState.SilentModeCompact,
         IslandDemoState.NotificationCompact,
+        IslandDemoState.NotificationStacked,
+        IslandDemoState.NotificationWithMusicCompact,
+        IslandDemoState.VibrateModeCompact,
+        IslandDemoState.NormalModeCompact,
+        IslandDemoState.RingerVolumeCompact,
+        IslandDemoState.MediaVolumeCompact,
+        IslandDemoState.BluetoothConnected,
+        IslandDemoState.BluetoothConnecting,
         IslandDemoState.TimerCompact,
         IslandDemoState.DeliveryCompact,
         IslandDemoState.FlightCompact,
@@ -430,6 +494,14 @@ fun PlaygroundScreen(
         IslandDemoState.LowBatteryCompact,
         IslandDemoState.SilentModeCompact,
         IslandDemoState.NotificationCompact,
+        IslandDemoState.NotificationStacked,
+        IslandDemoState.NotificationWithMusicCompact,
+        IslandDemoState.VibrateModeCompact,
+        IslandDemoState.NormalModeCompact,
+        IslandDemoState.RingerVolumeCompact,
+        IslandDemoState.MediaVolumeCompact,
+        IslandDemoState.BluetoothConnected,
+        IslandDemoState.BluetoothConnecting,
         IslandDemoState.TimerCompact,
         IslandDemoState.DeliveryCompact,
         IslandDemoState.FlightCompact,
@@ -453,6 +525,10 @@ fun PlaygroundScreen(
         IslandDemoState.SatelliteConnected,
         IslandDemoState.FindMyAlert,
         IslandDemoState.MovedToIPhone -> 156.dp
+
+        IslandDemoState.CallSummaryExpanded -> 168.dp
+
+        IslandDemoState.ActionControlExpanded -> 280.dp
 
         IslandDemoState.DeliveryExpanded,
         IslandDemoState.FlightExpanded,
@@ -480,7 +556,7 @@ fun PlaygroundScreen(
     }
 
     val serviceRunning = isIslandEnabled && permissionsGranted
-    val categories = remember { listOf("All", "Media", "Calls", "Live", "Capture", "System") }
+    val categories = remember { listOf("All", "Media", "Calls", "Alerts", "Live", "Capture", "Controls", "System") }
     var selectedCategory by remember { mutableStateOf("All") }
     val visibleStates = states.filter { item ->
         selectedCategory == "All" || item.experienceCategory() == selectedCategory
@@ -514,6 +590,31 @@ fun PlaygroundScreen(
         ) {
             DynamicIslandPill(
                 state = activeState,
+                musicIsPlaying = currentItem.label != "Music (Paused)",
+                callIsDialing = currentItem.label == "Dialing call",
+                callSummary = if (currentItem.label == "Call summary") {
+                    CallRecord(
+                        id = "call_summary_demo",
+                        contactName = "Tamia Castillo",
+                        phoneNumber = "+1 (555) 019-2834",
+                        startedAtMillis = System.currentTimeMillis() - 252_000L,
+                        durationSeconds = 252L,
+                        direction = CallDirection.INCOMING
+                    )
+                } else null,
+                actionCustomActions = if (currentItem.label == "Quick Controls") {
+                    listOf(
+                        ActionCustomShortcut(actionId = "torch", label = "Flashlight", iconKey = "torch", order = 0),
+                        ActionCustomShortcut(actionId = "lock", label = "Lock Screen", iconKey = "lock", order = 1)
+                    )
+                } else emptyList(),
+                actionApps = if (currentItem.label == "Quick Controls") {
+                    listOf(
+                        ActionAppShortcut(packageName = "com.google.android.apps.maps", appName = "Maps", order = 0),
+                        ActionAppShortcut(packageName = "com.spotify.music", appName = "Spotify", order = 1),
+                        ActionAppShortcut(packageName = "com.whatsapp", appName = "WhatsApp", order = 2)
+                    )
+                } else emptyList(),
                 onTap = {
                     if (currentItem.supportsExpand) {
                         isExpanded = !isExpanded

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "520456015417",
+    "project_id": "mysketchapp-7aa19",
+    "storage_bucket": "mysketchapp-7aa19.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520456015417:android:5326f31b7023150e7d87e8",
+        "android_client_info": {
+          "package_name": "ai.emots.kishan_dynamic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0oeLJtX_K05wLlyEt2Qik35Sr-NbmmXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520456015417:android:5326f31b7023150e7d87e8",
+        "android_client_info": {
+          "package_name": "com.dynamicnotchnotificationbar.dynamicbar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0oeLJtX_K05wLlyEt2Qik35Sr-NbmmXY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

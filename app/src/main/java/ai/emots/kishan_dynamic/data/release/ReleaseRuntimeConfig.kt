@@ -32,7 +32,29 @@ data class ReleaseRuntimeConfig(
     val screenCounterForInterstitial: Int = 4,
     val clickCounterForInterstitial: Int = 3,
     val adsStartFromScreen: Int = 0,
-    val adsTestMode: Boolean = false
+    val adsTestMode: Boolean = false,
+    val premiumEnabled: Boolean = true,
+    val weeklyPlanId: String = "dynamic_island_weekly",
+    val monthlyPlanId: String = "dynamic_island_monthly",
+    val yearlyPlanId: String = "dynamic_island_yearly",
+    val lifetimePlanId: String = "dynamic_island_lifetime",
+    val premiumFeatures: List<String> = listOf(
+        "quick_control",
+        "theme_settings",
+        "sound_settings",
+        "call_end_disable",
+        "compact_music",
+        "notification_duration",
+        "display_horizontal_offset"
+    ),
+    val trustSectionVisible: Boolean = true,
+    val trustSectionTitle: String = "Trusted by Thousands",
+    val trustStat1Value: String = "1.1K+",
+    val trustStat1Label: String = "Happy Users",
+    val trustStat2Value: String = "4.9+",
+    val trustStat2Label: String = "Ratings",
+    val trustStat3Value: String = "30+",
+    val trustStat3Label: String = "Reviews"
 )
 
 interface ReleaseRuntimeConfigProvider {

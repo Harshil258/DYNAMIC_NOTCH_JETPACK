@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -54,6 +55,8 @@ import kotlinx.coroutines.delay
  *  * Reveal helpers give every screen the same, staggered entrance.
  * =============================================================================
  */
+val LocalReducedMotion = staticCompositionLocalOf { false }
+
 object AppMotion {
 
     // -------------------------------------------------------------------------
@@ -166,10 +169,11 @@ fun rememberPressScale(
     pressedScale: Float = 0.96f,
     enabled: Boolean = true
 ): State<Float> {
+    val reduceMotion = LocalReducedMotion.current
     val pressed by interactionSource.collectIsPressedAsState()
     return animateFloatAsState(
-        targetValue = if (pressed && enabled) pressedScale else 1f,
-        animationSpec = AppMotion.pressSpring(),
+        targetValue = if (pressed && enabled && !reduceMotion) pressedScale else 1f,
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap() else AppMotion.pressSpring(),
         label = "press_scale"
     )
 }
@@ -201,7 +205,7 @@ fun Modifier.appReveal(
     slideDp: Dp = Dp.Unspecified,
     enabled: Boolean = true
 ): Modifier = composed {
-    if (!enabled) return@composed this
+    if (!enabled || LocalReducedMotion.current) return@composed this
 
     var visible by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -245,6 +249,7 @@ fun rememberBreathing(
     max: Float = 1f,
     durationMillis: Int = 3200
 ): State<Float> {
+    if (LocalReducedMotion.current) return remember(max) { mutableStateOf(max) }
     val transition = rememberInfiniteTransition(label = "breathing")
     return transition.animateFloat(
         initialValue = min,
@@ -260,6 +265,7 @@ fun rememberBreathing(
 /** Endless 0f..1f sweep used to drive shimmer highlights. */
 @Composable
 fun rememberShimmerProgress(durationMillis: Int = 1600): State<Float> {
+    if (LocalReducedMotion.current) return remember { mutableStateOf(0.5f) }
     val transition = rememberInfiniteTransition(label = "shimmer")
     return transition.animateFloat(
         initialValue = 0f,

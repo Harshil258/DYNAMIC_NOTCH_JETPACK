@@ -36,6 +36,7 @@ import android.media.session.MediaSessionManager
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -54,7 +55,8 @@ class IslandNotificationListener : NotificationListenerService() {
             private set
     }
 
-    private val scope = CoroutineScope(Dispatchers.Main)
+    private val listenerJob = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.Main + listenerJob)
     private val mappedLiveActivityIds = mutableSetOf<String>()
     private lateinit var preferences: AuroraPreferences
     private var mediaSessionManager: MediaSessionManager? = null
@@ -97,13 +99,19 @@ class IslandNotificationListener : NotificationListenerService() {
         // Rehydrate the reducer after the listener process/service reconnects;
         // Android does not guarantee that every existing notification is
         // reposted as a new callback.
-        activeNotifications.orEmpty().forEach(::onNotificationPosted)
+        val currentNotifications = runCatching { activeNotifications.orEmpty() }.getOrDefault(emptyArray())
+        IslandStateManager.reconcileNotificationSources(currentNotifications.mapTo(mutableSetOf()) { it.key })
+        currentNotifications.forEach(::onNotificationPosted)
     }
 
     override fun onListenerDisconnected() {
         instance = null
         mappedLiveActivityIds.toList().forEach(IslandStateManager::clearLiveActivity)
         mappedLiveActivityIds.clear()
+        IslandStateManager.clearNotificationSources()
+        NotificationActionRegistry.clear()
+        MediaPlaybackRegistry.clear()
+        IslandStateManager.stopMusic()
         teardownMediaSessionListener()
         super.onListenerDisconnected()
         PermissionUtils.sendPermissionsChangedBroadcast(this)
@@ -116,6 +124,13 @@ class IslandNotificationListener : NotificationListenerService() {
 
     override fun onDestroy() {
         teardownMediaSessionListener()
+        mappedLiveActivityIds.toList().forEach(IslandStateManager::clearLiveActivity)
+        mappedLiveActivityIds.clear()
+        IslandStateManager.clearNotificationSources()
+        NotificationActionRegistry.clear()
+        MediaPlaybackRegistry.clear()
+        IslandStateManager.stopMusic()
+        listenerJob.cancel()
         if (instance == this) {
             instance = null
         }
@@ -156,9 +171,7 @@ class IslandNotificationListener : NotificationListenerService() {
             state == PlaybackState.STATE_PLAYING || state == PlaybackState.STATE_BUFFERING
         } ?: controllers.first()
 
-        activeController.sessionToken?.let { token ->
-            MediaPlaybackRegistry.replace(token)
-        }
+        MediaPlaybackRegistry.replace(activeController.sessionToken)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
@@ -230,13 +243,12 @@ class IslandNotificationListener : NotificationListenerService() {
         val actions = notification.actions.orEmpty().mapIndexedNotNull { index, action ->
             val label = action.title?.toString()?.trim().orEmpty()
             if (label.isBlank()) return@mapIndexedNotNull null
+            val actionIntent = action.actionIntent ?: return@mapIndexedNotNull null
             val actionId = index.toString()
-            action.actionIntent?.let {
-                actionIntents[actionId] = NotificationActionRegistry.Target(
-                    pendingIntent = it,
-                    remoteInputs = action.remoteInputs?.toList().orEmpty()
-                )
-            }
+            actionIntents[actionId] = NotificationActionRegistry.Target(
+                pendingIntent = actionIntent,
+                remoteInputs = action.remoteInputs?.toList().orEmpty()
+            )
             NotificationActionInfo(
                 id = actionId,
                 label = label,
@@ -271,6 +283,7 @@ class IslandNotificationListener : NotificationListenerService() {
                     category == Notification.CATEGORY_NAVIGATION),
             category = category,
             groupKey = sbn.groupKey ?: sbn.packageName,
+            isGroupSummary = isGroupSummary,
             isOngoing = isOngoing,
             isClearable = sbn.isClearable,
             progress = extras.getInt(Notification.EXTRA_PROGRESS, 0),
@@ -289,6 +302,7 @@ class IslandNotificationListener : NotificationListenerService() {
             channelId = channelId.orEmpty(),
             imagePath = imagePath,
             template = template,
+            isSensitive = notification.visibility != Notification.VISIBILITY_PUBLIC,
             hasContentIntent = notification.contentIntent != null,
             actions = resolvedActions
         )
@@ -497,7 +511,8 @@ class IslandNotificationListener : NotificationListenerService() {
         val bitmap = readBitmapExtra(extras, Notification.EXTRA_PICTURE)
             ?: readBitmapExtra(extras, Notification.EXTRA_LARGE_ICON_BIG)
             ?: readBitmapExtra(extras, Notification.EXTRA_LARGE_ICON)
-            ?: readIconExtra(extras)?.let { drawable -> drawable.toBitmap() }
+            ?: readIconExtra(extras, Notification.EXTRA_LARGE_ICON_BIG)?.let { drawable -> drawable.toBitmap() }
+            ?: readIconExtra(extras, Notification.EXTRA_LARGE_ICON)?.let { drawable -> drawable.toBitmap() }
             ?: return null
 
         val directory = File(cacheDir, "notification_artwork").apply { mkdirs() }
@@ -518,21 +533,13 @@ class IslandNotificationListener : NotificationListenerService() {
         File(cacheDir, "notification_artwork/${notificationId.hashCode()}.png").delete()
     }
 
+    @Suppress("DEPRECATION")
     private fun readBitmapExtra(extras: android.os.Bundle, key: String): Bitmap? =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            extras.getParcelable(key, Bitmap::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            extras.getParcelable(key) as? Bitmap
-        }
+        extras.get(key) as? Bitmap
 
-    private fun readIconExtra(extras: android.os.Bundle): Drawable? {
-        val icon = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            extras.getParcelable(Notification.EXTRA_LARGE_ICON_BIG, android.graphics.drawable.Icon::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            extras.getParcelable(Notification.EXTRA_LARGE_ICON_BIG) as? android.graphics.drawable.Icon
-        }
+    @Suppress("DEPRECATION")
+    private fun readIconExtra(extras: android.os.Bundle, key: String): Drawable? {
+        val icon = extras.get(key) as? android.graphics.drawable.Icon
         return runCatching { icon?.loadDrawable(this) }.getOrNull()
     }
 

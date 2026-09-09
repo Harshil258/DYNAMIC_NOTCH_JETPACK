@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +48,9 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import ai.emots.kishan_dynamic.data.model.IslandState
+import ai.emots.kishan_dynamic.data.model.IslandInteractionAction
+import ai.emots.kishan_dynamic.data.model.IslandInteractionPolicy
+import ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicy
 import ai.emots.kishan_dynamic.data.model.OverlayDisplayPolicy
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicy
@@ -92,9 +96,15 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
     private val systemIslandReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
-                Intent.ACTION_SCREEN_OFF -> deviceLocked.value = true
+                Intent.ACTION_SCREEN_OFF -> {
+                    IslandStateManager.onDeviceLocked()
+                    deviceLocked.value = true
+                }
                 Intent.ACTION_SCREEN_ON -> syncDeviceLockState()
-                Intent.ACTION_USER_PRESENT -> deviceLocked.value = false
+                Intent.ACTION_USER_PRESENT -> {
+                    deviceLocked.value = false
+                    IslandStateManager.onDeviceUnlocked()
+                }
                 PermissionUtils.ACTION_PERMISSIONS_CHANGED -> {
                     syncFocusModeState()
                     syncDeviceLockState()
@@ -358,7 +368,9 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val isEnabled by preferences.islandEnabled.collectAsState(initial = true)
                 val alwaysOnTop by preferences.alwaysOnTop.collectAsState(initial = true)
                 val showOnLockScreen by preferences.showOnLockScreen.collectAsState(initial = true)
+                val hideSensitiveContent by preferences.hideSensitiveContent.collectAsState(initial = true)
                 val animationSpeedNormal by preferences.animationSpeedNormal.collectAsState(initial = true)
+                val reduceMotion by preferences.reduceMotion.collectAsState(initial = false)
                 val compactMusicControls by preferences.compactMusicControls.collectAsState(initial = false)
                 val isProActive by preferences.isProActive.collectAsState(initial = false)
                 val isDeviceLocked by deviceLocked.collectAsState()
@@ -374,6 +386,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     initial = ai.emots.kishan_dynamic.data.model.ActionIslandConfig()
                 )
                 val actionSystemSnapshot by actionSystemController.snapshot.collectAsState()
+                val observedMediaVolume by IslandStateManager.observedMediaVolume.collectAsState()
 
                 // The island drops out of the cutout rather than popping in.
                 androidx.compose.animation.AnimatedVisibility(
@@ -383,25 +396,43 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                         showOnLockScreen = showOnLockScreen,
                         deviceLocked = isDeviceLocked
                     ).shouldRender(islandState is IslandState.Hidden),
-                    enter = androidx.compose.animation.expandVertically(
-                        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
-                        expandFrom = Alignment.Top
-                    ) + androidx.compose.animation.fadeIn(
-                        animationSpec = androidx.compose.animation.core.tween(180)
-                    ),
-                    exit = androidx.compose.animation.shrinkVertically(
-                        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
-                        shrinkTowards = Alignment.Top
-                    ) + androidx.compose.animation.fadeOut(
-                        animationSpec = androidx.compose.animation.core.tween(140)
-                    )
+                    enter = if (reduceMotion) {
+                        androidx.compose.animation.fadeIn(
+                            animationSpec = androidx.compose.animation.core.tween(80)
+                        )
+                    } else {
+                        androidx.compose.animation.expandVertically(
+                            animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
+                            expandFrom = Alignment.Top
+                        ) + androidx.compose.animation.fadeIn(
+                            animationSpec = androidx.compose.animation.core.tween(180)
+                        )
+                    },
+                    exit = if (reduceMotion) {
+                        androidx.compose.animation.fadeOut(
+                            animationSpec = androidx.compose.animation.core.tween(80)
+                        )
+                    } else {
+                        androidx.compose.animation.shrinkVertically(
+                            animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
+                            shrinkTowards = Alignment.Top
+                        ) + androidx.compose.animation.fadeOut(
+                            animationSpec = androidx.compose.animation.core.tween(140)
+                        )
+                    }
                 ) {
-                    AppTheme(darkTheme = true) {
+                    androidx.compose.runtime.CompositionLocalProvider(
+                        ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion provides reduceMotion
+                    ) {
+                        AppTheme(darkTheme = true) {
                         var brightnessLevel by remember {
                             mutableFloatStateOf(actionSystemController.readBrightness())
                         }
                         var mediaVolumeLevel by remember {
                             mutableFloatStateOf(actionSystemController.readMediaVolume())
+                        }
+                        LaunchedEffect(observedMediaVolume) {
+                            observedMediaVolume?.let { mediaVolumeLevel = it }
                         }
                         Box(
                             modifier = Modifier.wrapContentSize(),
@@ -417,25 +448,50 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                             } else {
                                 mapToDemoState(renderedState)
                             }
-                            val callContact = when (renderedState) {
+                            val sourceCallContact = when (renderedState) {
                                 is IslandState.IncomingCall -> renderedState.contact
                                 is IslandState.OngoingCall -> renderedState.contact
                                 else -> null
                             }
+                            val callContact = LockScreenPrivacyPolicy.contact(
+                                source = sourceCallContact,
+                                deviceLocked = isDeviceLocked,
+                                hideSensitiveContent = hideSensitiveContent,
+                                incoming = renderedState is IslandState.IncomingCall
+                            )
                             val callSummary = (renderedState as? IslandState.CallSummary)?.record
                             val callDurationSeconds = (renderedState as? IslandState.OngoingCall)?.durationSeconds ?: 0L
                             val showCallDuration = (renderedState as? IslandState.OngoingCall)?.showDuration ?: true
                             val callIsDialing = (renderedState as? IslandState.OngoingCall)?.isDialing == true
+                            val callCanDecline = (renderedState as? IslandState.IncomingCall)?.let { incoming ->
+                                incoming.sourceNotificationId == null || incoming.declineActionId != null
+                            } ?: true
                             val musicState = renderedState as? IslandState.Music
                             val timerActivity = (renderedState as? IslandState.LiveActivity)?.activity?.takeIf {
                                 it.kind == ai.emots.kishan_dynamic.data.model.LiveActivityKind.TIMER
                             }
                             val liveActivity = (renderedState as? IslandState.LiveActivity)?.activity
+                            val liveActivityActionLabel = liveActivity?.sourceActionId?.let { actionId ->
+                                liveActivity.sourceActions.firstOrNull { it.id == actionId }?.label
+                                    ?: "Open".takeIf { actionId == "open" }
+                            }.orEmpty()
                             val actionNotificationCount = (renderedState as? IslandState.ActionControl)?.notificationCount ?: 0
-                            val notificationItems = when (renderedState) {
+                            val sourceNotificationItems = when (renderedState) {
                                 is IslandState.Notification -> renderedState.notifications
                                 is IslandState.NotificationWithMusic -> renderedState.notifications
                                 else -> emptyList()
+                            }
+                            val notificationItems = sourceNotificationItems.map { notification ->
+                                LockScreenPrivacyPolicy.notification(
+                                    source = notification,
+                                    deviceLocked = isDeviceLocked,
+                                    hideSensitiveContent = hideSensitiveContent
+                                )
+                            }
+                            val notificationActiveIndex = when (renderedState) {
+                                is IslandState.Notification -> renderedState.activeIndex
+                                is IslandState.NotificationWithMusic -> renderedState.activeIndex
+                                else -> 0
                             }
                             val ringerVolumeState = renderedState as? IslandState.RingerVolume
                             val mediaVolumeState = renderedState as? IslandState.MediaVolume
@@ -447,51 +503,38 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 horizontalScale = widthScale,
                                 onTap = {
                                     if (!(compactMusicControlsEnabled && islandState is IslandState.Music)) {
-                                        if (actionConfig.isEnabled || islandState !is IslandState.Minimal) {
-                                            IslandStateManager.toggleExpansion()
-                                        }
+                                        performIslandInteraction(
+                                            IslandInteractionPolicy.mainTap(islandState),
+                                            actionConfig.isEnabled
+                                        )
                                     }
                                 },
                                 onCompanionTap = {
-                                    when (val currentIsland = islandState) {
-                                        is IslandState.Notification -> {
-                                            if (currentIsland.notifications.size > 1) {
-                                                IslandStateManager.selectNextNotification()
-                                            } else {
-                                                IslandStateManager.toggleExpansion()
-                                            }
-                                        }
-                                        is IslandState.NotificationWithMusic -> {
-                                            MediaPlaybackRegistry.snapshot.value?.let { snapshot ->
-                                                IslandStateManager.postMusicPlayback(
-                                                    track = ai.emots.kishan_dynamic.data.model.MusicTrack(
-                                                        title = snapshot.title,
-                                                        artist = snapshot.artist,
-                                                        packageName = snapshot.packageName,
-                                                        durationMs = snapshot.durationMs,
-                                                        positionMs = snapshot.positionMs,
-                                                        albumArtUri = snapshot.albumArtUri
-                                                    ),
-                                                    isPlaying = snapshot.isPlaying
-                                                )
-                                                IslandStateManager.toggleExpansion()
-                                            } ?: IslandStateManager.toggleExpansion()
-                                        }
-                                        is IslandState.LiveActivity -> {
-                                            if (currentIsland.activity.kind == ai.emots.kishan_dynamic.data.model.LiveActivityKind.TIMER) {
-                                                IslandStateManager.toggleTimer()
-                                            } else {
-                                                IslandStateManager.toggleExpansion()
-                                            }
-                                        }
-                                        else -> IslandStateManager.toggleExpansion()
-                                    }
+                                    performIslandInteraction(
+                                        IslandInteractionPolicy.companionTap(islandState),
+                                        actionConfig.isEnabled
+                                    )
                                 },
                                 onLongPress = {
-                                    if (actionConfig.isEnabled) IslandStateManager.openActionControl()
+                                    performIslandInteraction(
+                                        IslandInteractionPolicy.mainLongPress(islandState),
+                                        actionConfig.isEnabled
+                                    )
                                 },
+                                onCompanionLongPress = {
+                                    performIslandInteraction(
+                                        IslandInteractionPolicy.companionLongPress(islandState),
+                                        actionConfig.isEnabled
+                                    )
+                                },
+                                mainContentDescription = islandMainContentDescription(renderedState),
+                                companionContentDescription = islandCompanionContentDescription(renderedState),
                                 onSwipeDismiss = {
-                                    if (swipeUpDismiss) IslandStateManager.handleSwipeDismiss()
+                                    if (swipeUpDismiss) {
+                                        IslandStateManager.handleSwipeDismiss()?.let { notificationId ->
+                                            IslandNotificationListener.instance?.cancelNotification(notificationId)
+                                        }
+                                    }
                                 },
                                 onControlAction = ::handleIslandControlAction,
                                 onOpenNotifications = { IslandStateManager.openNotifications() },
@@ -517,6 +560,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     }
                                 },
                                 notifications = notificationItems,
+                                notificationActiveIndex = notificationActiveIndex,
                                 onNotificationAction = { notification, action ->
                                     if (action.isReply && NotificationActionRegistry.hasReplyTarget(notification.id, action.id)) {
                                         startActivity(
@@ -536,14 +580,19 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     IslandStateManager.selectNotification(notificationId)
                                 },
                                 onNotificationDismiss = { notificationId ->
-                                    IslandStateManager.removeNotification(notificationId)
-                                    NotificationActionRegistry.remove(notificationId)
+                                    val notification = notificationItems.firstOrNull { it.id == notificationId }
+                                    if (notification?.isClearable == true) {
+                                        IslandStateManager.removeNotification(notificationId)
+                                        NotificationActionRegistry.remove(notificationId)
+                                        IslandNotificationListener.instance?.cancelNotification(notificationId)
+                                    }
                                 },
                                 callContact = callContact,
                                 callSummary = callSummary,
                                 callDurationSeconds = callDurationSeconds,
                                 showCallDuration = showCallDuration,
                                 callIsDialing = callIsDialing,
+                                callCanDecline = callCanDecline,
                                 musicTrack = musicState?.track,
                                 musicIsPlaying = musicState?.isPlaying ?: true,
                                 musicScrubberEnabled = musicScrubberEnabled,
@@ -567,6 +616,11 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 liveActivityTitle = liveActivity?.title.orEmpty(),
                                 liveActivitySubtitle = liveActivity?.subtitle.orEmpty(),
                                 liveActivityProgress = liveActivity?.progress,
+                                liveActivityShowChronometer = liveActivity?.showChronometer == true,
+                                liveActivityChronometerBase = liveActivity?.chronometerBaseElapsedRealtime ?: 0L,
+                                liveActivityChronometerCountDown = liveActivity?.chronometerCountDown == true,
+                                liveActivitySourceBacked = liveActivity?.sourceNotificationId != null,
+                                liveActivityActionLabel = liveActivityActionLabel,
                                 ringerMode = (renderedState as? IslandState.RingerMode)?.mode
                                     ?: ai.emots.kishan_dynamic.data.model.RingerModeType.SILENT,
                                 ringerVolumeLevel = ringerVolumeState?.volumeLevel ?: 0.5f,
@@ -607,6 +661,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     }
                                 }
                             )
+                        }
                         }
                     }
                 }
@@ -705,7 +760,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val incoming = IslandStateManager.currentState.value as? IslandState.IncomingCall
                 if (incoming?.sourceNotificationId != null && incoming.acceptActionId != null) {
                     if (NotificationActionRegistry.send(incoming.sourceNotificationId, incoming.acceptActionId)) {
-                        IslandStateManager.resolveNotificationIncomingCall()
+                        IslandStateManager.resolveNotificationIncomingCall(restoreInterrupted = false)
                     }
                 } else if (callSystemController.acceptIncomingCall()) {
                     IslandStateManager.acceptIncomingCall()
@@ -719,7 +774,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     val sent = incoming.declineActionId?.let { actionId ->
                         NotificationActionRegistry.send(incoming.sourceNotificationId, actionId)
                     } ?: false
-                    if (sent || incoming.declineActionId == null) {
+                    if (sent) {
                         IslandStateManager.resolveNotificationIncomingCall()
                     }
                 } else if (ongoing?.sourceNotificationId != null && ongoing.endActionId != null) {
@@ -727,7 +782,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                         IslandStateManager.resolveNotificationOngoingCall()
                     }
                 } else if (callSystemController.endActiveCall()) {
-                    IslandStateManager.endCall()
+                    if (incoming != null) IslandStateManager.declineIncomingCall()
+                    else IslandStateManager.endCall()
                 }
             }
             IslandControlAction.CallSummaryRedial -> {
@@ -759,35 +815,29 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     (getSystemService(AUDIO_SERVICE) as AudioManager).ringerMode = nextMode
                 }
             }
-            IslandControlAction.TimerToggle -> IslandStateManager.toggleTimer()
-            IslandControlAction.TimerCancel -> IslandStateManager.cancelTimer()
+            IslandControlAction.TimerToggle -> handleTimerToggle()
+            IslandControlAction.TimerCancel -> handleLiveActivityCompletion("cancel", "stop", "end")
             IslandControlAction.ScreenMirroringStop,
-            IslandControlAction.MobileDataOk,
             IslandControlAction.TransitEndRoute,
             IslandControlAction.VoiceMemoStop,
-            IslandControlAction.ScreenRecordingStop,
-            IslandControlAction.AirDropPause,
-            IslandControlAction.MovedUndo -> {
-                val activity = (IslandStateManager.currentState.value as? IslandState.LiveActivity)?.activity
-                val dispatched = activity?.sourceNotificationId != null &&
-                    activity.sourceActionId != null &&
-                    NotificationActionRegistry.send(
-                        activity.sourceNotificationId,
-                        activity.sourceActionId
-                    )
-                if (dispatched || activity != null) {
-                    activity?.let { IslandStateManager.clearLiveActivity(it.id) }
-                }
+            IslandControlAction.ScreenRecordingStop -> {
+                handleLiveActivityCompletion("stop", "end", "cancel")
+            }
+            IslandControlAction.AirDropPause -> handleTransferToggle()
+            IslandControlAction.MovedUndo -> handleLiveActivityCompletion("undo", "revert")
+            IslandControlAction.MobileDataOk -> {
+                val activity = currentLiveActivity() ?: return
+                IslandStateManager.clearLiveActivity(activity.id)
             }
             IslandControlAction.LiveActivityOpen -> {
-                val activity = (IslandStateManager.currentState.value as? IslandState.LiveActivity)?.activity
-                val sourceId = activity?.sourceNotificationId
-                val actionId = activity?.sourceActionId
-                if (sourceId != null && actionId != null &&
-                    NotificationActionRegistry.send(sourceId, actionId)
-                ) {
-                    IslandStateManager.clearLiveActivity(activity.id)
-                }
+                val activity = currentLiveActivity() ?: return
+                sendLiveActivityAction(activity, "open", "view", "details", "continue")
+            }
+            IslandControlAction.LiveActivityPrimary -> {
+                val activity = currentLiveActivity() ?: return
+                val sourceId = activity.sourceNotificationId ?: return
+                val actionId = activity.sourceActionId ?: return
+                NotificationActionRegistry.send(sourceId, actionId)
             }
             IslandControlAction.AirPodsOpen -> actionSystemController.execute(ActionSystemTile.BLUETOOTH)
             IslandControlAction.SatelliteMessage -> actionSystemController.openSettings()
@@ -796,6 +846,120 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             IslandControlAction.PremiumBuy -> openMainActivity(MainActivity.EXTRA_OPEN_PREMIUM)
             else -> Unit
         }
+    }
+
+    private fun currentLiveActivity() =
+        (IslandStateManager.currentState.value as? IslandState.LiveActivity)?.activity
+
+    private fun handleTimerToggle() {
+        val activity = currentLiveActivity() ?: return
+        if (activity.sourceNotificationId == null) {
+            IslandStateManager.toggleTimer()
+            return
+        }
+        val keywords = if (activity.isRunning) arrayOf("pause") else arrayOf("resume", "start")
+        if (sendLiveActivityAction(activity, *keywords)) {
+            IslandStateManager.setTimerRunning(!activity.isRunning)
+        }
+    }
+
+    private fun handleTransferToggle() {
+        val activity = currentLiveActivity() ?: return
+        if (activity.sourceNotificationId == null) {
+            IslandStateManager.toggleLiveActivityRunning(activity.id)
+            return
+        }
+        val keywords = if (activity.isRunning) arrayOf("pause") else arrayOf("resume", "continue")
+        if (sendLiveActivityAction(activity, *keywords)) {
+            IslandStateManager.toggleLiveActivityRunning(activity.id)
+        }
+    }
+
+    private fun handleLiveActivityCompletion(vararg keywords: String) {
+        val activity = currentLiveActivity() ?: return
+        val canClear = if (activity.sourceNotificationId == null) {
+            true
+        } else {
+            sendLiveActivityAction(activity, *keywords)
+        }
+        if (canClear) IslandStateManager.clearLiveActivity(activity.id)
+    }
+
+    private fun sendLiveActivityAction(
+        activity: ai.emots.kishan_dynamic.data.model.LiveActivityInfo,
+        vararg keywords: String
+    ): Boolean {
+        val sourceId = activity.sourceNotificationId ?: return false
+        val matchingAction = activity.sourceActions.firstOrNull { action ->
+            keywords.any { keyword -> action.label.contains(keyword, ignoreCase = true) }
+        }
+        val actionId = matchingAction?.id ?: "open".takeIf {
+            activity.sourceHasContentIntent && keywords.any { keyword -> keyword == "open" }
+        } ?: return false
+        return NotificationActionRegistry.send(sourceId, actionId)
+    }
+
+    private fun performIslandInteraction(
+        action: IslandInteractionAction,
+        quickControlsEnabled: Boolean
+    ) {
+        when (action) {
+            IslandInteractionAction.NONE -> Unit
+            IslandInteractionAction.OPEN_QUICK_CONTROLS -> {
+                if (quickControlsEnabled) IslandStateManager.openActionControl()
+            }
+            IslandInteractionAction.OPEN_NOTIFICATIONS -> IslandStateManager.openNotifications()
+            IslandInteractionAction.OPEN_NEXT_NOTIFICATION -> {
+                IslandStateManager.openNotifications(selectNext = true)
+            }
+            IslandInteractionAction.OPEN_MUSIC -> IslandStateManager.openMusic()
+            IslandInteractionAction.TOGGLE_EXPANSION -> IslandStateManager.toggleExpansion()
+        }
+    }
+
+    private fun islandMainContentDescription(state: IslandState): String = when (state) {
+        is IslandState.Minimal -> "Open Quick Controls"
+        is IslandState.Notification -> {
+            val notification = state.notifications.getOrNull(state.activeIndex)
+                ?: state.notifications.firstOrNull()
+            val position = if (state.notifications.size > 1) {
+                ", ${state.activeIndex.coerceIn(0, state.notifications.lastIndex) + 1} of ${state.notifications.size}"
+            } else ""
+            "Open notification from ${notification?.appName ?: "an app"}$position"
+        }
+        is IslandState.NotificationWithMusic -> if (state.isPlaying) {
+            "Open media controls for ${state.track.title}"
+        } else {
+            "Open notifications"
+        }
+        is IslandState.Music -> "Open media controls for ${state.track.title}"
+        is IslandState.OngoingCall -> "Expand call controls for ${state.contact.name}"
+        is IslandState.LiveActivity -> "Expand ${state.activity.title}"
+        is IslandState.RingerMode -> "Expand ringer controls"
+        is IslandState.Charging -> "Battery ${state.batteryPercent} percent"
+        is IslandState.RingerVolume -> "Ringer volume ${(state.volumeLevel * 100).toInt()} percent"
+        is IslandState.MediaVolume -> "Media volume ${(state.volumeLevel * 100).toInt()} percent"
+        is IslandState.BluetoothDevice -> "${state.deviceName} connected"
+        else -> "Dynamic Island"
+    }
+
+    private fun islandCompanionContentDescription(state: IslandState): String = when (state) {
+        is IslandState.Notification -> {
+            val nextIndex = if (state.notifications.isEmpty()) 0
+                else (state.activeIndex.coerceIn(0, state.notifications.lastIndex) + 1) % state.notifications.size
+            val next = state.notifications.getOrNull(nextIndex)
+            "Open next notification${next?.appName?.let { " from $it" }.orEmpty()}"
+        }
+        is IslandState.NotificationWithMusic -> if (state.isPlaying) {
+            "Open ${state.notifications.size} notifications"
+        } else {
+            "Open media controls for ${state.track.title}"
+        }
+        is IslandState.Music -> "Open media controls for ${state.track.title}"
+        is IslandState.OngoingCall -> "Expand call controls for ${state.contact.name}"
+        is IslandState.LiveActivity -> "Expand ${state.activity.title}"
+        is IslandState.Minimal -> "Open Quick Controls"
+        else -> "Open companion activity"
     }
 
     private fun openMainActivity(extra: String) {

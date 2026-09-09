@@ -51,7 +51,33 @@ class NotificationReducerTest {
     }
 
     @Test
-    fun deduplicatesSameSenderAndPreservesExistingActions() {
+    fun removingAnotherNotificationPreservesExpandedSelection() {
+        var state = NotificationQueueState()
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("first", false, 10)))
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("middle", false, 20)))
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("last", false, 30)))
+        state = reducer.reduce(state, NotificationEvent.Selected("middle"))
+
+        state = reducer.reduce(state, NotificationEvent.Removed("last"))
+
+        assertEquals("middle", state.activeNotificationId)
+    }
+
+    @Test
+    fun removingSelectedNotificationChoosesNearestSurvivor() {
+        var state = NotificationQueueState()
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("first", false, 10)))
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("middle", false, 20)))
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("last", false, 30)))
+        state = reducer.reduce(state, NotificationEvent.Selected("middle"))
+
+        state = reducer.reduce(state, NotificationEvent.Removed("middle"))
+
+        assertEquals("first", state.activeNotificationId)
+    }
+
+    @Test
+    fun sameSenderWithDifferentAndroidKeysRemainsTwoSources() {
         var state = NotificationQueueState()
         val action = ai.emots.kishan_dynamic.data.model.NotificationActionInfo(id = "reply", label = "Reply", isReply = true)
         val initial = notification("msg1", false, 100).copy(
@@ -71,12 +97,28 @@ class NotificationReducerTest {
         )
         state = reducer.reduce(state, NotificationEvent.Posted(update))
 
-        assertEquals(1, state.notifications.size)
-        val merged = state.notifications.first()
-        assertEquals("Alice", merged.title)
-        assertEquals("Are you free?", merged.text)
-        assertEquals(1, merged.actions.size)
-        assertEquals("Reply", merged.actions.first().label)
+        assertEquals(2, state.notifications.size)
+        assertEquals(listOf("msg2", "msg1"), state.notifications.map { it.id })
+    }
+
+    @Test
+    fun exactUpdateRemovesActionsNoLongerExposedBySource() {
+        val action = ai.emots.kishan_dynamic.data.model.NotificationActionInfo(
+            id = "reply",
+            label = "Reply",
+            isReply = true
+        )
+        var state = reducer.reduce(
+            NotificationQueueState(),
+            NotificationEvent.Posted(notification("message", false, 100).copy(actions = listOf(action)))
+        )
+
+        state = reducer.reduce(
+            state,
+            NotificationEvent.Posted(notification("message", false, 110).copy(actions = emptyList()))
+        )
+
+        assertTrue(state.notifications.single().actions.isEmpty())
     }
 
     @Test
@@ -141,5 +183,75 @@ class NotificationReducerTest {
         assertEquals("activeChat", state.activeNotificationId)
         val updatedDl = state.notifications.first { it.id == "dl" }
         assertEquals(50, updatedDl.progress)
+    }
+
+    @Test
+    fun silentPostAddsNotificationWithoutChangingExpandedSelection() {
+        var state = NotificationQueueState()
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("first", false, 10)))
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("selected", false, 20)))
+        state = reducer.reduce(state, NotificationEvent.Selected("first"))
+
+        state = reducer.reduce(
+            state,
+            NotificationEvent.Posted(
+                notification = notification("new", false, 30),
+                isSilentUpdate = true
+            )
+        )
+
+        assertEquals("first", state.activeNotificationId)
+        assertEquals(listOf("new", "selected", "first"), state.notifications.map { it.id })
+    }
+
+    @Test
+    fun queueCapPreservesSelectedPageAndOngoingWork() {
+        var state = NotificationQueueState()
+        repeat(20) { index ->
+            state = reducer.reduce(
+                state,
+                NotificationEvent.Posted(notification("item-$index", false, index.toLong()))
+            )
+        }
+        state = reducer.reduce(state, NotificationEvent.Selected("item-0"))
+        val ongoing = notification("navigation", true, 100).copy(isOngoing = true)
+
+        state = reducer.reduce(
+            state,
+            NotificationEvent.Posted(ongoing, isSilentUpdate = true)
+        )
+
+        assertEquals(20, state.notifications.size)
+        assertEquals("item-0", state.activeNotificationId)
+        assertTrue(state.notifications.any { it.id == "navigation" })
+        assertTrue(state.notifications.any { it.id == "item-0" })
+    }
+
+    @Test
+    fun childNotificationReplacesGroupSummaryWithoutDuplication() {
+        val summary = notification("summary", false, 10).copy(
+            groupKey = "messages",
+            isGroupSummary = true
+        )
+        val child = notification("child", false, 20).copy(groupKey = "messages")
+        var state = reducer.reduce(NotificationQueueState(), NotificationEvent.Posted(summary))
+
+        state = reducer.reduce(state, NotificationEvent.Posted(child))
+
+        assertEquals(listOf("child"), state.notifications.map { it.id })
+    }
+
+    @Test
+    fun lateGroupSummaryIsIgnoredWhenChildrenAlreadyExist() {
+        val child = notification("child", false, 20).copy(groupKey = "messages")
+        val summary = notification("summary", false, 30).copy(
+            groupKey = "messages",
+            isGroupSummary = true
+        )
+        var state = reducer.reduce(NotificationQueueState(), NotificationEvent.Posted(child))
+
+        state = reducer.reduce(state, NotificationEvent.Posted(summary))
+
+        assertEquals(listOf("child"), state.notifications.map { it.id })
     }
 }

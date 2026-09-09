@@ -79,12 +79,12 @@ private fun NotificationReplyScreen(
     sender: String,
     message: String,
     onDismiss: () -> Unit,
-    onSend: (String) -> Unit
+    onSend: (String) -> Boolean
 ) {
     val keyboard = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
     var reply by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -115,7 +115,7 @@ private fun NotificationReplyScreen(
                 value = reply,
                 onValueChange = {
                     reply = it
-                    error = false
+                    errorMessage = null
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -130,7 +130,11 @@ private fun NotificationReplyScreen(
                 textStyle = AppTheme.typography.body.copy(color = AppTheme.colors.textPrimary),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
                 keyboardActions = KeyboardActions(onSend = {
-                    if (reply.isBlank()) error = true else onSend(reply.trim())
+                    errorMessage = when {
+                        reply.isBlank() -> "Write a reply before sending."
+                        !onSend(reply.trim()) -> "Couldn’t send. The notification action is no longer available."
+                        else -> null
+                    }
                 }),
                 decorationBox = { innerTextField ->
                     if (reply.isBlank()) {
@@ -139,9 +143,9 @@ private fun NotificationReplyScreen(
                     innerTextField()
                 }
             )
-            if (error) {
+            errorMessage?.let { error ->
                 AppText(
-                    text = "Write a reply before sending.",
+                    text = error,
                     style = AppTheme.typography.caption,
                     color = AppTheme.colors.error,
                     modifier = Modifier.padding(top = AppTheme.spacing.xs)
@@ -150,7 +154,11 @@ private fun NotificationReplyScreen(
             AppButton(
                 text = "Send reply",
                 onClick = {
-                    if (reply.isBlank()) error = true else onSend(reply.trim())
+                    errorMessage = when {
+                        reply.isBlank() -> "Write a reply before sending."
+                        !onSend(reply.trim()) -> "Couldn’t send. The notification action is no longer available."
+                        else -> null
+                    }
                 },
                 modifier = Modifier.padding(top = AppTheme.spacing.lg)
             )

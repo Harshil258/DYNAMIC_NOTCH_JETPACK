@@ -48,7 +48,9 @@ class AuroraPreferences(private val context: Context) {
         private val KEY_THEME_MODE = stringPreferencesKey("theme_mode")
         private val KEY_ALWAYS_ON_TOP = booleanPreferencesKey("always_on_top")
         private val KEY_SHOW_ON_LOCK_SCREEN = booleanPreferencesKey("show_on_lock_screen")
+        private val KEY_HIDE_SENSITIVE_CONTENT = booleanPreferencesKey("hide_sensitive_content")
         private val KEY_ANIMATION_SPEED_NORMAL = booleanPreferencesKey("animation_speed_normal")
+        private val KEY_REDUCE_MOTION = booleanPreferencesKey("reduce_motion")
         private val KEY_COMPACT_MUSIC_CONTROLS = booleanPreferencesKey("compact_music_controls")
         private val KEY_SHOW_BATTERY_NOTIFICATIONS = booleanPreferencesKey("show_battery_notifications")
         private val KEY_CALL_BANNER = booleanPreferencesKey("call_banner")
@@ -95,8 +97,14 @@ class AuroraPreferences(private val context: Context) {
     val themeMode: Flow<String> = context.auroraDataStore.data.map { it[KEY_THEME_MODE] ?: "system" }
     val alwaysOnTop: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_ALWAYS_ON_TOP] ?: true }
     val showOnLockScreen: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_SHOW_ON_LOCK_SCREEN] ?: true }
+    val hideSensitiveContent: Flow<Boolean> = context.auroraDataStore.data.map {
+        it[KEY_HIDE_SENSITIVE_CONTENT] ?: true
+    }
     val animationSpeedNormal: Flow<Boolean> = context.auroraDataStore.data.map {
         it[KEY_ANIMATION_SPEED_NORMAL] ?: true
+    }
+    val reduceMotion: Flow<Boolean> = context.auroraDataStore.data.map {
+        it[KEY_REDUCE_MOTION] ?: false
     }
     val compactMusicControls: Flow<Boolean> = context.auroraDataStore.data.map {
         it[KEY_COMPACT_MUSIC_CONTROLS] ?: false
@@ -220,8 +228,16 @@ class AuroraPreferences(private val context: Context) {
         context.auroraDataStore.edit { it[KEY_SHOW_ON_LOCK_SCREEN] = enabled }
     }
 
+    suspend fun setHideSensitiveContent(enabled: Boolean) {
+        context.auroraDataStore.edit { it[KEY_HIDE_SENSITIVE_CONTENT] = enabled }
+    }
+
     suspend fun setAnimationSpeedNormal(normal: Boolean) {
         context.auroraDataStore.edit { it[KEY_ANIMATION_SPEED_NORMAL] = normal }
+    }
+
+    suspend fun setReduceMotion(enabled: Boolean) {
+        context.auroraDataStore.edit { it[KEY_REDUCE_MOTION] = enabled }
     }
 
     suspend fun setCompactMusicControls(enabled: Boolean) {

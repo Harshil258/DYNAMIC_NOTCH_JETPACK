@@ -54,6 +54,7 @@ fun IncomingCallIsland(
     avatarUri: String? = null,
     onAccept: () -> Unit = {},
     onDecline: () -> Unit = {},
+    canDecline: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val pulse by rememberBreathing(min = 0.96f, max = 1.03f, durationMillis = 1400)
@@ -140,23 +141,25 @@ fun IncomingCallIsland(
                 horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
             ) {
                 // Red Decline Button (52dp circle)
-                Box(
-                    modifier = Modifier
-                        .size(buttonSize)
-                        .graphicsLayer {
-                            scaleX = declineScale
-                            scaleY = declineScale
-                        }
-                        .clip(CircleShape)
-                        .background(CallRed)
-                        .clickable(
-                            interactionSource = declineInteraction,
-                            indication = null,
-                            onClick = onDecline
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = 35.dp * scale)
+                if (canDecline) {
+                    Box(
+                        modifier = Modifier
+                            .size(buttonSize)
+                            .graphicsLayer {
+                                scaleX = declineScale
+                                scaleY = declineScale
+                            }
+                            .clip(CircleShape)
+                            .background(CallRed)
+                            .clickable(
+                                interactionSource = declineInteraction,
+                                indication = null,
+                                onClick = onDecline
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = 35.dp * scale)
+                    }
                 }
 
                 // Green Accept Button (52dp circle)

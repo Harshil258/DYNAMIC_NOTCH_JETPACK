@@ -27,7 +27,9 @@ object NotificationActionRegistry {
 
     fun send(notificationId: String, actionId: String): Boolean {
         val target = actions[notificationId]?.get(actionId) ?: return false
-        return runCatching { target.pendingIntent.send() }.isSuccess
+        return runCatching { target.pendingIntent.send() }.isSuccess.also { sent ->
+            if (!sent) removeAction(notificationId, actionId)
+        }
     }
 
     fun hasReplyTarget(notificationId: String, actionId: String): Boolean =
@@ -51,10 +53,22 @@ object NotificationActionRegistry {
         RemoteInput.addResultsToIntent(target.remoteInputs.toTypedArray(), fillInIntent, results)
         return runCatching {
             target.pendingIntent.send(context, 0, fillInIntent)
-        }.isSuccess
+        }.isSuccess.also { sent ->
+            if (!sent) removeAction(notificationId, actionId)
+        }
     }
 
     fun remove(notificationId: String) {
         actions.remove(notificationId)
+    }
+
+    fun clear() {
+        actions.clear()
+    }
+
+    private fun removeAction(notificationId: String, actionId: String) {
+        actions.computeIfPresent(notificationId) { _, current ->
+            current.toMutableMap().apply { remove(actionId) }.takeIf { it.isNotEmpty() }
+        }
     }
 }

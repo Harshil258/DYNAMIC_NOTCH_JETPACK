@@ -189,7 +189,9 @@ fun SettingsVaultScreen(
     val savedLanguage by preferences.languageCode.collectAsState(initial = "en")
     val alwaysOnTop by preferences.alwaysOnTop.collectAsState(initial = true)
     val showOnLockScreen by preferences.showOnLockScreen.collectAsState(initial = true)
+    val hideSensitiveContent by preferences.hideSensitiveContent.collectAsState(initial = true)
     val animationSpeedNormal by preferences.animationSpeedNormal.collectAsState(initial = true)
+    val reduceMotion by preferences.reduceMotion.collectAsState(initial = false)
 
     var showPaywall by remember { mutableStateOf(openPremiumOnLaunch) }
     var premiumMessage by remember { mutableStateOf<String?>(null) }
@@ -409,11 +411,27 @@ fun SettingsVaultScreen(
             )
             AppRowDivider()
             AppToggleRow(
+                title = "Hide sensitive content",
+                subtitle = "Mask messages, callers, OTPs, artwork and actions while locked",
+                checked = hideSensitiveContent,
+                glyph = AppleGlyph.Lock,
+                onCheckedChange = { value -> scope.launch { preferences.setHideSensitiveContent(value) } }
+            )
+            AppRowDivider()
+            AppToggleRow(
                 title = "Smooth animations",
                 subtitle = if (animationSpeedNormal) "Relaxed morphing and fades" else "Fast transitions",
                 checked = animationSpeedNormal,
                 glyph = AppleGlyph.Sparkles,
                 onCheckedChange = { value -> scope.launch { preferences.setAnimationSpeedNormal(value) } }
+            )
+            AppRowDivider()
+            AppToggleRow(
+                title = "Reduce motion",
+                subtitle = "Use short fades without bounce, shimmer or breathing effects",
+                checked = reduceMotion,
+                glyph = AppleGlyph.Sparkles,
+                onCheckedChange = { value -> scope.launch { preferences.setReduceMotion(value) } }
             )
         }
         AppFootnote("Display behavior updates the overlay without changing the island’s audited geometry.")

@@ -67,6 +67,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -90,7 +94,6 @@ import ai.emots.kishan_dynamic.data.model.ContactInfo
 import ai.emots.kishan_dynamic.data.model.MusicTrack
 import ai.emots.kishan_dynamic.data.model.CallDirection
 import ai.emots.kishan_dynamic.data.model.CallRecord
-import ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy
 import kotlin.math.roundToInt
 
 enum class IslandDemoState {
@@ -191,6 +194,7 @@ enum class IslandControlAction {
     AirPodsOpen,
     SatelliteMessage,
     LiveActivityOpen,
+    LiveActivityPrimary,
     MovedUndo,
     NavigationLeft,
     NavigationRight,
@@ -329,6 +333,9 @@ fun DynamicIslandPill(
     onTap: () -> Unit = {},
     onCompanionTap: () -> Unit = onTap,
     onLongPress: () -> Unit = {},
+    onCompanionLongPress: () -> Unit = onLongPress,
+    mainContentDescription: String = "Dynamic Island",
+    companionContentDescription: String = "Open companion activity",
     onSwipeDismiss: () -> Unit = {},
     onControlAction: (IslandControlAction) -> Unit = {},
     actionApps: List<ActionAppShortcut> = emptyList(),
@@ -341,6 +348,7 @@ fun DynamicIslandPill(
     onCustomActionClick: (String) -> Unit = {},
     onSystemTileClick: (ActionSystemTile) -> Unit = {},
     notifications: List<NotificationInfo> = emptyList(),
+    notificationActiveIndex: Int = 0,
     onNotificationAction: (NotificationInfo, NotificationActionInfo) -> Unit = { _, _ -> },
     onNotificationSelect: (String) -> Unit = {},
     onNotificationDismiss: (String) -> Unit = {},
@@ -349,6 +357,7 @@ fun DynamicIslandPill(
     callDurationSeconds: Long = 0L,
     showCallDuration: Boolean = true,
     callIsDialing: Boolean = false,
+    callCanDecline: Boolean = true,
     musicTrack: MusicTrack? = null,
     musicIsPlaying: Boolean = true,
     musicScrubberEnabled: Boolean = true,
@@ -364,6 +373,11 @@ fun DynamicIslandPill(
     liveActivityTitle: String = "",
     liveActivitySubtitle: String = "",
     liveActivityProgress: Float? = null,
+    liveActivityShowChronometer: Boolean = false,
+    liveActivityChronometerBase: Long = 0L,
+    liveActivityChronometerCountDown: Boolean = false,
+    liveActivitySourceBacked: Boolean = false,
+    liveActivityActionLabel: String = "",
     ringerMode: RingerModeType = RingerModeType.SILENT,
     ringerVolumeLevel: Float = 0.5f,
     brightnessLevel: Float = 0.5f,
@@ -379,16 +393,26 @@ fun DynamicIslandPill(
     onUtilityAction: (ActionUtilityAction) -> Unit = {},
     onOpenNotifications: () -> Unit = {}
 ) {
+    val reduceMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
     val interactionSource = remember { MutableInteractionSource() }
+    val companionInteractionSource = remember { MutableInteractionSource() }
     val islandView = androidx.compose.ui.platform.LocalView.current
     val isPressed by interactionSource.collectIsPressedAsState()
+    val isCompanionPressed by companionInteractionSource.collectIsPressedAsState()
     val pressScale by animateFloatAsState(
-        targetValue = if (isPressed) 0.96f else 1.0f,
-        animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.pressSpring(),
+        targetValue = if (isPressed && !reduceMotion) 0.96f else 1.0f,
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
+            else ai.emots.kishan_dynamic.ui.motion.AppMotion.pressSpring(),
         label = "island_press"
     )
+    val companionPressScale by animateFloatAsState(
+        targetValue = if (isCompanionPressed && !reduceMotion) 0.92f else 1f,
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
+            else ai.emots.kishan_dynamic.ui.motion.AppMotion.pressSpring(),
+        label = "companion_press"
+    )
     val islandStiffness = if (fastAnimations) 760f else 460f
-    val contentDuration = if (fastAnimations) 130 else 200
+    val contentDuration = if (reduceMotion) 80 else if (fastAnimations) 130 else 200
 
     // -------------------------------------------------------------------------
     // TRUE iOS GEOMETRY
@@ -508,30 +532,37 @@ fun DynamicIslandPill(
     // Apple Liquid Morphing Springs
     val animatedWidth by animateDpAsState(
         targetValue = targetWidth,
-        animationSpec = spring(dampingRatio = 0.73f, stiffness = islandStiffness),
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
+            else spring(dampingRatio = 0.73f, stiffness = islandStiffness),
         label = "island_width"
     )
 
     val animatedHeight by animateDpAsState(
         targetValue = targetHeight,
-        animationSpec = spring(dampingRatio = 0.73f, stiffness = islandStiffness),
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap()
+            else spring(dampingRatio = 0.73f, stiffness = islandStiffness),
         label = "island_height"
     )
 
     // Breathing Ambient Specular Aura (iOS Dynamic Island glow)
-    val infiniteTransition = rememberInfiniteTransition(label = "aura_pulse")
-    val auraAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.08f,
-        targetValue = 0.25f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                if (fastAnimations) 1400 else 2200,
-                easing = FastOutSlowInEasing
+    val auraAlpha = if (reduceMotion) {
+        0.08f
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "aura_pulse")
+        val animatedAuraAlpha by infiniteTransition.animateFloat(
+            initialValue = 0.08f,
+            targetValue = 0.25f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    if (fastAnimations) 1400 else 2200,
+                    easing = FastOutSlowInEasing
+                ),
+                repeatMode = RepeatMode.Reverse
             ),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "aura_alpha"
-    )
+            label = "aura_alpha"
+        )
+        animatedAuraAlpha
+    }
 
     val auraColor = when (state) {
         IslandDemoState.Idle -> IslandColors.Blue
@@ -585,32 +616,6 @@ fun DynamicIslandPill(
 
         Row(
             modifier = modifier
-                .graphicsLayer {
-                    scaleX = pressScale
-                    scaleY = pressScale
-                    // Grow downwards out of the cutout, like the real island.
-                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0f)
-                }
-                .combinedClickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                    onClick = {
-                        if (hapticEnabled) {
-                            islandView.performHapticFeedback(
-                                android.view.HapticFeedbackConstants.KEYBOARD_TAP
-                            )
-                        }
-                        onTap()
-                    },
-                    onLongClick = {
-                        if (hapticEnabled) {
-                            islandView.performHapticFeedback(
-                                android.view.HapticFeedbackConstants.LONG_PRESS
-                            )
-                        }
-                        onLongPress()
-                    }
-                )
                 .pointerInput(onSwipeDismiss) {
                     var totalDrag = 0f
                     detectVerticalDragGestures(
@@ -637,6 +642,11 @@ fun DynamicIslandPill(
                 modifier = Modifier
                     .width(animatedWidth)
                     .height(animatedHeight)
+                    .graphicsLayer {
+                        scaleX = pressScale
+                        scaleY = pressScale
+                        transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0f)
+                    }
                     .shadow(
                         elevation = 14.dp,
                         shape = cornerRadius,
@@ -644,6 +654,33 @@ fun DynamicIslandPill(
                         spotColor = Color.Black.copy(alpha = 0.9f)
                     )
                     .clip(cornerRadius)
+                    .semantics {
+                        if (isCompact) {
+                            contentDescription = mainContentDescription
+                            role = Role.Button
+                        }
+                    }
+                    .combinedClickable(
+                        enabled = isCompact,
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = {
+                            if (hapticEnabled) {
+                                islandView.performHapticFeedback(
+                                    android.view.HapticFeedbackConstants.KEYBOARD_TAP
+                                )
+                            }
+                            onTap()
+                        },
+                        onLongClick = {
+                            if (hapticEnabled) {
+                                islandView.performHapticFeedback(
+                                    android.view.HapticFeedbackConstants.LONG_PRESS
+                                )
+                            }
+                            onLongPress()
+                        }
+                    )
                     .background(Color.Black)
                     .border(
                         width = 0.75.dp,
@@ -740,7 +777,31 @@ fun DynamicIslandPill(
                     },
                     label = "island_content_morph"
                 ) { targetState ->
-                    when (targetState) {
+                    if (liveActivitySourceBacked) {
+                        if (targetState.isCompactPresentation()) {
+                            SourceBackedLiveActivityCompactContent(
+                                state = targetState,
+                                title = liveActivityTitle,
+                                subtitle = liveActivitySubtitle,
+                                progress = liveActivityProgress,
+                                showChronometer = liveActivityShowChronometer,
+                                chronometerBase = liveActivityChronometerBase,
+                                chronometerCountDown = liveActivityChronometerCountDown
+                            )
+                        } else {
+                            SourceBackedLiveActivityExpandedContent(
+                                state = targetState,
+                                title = liveActivityTitle,
+                                subtitle = liveActivitySubtitle,
+                                progress = liveActivityProgress,
+                                showChronometer = liveActivityShowChronometer,
+                                chronometerBase = liveActivityChronometerBase,
+                                chronometerCountDown = liveActivityChronometerCountDown,
+                                actionLabel = liveActivityActionLabel,
+                                onControlAction = onControlAction
+                            )
+                        }
+                    } else when (targetState) {
                         IslandDemoState.Idle -> IdleCutoutContent()
                         IslandDemoState.Minimal -> MinimalPillContent()
                         IslandDemoState.MusicCompact -> MusicCompactContent(musicTrack, musicIsPlaying)
@@ -782,15 +843,22 @@ fun DynamicIslandPill(
                             onControlAction = onControlAction
                         )
                         IslandDemoState.OngoingCallBanner -> OngoingCallBannerContent()
-                        IslandDemoState.NotificationCompact -> NotificationCompactContent(notifications.firstOrNull())
-                        IslandDemoState.NotificationStacked -> NotificationStackedMainContent(notifications)
+                        IslandDemoState.NotificationCompact -> NotificationCompactContent(
+                            notifications.getOrNull(notificationActiveIndex) ?: notifications.firstOrNull()
+                        )
+                        IslandDemoState.NotificationStacked -> NotificationStackedMainContent(
+                            notifications = notifications,
+                            activeIndex = notificationActiveIndex
+                        )
                         IslandDemoState.NotificationWithMusicCompact -> NotificationWithMusicCompactContent(
                             notifications = notifications,
+                            activeIndex = notificationActiveIndex,
                             track = musicTrack,
                             isPlaying = musicIsPlaying
                         )
                         IslandDemoState.NotificationExpanded -> NotificationExpandedContent(
                             notifications = notifications,
+                            activeIndex = notificationActiveIndex,
                             onNotificationAction = onNotificationAction,
                             onNotificationSelect = onNotificationSelect,
                             onNotificationDismiss = onNotificationDismiss
@@ -883,7 +951,11 @@ fun DynamicIslandPill(
                         IslandDemoState.NavigationCompact -> NavigationCompactContent()
                         IslandDemoState.TimerImage -> TimerWithImageCompactContent()
                         IslandDemoState.NotificationImage -> NotificationImageCompactContent()
-                        IslandDemoState.CallAvatars -> CallExpandedContent(onControlAction, callContact)
+                        IslandDemoState.CallAvatars -> CallExpandedContent(
+                            onControlAction = onControlAction,
+                            contact = callContact,
+                            canDecline = callCanDecline
+                        )
                         IslandDemoState.TransportActivity,
                         IslandDemoState.AirplaneAlert -> AirplaneAlertContent(onControlAction)
                         IslandDemoState.FlightTrackerExpanded,
@@ -912,6 +984,10 @@ fun DynamicIslandPill(
                     Box(
                         modifier = Modifier
                             .size(islandTokens.sideSize)
+                            .graphicsLayer {
+                                scaleX = companionPressScale
+                                scaleY = companionPressScale
+                            }
                             .shadow(
                                 elevation = 12.dp,
                                 shape = CircleShape,
@@ -919,14 +995,30 @@ fun DynamicIslandPill(
                                 spotColor = auraColor.copy(alpha = 0.5f)
                             )
                             .clip(CircleShape)
-                            .clickable {
-                                if (hapticEnabled) {
-                                    islandView.performHapticFeedback(
-                                        android.view.HapticFeedbackConstants.KEYBOARD_TAP
-                                    )
-                                }
-                                onCompanionTap()
+                            .semantics {
+                                contentDescription = companionContentDescription
+                                role = Role.Button
                             }
+                            .combinedClickable(
+                                interactionSource = companionInteractionSource,
+                                indication = null,
+                                onClick = {
+                                    if (hapticEnabled) {
+                                        islandView.performHapticFeedback(
+                                            android.view.HapticFeedbackConstants.KEYBOARD_TAP
+                                        )
+                                    }
+                                    onCompanionTap()
+                                },
+                                onLongClick = {
+                                    if (hapticEnabled) {
+                                        islandView.performHapticFeedback(
+                                            android.view.HapticFeedbackConstants.LONG_PRESS
+                                        )
+                                    }
+                                    onCompanionLongPress()
+                                }
+                            )
                             .background(Color.Black)
                             .border(
                                 width = 0.75.dp,
@@ -941,11 +1033,21 @@ fun DynamicIslandPill(
                             IslandDemoState.CallCompact -> {
                                 AppleIcon(glyph = AppleGlyph.Phone, tint = IslandColors.CapsuleGreen, size = 15.dp)
                             }
-                            IslandDemoState.TimerCompact, IslandDemoState.Minimal -> {
+                            IslandDemoState.TimerCompact -> {
                                 TimerProgressRing(progress = 0.72f, size = 21.dp, strokeWidth = 2.5.dp)
                             }
+                            IslandDemoState.Minimal -> {
+                                AppleIcon(
+                                    glyph = AppleGlyph.Controls,
+                                    tint = IslandColors.CapsuleCyan,
+                                    size = 17.dp
+                                )
+                            }
                             IslandDemoState.NotificationStacked -> {
-                                NotificationStackedSideContent(notifications)
+                                NotificationStackedSideContent(
+                                    notifications = notifications,
+                                    activeIndex = notificationActiveIndex
+                                )
                             }
                             IslandDemoState.NotificationWithMusicCompact -> {
                                 NotificationWithMusicSideContent(
@@ -978,6 +1080,173 @@ fun DynamicIslandPill(
             }
         }
     }
+}
+
+@Composable
+private fun SourceBackedLiveActivityCompactContent(
+    state: IslandDemoState,
+    title: String,
+    subtitle: String,
+    progress: Float?,
+    showChronometer: Boolean,
+    chronometerBase: Long,
+    chronometerCountDown: Boolean
+) {
+    val (glyph, tint) = sourceBackedIdentity(state)
+    CompactIslandLayout(
+        leading = { AppleIcon(glyph = glyph, tint = tint, size = 16.dp) },
+        trailing = {
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = title.ifBlank { "Live activity" },
+                    color = Color.White,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.widthIn(max = 105.dp)
+                )
+                if (showChronometer && chronometerBase > 0L) {
+                    NotificationChronometerText(
+                        baseElapsedRealtime = chronometerBase,
+                        countDown = chronometerCountDown,
+                        fontSize = 9.sp,
+                        color = tint
+                    )
+                } else {
+                    val status = progress?.let { "${(it.coerceIn(0f, 1f) * 100).roundToInt()}%" }
+                        ?: subtitle.takeIf { it.isNotBlank() }
+                    if (status != null) {
+                    Text(
+                        text = status,
+                        color = tint,
+                        fontSize = 9.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.widthIn(max = 105.dp)
+                    )
+                    }
+                }
+            }
+        }
+    )
+}
+
+@Composable
+private fun SourceBackedLiveActivityExpandedContent(
+    state: IslandDemoState,
+    title: String,
+    subtitle: String,
+    progress: Float?,
+    showChronometer: Boolean,
+    chronometerBase: Long,
+    chronometerCountDown: Boolean,
+    actionLabel: String,
+    onControlAction: (IslandControlAction) -> Unit
+) {
+    val (glyph, tint) = sourceBackedIdentity(state)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp, vertical = 15.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(CircleShape)
+                    .background(tint.copy(alpha = 0.18f)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = glyph, tint = tint, size = 21.dp)
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title.ifBlank { "Live activity" },
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (subtitle.isNotBlank()) {
+                    Text(
+                        text = subtitle,
+                        color = IslandColors.TextSecondary,
+                        fontSize = 12.sp,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                if (showChronometer && chronometerBase > 0L) {
+                    NotificationChronometerText(
+                        baseElapsedRealtime = chronometerBase,
+                        countDown = chronometerCountDown,
+                        fontSize = 12.sp,
+                        color = tint
+                    )
+                }
+            }
+            if (actionLabel.isNotBlank()) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(percent = 50))
+                        .background(tint.copy(alpha = 0.2f))
+                        .clickable { onControlAction(IslandControlAction.LiveActivityPrimary) }
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = actionLabel,
+                        color = tint,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+        if (progress != null) {
+            Spacer(modifier = Modifier.height(10.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(CircleShape)
+                    .background(IslandColors.Gray5)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(progress.coerceIn(0f, 1f))
+                        .fillMaxHeight()
+                        .background(tint)
+                )
+            }
+        }
+    }
+}
+
+private fun sourceBackedIdentity(state: IslandDemoState): Pair<AppleGlyph, Color> = when (state) {
+    IslandDemoState.TimerCompact,
+    IslandDemoState.TimerExpanded -> AppleGlyph.Timer to IslandColors.CapsuleOrange
+    IslandDemoState.NavigationCompact,
+    IslandDemoState.ColorOptions -> AppleGlyph.Maps to IslandColors.Blue
+    IslandDemoState.VoiceMemoExpanded,
+    IslandDemoState.ScreenRecordingExpanded -> AppleGlyph.Record to IslandColors.CapsuleRed
+    IslandDemoState.AirDropActivity -> AppleGlyph.AirDrop to IslandColors.CapsuleCyan
+    IslandDemoState.ScreenMirroringAlert -> AppleGlyph.ScreenMirroring to IslandColors.CapsuleCyan
+    IslandDemoState.TransitRouteAlert -> AppleGlyph.TransitTrain to IslandColors.CapsuleRed
+    IslandDemoState.FlightCompact,
+    IslandDemoState.FlightExpanded -> AppleGlyph.Airplane to IslandColors.CapsuleCyan
+    IslandDemoState.DeliveryCompact,
+    IslandDemoState.DeliveryExpanded -> AppleGlyph.Location to IslandColors.Orange
+    IslandDemoState.SportsCompact,
+    IslandDemoState.SportsExpanded -> AppleGlyph.Star to IslandColors.Purple
+    IslandDemoState.SatelliteConnected -> AppleGlyph.Satellite to IslandColors.Green
+    IslandDemoState.FindMyAlert -> AppleGlyph.Location to IslandColors.Green
+    else -> AppleGlyph.Sparkles to IslandColors.CapsuleCyan
 }
 
 // =============================================================================
@@ -1198,14 +1467,16 @@ private fun CallCompactContent(
 @Composable
 private fun CallExpandedContent(
     onControlAction: (IslandControlAction) -> Unit = {},
-    contact: ContactInfo? = null
+    contact: ContactInfo? = null,
+    canDecline: Boolean = true
 ) {
     IncomingCallIsland(
         name = contact?.name ?: "Tamia Castillo",
         label = "Mobile",
         avatarUri = contact?.avatarUri,
         onAccept = { onControlAction(IslandControlAction.CallAccept) },
-        onDecline = { onControlAction(IslandControlAction.CallDecline) }
+        onDecline = { onControlAction(IslandControlAction.CallDecline) },
+        canDecline = canDecline
     )
 }
 
@@ -1244,8 +1515,11 @@ private fun NotificationCompactContent(notification: NotificationInfo?) {
  * the queue affordance into the detached activity bubble.
  */
 @Composable
-private fun NotificationStackedMainContent(notifications: List<NotificationInfo>) {
-    val primary = notifications.firstOrNull(::isStackPriority) ?: notifications.firstOrNull()
+private fun NotificationStackedMainContent(
+    notifications: List<NotificationInfo>,
+    activeIndex: Int
+) {
+    val primary = notifications.getOrNull(activeIndex) ?: notifications.firstOrNull()
     if (primary == null) return
 
     Row(
@@ -1295,8 +1569,15 @@ private fun NotificationStackedMainContent(notifications: List<NotificationInfo>
 }
 
 @Composable
-private fun NotificationStackedSideContent(notifications: List<NotificationInfo>) {
-    val secondary = notifications.drop(1).firstOrNull(::isStackPriority)
+private fun NotificationStackedSideContent(
+    notifications: List<NotificationInfo>,
+    activeIndex: Int
+) {
+    val secondary = if (notifications.size > 1) {
+        notifications[(activeIndex.coerceIn(0, notifications.lastIndex) + 1) % notifications.size]
+    } else {
+        null
+    }
     if (secondary != null) {
         PackageIcon(
             packageName = secondary.packageName,
@@ -1323,16 +1604,14 @@ private fun NotificationStackedSideContent(notifications: List<NotificationInfo>
     }
 }
 
-private fun isStackPriority(notification: NotificationInfo): Boolean =
-    NotificationPriorityPolicy.isPriority(notification)
-
 @Composable
 private fun NotificationWithMusicCompactContent(
     notifications: List<NotificationInfo>,
+    activeIndex: Int,
     track: MusicTrack?,
     isPlaying: Boolean
 ) {
-    val notification = notifications.firstOrNull()
+    val notification = notifications.getOrNull(activeIndex) ?: notifications.firstOrNull()
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -1443,13 +1722,11 @@ private fun NotificationWithMusicSideContent(
 @Composable
 private fun NotificationExpandedContent(
     notifications: List<NotificationInfo>,
+    activeIndex: Int,
     onNotificationAction: (NotificationInfo, NotificationActionInfo) -> Unit,
     onNotificationSelect: (String) -> Unit,
     onNotificationDismiss: (String) -> Unit
 ) {
-    var activeIndex by androidx.compose.runtime.remember(notifications) {
-        androidx.compose.runtime.mutableIntStateOf(0)
-    }
     if (notifications.isEmpty()) return
     val currentIndex = activeIndex.coerceIn(0, notifications.lastIndex)
     val notification = notifications[currentIndex]
@@ -1463,24 +1740,24 @@ private fun NotificationExpandedContent(
             notification.subText,
             notification.expandedText.takeIf { it.isNotBlank() }
         ).distinct().joinToString(" · "),
-        actionLabel = notification.actions.firstOrNull()?.label ?: "Open",
+        actionLabel = notification.actions.firstOrNull()?.label.orEmpty(),
         onAction = { notification.actions.firstOrNull()?.let { onNotificationAction(notification, it) } },
         actions = notification.actions,
         onActionSelected = { action -> onNotificationAction(notification, action) },
         pagerLabel = if (notifications.size > 1) "${currentIndex + 1}/${notifications.size}" else null,
         onPrevious = if (currentIndex > 0) {
             {
-                activeIndex = currentIndex - 1
                 onNotificationSelect(notifications[currentIndex - 1].id)
             }
         } else null,
         onNext = if (currentIndex < notifications.lastIndex) {
             {
-                activeIndex = currentIndex + 1
                 onNotificationSelect(notifications[currentIndex + 1].id)
             }
         } else null,
-        onDismiss = { onNotificationDismiss(notification.id) },
+        onDismiss = if (notification.isClearable) {
+            { onNotificationDismiss(notification.id) }
+        } else null,
                 progress = if (notification.progressMax > 0) {
                     notification.progress.toFloat() / notification.progressMax.toFloat()
                 } else null,

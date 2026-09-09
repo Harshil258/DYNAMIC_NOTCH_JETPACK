@@ -22,9 +22,24 @@ object NotificationLiveActivityMapper {
             notification.category
         ).joinToString(" ").lowercase()
 
+        if (notification.category == "timer" || notification.category == "stopwatch") {
+            return LiveActivityInfo(
+                id = notification.id,
+                kind = LiveActivityKind.TIMER,
+                title = notification.title.ifBlank {
+                    if (notification.category == "stopwatch") "Stopwatch" else "Timer"
+                },
+                subtitle = notification.text,
+                showChronometer = notification.showChronometer,
+                chronometerBaseElapsedRealtime = notification.chronometerBaseElapsedRealtime,
+                chronometerCountDown = notification.chronometerCountDown,
+                isExpanded = false
+            )
+        }
+
         val isNavigation = notification.category == "navigation" ||
-            navigationPackages.any(packageName::contains) ||
-            navigationWords.any(searchableText::contains)
+            (navigationPackages.any(packageName::contains) &&
+                navigationWords.any(searchableText::contains))
 
         val isTransit = transitPackages.any(packageName::contains) &&
             transitWords.any(searchableText::contains)
@@ -81,7 +96,9 @@ object NotificationLiveActivityMapper {
             )
         }
 
-        if (recordingWords.any(searchableText::contains)) {
+        if (recordingPackages.any(packageName::contains) &&
+            recordingWords.any(searchableText::contains)
+        ) {
             return LiveActivityInfo(
                 id = notification.id,
                 kind = LiveActivityKind.SCREEN_RECORDING,
@@ -160,7 +177,7 @@ object NotificationLiveActivityMapper {
             )
         }
 
-        val isDelivery = deliveryPackages.any(packageName::contains) ||
+        val isDelivery = deliveryPackages.any(packageName::contains) &&
             deliveryWords.any(searchableText::contains)
         if (isDelivery) {
             return LiveActivityInfo(
@@ -254,6 +271,14 @@ object NotificationLiveActivityMapper {
         "screen recording",
         "screen recorder",
         "recording screen"
+    )
+
+    private val recordingPackages = setOf(
+        "android",
+        "com.android.systemui",
+        "com.google.android.apps.recorder",
+        "com.samsung.android.app.smartcapture",
+        "com.miui.screenrecorder"
     )
 
     private val voiceRecorderPackages = setOf(

@@ -28,6 +28,15 @@ class LiveActivitySourceActionPolicyTest {
     }
 
     @Test
+    fun exposesRealStopActionForRecordingActivity() {
+        val notification = notification(hasContentIntent = true).copy(
+            actions = listOf(NotificationActionInfo("stop", "Stop recording"))
+        )
+
+        assertEquals("stop", LiveActivitySourceActionPolicy.primaryActionId(notification))
+    }
+
+    @Test
     fun doesNotInventSourceAction() {
         assertNull(LiveActivitySourceActionPolicy.primaryActionId(notification()))
     }

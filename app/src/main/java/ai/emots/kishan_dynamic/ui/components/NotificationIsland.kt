@@ -229,11 +229,13 @@ fun NotificationIslandExpanded(
                                 onClick = onPrevious
                             )
                         }
-                        NotificationActionButton(
-                            label = actionLabel,
-                            scale = scale,
-                            onClick = onAction
-                        )
+                        if (actionLabel.isNotBlank()) {
+                            NotificationActionButton(
+                                label = actionLabel,
+                                scale = scale,
+                                onClick = onAction
+                            )
+                        }
                         if (onNext != null) {
                             NotificationPagerButton(
                                 label = "›",

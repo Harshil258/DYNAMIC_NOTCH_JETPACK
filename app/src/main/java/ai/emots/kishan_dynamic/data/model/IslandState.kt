@@ -33,6 +33,7 @@ data class NotificationInfo(
     val isPriority: Boolean = false,
     val category: String = "general",
     val groupKey: String = packageName,
+    val isGroupSummary: Boolean = false,
     val isOngoing: Boolean = false,
     val isClearable: Boolean = true,
     val progress: Int = 0,
@@ -45,6 +46,8 @@ data class NotificationInfo(
     val channelId: String = "",
     val imagePath: String? = null,
     val template: String = "",
+    /** True unless Android explicitly marks this notification public on the lock screen. */
+    val isSensitive: Boolean = true,
     /** True when the source notification exposes a tap destination. */
     val hasContentIntent: Boolean = false,
     val actions: List<NotificationActionInfo> = emptyList()
@@ -109,7 +112,8 @@ sealed class IslandState {
     data class NotificationWithMusic(
         val notifications: List<NotificationInfo>,
         val track: MusicTrack,
-        val isPlaying: Boolean = true
+        val isPlaying: Boolean = true,
+        val activeIndex: Int = 0
     ) : IslandState()
 
     data class Charging(

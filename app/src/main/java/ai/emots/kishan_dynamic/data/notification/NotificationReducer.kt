@@ -41,10 +41,23 @@ class NotificationReducer {
         return when (event) {
             is NotificationEvent.Posted -> {
                 val incoming = event.notification
-                val existingIndex = findMatchingIndex(state.notifications, incoming)
+                if (incoming.isGroupSummary && state.notifications.any { existing ->
+                        !existing.isGroupSummary && existing.groupKey == incoming.groupKey
+                    }
+                ) {
+                    return state
+                }
+                val sourceNotifications = if (!incoming.isGroupSummary) {
+                    state.notifications.filterNot { existing ->
+                        existing.isGroupSummary && existing.groupKey == incoming.groupKey
+                    }
+                } else {
+                    state.notifications
+                }
+                val existingIndex = findMatchingIndex(sourceNotifications, incoming)
 
                 val updatedList = if (existingIndex != -1) {
-                    val existing = state.notifications[existingIndex]
+                    val existing = sourceNotifications[existingIndex]
                     val merged = mergeNotification(existing, incoming)
 
                     // Content change check
@@ -56,26 +69,23 @@ class NotificationReducer {
 
                     if (isOngoingProgressOnly || event.isSilentUpdate) {
                         // Update in place silently without bumping priority or moving to top
-                        state.notifications.toMutableList().apply {
+                        sourceNotifications.toMutableList().apply {
                             set(existingIndex, merged)
                         }
                     } else {
                         // Remove from old position, prepend to top
-                        val mutable = state.notifications.toMutableList()
+                        val mutable = sourceNotifications.toMutableList()
                         mutable.removeAt(existingIndex)
                         mutable.add(0, merged)
                         sortQueue(mutable)
                     }
                 } else {
                     // New notification: add to queue and sort
-                    val combined = listOf(incoming) + state.notifications
+                    val combined = listOf(incoming) + sourceNotifications
                     sortQueue(combined)
                 }
 
-                // Cap queue to 20 notifications to prevent unbounded memory growth
-                val cappedList = updatedList.take(MAX_NOTIFICATIONS)
-
-                val newActiveId = if (event.isSilentUpdate && state.activeNotificationId != null) {
+                val requestedActiveId = if (event.isSilentUpdate && state.activeNotificationId != null) {
                     // If silent update (e.g. progress tick), preserve currently active notification
                     state.activeNotificationId
                 } else if (existingIndex != -1 && incoming.isOngoing && existingIndex != 0) {
@@ -85,23 +95,22 @@ class NotificationReducer {
                     incoming.id
                 }
 
+                // Keep the queue bounded without evicting the page being read or
+                // authoritative ongoing work such as navigation and transfers.
+                val cappedList = capQueue(updatedList, requestedActiveId)
+                val newActiveId = requestedActiveId.takeIf { activeId ->
+                    cappedList.any { it.id == activeId }
+                } ?: cappedList.firstOrNull()?.id
+
                 NotificationQueueState(cappedList, newActiveId)
             }
 
             is NotificationEvent.Removed -> {
-                val remaining = state.notifications.filterNot { it.id == event.notificationId }
-                NotificationQueueState(
-                    notifications = remaining,
-                    activeNotificationId = remaining.firstOrNull()?.id
-                )
+                removeNotification(state, event.notificationId)
             }
 
             is NotificationEvent.Expired -> {
-                val remaining = state.notifications.filterNot { it.id == event.notificationId }
-                NotificationQueueState(
-                    notifications = remaining,
-                    activeNotificationId = remaining.firstOrNull()?.id
-                )
+                removeNotification(state, event.notificationId)
             }
 
             is NotificationEvent.DismissActive -> {
@@ -144,53 +153,66 @@ class NotificationReducer {
         )
     }
 
+    private fun capQueue(
+        notifications: List<NotificationInfo>,
+        protectedActiveId: String?
+    ): List<NotificationInfo> {
+        if (notifications.size <= MAX_NOTIFICATIONS) return notifications
+
+        val protectedIds = notifications
+            .filter { it.isOngoing || it.id == protectedActiveId }
+            .mapTo(linkedSetOf()) { it.id }
+        val remainingCapacity = (MAX_NOTIFICATIONS - protectedIds.size).coerceAtLeast(0)
+        notifications.asSequence()
+            .filterNot { it.id in protectedIds }
+            .take(remainingCapacity)
+            .forEach { protectedIds += it.id }
+        return notifications.filter { it.id in protectedIds }
+    }
+
+    private fun removeNotification(
+        state: NotificationQueueState,
+        notificationId: String
+    ): NotificationQueueState {
+        val removedIndex = state.notifications.indexOfFirst { it.id == notificationId }
+        if (removedIndex == -1) return state
+
+        val remaining = state.notifications.filterNot { it.id == notificationId }
+        val currentSelectionSurvives = state.activeNotificationId != notificationId &&
+            remaining.any { it.id == state.activeNotificationId }
+        val nextActiveId = if (currentSelectionSurvives) {
+            state.activeNotificationId
+        } else {
+            remaining.getOrNull(removedIndex.coerceAtMost(remaining.lastIndex))?.id
+                ?: remaining.lastOrNull()?.id
+        }
+        return NotificationQueueState(
+            notifications = remaining,
+            activeNotificationId = nextActiveId
+        )
+    }
+
     /**
-     * Matching priority for Android notification deduplication:
-     * 1. Exact ID match (sbn.key)
-     * 2. Package + non-blank sender title (same chat / sender in WhatsApp, Instagram, Telegram)
-     * 3. GroupKey + non-blank title (Android group grouping)
+     * Android's StatusBarNotification key is the only safe update identity.
+     * Sender/title heuristics can merge two genuinely separate messages and
+     * leave their remove/action callbacks pointing at the wrong source.
      */
     fun findMatchingIndex(
         notifications: List<NotificationInfo>,
         incoming: NotificationInfo
     ): Int {
-        // 1. Exact ID
-        val exactIndex = notifications.indexOfFirst { it.id == incoming.id }
-        if (exactIndex != -1) return exactIndex
-
-        // 2. Package + non-blank sender title
-        if (incoming.title.isNotBlank()) {
-            val pkgTitleIndex = notifications.indexOfFirst {
-                it.packageName == incoming.packageName && it.title == incoming.title
-            }
-            if (pkgTitleIndex != -1) return pkgTitleIndex
-        }
-
-        // 3. GroupKey + non-blank title
-        if (incoming.title.isNotBlank()) {
-            val groupIndex = notifications.indexOfFirst {
-                it.groupKey == incoming.groupKey && it.title == incoming.title
-            }
-            if (groupIndex != -1) return groupIndex
-        }
-
-        return -1
+        return notifications.indexOfFirst { it.id == incoming.id }
     }
 
     /**
-     * Intelligently merges fields from an existing notification with an incoming update.
-     * Preserves actionable buttons (Reply, Mark as Read) and images if the incoming update omitted them.
+     * Merges display fields for an update to the same Android notification key.
+     * Actions are authoritative on every update so removed PendingIntents never
+     * remain visible as dead controls.
      */
     fun mergeNotification(
         existing: NotificationInfo,
         incoming: NotificationInfo
     ): NotificationInfo {
-        val mergedActions = if (incoming.actions.isNotEmpty()) {
-            incoming.actions
-        } else {
-            existing.actions
-        }
-
         val mergedImage = incoming.imagePath ?: existing.imagePath
         val mergedTitle = incoming.title.ifBlank { existing.title }
         val mergedText = incoming.text.ifBlank { existing.text }
@@ -206,7 +228,7 @@ class NotificationReducer {
             subText = mergedSubText,
             inboxLines = mergedInboxLines,
             imagePath = mergedImage,
-            actions = mergedActions
+            actions = incoming.actions
         )
     }
 

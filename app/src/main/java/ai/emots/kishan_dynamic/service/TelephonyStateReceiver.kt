@@ -76,6 +76,7 @@ class TelephonyStateReceiver : BroadcastReceiver() {
                     }
                 }
                 TelephonyManager.EXTRA_STATE_IDLE -> {
+                    val callWasConnected = wentOffHook
                     val contact = activeContact
                     if (contact != null) {
                         val duration = if (wentOffHook) {
@@ -110,7 +111,8 @@ class TelephonyStateReceiver : BroadcastReceiver() {
                     activeDirection = null
                     wentOffHook = false
                     CallScreeningCoordinator.clear()
-                    IslandStateManager.endCall()
+                    if (callWasConnected) IslandStateManager.endCall()
+                    else IslandStateManager.declineIncomingCall()
                 }
             }
         }

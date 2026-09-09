@@ -48,6 +48,28 @@ class NotificationLiveActivityMapperTest {
     }
 
     @Test
+    fun mapsAuthoritativeClockTimerAndPreservesChronometer() {
+        val activity = NotificationLiveActivityMapper.map(
+            NotificationInfo(
+                id = "timer-1",
+                packageName = "com.google.android.deskclock",
+                appName = "Clock",
+                title = "Tea",
+                text = "04:12",
+                category = "timer",
+                isOngoing = true,
+                showChronometer = true,
+                chronometerBaseElapsedRealtime = 42_000L,
+                chronometerCountDown = true
+            )
+        )
+
+        assertEquals(LiveActivityKind.TIMER, activity?.kind)
+        assertEquals(42_000L, activity?.chronometerBaseElapsedRealtime)
+        assertTrue(activity?.chronometerCountDown == true)
+    }
+
+    @Test
     fun mapsOngoingScreenRecordingNotification() {
         val activity = NotificationLiveActivityMapper.map(
             NotificationInfo(
@@ -162,6 +184,28 @@ class NotificationLiveActivityMapperTest {
         )
 
         assertNull(activity)
+    }
+
+    @Test
+    fun doesNotPromoteNavigationRecordingOrDeliveryCopyFromUnknownPackages() {
+        listOf(
+            "Navigation route" to "Continue straight",
+            "Screen recording guide" to "Recording screen tips",
+            "Order update" to "Out for delivery"
+        ).forEachIndexed { index, copy ->
+            assertNull(
+                NotificationLiveActivityMapper.map(
+                    NotificationInfo(
+                        id = "unknown-$index",
+                        packageName = "com.example.messaging",
+                        appName = "Messages",
+                        title = copy.first,
+                        text = copy.second,
+                        isOngoing = true
+                    )
+                )
+            )
+        }
     }
 
     @Test

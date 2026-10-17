@@ -80,7 +80,11 @@ class MobileAdsRewardedPassGateway(
     context: Context,
     private val configuration: RewardedAdConfiguration,
     private val analytics: AnalyticsSink = AppAnalytics,
-    private val nowMillis: () -> Long = { System.currentTimeMillis() }
+    private val nowMillis: () -> Long = { System.currentTimeMillis() },
+    private val revenueTracker: ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker =
+        ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker(
+            ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker(context)
+        )
 ) : RewardedPassGateway {
     private val appContext = context.applicationContext
     private val preferences = AuroraPreferences(appContext)
@@ -124,15 +128,15 @@ class MobileAdsRewardedPassGateway(
                     }
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
                     loading = false
                     showWhenReady = false
                     pendingActivity = null
-                    report(error.message.ifBlank { "Rewarded ad could not be loaded." })
+                    report(adError.message.ifBlank { "Rewarded ad could not be loaded." })
                     analytics.track(
                         AnalyticsEvent(
                             "rewarded_ad_load_failed",
-                            mapOf("error_code" to error.code.toString())
+                            mapOf("error_code" to adError.code.toString())
                         )
                     )
                 }
@@ -141,13 +145,24 @@ class MobileAdsRewardedPassGateway(
     }
 
     override fun show(activity: Activity): RewardedPassResult {
+        return show(activity, {}, {}, {})
+    }
+
+    fun show(
+        activity: Activity,
+        onRewarded: () -> Unit = {},
+        onDismissed: () -> Unit = {},
+        onFailed: (String) -> Unit = {}
+    ): RewardedPassResult {
         if (!isConfigured()) {
-            return RewardedPassResult.Unavailable(
-                "Rewarded passes are not configured in this build."
-            )
+            val msg = "Rewarded passes are not configured in this build."
+            onFailed(msg)
+            return RewardedPassResult.Unavailable(msg)
         }
         if (activity.isFinishing || activity.isDestroyed) {
-            return RewardedPassResult.Unavailable("Rewarded passes require an active app screen.")
+            val msg = "Rewarded passes require an active app screen."
+            onFailed(msg)
+            return RewardedPassResult.Unavailable(msg)
         }
         val ad = rewardedAd
         if (ad == null) {
@@ -156,7 +171,7 @@ class MobileAdsRewardedPassGateway(
             preload()
             return RewardedPassResult.Started("Preparing a rewarded pass…")
         }
-        showLoadedAd(activity)
+        showLoadedAd(activity, onRewarded, onDismissed, onFailed)
         return RewardedPassResult.Started("Opening rewarded ad…")
     }
 
@@ -167,7 +182,12 @@ class MobileAdsRewardedPassGateway(
         scope.coroutineContext.cancel()
     }
 
-    private fun showLoadedAd(activity: Activity) {
+    private fun showLoadedAd(
+        activity: Activity,
+        onRewarded: () -> Unit = {},
+        onDismissed: () -> Unit = {},
+        onFailed: (String) -> Unit = {}
+    ) {
         val ad = rewardedAd ?: return
         rewardedAd = null
         pendingActivity = null
@@ -183,34 +203,44 @@ class MobileAdsRewardedPassGateway(
                         "Rewarded ad dismissed."
                     }
                 )
+                onDismissed()
                 preload()
             }
 
-            override fun onAdFailedToShowFullScreenContent(error: FullScreenContentError) {
-                report(error.message.ifBlank { "Rewarded ad could not be shown." })
+            override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
+                val errorMsg = fullScreenContentError.message.ifBlank { "Rewarded ad could not be shown." }
+                report(errorMsg)
                 analytics.track(
                     AnalyticsEvent(
                         "rewarded_ad_show_failed",
-                        mapOf("error_code" to error.code.toString())
+                        mapOf("error_code" to fullScreenContentError.code.toString())
                     )
                 )
+                onFailed(errorMsg)
                 preload()
             }
 
             override fun onAdShowedFullScreenContent() = Unit
             override fun onAdClicked() = Unit
             override fun onAdImpression() = Unit
+            override fun onAdPaid(value: com.google.android.libraries.ads.mobile.sdk.common.AdValue) {
+                revenueTracker.trackAdRevenue(
+                    adValue = value,
+                    adFormat = "rewarded",
+                    adUnitId = configuration.adUnitId,
+                    placement = "rewarded_pass"
+                )
+            }
         }
         ad.show(activity) { rewardItem: RewardItem ->
             if (rewardGranted) return@show
             rewardGranted = true
             val expiresAt = RewardedPassPolicy.expiresAt(nowMillis(), configuration.passHours)
-            if (expiresAt == null) {
-                report("Rewarded pass duration is not configured.")
-                return@show
-            }
             scope.launch {
-                preferences.setProEntitlement(source = "rewarded_pass", expiresAt = expiresAt)
+                if (expiresAt != null) {
+                    preferences.setProEntitlement(source = "rewarded_pass", expiresAt = expiresAt)
+                }
+                RewardedAccessManager(appContext, preferences).recordAdReward(1)
                 analytics.track(
                     AnalyticsEvent(
                         "rewarded_ad_earned",
@@ -220,6 +250,7 @@ class MobileAdsRewardedPassGateway(
                 report(
                     "Rewarded pass active for ${RewardedPassPolicy.durationLabel(configuration.passHours)}."
                 )
+                mainHandler.post { onRewarded() }
             }
         }
     }

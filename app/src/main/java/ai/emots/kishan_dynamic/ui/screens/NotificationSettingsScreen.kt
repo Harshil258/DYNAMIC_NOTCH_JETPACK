@@ -77,21 +77,26 @@ fun NotificationSettingsScreen(
         }
     }
 
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Notifications",
-            subtitle = "Heads-up alerts inside the island",
-            onBack = onBack
-        )
+    val isExpandedPreview = autoExpand || isSimulating
+    val stageTargetHeight = if (isExpandedPreview) 156.dp else 116.dp
 
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Notifications",
+                subtitle = "Heads-up alerts inside the island",
+                onBack = onBack
+            )
+        }
+    ) {
         AppStage(
             modifier = Modifier.appReveal(1),
-            caption = if (autoExpand || isSimulating) "Expanded preview" else "Compact preview",
-            minHeight = 190.dp
+            caption = if (isExpandedPreview) "Expanded preview" else "Compact preview",
+            targetHeight = stageTargetHeight,
+            showStatusBar = !isExpandedPreview
         ) {
             DynamicIslandPill(
-                state = if (autoExpand || isSimulating) IslandDemoState.NotificationExpanded
+                state = if (isExpandedPreview) IslandDemoState.NotificationExpanded
                 else IslandDemoState.NotificationCompact
             )
         }

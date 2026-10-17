@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
@@ -47,11 +48,11 @@ fun NoInternetDialog(
     onDismiss: () -> Unit
 ) {
     val transition = rememberInfiniteTransition(label = "network_recovery")
-    val pulse by transition.animateFloat(
+    val pulseState = transition.animateFloat(
         initialValue = 0.94f,
         targetValue = 1.06f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1_200, easing = FastOutSlowInEasing),
+            animation = tween(1200, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "network_recovery_pulse"
@@ -72,7 +73,11 @@ fun NoInternetDialog(
             Box(
                 modifier = Modifier
                     .size(86.dp)
-                    .scale(pulse)
+                    .graphicsLayer {
+                        val s = pulseState.value
+                        scaleX = s
+                        scaleY = s
+                    }
                     .background(
                         Brush.radialGradient(
                             colors = listOf(

@@ -61,9 +61,14 @@ object ReleaseRuntimeConfigDecoder {
         fun intValue(default: Int, vararg keys: String): Int =
             raw(*keys)?.toIntOrNull() ?: default
 
+        val featuresRegex = Regex("\"features\"\\s*:\\s*\\[([^\\]]*)\\]")
+        val featuresList = featuresRegex.find(payload)?.groupValues?.get(1)?.let { rawFeatures ->
+            Regex("\"([^\"]+)\"").findAll(rawFeatures).map { it.groupValues[1] }.toList()
+        } ?: fallback.premiumFeatures
+
         return ReleaseRuntimeConfig(
-            adsEnabled = booleanValue(fallback.adsEnabled, "adsEnabled", "ads_enabled"),
-            ratingEnabled = booleanValue(fallback.ratingEnabled, "ratingEnabled", "rating_enabled"),
+            adsEnabled = booleanValue(fallback.adsEnabled, "adsEnabled", "ads_enabled", "isAdsEnabled"),
+            ratingEnabled = booleanValue(fallback.ratingEnabled, "ratingEnabled", "rating_enabled", "isRatingDialogEnabled"),
             updateEnabled = booleanValue(fallback.updateEnabled, "updateEnabled", "update_enabled"),
             latestVersionCode = intValue(
                 fallback.latestVersionCode,
@@ -99,29 +104,68 @@ object ReleaseRuntimeConfigDecoder {
                 "rewarded_pass_hours"
             ).coerceIn(1, 168),
             mobileAdsAppId = stringValue(fallback.mobileAdsAppId, "mobileAdsAppId", "mobile_ads_app_id"),
-            bannerAdUnitId = stringValue(fallback.bannerAdUnitId, "bannerAdUnitId", "banner_ad_unit_id"),
-            nativeAdUnitId = stringValue(fallback.nativeAdUnitId, "nativeAdUnitId", "native_ad_unit_id"),
+            bannerAdUnitId = stringValue(fallback.bannerAdUnitId, "bannerAdUnitId", "banner_ad_unit_id", "admobBannerId"),
+            nativeAdUnitId = stringValue(fallback.nativeAdUnitId, "nativeAdUnitId", "native_ad_unit_id", "admobNativeId"),
             interstitialAdUnitId = stringValue(
                 fallback.interstitialAdUnitId,
                 "interstitialAdUnitId",
-                "interstitial_ad_unit_id"
+                "interstitial_ad_unit_id",
+                "admobInterstitialId"
             ),
             appOpenAdUnitId = stringValue(
                 fallback.appOpenAdUnitId,
                 "appOpenAdUnitId",
-                "app_open_ad_unit_id"
+                "app_open_ad_unit_id",
+                "admobAppOpenId"
             ),
-            rewardedAdUnitId = stringValue(fallback.rewardedAdUnitId, "rewardedAdUnitId", "rewarded_ad_unit_id"),
+            rewardedAdUnitId = stringValue(fallback.rewardedAdUnitId, "rewardedAdUnitId", "rewarded_ad_unit_id", "admobRewardedId"),
             resumeAdEnabled = booleanValue(
                 fallback.resumeAdEnabled,
                 "resumeAdEnabled",
-                "resume_ad_enabled"
+                "resume_ad_enabled",
+                "isResumeAdEnabled"
             ),
             preloadAppOpen = booleanValue(
                 fallback.preloadAppOpen,
                 "preloadAppOpen",
-                "preload_app_open"
+                "preload_app_open",
+                "isPreloadAppOpen"
             ),
+            isSplashInterstitialEnabled = booleanValue(
+                fallback.isSplashInterstitialEnabled,
+                "isSplashInterstitialEnabled",
+                "is_splash_interstitial_enabled"
+            ),
+            isBackInterstitialEnabled = booleanValue(
+                fallback.isBackInterstitialEnabled,
+                "isBackInterstitialEnabled",
+                "is_back_interstitial_enabled"
+            ),
+            isExitNativeEnabled = booleanValue(
+                fallback.isExitNativeEnabled,
+                "isExitNativeEnabled",
+                "is_exit_native_enabled"
+            ),
+            isPreloadInterstitial = booleanValue(
+                fallback.isPreloadInterstitial,
+                "isPreloadInterstitial",
+                "is_preload_interstitial"
+            ),
+            isPreloadNative = booleanValue(
+                fallback.isPreloadNative,
+                "isPreloadNative",
+                "is_preload_native"
+            ),
+            isPreloadBanner = booleanValue(
+                fallback.isPreloadBanner,
+                "isPreloadBanner",
+                "is_preload_banner"
+            ),
+            bigNativePercentage = intValue(
+                fallback.bigNativePercentage,
+                "bigNativePercentage",
+                "big_native_percentage"
+            ).coerceIn(0, 100),
             screenCounterForInterstitial = intValue(
                 fallback.screenCounterForInterstitial,
                 "screenCounterForInterstitial",
@@ -137,7 +181,35 @@ object ReleaseRuntimeConfigDecoder {
                 "adsStartFromScreen",
                 "ads_start_from_screen"
             ).coerceAtLeast(0),
-            adsTestMode = booleanValue(fallback.adsTestMode, "adsTestMode", "ads_test_mode")
+            adsTestMode = booleanValue(fallback.adsTestMode, "adsTestMode", "ads_test_mode", "isTestModeEnabled"),
+            premiumEnabled = booleanValue(fallback.premiumEnabled, "premiumEnabled", "premium_enabled", "isPremiumEnabled"),
+            weeklyPlanId = stringValue(fallback.weeklyPlanId, "weeklyPlanId", "weekly_plan_id"),
+            monthlyPlanId = stringValue(fallback.monthlyPlanId, "monthlyPlanId", "monthly_plan_id"),
+            yearlyPlanId = stringValue(fallback.yearlyPlanId, "yearlyPlanId", "yearly_plan_id"),
+            lifetimePlanId = stringValue(fallback.lifetimePlanId, "lifetimePlanId", "lifetime_plan_id"),
+            premiumFeatures = featuresList,
+            trustSectionVisible = booleanValue(fallback.trustSectionVisible, "trustSectionVisible", "isVisible"),
+            trustSectionTitle = stringValue(fallback.trustSectionTitle, "trustSectionTitle", "title"),
+            trustStat1Value = stringValue(fallback.trustStat1Value, "trustStat1Value", "stat1Value"),
+            trustStat1Label = stringValue(fallback.trustStat1Label, "trustStat1Label", "stat1Label"),
+            trustStat2Value = stringValue(fallback.trustStat2Value, "trustStat2Value", "stat2Value"),
+            trustStat2Label = stringValue(fallback.trustStat2Label, "trustStat2Label", "stat2Label"),
+            trustStat3Value = stringValue(fallback.trustStat3Value, "trustStat3Value", "stat3Value"),
+            trustStat3Label = stringValue(fallback.trustStat3Label, "trustStat3Label", "stat3Label"),
+            premiumInstallTrialDays = intValue(fallback.premiumInstallTrialDays, "premiumInstallTrialDays", "premium_install_trial_days").coerceIn(0, 365),
+            premiumExpiryIslandEnabled = booleanValue(fallback.premiumExpiryIslandEnabled, "premiumExpiryIslandEnabled", "premium_expiry_island_enabled"),
+            premiumRewardedAccessEnabled = booleanValue(fallback.premiumRewardedAccessEnabled, "premiumRewardedAccessEnabled", "premium_rewarded_access_enabled"),
+            premiumRewardDaysPerAd = intValue(fallback.premiumRewardDaysPerAd, "premiumRewardDaysPerAd", "premium_reward_days_per_ad").coerceIn(1, 30),
+            rewardedAdCooldownSeconds = intValue(fallback.rewardedAdCooldownSeconds, "rewardedAdCooldownSeconds", "rewarded_ad_cooldown_seconds").coerceIn(0, 300),
+            rewardedAccessMaxVisibleDays = intValue(fallback.rewardedAccessMaxVisibleDays, "rewardedAccessMaxVisibleDays", "rewarded_access_max_visible_days").coerceIn(1, 30),
+            premiumPaywallEnabled = booleanValue(fallback.premiumPaywallEnabled, "premiumPaywallEnabled", "premium_paywall_enabled"),
+            premiumWeeklyEnabled = booleanValue(fallback.premiumWeeklyEnabled, "premiumWeeklyEnabled", "premium_weekly_enabled"),
+            premiumMonthlyEnabled = booleanValue(fallback.premiumMonthlyEnabled, "premiumMonthlyEnabled", "premium_monthly_enabled"),
+            premiumYearlyEnabled = booleanValue(fallback.premiumYearlyEnabled, "premiumYearlyEnabled", "premium_yearly_enabled"),
+            premiumLifetimeEnabled = booleanValue(fallback.premiumLifetimeEnabled, "premiumLifetimeEnabled", "premium_lifetime_enabled"),
+            callEndPremiumControlEnabled = booleanValue(fallback.callEndPremiumControlEnabled, "callEndPremiumControlEnabled", "call_end_premium_control_enabled"),
+            premiumFeatureGatesEnabled = booleanValue(fallback.premiumFeatureGatesEnabled, "premiumFeatureGatesEnabled", "premium_feature_gates_enabled"),
+            islandIdleAutoHideEnabled = booleanValue(fallback.islandIdleAutoHideEnabled, "islandIdleAutoHideEnabled", "island_idle_auto_hide_enabled")
         )
     }
 
@@ -161,7 +233,7 @@ class RemoteReleaseRuntimeConfigProvider(
     private val _lastRefreshError = MutableStateFlow<String?>(null)
 
     override val config: StateFlow<ReleaseRuntimeConfig> = snapshot.asStateFlow()
-    val lastRefreshError: StateFlow<String?> = _lastRefreshError.asStateFlow()
+    override val lastRefreshError: StateFlow<String?> = _lastRefreshError.asStateFlow()
 
     override suspend fun refresh() {
         if (endpoint.isBlank()) return

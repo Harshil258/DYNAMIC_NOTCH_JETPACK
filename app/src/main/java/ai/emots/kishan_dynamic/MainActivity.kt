@@ -40,6 +40,10 @@ import ai.emots.kishan_dynamic.data.model.StartupRoute
 import ai.emots.kishan_dynamic.data.model.initialStartupRoute
 import ai.emots.kishan_dynamic.data.model.startupRouteForIntent
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsConsentManager
+import ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker
+import ai.emots.kishan_dynamic.data.analytics.ScreenDeduplicator
+import ai.emots.kishan_dynamic.data.premium.AdConsentStatus
 import ai.emots.kishan_dynamic.ui.theme.AppThemeMode
 import ai.emots.kishan_dynamic.ui.localization.LocalAppLanguage
 import kotlinx.coroutines.flow.first
@@ -86,18 +90,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(true)
-            setTurnScreenOn(true)
-        }
-        window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         enableEdgeToEdge()
         val openActionIslandEditor = intent.getBooleanExtra(EXTRA_OPEN_ACTION_ISLAND_EDITOR, false)
         val openPremium = intent.getBooleanExtra(EXTRA_OPEN_PREMIUM, false)
         val openRewardedPass = intent.getBooleanExtra(EXTRA_OPEN_REWARDED_PASS, false)
         val openLiveActivity = intent.getBooleanExtra(EXTRA_OPEN_LIVE_ACTIVITY, false)
         val initiallyDark = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
-        window.navigationBarColor = if (initiallyDark) android.graphics.Color.BLACK else android.graphics.Color.rgb(248, 249, 251)
+        @Suppress("DEPRECATION")
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            window.navigationBarColor = if (initiallyDark) android.graphics.Color.BLACK else android.graphics.Color.rgb(248, 249, 251)
+        }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
         }
@@ -132,6 +134,7 @@ class MainActivity : ComponentActivity() {
             val isProActive by preferences.isProActive.collectAsState(initial = false)
             val savedThemeMode by preferences.themeMode.collectAsState(initial = AppThemeMode.System.storageValue)
             val savedLanguage by preferences.languageCode.collectAsState(initial = "en")
+            val reduceMotion by preferences.reduceMotion.collectAsState(initial = false)
             val requestedThemeMode = AppThemeMode.fromStorage(savedThemeMode)
             val themeMode = if (
                 PremiumFeaturePolicy.isLocked(PremiumFeaturePolicy.THEME_SETTINGS, isProActive)
@@ -145,10 +148,42 @@ class MainActivity : ComponentActivity() {
                 AppThemeMode.Light -> false
                 AppThemeMode.Dark -> true
             }
-            var currentRoute by remember { mutableStateOf<AppNavigationRoute?>(null) }
+            val analyticsTracker = remember { FirebaseAnalyticsTracker(context) }
+            val screenDeduplicator = remember { ScreenDeduplicator(analyticsTracker) }
+            val consentManager = remember { AnalyticsConsentManager(context) }
+
+            LaunchedEffect(consentSnapshot) {
+                if (consentSnapshot.status == AdConsentStatus.READY) {
+                    consentManager.updateConsent(
+                        analyticsStorageGranted = true,
+                        adStorageGranted = consentSnapshot.canRequestAds,
+                        adUserDataGranted = consentSnapshot.canRequestAds,
+                        adPersonalizationGranted = consentSnapshot.canRequestAds
+                    )
+                }
+            }
+
+            var currentRoute by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf<AppNavigationRoute?>(null) }
+
+            LaunchedEffect(currentRoute) {
+                when (currentRoute) {
+                    AppNavigationRoute.LanguageSelection -> screenDeduplicator.onScreenVisible("language_selection")
+                    AppNavigationRoute.Onboarding -> screenDeduplicator.onScreenVisible("onboarding")
+                    AppNavigationRoute.PermissionHub -> screenDeduplicator.onScreenVisible("permission_hub")
+                    AppNavigationRoute.ActionIslandEditor -> screenDeduplicator.onScreenVisible("action_island_editor")
+                    AppNavigationRoute.ComponentGallery -> screenDeduplicator.onScreenVisible("component_gallery")
+                    AppNavigationRoute.MainHub -> Unit
+                    null -> Unit
+                }
+            }
 
             LaunchedEffect(releaseConfigProvider) {
                 releaseConfigProvider.refresh()
+            }
+            LaunchedEffect(releaseConfig) {
+                val entitlementManager = ai.emots.kishan_dynamic.data.premium.EntitlementManager.getInstance(context)
+                entitlementManager.trialManager.checkOrStartTrial(releaseConfig)
+                entitlementManager.rewardedAccessManager.cleanupExpiredDays()
             }
             LaunchedEffect(consentGateway, releaseConfig.adsEnabled) {
                 if (releaseConfig.adsEnabled) {
@@ -174,6 +209,7 @@ class MainActivity : ComponentActivity() {
             }
 
             androidx.compose.runtime.LaunchedEffect(Unit) {
+                if (currentRoute != null) return@LaunchedEffect
                 val baseStartupRoute = initialStartupRoute(
                     onboardingCompleted = preferences.onboardingCompleted.first(),
                     languageSelectionCompleted = preferences.languageSelectionCompleted.first()
@@ -190,17 +226,28 @@ class MainActivity : ComponentActivity() {
                 val navigationBarArgb = AppTheme.colors.background.toArgb()
                 val appIsDark = AppTheme.isDark
                 SideEffect {
-                    window.navigationBarColor = navigationBarArgb
-                    window.statusBarColor = android.graphics.Color.TRANSPARENT
+                    @Suppress("DEPRECATION")
+                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+                        window.navigationBarColor = navigationBarArgb
+                        window.statusBarColor = android.graphics.Color.TRANSPARENT
+                    }
                     androidx.core.view.WindowCompat.getInsetsController(window, window.decorView).apply {
                         isAppearanceLightNavigationBars = !appIsDark
                         isAppearanceLightStatusBars = !appIsDark
                     }
                 }
-                CompositionLocalProvider(LocalAppLanguage provides savedLanguage) {
+                CompositionLocalProvider(
+                    LocalAppLanguage provides savedLanguage,
+                    ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion provides reduceMotion
+                ) {
                     AnimatedContent(
                         targetState = currentRoute,
-                        transitionSpec = { fadeIn() togetherWith fadeOut() },
+                        transitionSpec = {
+                            if (reduceMotion) {
+                                androidx.compose.animation.EnterTransition.None togetherWith
+                                    androidx.compose.animation.ExitTransition.None
+                            } else fadeIn() togetherWith fadeOut()
+                        },
                         label = "root_navigation"
                     ) { route ->
                         when (route) {

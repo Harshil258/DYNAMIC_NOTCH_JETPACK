@@ -8,6 +8,12 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -29,6 +35,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -50,6 +57,7 @@ import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.accentGradient
+import ai.emots.kishan_dynamic.ui.theme.auroraActionGradient
 
 // =============================================================================
 // APP KIT CONTROLS — fully token driven, correct touch targets, light+dark safe.
@@ -84,15 +92,19 @@ fun AppSwitch(
 
     Box(
         modifier = modifier
+            .minimumInteractiveComponentSize()
             .size(width = trackWidth, height = trackHeight)
             .clip(CircleShape)
             .background(trackColor)
             .border(0.5.dp, AppTheme.colors.border, CircleShape)
-            .clickable(
+            .toggleable(
+                value = checked,
+                role = Role.Switch,
                 enabled = enabled,
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { onCheckedChange(!checked) }
+                indication = null,
+                onValueChange = onCheckedChange
+            )
             .padding(thumbPadding),
         contentAlignment = Alignment.CenterStart
     ) {
@@ -106,7 +118,7 @@ fun AppSwitch(
     }
 }
 
-enum class AppButtonStyle { Primary, Secondary, Tonal, Destructive }
+enum class AppButtonStyle { Primary, Secondary, Tonal, Destructive, AuroraPro }
 
 @Composable
 fun AppButton(
@@ -116,11 +128,12 @@ fun AppButton(
     style: AppButtonStyle = AppButtonStyle.Primary,
     glyph: AppleGlyph? = null,
     enabled: Boolean = true,
-    fillMaxWidth: Boolean = true
+    fillMaxWidth: Boolean = true,
+    customBrush: androidx.compose.ui.graphics.Brush? = null
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (pressed && enabled) 0.97f else 1f,
         animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
         label = "button_scale"
@@ -128,37 +141,46 @@ fun AppButton(
 
     val container = when {
         !enabled -> AppTheme.colors.disabled
-        style == AppButtonStyle.Primary -> AppTheme.colors.accent
+        style == AppButtonStyle.AuroraPro || style == AppButtonStyle.Primary -> AppTheme.colors.accent
         style == AppButtonStyle.Destructive -> AppTheme.colors.error
         style == AppButtonStyle.Tonal -> AppTheme.colors.accent.copy(alpha = 0.16f)
         else -> AppTheme.colors.surfaceElevated
     }
     val content = when {
         !enabled -> AppTheme.colors.textTertiary
-        style == AppButtonStyle.Primary || style == AppButtonStyle.Destructive -> AppTheme.colors.onAccent
+        style == AppButtonStyle.AuroraPro || style == AppButtonStyle.Primary || style == AppButtonStyle.Destructive -> AppTheme.colors.onAccent
         style == AppButtonStyle.Tonal -> AppTheme.colors.accent
         else -> AppTheme.colors.textPrimary
     }
     val shape = RoundedCornerShape(AppTheme.radius.lg)
-    val containerBrush = if (enabled && style == AppButtonStyle.Primary) {
-        AppTheme.colors.accentGradient()
-    } else {
-        androidx.compose.ui.graphics.Brush.linearGradient(listOf(container, container))
+    val containerBrush = when {
+        customBrush != null -> customBrush
+        !enabled -> androidx.compose.ui.graphics.Brush.linearGradient(listOf(container, container))
+        style == AppButtonStyle.AuroraPro -> AppTheme.colors.auroraActionGradient()
+        style == AppButtonStyle.Primary -> AppTheme.colors.accentGradient()
+        else -> androidx.compose.ui.graphics.Brush.linearGradient(listOf(container, container))
     }
 
     Row(
         modifier = modifier
             .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
-            .scale(scale)
+            .graphicsLayer {
+                val s = scaleState.value
+                scaleX = s
+                scaleY = s
+            }
             .clip(shape)
             .background(containerBrush, shape)
             .then(
                 if (style == AppButtonStyle.Secondary) {
                     Modifier.border(0.5.dp, AppTheme.colors.border, shape)
+                } else if (style == AppButtonStyle.AuroraPro) {
+                    Modifier.border(0.5.dp, androidx.compose.ui.graphics.Color(0x33FFFFFF), shape)
                 } else Modifier
             )
             .clickable(
                 enabled = enabled,
+                role = Role.Button,
                 interactionSource = interaction,
                 indication = null,
                 onClick = onClick
@@ -181,7 +203,69 @@ fun AppButton(
     }
 }
 
-/** iOS-style segmented control with a sliding indicator. */
+/**
+ * Horizontally scrollable selection tabs for multi-category and dynamic collections.
+ * Preserves full label readability, supports auto-scrolling to selected index,
+ * and maintains 44dp minimum touch targets.
+ */
+@Composable
+fun AppScrollableTabs(
+    options: List<String>,
+    selectedIndex: Int,
+    onOptionSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val scrollState = rememberScrollState()
+    LaunchedEffect(selectedIndex) {
+        if (options.isNotEmpty() && selectedIndex in options.indices) {
+            val approxTabWidthPx = 280
+            val targetScroll = (selectedIndex * approxTabWidthPx - 180).coerceAtLeast(0)
+            scrollState.animateScrollTo(targetScroll)
+        }
+    }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .horizontalScroll(scrollState)
+            .padding(vertical = AppTheme.spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        options.forEachIndexed { index, option ->
+            val isSelected = index == selectedIndex
+            val shape = RoundedCornerShape(AppTheme.radius.pill)
+            Box(
+                modifier = Modifier
+                    .clip(shape)
+                    .background(
+                        if (isSelected) AppTheme.colors.surfaceElevated else AppTheme.colors.surfaceVariant.copy(alpha = 0.5f)
+                    )
+                    .border(
+                        width = if (isSelected) 1.dp else 0.5.dp,
+                        color = if (isSelected) AppTheme.colors.accent else AppTheme.colors.border,
+                        shape = shape
+                    )
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { onOptionSelected(index) }
+                    .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.sm + 2.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                AppText(
+                    text = option,
+                    style = AppTheme.typography.button,
+                    color = if (isSelected) AppTheme.colors.textPrimary else AppTheme.colors.textSecondary,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                    maxLines = 1
+                )
+            }
+        }
+    }
+}
+
+/** iOS-style segmented control with a sliding indicator. Automatically delegates to AppScrollableTabs when options > 4 to prevent label compression. */
 @Composable
 fun AppSegmented(
     options: List<String>,
@@ -189,6 +273,16 @@ fun AppSegmented(
     onOptionSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    if (options.size > 4) {
+        AppScrollableTabs(
+            options = options,
+            selectedIndex = selectedIndex,
+            onOptionSelected = onOptionSelected,
+            modifier = modifier
+        )
+        return
+    }
+
     val shape = RoundedCornerShape(AppTheme.radius.md)
     BoxWithConstraints(
         modifier = modifier
@@ -367,7 +461,7 @@ fun AppTile(
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (pressed) 0.94f else 1f,
         animationSpec = spring(dampingRatio = 0.65f, stiffness = Spring.StiffnessMedium),
         label = "tile_scale"
@@ -377,7 +471,11 @@ fun AppTile(
 
     Column(
         modifier = modifier
-            .scale(scale)
+            .graphicsLayer {
+                val s = scaleState.value
+                scaleX = s
+                scaleY = s
+            }
             .clip(shape)
             .background(
                 if (selected) {

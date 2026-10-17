@@ -36,6 +36,10 @@ class BluetoothAccessoryMonitor(
         scope.launch { sync() }
     }
 
+    fun onBluetoothEvent() {
+        scope.launch { sync() }
+    }
+
     fun start() {
         if (monitorJob?.isActive == true) return
         monitorJob = scope.launch {
@@ -69,7 +73,9 @@ class BluetoothAccessoryMonitor(
                 title = snapshot.deviceName,
                 subtitle = batteryText,
                 progress = snapshot.batteryPercent?.div(100f),
-                isExpanded = true
+                isExpanded = true,
+                expandedByUser = false,
+                expiresAtMillis = System.currentTimeMillis() + 3000L
             )
         )
     }

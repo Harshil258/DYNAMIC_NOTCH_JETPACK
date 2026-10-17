@@ -92,15 +92,24 @@ fun LanguageScreen(
         scope.launch { preferences.setLanguageCode(language.code) }
     }
 
-    AppScreen {
-        AppTopBar(
-            title = "Language",
-            subtitle = "Choose how the app speaks to you.",
-            onBack = onBack,
-            showBack = onComplete == null,
-            modifier = Modifier.appReveal(0)
-        )
-
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Language",
+                subtitle = "Choose how the app speaks to you.",
+                onBack = onBack,
+                showBack = onComplete == null
+            )
+        },
+        bottomAction = if (onComplete != null) ({
+            AppButton(text = "Continue", glyph = AppleGlyph.Check, onClick = {
+                scope.launch {
+                    preferences.setLanguageSelectionCompleted(true)
+                    onComplete()
+                }
+            })
+        }) else null
+    ) {
         LanguageHero(
             language = current,
             modifier = Modifier.appReveal(1)
@@ -168,19 +177,6 @@ fun LanguageScreen(
             }
         )
 
-        if (onComplete != null) {
-            AppSectionSpacer()
-            AppButton(
-                text = "Continue",
-                glyph = AppleGlyph.Check,
-                onClick = {
-                    scope.launch {
-                        preferences.setLanguageSelectionCompleted(true)
-                        onComplete()
-                    }
-                }
-            )
-        }
     }
 }
 

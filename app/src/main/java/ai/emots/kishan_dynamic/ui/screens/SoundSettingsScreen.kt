@@ -54,18 +54,22 @@ fun SoundSettingsScreen(
     val pulseDuration by preferences.pulseDuration.collectAsState(initial = 450)
     var isExpandedPreview by remember { mutableStateOf(false) }
 
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Sound & haptics",
-            subtitle = "Ringer, volume HUD, and pulse behaviour",
-            onBack = onBack
-        )
+    val stageTargetHeight = if (isExpandedPreview && showRingerMode) 156.dp else 116.dp
 
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Sound & haptics",
+                subtitle = "Ringer, volume HUD, and pulse behaviour",
+                onBack = onBack
+            )
+        }
+    ) {
         AppStage(
             modifier = Modifier.appReveal(1),
             caption = if (showVolume) "Volume indicator preview" else "Sound indicators paused",
-            minHeight = 150.dp
+            targetHeight = stageTargetHeight,
+            showStatusBar = !(isExpandedPreview && showRingerMode)
         ) {
             DynamicIslandPill(
                 state = if (isExpandedPreview && showRingerMode) IslandDemoState.RingerModeExpanded

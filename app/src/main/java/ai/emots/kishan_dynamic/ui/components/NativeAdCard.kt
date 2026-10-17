@@ -45,6 +45,7 @@ fun NativeAdCard(
     canRequestAds: Boolean,
     placement: String,
     modifier: Modifier = Modifier,
+    size: NativeAdSize = NativeAdSize.Big,
     onAdLoaded: () -> Unit = {},
     onAdFailed: (String) -> Unit = {}
 ) {
@@ -67,7 +68,10 @@ fun NativeAdCard(
 
     when (val current = status) {
         NativeAdStatus.Idle,
-        NativeAdStatus.Loading,
+        NativeAdStatus.Loading -> {
+            NativeAdShimmer(size = size, modifier = modifier)
+        }
+
         NativeAdStatus.Unavailable -> Unit
 
         is NativeAdStatus.Failed -> {
@@ -84,11 +88,12 @@ fun NativeAdCard(
                 AndroidView(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 96.dp),
+                        .heightIn(min = if (size == NativeAdSize.Medium) 90.dp else 220.dp),
                     factory = { viewContext ->
                         buildNativeAdView(
                             context = viewContext,
                             ad = current.ad,
+                            size = size,
                             backgroundColor = backgroundColor,
                             textColor = textColor,
                             secondaryColor = secondaryColor,
@@ -104,6 +109,7 @@ fun NativeAdCard(
 private fun buildNativeAdView(
     context: android.content.Context,
     ad: NativeAd,
+    size: NativeAdSize,
     backgroundColor: Int,
     textColor: Int,
     secondaryColor: Int,
@@ -152,7 +158,7 @@ private fun buildNativeAdView(
     val headline = TextView(context).apply {
         text = ad.headline.orEmpty()
         setTextColor(textColor)
-        textSize = 16f
+        textSize = 15f
         typeface = Typeface.create("sans-serif", Typeface.BOLD)
         maxLines = 1
         ellipsize = android.text.TextUtils.TruncateAt.END
@@ -167,24 +173,36 @@ private fun buildNativeAdView(
     header.addView(adChoices)
     root.addView(header)
 
-    val media = MediaView(context).apply {
-        layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            dp(88)
-        ).apply { topMargin = dp(8) }
-        ad.mediaContent?.let { mediaContent = it }
-    }
-    root.addView(media)
+    var mediaView: MediaView? = null
+    var bodyView: TextView? = null
 
-    val body = TextView(context).apply {
-        text = ad.body.orEmpty()
-        setTextColor(secondaryColor)
-        textSize = 13f
-        maxLines = 2
-        ellipsize = android.text.TextUtils.TruncateAt.END
-        setPadding(0, dp(8), 0, dp(6))
+    if (size == NativeAdSize.Big) {
+        val media = MediaView(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(140)
+            ).apply { topMargin = dp(8) }
+            mediaContent = ad.mediaContent
+        }
+        root.addView(media)
+        mediaView = media
+
+        val body = TextView(context).apply {
+            text = ad.body.orEmpty()
+            setTextColor(secondaryColor)
+            textSize = 13f
+            maxLines = 2
+            ellipsize = android.text.TextUtils.TruncateAt.END
+            setPadding(0, dp(8), 0, dp(6))
+        }
+        root.addView(body)
+        bodyView = body
+    } else {
+        // Space before CTA in Medium layout
+        header.layoutParams = (header.layoutParams as LinearLayout.LayoutParams).apply {
+            bottomMargin = dp(6)
+        }
     }
-    root.addView(body)
 
     val callToAction = TextView(context).apply {
         text = ad.callToAction.orEmpty().ifBlank { "Learn more" }
@@ -196,7 +214,7 @@ private fun buildNativeAdView(
             GradientDrawable.Orientation.LEFT_RIGHT,
             intArrayOf(accentColor, blend(accentColor, AndroidColor.WHITE, 0.16f))
         ).apply { cornerRadius = dp(12).toFloat() }
-        minimumHeight = dp(42)
+        minimumHeight = dp(40)
     }
     root.addView(callToAction)
 
@@ -208,11 +226,11 @@ private fun buildNativeAdView(
         )
     )
     nativeAdView.headlineView = headline
-    nativeAdView.bodyView = body
+    nativeAdView.bodyView = bodyView
     nativeAdView.callToActionView = callToAction
     nativeAdView.iconView = icon
     nativeAdView.adChoicesView = adChoices
-    nativeAdView.registerNativeAd(ad, media)
+    nativeAdView.registerNativeAd(ad, mediaView)
     return nativeAdView
 }
 

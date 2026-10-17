@@ -41,6 +41,8 @@ import ai.emots.kishan_dynamic.data.premium.RewardedAdConfiguration
 import ai.emots.kishan_dynamic.data.premium.PremiumAccessResult
 import ai.emots.kishan_dynamic.data.premium.MobileAdsRewardedPassGateway
 import ai.emots.kishan_dynamic.data.premium.PlayBillingPremiumAccessGateway
+import ai.emots.kishan_dynamic.data.premium.EntitlementManager
+import ai.emots.kishan_dynamic.data.premium.EntitlementSource
 import ai.emots.kishan_dynamic.data.premium.RewardedPassResult
 import ai.emots.kishan_dynamic.data.premium.RewardedPassPolicy
 import ai.emots.kishan_dynamic.data.premium.BannerAdConfiguration
@@ -55,6 +57,7 @@ import ai.emots.kishan_dynamic.ui.components.AdaptiveBannerAdSlot
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.RemoveAdsInlineCta
 import ai.emots.kishan_dynamic.ui.components.NativeAdCard
+import ai.emots.kishan_dynamic.ui.components.NativeAdSize
 import ai.emots.kishan_dynamic.ui.dialogs.FeedbackDialog
 import ai.emots.kishan_dynamic.ui.dialogs.LegalDocumentDialog
 import ai.emots.kishan_dynamic.ui.dialogs.NoInternetDialog
@@ -79,6 +82,7 @@ import ai.emots.kishan_dynamic.ui.platform.openPlayStore
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AppThemeMode
 import ai.emots.kishan_dynamic.ui.theme.accentGradient
+import ai.emots.kishan_dynamic.ui.theme.auroraActionGradient
 import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 import kotlinx.coroutines.launch
 
@@ -101,6 +105,7 @@ fun SettingsVaultScreen(
     onNavigateGallery: () -> Unit = {},
     onNavigateAbout: () -> Unit = {},
     onNavigatePremium: () -> Unit = {},
+    onNavigateFeedback: () -> Unit = {},
     onCheckForUpdates: () -> Unit = {},
     openPremiumOnLaunch: Boolean = false,
     openRewardedPassOnLaunch: Boolean = false,
@@ -181,9 +186,13 @@ fun SettingsVaultScreen(
     val billingStatus by premiumGateway.status.collectAsState(initial = null)
     val rewardedStatus by rewardedGateway.status.collectAsState(initial = null)
 
+    val entitlementManager = remember { EntitlementManager.getInstance(context) }
+    val entitlementSnapshot by entitlementManager.entitlement.collectAsState()
+    val isPaidPro by preferences.isPaidPro.collectAsState(initial = false)
+    val isAdFree by preferences.isAdFree.collectAsState(initial = false)
     val isProActive by preferences.isProActive.collectAsState(initial = false)
-    var bannerLoaded by remember(bannerConfiguration, isProActive, canRequestAds) { mutableStateOf(false) }
-    var nativeLoaded by remember(nativeConfiguration, isProActive, canRequestAds) { mutableStateOf(false) }
+    var bannerLoaded by remember(bannerConfiguration, isAdFree, canRequestAds) { mutableStateOf(false) }
+    var nativeLoaded by remember(nativeConfiguration, isAdFree, canRequestAds) { mutableStateOf(false) }
     val proExpiresAt by preferences.proExpiresAt.collectAsState(initial = null)
     val proSource by preferences.proSource.collectAsState(initial = "none")
     val savedLanguage by preferences.languageCode.collectAsState(initial = "en")
@@ -220,8 +229,8 @@ fun SettingsVaultScreen(
         listOf(
             PricingPlan("weekly", "Weekly", "₹39"),
             PricingPlan("monthly", "Monthly", "₹59"),
-            PricingPlan("yearly", "Yearly", "₹199", "Save 70%"),
-            PricingPlan("lifetime", "Lifetime", "₹499", "Best value")
+            PricingPlan("yearly", "Yearly", "₹99", "Save 70%"),
+            PricingPlan("lifetime", "Lifetime", "₹149", "Best value")
         )
     }
 
@@ -243,13 +252,24 @@ fun SettingsVaultScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     AppText(
-                        text = if (isProActive) "Dynamic Island Pro" else "Unlock Pro",
+                        text = when {
+                            entitlementSnapshot.source == EntitlementSource.LIFETIME -> "Dynamic Island Lifetime"
+                            entitlementSnapshot.source in listOf(EntitlementSource.WEEKLY, EntitlementSource.MONTHLY, EntitlementSource.YEARLY) -> "Dynamic Island Pro"
+                            entitlementSnapshot.isTrial -> "7-Day Trial Active"
+                            entitlementSnapshot.isRewarded -> "Reward Pass Active"
+                            else -> "Unlock Pro"
+                        },
                         style = AppTheme.typography.h3,
                         color = AppTheme.colors.textPrimary
                     )
                     Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
                     AppText(
-                        text = "Ad-free, every island style and unlimited customisation.",
+                        text = when {
+                            isPaidPro -> "Ad-free, every island style and unlimited customisation."
+                            entitlementSnapshot.isTrial -> "${entitlementSnapshot.remainingDays} days remaining in your free full-access trial."
+                            entitlementSnapshot.isRewarded -> "${entitlementSnapshot.remainingDays} days remaining with your rewarded ad pass."
+                            else -> "Ad-free, every island style and unlimited customisation."
+                        },
                         style = AppTheme.typography.bodySmall,
                         color = AppTheme.colors.textSecondary
                     )
@@ -257,15 +277,17 @@ fun SettingsVaultScreen(
                 Spacer(modifier = Modifier.width(AppTheme.spacing.md))
                 AppStatusPill(
                     text = when {
-                        !isProActive -> "Free"
-                        proExpiresAt != null -> "Pass · ${remainingHours(proExpiresAt!!)}h"
-                        else -> "Active"
+                        entitlementSnapshot.source == EntitlementSource.LIFETIME -> "Lifetime"
+                        entitlementSnapshot.source in listOf(EntitlementSource.WEEKLY, EntitlementSource.MONTHLY, EntitlementSource.YEARLY) -> "Active"
+                        entitlementSnapshot.isTrial -> "Trial · ${entitlementSnapshot.remainingDays}d"
+                        entitlementSnapshot.isRewarded -> "Pass · ${entitlementSnapshot.remainingDays}d"
+                        else -> "Free"
                     },
-                    color = if (isProActive) AppTheme.colors.success else AppTheme.colors.textTertiary
+                    color = if (entitlementSnapshot.isActive) AppTheme.colors.success else AppTheme.colors.textTertiary
                 )
             }
 
-            if (!isProActive) {
+            if (!isPaidPro) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
 
                 Row(
@@ -288,7 +310,8 @@ fun SettingsVaultScreen(
                 AppButton(
                     text = "Continue with ${plans[selectedPlanIndex].title}",
                     onClick = onNavigatePremium,
-                    glyph = AppleGlyph.Crown
+                    glyph = AppleGlyph.Crown,
+                    style = AppButtonStyle.AuroraPro
                 )
                 Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
                 AppButton(
@@ -329,11 +352,11 @@ fun SettingsVaultScreen(
                     )
                 }
             }
-            if (!isProActive && bannerConfiguration.enabled) {
+            if (!isAdFree && bannerConfiguration.enabled) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
                 AdaptiveBannerAdSlot(
                     configuration = bannerConfiguration,
-                    isProActive = isProActive,
+                    isProActive = isAdFree,
                     canRequestAds = canRequestAds,
                     onAdLoaded = { bannerLoaded = true }
                 )
@@ -345,13 +368,14 @@ fun SettingsVaultScreen(
                     )
                 }
             }
-            if (!isProActive && nativeConfiguration.enabled) {
+            if (!isAdFree && nativeConfiguration.enabled) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
                 NativeAdCard(
                     configuration = nativeConfiguration,
-                    isProActive = isProActive,
+                    isProActive = isAdFree,
                     canRequestAds = canRequestAds,
                     placement = "settings_membership_native",
+                    size = if (releaseConfig.bigNativePercentage > 0) NativeAdSize.Big else NativeAdSize.Medium,
                     onAdLoaded = { nativeLoaded = true }
                 )
                 if (nativeLoaded) {
@@ -479,7 +503,7 @@ fun SettingsVaultScreen(
                 title = "Send feedback",
                 glyph = AppleGlyph.Bell,
                 accent = AppTheme.colors.info,
-                onClick = { showFeedback = true }
+                onClick = onNavigateFeedback
             )
             AppRowDivider()
             AppNavRow(
@@ -565,8 +589,10 @@ fun SettingsVaultScreen(
         LegalDocumentDialog(
             title = "Privacy policy",
             paragraphs = listOf(
-                "Aurora reads only the notifications, contacts, phone state, and device signals required for the features you enable.",
-                "Notification content, caller details, and call history stay on this device. They are not uploaded by the app.",
+                "Aurora Dynamic Island is developed and operated by Surya Developer (support email: suryadevelopers07@gmail.com).",
+                "Aurora processes only notifications, contacts, phone state, and device signals strictly required for the features you enable.",
+                "Notification content, caller details, and call records stay entirely on your device and are never uploaded or transmitted to any server.",
+                "All advertising complies with Google AdMob policies and UMP consent standards. No private data is ever shared with advertising partners.",
                 "You can revoke any optional permission from Android Settings at any time."
             ),
             onDismiss = { showPrivacy = false }
@@ -576,9 +602,10 @@ fun SettingsVaultScreen(
         LegalDocumentDialog(
             title = "Terms of service",
             paragraphs = listOf(
-                "Aurora Dynamic Island is a personal overlay utility. Use it only on devices and accounts you are authorized to manage.",
-                "System controls are routed through Android permissions and settings. The app does not bypass platform restrictions.",
-                "Premium, advertising, and release-provider integrations remain disabled until configured for a production release."
+                "Aurora Dynamic Island is an overlay and notification utility developed by Surya Developer.",
+                "System controls are executed through official Android permissions and APIs. The app does not bypass platform security restrictions.",
+                "Aurora Pro subscriptions, lifetime purchases, and rewarded ad passes unlock premium customization features as described in the store listing.",
+                "Subscriptions can be managed or cancelled at any time through Google Play Subscriptions."
             ),
             onDismiss = { showTerms = false }
         )
@@ -624,15 +651,15 @@ private fun PlanCard(
     val shape = RoundedCornerShape(AppTheme.radius.lg)
     Column(
         modifier = Modifier
-            .width(112.dp)
+            .width(104.dp)
             .clip(shape)
             .background(
-                if (selected) AppTheme.colors.accentGradient()
+                if (selected) AppTheme.colors.auroraActionGradient()
                 else AppTheme.colors.surfaceGradient()
             )
             .border(
-                0.5.dp,
-                if (selected) AppTheme.colors.accent.copy(alpha = 0.5f) else AppTheme.colors.border,
+                if (selected) 1.dp else 0.5.dp,
+                if (selected) AppTheme.colors.auroraCyan else AppTheme.colors.border,
                 shape
             )
             .clickable(
@@ -640,20 +667,20 @@ private fun PlanCard(
                 indication = null,
                 onClick = onClick
             )
-            .padding(vertical = AppTheme.spacing.md, horizontal = AppTheme.spacing.md),
+            .padding(vertical = AppTheme.spacing.md, horizontal = AppTheme.spacing.sm),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs)
     ) {
         AppText(
             text = plan.title,
             style = AppTheme.typography.caption,
-            color = AppTheme.colors.textSecondary,
+            color = if (selected) AppTheme.colors.onAccent.copy(alpha = 0.85f) else AppTheme.colors.textSecondary,
             maxLines = 1
         )
         AppText(
             text = plan.price,
             style = AppTheme.typography.h3,
-            color = AppTheme.colors.textPrimary,
+            color = if (selected) AppTheme.colors.onAccent else AppTheme.colors.textPrimary,
             maxLines = 1
         )
         Box(modifier = Modifier.heightIn(min = 18.dp), contentAlignment = Alignment.Center) {
@@ -662,7 +689,7 @@ private fun PlanCard(
                     text = plan.badge,
                     style = AppTheme.typography.caption,
                     fontWeight = FontWeight.SemiBold,
-                    color = AppTheme.colors.accent,
+                    color = if (selected) AppTheme.colors.onAccent else AppTheme.colors.accent,
                     maxLines = 1
                 )
             }

@@ -45,7 +45,7 @@ fun ChargingIslandMain(
     modifier: Modifier = Modifier
 ) {
     val color = batteryColorFor(percentage)
-    val glow by rememberBreathing(min = 0.55f, max = 1f, durationMillis = 1800)
+    val glowState = rememberBreathing(min = 0.55f, max = 1f, durationMillis = 1800)
 
     Row(
         modifier = modifier
@@ -58,7 +58,7 @@ fun ChargingIslandMain(
             glyph = if (isLowBattery) AppleGlyph.Battery else AppleGlyph.Power,
             tint = color,
             size = 13.dp,
-            modifier = Modifier.graphicsLayer { alpha = if (isLowBattery) 1f else glow }
+            modifier = Modifier.graphicsLayer { alpha = if (isLowBattery) 1f else glowState.value }
         )
         AppText(
             text = "$percentage%",

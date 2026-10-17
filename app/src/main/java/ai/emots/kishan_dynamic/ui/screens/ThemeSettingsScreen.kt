@@ -58,13 +58,15 @@ fun ThemeSettingsScreen(
         PremiumFeaturePolicy.THEME_SETTINGS,
         isProActive
     )
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Theme",
-            subtitle = "Choose the atmosphere for every screen",
-            onBack = onBack
-        )
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Theme",
+                subtitle = "Choose the atmosphere for every screen",
+                onBack = onBack
+            )
+        }
+    ) {
 
         AppSectionSpacer()
         AppSectionTitle("Preview")

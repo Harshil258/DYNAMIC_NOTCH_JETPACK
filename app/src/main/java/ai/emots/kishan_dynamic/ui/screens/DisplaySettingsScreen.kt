@@ -24,11 +24,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
-import ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicy
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
+import ai.emots.kishan_dynamic.ui.components.IslandColorPicker
 import ai.emots.kishan_dynamic.ui.components.IslandDemoState
+import ai.emots.kishan_dynamic.ui.components.PrecisePixelControl
 import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppCard
@@ -38,6 +39,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
 import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppSegmented
 import ai.emots.kishan_dynamic.ui.kit.AppSlider
+import ai.emots.kishan_dynamic.ui.kit.AppToggleRow
 import ai.emots.kishan_dynamic.ui.kit.AppTopBar
 import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
@@ -52,8 +54,6 @@ fun DisplaySettingsScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val preferences = remember { AuroraPreferences(context) }
-    val isProActive by preferences.isProActive.collectAsState(initial = false)
-    val horizontalOffsetEnabled = PremiumFeaturePolicy.horizontalOffsetEnabled(isProActive)
 
     val savedVerticalOffset by preferences.verticalOffset.collectAsState(
         initial = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP
@@ -64,6 +64,13 @@ fun DisplaySettingsScreen(
     val savedWidthScale by preferences.widthScale.collectAsState(
         initial = AuroraPreferences.DEFAULT_WIDTH_SCALE
     )
+    val savedNotchFlatTop by preferences.notchFlatTop.collectAsState(initial = false)
+    val savedNotchBgArgb by preferences.notchBackgroundArgb.collectAsState(initial = 0xFF000000.toInt())
+    val savedNotchFgArgb by preferences.notchForegroundArgb.collectAsState(initial = 0xFFFFFFFF.toInt())
+    val savedIdleAutoHide by preferences.idleAutoHideEnabled.collectAsState(initial = false)
+    val savedIdleTimeout by preferences.idleAutoHideTimeoutSeconds.collectAsState(initial = 10)
+    val savedCutoutMode by preferences.cameraCutoutMode.collectAsState(initial = false)
+    val savedCutoutSize by preferences.cutoutSizePx.collectAsState(initial = 80)
 
     var verticalOffset by remember(savedVerticalOffset) {
         mutableFloatStateOf(savedVerticalOffset.toFloat())
@@ -76,18 +83,20 @@ fun DisplaySettingsScreen(
     }
     var selectedCutoutIndex by remember { mutableIntStateOf(1) }
 
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Notch alignment",
-            subtitle = "Fit the island around your camera cutout",
-            onBack = onBack
-        )
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Notch alignment",
+                subtitle = "Fit the island around your camera cutout",
+                onBack = onBack
+            )
+        }
+    ) {
 
         // -------------------------------------------------------------------
-        // Alignment stage: a simulated top-of-screen with a real punch hole.
+        // 1. Alignment stage: simulated punch hole with real-time feedback
         // -------------------------------------------------------------------
-        AppSectionTitle("Preview")
+        AppSectionTitle("Live Notch Preview")
         AppCard(padding = AppTheme.spacing.md) {
             Box(
                 modifier = Modifier
@@ -101,7 +110,7 @@ fun DisplaySettingsScreen(
                         RoundedCornerShape(AppTheme.radius.lg)
                     )
             ) {
-                // Simulated camera punch hole.
+                // Simulated camera punch hole
                 Box(
                     modifier = Modifier
                         .align(
@@ -111,7 +120,10 @@ fun DisplaySettingsScreen(
                                 else -> Alignment.TopCenter
                             }
                         )
-                        .offset(x = if (selectedCutoutIndex == 1) 0.dp else 22.dp * (if (selectedCutoutIndex == 0) 1 else -1), y = 14.dp)
+                        .offset(
+                            x = if (selectedCutoutIndex == 1) 0.dp else 22.dp * (if (selectedCutoutIndex == 0) 1 else -1),
+                            y = 14.dp
+                        )
                         .size(13.dp)
                         .clip(CircleShape)
                         .background(AppTheme.colors.textPrimary.copy(alpha = 0.25f))
@@ -120,10 +132,10 @@ fun DisplaySettingsScreen(
                 Box(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                    .offset(
-                        x = if (horizontalOffsetEnabled) horizontalOffset.dp else AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP.dp,
-                        y = verticalOffset.dp
-                    )
+                        .offset(
+                            x = horizontalOffset.dp,
+                            y = verticalOffset.dp
+                        )
                 ) {
                     DynamicIslandPill(
                         state = IslandDemoState.Minimal,
@@ -134,7 +146,7 @@ fun DisplaySettingsScreen(
 
             Spacer(modifier = Modifier.height(AppTheme.spacing.md))
             AppText(
-                text = "Adjust until the pill sits neatly over your camera.",
+                text = "Adjust the sliders and steppers until the pill sits perfectly around your camera cutout.",
                 style = AppTheme.typography.caption,
                 color = AppTheme.colors.textTertiary
             )
@@ -142,6 +154,9 @@ fun DisplaySettingsScreen(
 
         AppSectionSpacer()
 
+        // -------------------------------------------------------------------
+        // 2. Camera Cutout Position
+        // -------------------------------------------------------------------
         AppSectionTitle("Camera position")
         AppCard(modifier = Modifier.appReveal(1)) {
             AppSegmented(
@@ -153,40 +168,60 @@ fun DisplaySettingsScreen(
 
         AppSectionSpacer()
 
-        AppSectionTitle("Fine tuning")
+        // -------------------------------------------------------------------
+        // 3. Notch Style (Normal vs Monobrow)
+        // -------------------------------------------------------------------
+        AppSectionTitle("Notch shape")
         AppCard(modifier = Modifier.appReveal(2)) {
-            AppSlider(
+            AppSegmented(
+                options = listOf("Normal (Capsule)", "Monobrow (Flat Top)"),
+                selectedIndex = if (savedNotchFlatTop) 1 else 0,
+                onOptionSelected = { index ->
+                    scope.launch { preferences.setNotchFlatTop(index == 1) }
+                }
+            )
+        }
+
+        AppSectionSpacer()
+
+        // -------------------------------------------------------------------
+        // 4. Precision Pixel Controls (100% Free Basic Calibration)
+        // -------------------------------------------------------------------
+        AppSectionTitle("Precision alignment")
+        AppCard(modifier = Modifier.appReveal(3)) {
+            PrecisePixelControl(
                 title = "Distance from top",
-                value = verticalOffset,
-                valueRange = -10f..60f,
-                valueFormatter = { "${it.roundToInt()} dp" },
-                onValueChange = { value ->
-                    verticalOffset = value
-                    scope.launch { preferences.setVerticalOffset(value.roundToInt()) }
+                value = verticalOffset.roundToInt(),
+                range = -20..80,
+                unit = "dp",
+                onChange = { value ->
+                    verticalOffset = value.toFloat()
+                    scope.launch { preferences.setVerticalOffset(value) }
                 }
             )
-            Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
-            AppSlider(
+
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+            PrecisePixelControl(
                 title = "Horizontal offset",
-                value = horizontalOffset,
-                valueRange = -200f..200f,
-                enabled = horizontalOffsetEnabled,
-                trailingLabel = if (!horizontalOffsetEnabled) "PRO" else null,
-                onLockedInteraction = onNavigateToPremium,
-                valueFormatter = { "${it.roundToInt()} dp" },
-                onValueChange = { value ->
-                    horizontalOffset = value
-                    scope.launch { preferences.setHorizontalOffset(value.roundToInt()) }
+                value = horizontalOffset.roundToInt(),
+                range = -200..200,
+                unit = "dp",
+                onChange = { value ->
+                    horizontalOffset = value.toFloat()
+                    scope.launch { preferences.setHorizontalOffset(value) }
                 }
             )
-            Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
-            AppSlider(
+
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+            PrecisePixelControl(
                 title = "Island width",
-                value = widthScale,
-                valueRange = 80f..120f,
-                valueFormatter = { "${it.roundToInt()}%" },
-                onValueChange = { value ->
-                    widthScale = value
+                value = widthScale.roundToInt(),
+                range = 70..140,
+                unit = "%",
+                onChange = { value ->
+                    widthScale = value.toFloat()
                     scope.launch { preferences.setWidthScale(value / 100f) }
                 }
             )
@@ -194,6 +229,91 @@ fun DisplaySettingsScreen(
 
         AppSectionSpacer()
 
+        // -------------------------------------------------------------------
+        // 5. Island Colors
+        // -------------------------------------------------------------------
+        AppSectionTitle("Island colors")
+        AppCard(modifier = Modifier.appReveal(4)) {
+            IslandColorPicker(
+                title = "Background color",
+                argb = savedNotchBgArgb,
+                onSave = { color ->
+                    scope.launch { preferences.setNotchBackgroundArgb(color) }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
+
+            IslandColorPicker(
+                title = "Foreground / Text color",
+                argb = savedNotchFgArgb,
+                onSave = { color ->
+                    scope.launch { preferences.setNotchForegroundArgb(color) }
+                }
+            )
+        }
+
+        AppSectionSpacer()
+
+        // -------------------------------------------------------------------
+        // 6. Auto-Hide & Camera Cutout Mode
+        // -------------------------------------------------------------------
+        AppSectionTitle("Display behavior")
+        AppCard(modifier = Modifier.appReveal(5)) {
+            AppToggleRow(
+                title = "Auto-hide when idle",
+                subtitle = "Hide notch when there is no active notification or media",
+                glyph = AppleGlyph.Moon,
+                checked = savedIdleAutoHide,
+                onCheckedChange = { checked ->
+                    scope.launch { preferences.setIdleAutoHideEnabled(checked) }
+                }
+            )
+
+            if (savedIdleAutoHide) {
+                Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+                AppSlider(
+                    title = "Auto-hide delay",
+                    value = savedIdleTimeout.toFloat(),
+                    valueRange = 5f..30f,
+                    valueFormatter = { "${it.roundToInt()}s" },
+                    onValueChange = { value ->
+                        scope.launch { preferences.setIdleAutoHideTimeoutSeconds(value.roundToInt()) }
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+            AppToggleRow(
+                title = "Camera cutout alignment mode",
+                subtitle = "Compress into a circular dot centered on camera hole",
+                glyph = AppleGlyph.Camera,
+                checked = savedCutoutMode,
+                onCheckedChange = { checked ->
+                    scope.launch { preferences.setCameraCutoutMode(checked) }
+                }
+            )
+
+            if (savedCutoutMode) {
+                Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+                PrecisePixelControl(
+                    title = "Cutout dot size",
+                    value = savedCutoutSize,
+                    range = 40..140,
+                    unit = "px",
+                    onChange = { value ->
+                        scope.launch { preferences.setCutoutSizePx(value) }
+                    }
+                )
+            }
+        }
+
+        AppSectionSpacer()
+
+        // -------------------------------------------------------------------
+        // 7. Reset to Defaults
+        // -------------------------------------------------------------------
         AppButton(
             text = "Reset to defaults",
             glyph = AppleGlyph.Reset,
@@ -204,14 +324,10 @@ fun DisplaySettingsScreen(
                 widthScale = 100f
                 selectedCutoutIndex = 1
                 scope.launch {
-                    preferences.setVerticalOffset(AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP)
-                    if (horizontalOffsetEnabled) {
-                        preferences.setHorizontalOffset(AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP)
-                    }
-                    preferences.setWidthScale(AuroraPreferences.DEFAULT_WIDTH_SCALE)
+                    preferences.resetNotchDisplayToDefaults()
                 }
             }
         )
-        AppFootnote("These values are applied to the overlay immediately.")
+        AppFootnote("All basic notch display & alignment controls are 100% free.")
     }
 }

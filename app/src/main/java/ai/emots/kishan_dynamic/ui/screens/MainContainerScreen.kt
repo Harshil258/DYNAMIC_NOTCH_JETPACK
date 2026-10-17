@@ -2,6 +2,7 @@ package ai.emots.kishan_dynamic.ui.screens
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -50,13 +52,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker
+import ai.emots.kishan_dynamic.data.analytics.ScreenDeduplicator
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
+import ai.emots.kishan_dynamic.ui.dialogs.AdLoadingDialog
 import ai.emots.kishan_dynamic.ui.dialogs.ExitConfirmationDialog
 import ai.emots.kishan_dynamic.ui.dialogs.ForceUpdateDialog
 import ai.emots.kishan_dynamic.ui.dialogs.RatingDialog
 import ai.emots.kishan_dynamic.ui.dialogs.SoftUpdateDialog
+import ai.emots.kishan_dynamic.data.premium.NativeAdConfiguration
 import ai.emots.kishan_dynamic.ui.gallery.ComponentGalleryScreen
 import ai.emots.kishan_dynamic.ui.kit.AppBackground
 import ai.emots.kishan_dynamic.ui.motion.AppMotion
@@ -96,7 +102,8 @@ enum class SubScreen {
     QuickControl,
     PermissionHub,
     ComponentGallery,
-    About
+    About,
+    Feedback
 }
 
 private data class NavTab(
@@ -146,14 +153,33 @@ fun MainContainerScreen(
     val ratingPromptRepository = remember { RatingPromptRepository(context) }
     val updateCheckRepository = remember { UpdateCheckRepository(context) }
     val preferences = remember { AuroraPreferences(context) }
+    val analyticsTracker = remember { FirebaseAnalyticsTracker(context) }
+    val screenDeduplicator = remember { ScreenDeduplicator(analyticsTracker) }
     val isProActive by preferences.isProActive.collectAsState(initial = false)
-    var selectedTab by remember { mutableIntStateOf(initialTab) }
-    var currentSubScreen by remember(openPremiumOnLaunch) {
+    val isAdFree by preferences.isAdFree.collectAsState(initial = false)
+    var selectedTab by rememberSaveable { mutableIntStateOf(initialTab) }
+    var currentSubScreen by rememberSaveable(openPremiumOnLaunch) {
         mutableStateOf<SubScreen?>(if (openPremiumOnLaunch) SubScreen.Premium else null)
     }
     var showExitDialog by remember { mutableStateOf(false) }
     var showRatingPrompt by remember { mutableStateOf(false) }
     var updateDecision by remember { mutableStateOf<UpdateDecision?>(null) }
+    var isAdLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(selectedTab, currentSubScreen) {
+        val screenName = if (currentSubScreen != null) {
+            "subscreen_${currentSubScreen!!.name.lowercase()}"
+        } else {
+            when (selectedTab) {
+                0 -> "main_tab_island"
+                1 -> "main_tab_features"
+                2 -> "main_tab_live"
+                3 -> "main_tab_settings"
+                else -> "main_tab_$selectedTab"
+            }
+        }
+        screenDeduplicator.onScreenVisible(screenName)
+    }
 
     LaunchedEffect(releaseConfigProvider) {
         releaseConfigProvider.refresh()
@@ -201,15 +227,17 @@ fun MainContainerScreen(
         val activity = context as? Activity
         scope.launch {
             val screenCount = frequencyRepository.recordScreenChange()
-            val clickCount = frequencyRepository.recordNavigationClick()
-            val shouldShow = !isProActive && InterstitialAdFrequencyPolicy.shouldShow(
+            val shouldShow = !isAdFree && InterstitialAdFrequencyPolicy.shouldShow(
                 screenCount = screenCount,
-                clickCount = clickCount,
                 screenEvery = interstitialConfiguration.screenEvery,
-                clickEvery = interstitialConfiguration.clickEvery,
-                startFromScreen = interstitialConfiguration.startFromScreen
+                startFromScreen = interstitialConfiguration.startFromScreen,
+                lastShownMillis = frequencyRepository.lastShownMillis()
             )
             if (shouldShow && activity != null) {
+                frequencyRepository.recordAdShown()
+                isAdLoading = true
+                delay(650L)
+                isAdLoading = false
                 interstitialGateway.showIfReady(activity) { selectedTab = nextTab }
             } else {
                 selectedTab = nextTab
@@ -248,10 +276,14 @@ fun MainContainerScreen(
     }
 
     AppBackground {
+        val reduceMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
         AnimatedContent(
             targetState = currentSubScreen,
             transitionSpec = {
-                if (targetState != null) {
+                if (reduceMotion) {
+                    androidx.compose.animation.EnterTransition.None togetherWith
+                        androidx.compose.animation.ExitTransition.None
+                } else if (targetState != null) {
                     AppMotion.pushEnter() togetherWith AppMotion.pushExit()
                 } else {
                     AppMotion.popEnter() togetherWith AppMotion.popExit()
@@ -309,14 +341,21 @@ fun MainContainerScreen(
                 SubScreen.About -> AboutScreen(
                     onBack = { currentSubScreen = null },
                     onRate = { openPlayStore(context) },
-                    onShare = { context.shareAuroraApp() }
+                    onShare = { context.shareAuroraApp() },
+                    onNavigateFeedback = { currentSubScreen = SubScreen.Feedback }
+                )
+                SubScreen.Feedback -> FeedbackScreen(
+                    onBack = { currentSubScreen = null }
                 )
 
                 null -> Box(modifier = Modifier.fillMaxSize()) {
                     AnimatedContent(
                         targetState = selectedTab,
                         transitionSpec = {
-                            AppMotion.fadeThroughEnter() togetherWith AppMotion.fadeThroughExit()
+                            if (reduceMotion) {
+                                androidx.compose.animation.EnterTransition.None togetherWith
+                                    androidx.compose.animation.ExitTransition.None
+                            } else AppMotion.fadeThroughEnter() togetherWith AppMotion.fadeThroughExit()
                         },
                         label = "root_tab_switch"
                     ) { tab ->
@@ -330,7 +369,8 @@ fun MainContainerScreen(
                                 onNavigateSoundSettings = { currentSubScreen = SubScreen.SoundSettings },
                                 onNavigateQuickControl = { currentSubScreen = SubScreen.QuickControl },
                                 onNavigatePermissions = { currentSubScreen = SubScreen.PermissionHub },
-                                onNavigateVault = { selectTab(3) }
+                                onNavigateVault = { selectTab(3) },
+                                onNavigateToPremium = { currentSubScreen = SubScreen.Premium }
                             )
 
                             1 -> StudioScreen(
@@ -351,6 +391,7 @@ fun MainContainerScreen(
                                 onNavigateGallery = { currentSubScreen = SubScreen.ComponentGallery },
                                 onNavigateAbout = { currentSubScreen = SubScreen.About },
                                 onNavigatePremium = { currentSubScreen = SubScreen.Premium },
+                                onNavigateFeedback = { currentSubScreen = SubScreen.Feedback },
                                 onCheckForUpdates = ::requestUpdateCheck,
                                 openPremiumOnLaunch = false,
                                 openRewardedPassOnLaunch = openRewardedPassOnLaunch,
@@ -371,13 +412,21 @@ fun MainContainerScreen(
         }
     }
 
+    AdLoadingDialog(isVisible = isAdLoading)
+
     if (showExitDialog) {
         ExitConfirmationDialog(
             onDismiss = { showExitDialog = false },
             onExit = {
                 showExitDialog = false
                 onExitRequested()
-            }
+            },
+            nativeAdConfiguration = remember(releaseConfig) {
+                NativeAdConfiguration.fromReleaseConfig(releaseConfig)
+            },
+            isProActive = isProActive,
+            canRequestAds = canRequestAds,
+            isExitNativeEnabled = releaseConfig.isExitNativeEnabled
         )
     }
     if (showRatingPrompt) {
@@ -490,7 +539,7 @@ private fun BottomNavigationDock(
                     val isSelected = selectedTab == index
                     val interaction = remember { MutableInteractionSource() }
                     val pressed by interaction.collectIsPressedAsState()
-                    val scale by animateFloatAsState(
+                    val scaleState = animateFloatAsState(
                         targetValue = if (pressed) 0.93f else 1f,
                         animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
                         label = "tab_scale"
@@ -500,7 +549,11 @@ private fun BottomNavigationDock(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxHeight()
-                            .scale(scale)
+                            .graphicsLayer {
+                                val s = scaleState.value
+                                scaleX = s
+                                scaleY = s
+                            }
                             .clip(RoundedCornerShape(AppTheme.radius.pill))
                             .background(
                                 if (isSelected) AppTheme.colors.surfaceElevated else Color.Transparent

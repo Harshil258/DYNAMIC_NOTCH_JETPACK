@@ -229,7 +229,7 @@ private fun sendFeedbackEmail(
 
     val intent = Intent(Intent.ACTION_SENDTO).apply {
         data = Uri.parse("mailto:")
-        putExtra(Intent.EXTRA_EMAIL, arrayOf("developer@auroraisland.app"))
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("suryadevelopers07@gmail.com"))
         putExtra(Intent.EXTRA_SUBJECT, subject)
         putExtra(Intent.EXTRA_TEXT, body)
     }
@@ -240,7 +240,7 @@ private fun sendFeedbackEmail(
     } catch (e: Exception) {
         val fallback = Intent(Intent.ACTION_SEND).apply {
             type = "message/rfc822"
-            putExtra(Intent.EXTRA_EMAIL, arrayOf("developer@auroraisland.app"))
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("suryadevelopers07@gmail.com"))
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_TEXT, body)
         }

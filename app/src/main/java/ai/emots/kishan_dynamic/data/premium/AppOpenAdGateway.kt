@@ -69,7 +69,11 @@ class MobileAdsAppOpenGateway(
     context: Context,
     private val configuration: AppOpenAdConfiguration,
     private val analytics: AnalyticsSink = AppAnalytics,
-    private val nowMillis: () -> Long = { System.currentTimeMillis() }
+    private val nowMillis: () -> Long = { System.currentTimeMillis() },
+    private val revenueTracker: ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker =
+        ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker(
+            ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker(context)
+        )
 ) : AutoCloseable {
     private val appContext = context.applicationContext
     private val fullscreenLease = Any()
@@ -107,12 +111,12 @@ class MobileAdsAppOpenGateway(
                     analytics.track(AnalyticsEvent("app_open_ad_loaded"))
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
                     loading = false
                     analytics.track(
                         AnalyticsEvent(
                             "app_open_ad_load_failed",
-                            mapOf("error_code" to error.code.toString())
+                            mapOf("error_code" to adError.code.toString())
                         )
                     )
                 }
@@ -185,11 +189,11 @@ class MobileAdsAppOpenGateway(
         ad.adEventCallback = object : AppOpenAdEventCallback {
             override fun onAdDismissedFullScreenContent() = complete()
 
-            override fun onAdFailedToShowFullScreenContent(error: FullScreenContentError) {
+            override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
                 analytics.track(
                     AnalyticsEvent(
                         "app_open_ad_show_failed",
-                        mapOf("error_code" to error.code.toString())
+                        mapOf("error_code" to fullScreenContentError.code.toString())
                     )
                 )
                 complete()
@@ -199,6 +203,14 @@ class MobileAdsAppOpenGateway(
             override fun onAdClicked() = Unit
             override fun onAdImpression() {
                 analytics.track(AnalyticsEvent("app_open_ad_impression"))
+            }
+            override fun onAdPaid(value: com.google.android.libraries.ads.mobile.sdk.common.AdValue) {
+                revenueTracker.trackAdRevenue(
+                    adValue = value,
+                    adFormat = "app_open",
+                    adUnitId = configuration.adUnitId,
+                    placement = "app_launch"
+                )
             }
         }
         analytics.track(AnalyticsEvent("app_open_ad_started"))

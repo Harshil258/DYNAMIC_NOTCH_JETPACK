@@ -8,6 +8,12 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.heightIn
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +48,12 @@ import ai.emots.kishan_dynamic.ui.components.IslandDemoState
 import ai.emots.kishan_dynamic.ui.kit.AppBackground
 import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.LaunchedEffect
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsEventNames
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsParamNames
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsTracker
+import ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 private data class OnboardingSlide(
@@ -54,9 +66,11 @@ private data class OnboardingSlide(
 @Composable
 fun OnboardingScreen(
     onComplete: () -> Unit = {},
-    onSkip: () -> Unit = {}
+    onSkip: () -> Unit = {},
+    analyticsTracker: AnalyticsTracker = FirebaseAnalyticsTracker(LocalContext.current)
 ) {
-    var currentPage by remember { mutableIntStateOf(0) }
+    var currentPage by rememberSaveable { mutableIntStateOf(0) }
+    BackHandler(enabled = currentPage > 0) { currentPage-- }
 
     val slides = remember {
         listOf(
@@ -84,14 +98,27 @@ fun OnboardingScreen(
     val slide = slides[currentPage]
     val isLast = currentPage == slides.lastIndex
 
+    LaunchedEffect(Unit) {
+        analyticsTracker.logEvent(AnalyticsEventNames.ONBOARDING_STARTED)
+    }
+
+    LaunchedEffect(currentPage) {
+        analyticsTracker.logEvent(
+            AnalyticsEventNames.ONBOARDING_STEP_VIEWED,
+            mapOf(
+                AnalyticsParamNames.STEP_INDEX to currentPage,
+                AnalyticsParamNames.STEP_NAME to slides[currentPage].eyebrow
+            )
+        )
+    }
+
     AppBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .widthIn(max = 640.dp)
                 .align(Alignment.TopCenter)
-                .statusBarsPadding()
-                .navigationBarsPadding()
+                .safeDrawingPadding()
                 .padding(horizontal = AppTheme.layout.screenGutter)
                 .padding(vertical = AppTheme.spacing.lg),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -121,12 +148,19 @@ fun OnboardingScreen(
 
                 Box(
                     modifier = Modifier
+                        .heightIn(min = 48.dp)
                         .clip(RoundedCornerShape(AppTheme.radius.pill))
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             enabled = !isLast,
-                            onClick = onSkip
+                            onClick = {
+                                analyticsTracker.logEvent(
+                                    AnalyticsEventNames.ONBOARDING_COMPLETED,
+                                    mapOf("skipped" to true, AnalyticsParamNames.STEP_INDEX to currentPage)
+                                )
+                                onSkip()
+                            }
                         )
                         .padding(horizontal = AppTheme.spacing.md, vertical = AppTheme.spacing.sm)
                 ) {
@@ -140,7 +174,8 @@ fun OnboardingScreen(
 
             // Stage
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState())
+                    .padding(vertical = AppTheme.spacing.lg),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -212,7 +247,7 @@ fun OnboardingScreen(
                             .size(width = dotWidth, height = 8.dp)
                             .clip(CircleShape)
                             .background(
-                                if (isSelected) AppTheme.colors.textPrimary
+                                if (isSelected) AppTheme.colors.auroraCyan
                                 else AppTheme.colors.surfaceElevated
                             )
                     )
@@ -224,9 +259,24 @@ fun OnboardingScreen(
             AppButton(
                 text = if (isLast) "Get started" else "Continue",
                 glyph = if (isLast) AppleGlyph.Sparkles else AppleGlyph.ChevronRight,
-                style = AppButtonStyle.Primary,
+                style = if (isLast) AppButtonStyle.AuroraPro else AppButtonStyle.Primary,
                 onClick = {
-                    if (isLast) onComplete() else currentPage++
+                    analyticsTracker.logEvent(
+                        AnalyticsEventNames.ONBOARDING_STEP_COMPLETED,
+                        mapOf(
+                            AnalyticsParamNames.STEP_INDEX to currentPage,
+                            AnalyticsParamNames.STEP_NAME to slide.eyebrow
+                        )
+                    )
+                    if (isLast) {
+                        analyticsTracker.logEvent(
+                            AnalyticsEventNames.ONBOARDING_COMPLETED,
+                            mapOf("skipped" to false, AnalyticsParamNames.STEP_INDEX to currentPage)
+                        )
+                        onComplete()
+                    } else {
+                        currentPage++
+                    }
                 }
             )
         }

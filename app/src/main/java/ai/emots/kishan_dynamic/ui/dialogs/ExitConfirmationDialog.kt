@@ -11,11 +11,19 @@ import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.kit.AppDialog
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
-/** A calm confirmation for leaving the root app surface. */
+import ai.emots.kishan_dynamic.data.premium.NativeAdConfiguration
+import ai.emots.kishan_dynamic.ui.components.NativeAdCard
+import ai.emots.kishan_dynamic.ui.components.NativeAdSize
+
+/** A calm confirmation for leaving the root app surface, supporting optional exit native ad. */
 @Composable
 fun ExitConfirmationDialog(
     onDismiss: () -> Unit,
-    onExit: () -> Unit
+    onExit: () -> Unit,
+    nativeAdConfiguration: NativeAdConfiguration? = null,
+    isProActive: Boolean = false,
+    canRequestAds: Boolean = false,
+    isExitNativeEnabled: Boolean = false
 ) {
     AppDialog(
         onDismiss = onDismiss,
@@ -29,6 +37,16 @@ fun ExitConfirmationDialog(
             style = AppTheme.typography.body,
             color = AppTheme.colors.textSecondary
         )
+        if (isExitNativeEnabled && !isProActive && nativeAdConfiguration != null) {
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+            NativeAdCard(
+                configuration = nativeAdConfiguration,
+                isProActive = isProActive,
+                canRequestAds = canRequestAds,
+                placement = "exit_dialog",
+                size = NativeAdSize.Medium
+            )
+        }
         Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
         AppButton(
             text = "Stay in app",

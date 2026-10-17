@@ -42,14 +42,14 @@ class NotificationReducer {
             is NotificationEvent.Posted -> {
                 val incoming = event.notification
                 if (incoming.isGroupSummary && state.notifications.any { existing ->
-                        !existing.isGroupSummary && existing.groupKey == incoming.groupKey
+                        !existing.isGroupSummary && sameSourceGroup(existing, incoming)
                     }
                 ) {
                     return state
                 }
                 val sourceNotifications = if (!incoming.isGroupSummary) {
                     state.notifications.filterNot { existing ->
-                        existing.isGroupSummary && existing.groupKey == incoming.groupKey
+                        existing.isGroupSummary && sameSourceGroup(existing, incoming)
                     }
                 } else {
                     state.notifications
@@ -85,14 +85,18 @@ class NotificationReducer {
                     sortQueue(combined)
                 }
 
-                val requestedActiveId = if (event.isSilentUpdate && state.activeNotificationId != null) {
+                val requestedActiveId = if (existingIndex != -1 && state.activeNotificationId != null) {
+                    // An update is not a new selection. Progress/content changes
+                    // must not move the user to a different source.
+                    state.activeNotificationId
+                } else if (event.isSilentUpdate && state.activeNotificationId != null) {
                     // If silent update (e.g. progress tick), preserve currently active notification
                     state.activeNotificationId
                 } else if (existingIndex != -1 && incoming.isOngoing && existingIndex != 0) {
                     // Ongoing progress on non-active item keeps current active item
                     state.activeNotificationId ?: incoming.id
                 } else {
-                    incoming.id
+                    updatedList.firstOrNull()?.id
                 }
 
                 // Keep the queue bounded without evicting the page being read or
@@ -148,10 +152,14 @@ class NotificationReducer {
     private fun sortQueue(list: List<NotificationInfo>): List<NotificationInfo> {
         return list.sortedWith(
             compareByDescending<NotificationInfo> { it.isPriority }
+                .thenByDescending { it.importance }
                 .thenByDescending { it.isOngoing }
                 .thenByDescending { it.timestamp }
         )
     }
+
+    private fun sameSourceGroup(a: NotificationInfo, b: NotificationInfo): Boolean =
+        a.packageName == b.packageName && a.groupKey == b.groupKey
 
     private fun capQueue(
         notifications: List<NotificationInfo>,
@@ -159,9 +167,10 @@ class NotificationReducer {
     ): List<NotificationInfo> {
         if (notifications.size <= MAX_NOTIFICATIONS) return notifications
 
-        val protectedIds = notifications
-            .filter { it.isOngoing || it.id == protectedActiveId }
-            .mapTo(linkedSetOf()) { it.id }
+        val protectedIds = linkedSetOf<String>()
+        notifications.firstOrNull { it.id == protectedActiveId }?.let { protectedIds += it.id }
+        notifications.filter { it.isOngoing }.take(MAX_NOTIFICATIONS - protectedIds.size)
+            .forEach { protectedIds += it.id }
         val remainingCapacity = (MAX_NOTIFICATIONS - protectedIds.size).coerceAtLeast(0)
         notifications.asSequence()
             .filterNot { it.id in protectedIds }
@@ -213,23 +222,9 @@ class NotificationReducer {
         existing: NotificationInfo,
         incoming: NotificationInfo
     ): NotificationInfo {
-        val mergedImage = incoming.imagePath ?: existing.imagePath
-        val mergedTitle = incoming.title.ifBlank { existing.title }
-        val mergedText = incoming.text.ifBlank { existing.text }
-        val mergedExpandedText = incoming.expandedText.ifBlank { existing.expandedText }
-        val mergedSubText = incoming.subText ?: existing.subText
-        val mergedInboxLines = if (incoming.inboxLines.isNotEmpty()) incoming.inboxLines else existing.inboxLines
-
-        return incoming.copy(
-            id = incoming.id,
-            title = mergedTitle,
-            text = mergedText,
-            expandedText = mergedExpandedText,
-            subText = mergedSubText,
-            inboxLines = mergedInboxLines,
-            imagePath = mergedImage,
-            actions = incoming.actions
-        )
+        // A full Android repost is authoritative, including fields deliberately
+        // removed/redacted by the source. Never resurrect private old content.
+        return incoming
     }
 
     companion object {

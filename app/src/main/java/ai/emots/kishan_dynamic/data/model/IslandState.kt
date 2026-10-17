@@ -45,12 +45,15 @@ data class NotificationInfo(
     val chronometerCountDown: Boolean = false,
     val channelId: String = "",
     val imagePath: String? = null,
+    val picturePath: String? = null,
     val template: String = "",
     /** True unless Android explicitly marks this notification public on the lock screen. */
     val isSensitive: Boolean = true,
     /** True when the source notification exposes a tap destination. */
     val hasContentIntent: Boolean = false,
-    val actions: List<NotificationActionInfo> = emptyList()
+    val actions: List<NotificationActionInfo> = emptyList(),
+    /** Android channel/ranking importance; legacy sources default to DEFAULT. */
+    val importance: Int = 3
 )
 
 @Immutable
@@ -69,6 +72,7 @@ enum class RingerModeType {
 /**
  * Universal Sealed Hierarchy representing every Dynamic Island State.
  */
+@Immutable
 sealed class IslandState {
     object Hidden : IslandState()
     object Minimal : IslandState()
@@ -103,12 +107,15 @@ sealed class IslandState {
         val declineActionId: String? = null
     ) : IslandState()
 
+    @Immutable
     data class Notification(
         val notifications: List<NotificationInfo>,
         val isExpanded: Boolean = false,
-        val activeIndex: Int = 0
+        val activeIndex: Int = 0,
+        val expandedByUser: Boolean = isExpanded
     ) : IslandState()
 
+    @Immutable
     data class NotificationWithMusic(
         val notifications: List<NotificationInfo>,
         val track: MusicTrack,
@@ -154,3 +161,34 @@ sealed class IslandState {
         val activity: LiveActivityInfo
     ) : IslandState()
 }
+
+/** Explicit Presentation Modes for the iOS Dynamic Island state architecture. */
+enum class IslandPresentationMode {
+    HIDDEN,
+    COMPACT,
+    EXPANDED
+}
+
+val IslandState.presentationMode: IslandPresentationMode
+    get() = when (this) {
+        is IslandState.Hidden -> IslandPresentationMode.HIDDEN
+        is IslandState.ActionControl,
+        is IslandState.IncomingCall,
+        is IslandState.CallSummary,
+        is IslandState.PremiumExpiry -> IslandPresentationMode.EXPANDED
+        is IslandState.Music -> if (isExpanded) IslandPresentationMode.EXPANDED else IslandPresentationMode.COMPACT
+        is IslandState.OngoingCall -> if (isExpanded) IslandPresentationMode.EXPANDED else IslandPresentationMode.COMPACT
+        is IslandState.Notification -> if (isExpanded) IslandPresentationMode.EXPANDED else IslandPresentationMode.COMPACT
+        is IslandState.RingerMode -> if (isExpanded) IslandPresentationMode.EXPANDED else IslandPresentationMode.COMPACT
+        is IslandState.LiveActivity -> if (activity.isExpanded) IslandPresentationMode.EXPANDED else IslandPresentationMode.COMPACT
+        else -> IslandPresentationMode.COMPACT
+    }
+
+/** True when this state represents a genuinely active background task. */
+val IslandState.isOngoing: Boolean
+    get() = when (this) {
+        is IslandState.Music,
+        is IslandState.OngoingCall -> true
+        is IslandState.LiveActivity -> !activity.kind.isTransientAlert
+        else -> false
+    }

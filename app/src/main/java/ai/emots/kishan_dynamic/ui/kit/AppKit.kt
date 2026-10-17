@@ -30,6 +30,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.material3.Scaffold
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +47,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -125,22 +136,87 @@ fun AppScreen(
     modifier: Modifier = Modifier,
     bottomInset: Dp = 0.dp,
     horizontalGutter: Dp? = null,
+    topBar: (@Composable () -> Unit)? = null,
+    bottomAction: (@Composable ColumnScope.() -> Unit)? = null,
+    scrollable: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val gutter = horizontalGutter ?: AppTheme.layout.screenGutter
     AppBackground(modifier = modifier) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .widthIn(max = 720.dp)
-                .align(Alignment.TopCenter)
-                .verticalScroll(rememberScrollState())
-                .statusBarsPadding()
-                .navigationBarsPadding()
-                .padding(horizontal = gutter)
-                .padding(bottom = bottomInset + AppTheme.spacing.xxxl),
-            content = content
-        )
+        Scaffold(
+            containerColor = Color.Transparent,
+            contentWindowInsets = WindowInsets.safeDrawing,
+            modifier = Modifier.imePadding(),
+            topBar = {
+                if (topBar != null) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(AppTheme.colors.background)
+                            .windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(
+                                    WindowInsetsSides.Horizontal + WindowInsetsSides.Top
+                                )
+                            )
+                    ) {
+                        Box(
+                            Modifier
+                                .align(Alignment.Center)
+                                .widthIn(max = 720.dp)
+                                .fillMaxWidth()
+                                .padding(horizontal = gutter)
+                        ) {
+                            topBar()
+                        }
+                    }
+                }
+            },
+            bottomBar = {
+                if (bottomAction != null) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(AppTheme.colors.background)
+                            .border(width = 0.5.dp, color = AppTheme.colors.border)
+                    ) {
+                        Column(
+                            Modifier.align(Alignment.TopCenter)
+                                .widthIn(max = 720.dp).fillMaxWidth()
+                                .windowInsetsPadding(WindowInsets.safeDrawing.only(
+                                    WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
+                                ))
+                                .padding(horizontal = gutter, vertical = AppTheme.spacing.md),
+                            content = bottomAction
+                        )
+                    }
+                }
+            }
+        ) { innerPadding ->
+            Box(Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)) {
+                if (scrollable) {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .widthIn(max = 720.dp)
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = gutter)
+                            .padding(bottom = bottomInset + AppTheme.spacing.xxxl),
+                        content = content
+                    )
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .widthIn(max = 720.dp)
+                            .fillMaxSize()
+                            .padding(horizontal = gutter)
+                            .padding(bottom = bottomInset + AppTheme.spacing.xxxl),
+                        content = content
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -240,19 +316,24 @@ fun AppIconButton(
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (pressed) 0.90f else 1f,
         animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
         label = "icon_button_scale"
     )
     Box(
         modifier = modifier
-            .size(44.dp)
-            .scale(scale)
+            .size(48.dp)
+            .semantics { if (contentDescription != null) this.contentDescription = contentDescription }
+            .graphicsLayer {
+                val s = scaleState.value
+                scaleX = s
+                scaleY = s
+            }
             .clip(CircleShape)
             .background(AppTheme.colors.surface)
             .border(0.5.dp, AppTheme.colors.border, CircleShape)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+            .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         AppleIcon(
@@ -299,7 +380,7 @@ fun AppCard(
     val shape = RoundedCornerShape(AppTheme.radius.card)
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
-    val scale by animateFloatAsState(
+    val scaleState = animateFloatAsState(
         targetValue = if (pressed && onClick != null) 0.99f else 1f,
         animationSpec = spring(dampingRatio = 0.8f, stiffness = Spring.StiffnessMedium),
         label = "card_scale"
@@ -308,7 +389,11 @@ fun AppCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .scale(scale)
+            .graphicsLayer {
+                val s = scaleState.value
+                scaleX = s
+                scaleY = s
+            }
             .shadow(
                 elevation = AppTheme.elevation.card,
                 shape = shape,

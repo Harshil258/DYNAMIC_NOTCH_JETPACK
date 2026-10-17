@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
@@ -34,9 +35,9 @@ import ai.emots.kishan_dynamic.ui.theme.AppTheme
 /** Branded startup surface shown while persisted routing is being resolved. */
 @Composable
 fun StartupSplashScreen() {
-    val transition = rememberInfiniteTransition(label = "startup_splash")
-    val pulse by transition.animateFloat(
-        initialValue = 0.94f,
+    val infiniteTransition = rememberInfiniteTransition(label = "startup_splash")
+    val pulseState = infiniteTransition.animateFloat(
+        initialValue = 0.96f,
         targetValue = 1.04f,
         animationSpec = infiniteRepeatable(
             animation = tween(1_200, easing = FastOutSlowInEasing),
@@ -54,7 +55,11 @@ fun StartupSplashScreen() {
             Box(
                 modifier = Modifier
                     .size(88.dp)
-                    .scale(pulse)
+                    .graphicsLayer {
+                        val s = pulseState.value
+                        scaleX = s
+                        scaleY = s
+                    }
                     .shadow(
                         elevation = AppTheme.elevation.raised,
                         shape = RoundedCornerShape(AppTheme.radius.xl),

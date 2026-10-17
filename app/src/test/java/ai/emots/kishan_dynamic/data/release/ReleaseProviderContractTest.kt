@@ -190,4 +190,83 @@ class ReleaseProviderContractTest {
             )
         )
     }
+
+    @Test
+    fun testDecodingReferenceProjectAdsDetailsNewPayload() {
+        val referenceJson = """
+        {
+          "adsdetailsnew": {
+            "isAdsEnabled": true,
+            "isTestModeEnabled": true,
+            "admobBannerId": "ca-app-pub-4592759972304958/9884587664",
+            "admobInterstitialId": "ca-app-pub-4592759972304958/9483422409",
+            "admobNativeId": "ca-app-pub-4592759972304958/2528741163",
+            "admobAppOpenId": "ca-app-pub-4592759972304958/4437207434",
+            "admobRewardedId": "ca-app-pub-4592759972304958/7864434685",
+            "isResumeAdEnabled": true,
+            "isSplashInterstitialEnabled": true,
+            "isBackInterstitialEnabled": true,
+            "isExitNativeEnabled": true,
+            "clickCounterForInterstitial": 30,
+            "screenCounterForInterstitial": 2,
+            "adsStartFromScreen": 1,
+            "isPreloadInterstitial": true,
+            "isPreloadNative": true,
+            "isPreloadBanner": true,
+            "isPreloadAppOpen": true,
+            "bigNativePercentage": 80,
+            "premium_config": {
+              "isPremiumEnabled": true,
+              "weeklyPlanId": "dynamic_weekly",
+              "monthlyPlanId": "dynamic_monthly",
+              "yearlyPlanId": "dynamic_yearly",
+              "lifetimePlanId": "dynamic_lifetime",
+              "features": [
+                "quick_control",
+                "theme_settings",
+                "sound_settings"
+              ],
+              "trustSection": {
+                "title": "Trusted by Thousands",
+                "stat1Value": "1.1K+",
+                "stat1Label": "Happy Users",
+                "stat2Value": "4.9+",
+                "stat2Label": "Ratings",
+                "stat3Value": "30+",
+                "stat3Label": "Reviews",
+                "isVisible": true
+              }
+            }
+          }
+        }
+        """.trimIndent()
+
+        val config = ReleaseRuntimeConfigDecoder.decode(referenceJson)
+
+        assertTrue(config.adsEnabled)
+        assertTrue(config.adsTestMode)
+        assertEquals("ca-app-pub-4592759972304958/9884587664", config.bannerAdUnitId)
+        assertEquals("ca-app-pub-4592759972304958/9483422409", config.interstitialAdUnitId)
+        assertEquals("ca-app-pub-4592759972304958/2528741163", config.nativeAdUnitId)
+        assertEquals("ca-app-pub-4592759972304958/4437207434", config.appOpenAdUnitId)
+        assertEquals("ca-app-pub-4592759972304958/7864434685", config.rewardedAdUnitId)
+        assertTrue(config.resumeAdEnabled)
+        assertTrue(config.isSplashInterstitialEnabled)
+        assertTrue(config.isBackInterstitialEnabled)
+        assertTrue(config.isExitNativeEnabled)
+        assertEquals(30, config.clickCounterForInterstitial)
+        assertEquals(2, config.screenCounterForInterstitial)
+        assertEquals(1, config.adsStartFromScreen)
+        assertTrue(config.isPreloadInterstitial)
+        assertTrue(config.isPreloadNative)
+        assertTrue(config.isPreloadBanner)
+        assertTrue(config.preloadAppOpen)
+        assertEquals(80, config.bigNativePercentage)
+        assertTrue(config.premiumEnabled)
+        assertEquals("dynamic_weekly", config.weeklyPlanId)
+        assertEquals(listOf("quick_control", "theme_settings", "sound_settings"), config.premiumFeatures)
+        assertTrue(config.trustSectionVisible)
+        assertEquals("Trusted by Thousands", config.trustSectionTitle)
+        assertEquals("1.1K+", config.trustStat1Value)
+    }
 }

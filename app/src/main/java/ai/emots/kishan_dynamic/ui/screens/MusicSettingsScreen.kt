@@ -60,19 +60,23 @@ fun MusicSettingsScreen(
         .indexOfFirst { savedWaveform.contains(it, ignoreCase = true) }
         .coerceAtLeast(0)
 
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Music & media",
-            subtitle = "Album art, visualiser and controls",
-            onBack = onBack
-        )
+    val stageTargetHeight = if (isExpandedPreview && !compactMusicControlsEnabled) 238.dp else 116.dp
 
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Music & media",
+                subtitle = "Album art, visualiser and controls",
+                onBack = onBack
+            )
+        }
+    ) {
         AppStage(
             modifier = Modifier.appReveal(1),
             caption = if (compactMusicControlsEnabled) "Compact controls enabled"
             else if (isExpandedPreview) "Tap the island to collapse" else "Tap the island to expand",
-            minHeight = 200.dp
+            targetHeight = stageTargetHeight,
+            showStatusBar = !isExpandedPreview || compactMusicControlsEnabled
         ) {
             DynamicIslandPill(
                 state = if (isExpandedPreview && !compactMusicControlsEnabled) IslandDemoState.MusicExpanded

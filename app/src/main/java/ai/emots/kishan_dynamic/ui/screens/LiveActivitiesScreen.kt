@@ -43,6 +43,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +68,7 @@ import ai.emots.kishan_dynamic.ui.kit.AppScreen
 import ai.emots.kishan_dynamic.ui.kit.AppSectionSpacer
 import ai.emots.kishan_dynamic.ui.kit.AppSectionTitle
 import ai.emots.kishan_dynamic.ui.kit.AppSegmented
+import ai.emots.kishan_dynamic.ui.kit.AppScrollableTabs
 import ai.emots.kishan_dynamic.ui.kit.AppSlider
 import ai.emots.kishan_dynamic.ui.kit.AppStage
 import ai.emots.kishan_dynamic.ui.kit.AppStatusPill
@@ -301,6 +303,26 @@ fun LiveActivitiesScreen() {
         else -> catalogDemoState(selectedActivityIndex - 6)
     }
 
+    val isCompactPresentation = when (activeIslandState) {
+        IslandDemoState.MusicCompact,
+        IslandDemoState.SportsCompact,
+        IslandDemoState.FlightCompact,
+        IslandDemoState.TimerCompact,
+        IslandDemoState.NavigationCompact,
+        IslandDemoState.Idle,
+        IslandDemoState.Minimal -> true
+        else -> false
+    }
+
+    val stageTargetHeight = if (isCompactPresentation) 116.dp else when (activeIslandState) {
+        IslandDemoState.MusicExpanded -> 238.dp
+        IslandDemoState.DeliveryExpanded,
+        IslandDemoState.FlightExpanded,
+        IslandDemoState.SportsExpanded -> 198.dp
+        IslandDemoState.ColorOptions -> 248.dp
+        else -> 168.dp
+    }
+
     AppScreen(bottomInset = BottomDockInset) {
         AppLargeTitle(
             modifier = Modifier.appReveal(0),
@@ -308,7 +330,7 @@ fun LiveActivitiesScreen() {
             subtitle = "Ongoing events that stay pinned to your island."
         )
 
-        AppSegmented(
+        AppScrollableTabs(
             options = activityTypes,
             selectedIndex = selectedActivityIndex,
             onOptionSelected = { selectedActivityIndex = it }
@@ -319,7 +341,8 @@ fun LiveActivitiesScreen() {
         AppStage(
             modifier = Modifier.appReveal(1),
             caption = if (selectedActivityIndex == 0) "Tap the island to play or pause" else null,
-            minHeight = 200.dp
+            targetHeight = stageTargetHeight,
+            showStatusBar = isCompactPresentation
         ) {
             DynamicIslandPill(
                 state = activeIslandState,
@@ -531,7 +554,7 @@ private fun MusicActivityCard(
     onSeek: (Float) -> Unit
 ) {
     val transition = rememberInfiniteTransition(label = "disc")
-    val rotation by transition.animateFloat(
+    val rotationState = transition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(tween(6000, easing = LinearEasing), RepeatMode.Restart),
@@ -557,7 +580,9 @@ private fun MusicActivityCard(
                 Box(
                     modifier = Modifier
                         .size(30.dp)
-                        .rotate(if (isPlaying) rotation else 0f)
+                        .graphicsLayer {
+                            rotationZ = if (isPlaying) rotationState.value else 0f
+                        }
                         .clip(CircleShape)
                         .background(AppTheme.colors.background.copy(alpha = 0.6f)),
                     contentAlignment = Alignment.Center
@@ -1031,7 +1056,7 @@ private fun SportsActivityCard(
     onReset: () -> Unit
 ) {
     val transition = rememberInfiniteTransition(label = "sports")
-    val pulse by transition.animateFloat(
+    val pulseState = transition.animateFloat(
         initialValue = 0.6f,
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
@@ -1059,7 +1084,11 @@ private fun SportsActivityCard(
                 Box(
                     modifier = Modifier
                         .size(7.dp)
-                        .scale(if (isRunning) pulse else 1f)
+                        .graphicsLayer {
+                            val scale = if (isRunning) pulseState.value else 1f
+                            scaleX = scale
+                            scaleY = scale
+                        }
                         .clip(CircleShape)
                         .background(AppTheme.colors.error)
                 )

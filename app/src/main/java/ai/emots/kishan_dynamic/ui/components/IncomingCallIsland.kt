@@ -57,7 +57,7 @@ fun IncomingCallIsland(
     canDecline: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    val pulse by rememberBreathing(min = 0.96f, max = 1.03f, durationMillis = 1400)
+    val pulseState = rememberBreathing(min = 0.96f, max = 1.03f, durationMillis = 1400)
     val declineInteraction = remember { MutableInteractionSource() }
     val acceptInteraction = remember { MutableInteractionSource() }
     val declineScale by rememberPressScale(declineInteraction)
@@ -87,8 +87,8 @@ fun IncomingCallIsland(
                     modifier = Modifier
                         .size(avatarSize)
                         .graphicsLayer {
-                            scaleX = pulse
-                            scaleY = pulse
+                            scaleX = pulseState.value
+                            scaleY = pulseState.value
                         }
                         .clip(CircleShape)
                         .background(

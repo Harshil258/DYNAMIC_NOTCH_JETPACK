@@ -50,7 +50,11 @@ sealed interface NativeAdStatus {
 class MobileAdsNativeAdGateway(
     context: Context,
     private val configuration: NativeAdConfiguration,
-    private val analytics: AnalyticsSink = AppAnalytics
+    private val analytics: AnalyticsSink = AppAnalytics,
+    private val revenueTracker: ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker =
+        ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker(
+            ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker(context)
+        )
 ) : AutoCloseable {
     private val appContext = context.applicationContext
     private val _status = MutableStateFlow<NativeAdStatus>(
@@ -84,20 +88,30 @@ class MobileAdsNativeAdGateway(
             listOf(NativeAd.NativeAdType.NATIVE)
         ).build()
         NativeAdLoader.load(request, object : NativeAdLoaderCallback {
-            override fun onNativeAdLoaded(ad: NativeAd) {
+            override fun onNativeAdLoaded(nativeAd: NativeAd) {
                 loading = false
-                activeAd = ad
-                _status.value = NativeAdStatus.Ready(ad)
+                nativeAd.adEventCallback = object : com.google.android.libraries.ads.mobile.sdk.nativead.NativeAdEventCallback {
+                    override fun onAdPaid(value: com.google.android.libraries.ads.mobile.sdk.common.AdValue) {
+                        revenueTracker.trackAdRevenue(
+                            adValue = value,
+                            adFormat = "native",
+                            adUnitId = configuration.adUnitId,
+                            placement = "settings_native"
+                        )
+                    }
+                }
+                activeAd = nativeAd
+                _status.value = NativeAdStatus.Ready(nativeAd)
                 analytics.track(AnalyticsEvent("native_ad_loaded"))
             }
 
-            override fun onAdFailedToLoad(error: LoadAdError) {
+            override fun onAdFailedToLoad(adError: LoadAdError) {
                 loading = false
-                _status.value = NativeAdStatus.Failed(error.message)
+                _status.value = NativeAdStatus.Failed(adError.message)
                 analytics.track(
                     AnalyticsEvent(
                         "native_ad_load_failed",
-                        mapOf("error_code" to error.code.toString())
+                        mapOf("error_code" to adError.code.toString())
                     )
                 )
             }

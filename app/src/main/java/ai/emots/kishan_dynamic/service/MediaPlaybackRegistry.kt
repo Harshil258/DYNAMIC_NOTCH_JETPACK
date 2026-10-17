@@ -5,6 +5,7 @@ import android.media.session.MediaSession
 import android.media.MediaMetadata
 import android.media.session.PlaybackState
 import ai.emots.kishan_dynamic.data.media.MediaSeekPolicy
+import ai.emots.kishan_dynamic.data.media.MediaPlaybackPositionPolicy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -118,7 +119,14 @@ object MediaPlaybackRegistry {
             title = title,
             artist = metadata?.getString(MediaMetadata.METADATA_KEY_ARTIST).orEmpty(),
             durationMs = metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L,
-            positionMs = playbackState?.position?.coerceAtLeast(0L) ?: 0L,
+            positionMs = MediaPlaybackPositionPolicy.position(
+                playbackState?.position ?: 0L,
+                metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L,
+                playbackState?.state == PlaybackState.STATE_PLAYING,
+                playbackState?.playbackSpeed ?: 0f,
+                playbackState?.lastPositionUpdateTime ?: 0L,
+                android.os.SystemClock.elapsedRealtime()
+            ),
             isPlaying = playbackState?.state == PlaybackState.STATE_PLAYING,
             albumArtUri = metadata?.getString(MediaMetadata.METADATA_KEY_ART_URI)
         )

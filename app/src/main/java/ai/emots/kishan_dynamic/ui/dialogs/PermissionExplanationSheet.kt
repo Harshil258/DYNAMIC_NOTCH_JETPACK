@@ -1,6 +1,7 @@
 package ai.emots.kishan_dynamic.ui.dialogs
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -80,6 +81,27 @@ fun PermissionExplanationSheet(
                 style = AppTheme.typography.bodySmall,
                 color = AppTheme.colors.textSecondary
             )
+        }
+
+        if (permission.id == "accessibility") {
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(AppTheme.radius.md))
+                    .background(AppTheme.colors.info.copy(alpha = 0.12f))
+                    .border(0.5.dp, AppTheme.colors.info.copy(alpha = 0.35f), RoundedCornerShape(AppTheme.radius.md))
+                    .padding(AppTheme.spacing.md),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AppleIcon(glyph = AppleGlyph.Sparkles, tint = AppTheme.colors.info, size = 16.dp)
+                Spacer(modifier = Modifier.width(AppTheme.spacing.sm))
+                AppText(
+                    text = "Setup Tip: In Accessibility settings, turn ON 'Aurora Dynamic Island', but leave 'Accessibility Shortcut' OFF to prevent Android from showing a floating button.",
+                    style = AppTheme.typography.caption,
+                    color = AppTheme.colors.textPrimary
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.xl))

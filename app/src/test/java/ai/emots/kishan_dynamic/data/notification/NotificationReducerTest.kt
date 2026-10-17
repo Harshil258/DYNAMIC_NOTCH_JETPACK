@@ -230,10 +230,11 @@ class NotificationReducerTest {
     @Test
     fun childNotificationReplacesGroupSummaryWithoutDuplication() {
         val summary = notification("summary", false, 10).copy(
+            packageName = "test.messages",
             groupKey = "messages",
             isGroupSummary = true
         )
-        val child = notification("child", false, 20).copy(groupKey = "messages")
+        val child = notification("child", false, 20).copy(packageName = "test.messages", groupKey = "messages")
         var state = reducer.reduce(NotificationQueueState(), NotificationEvent.Posted(summary))
 
         state = reducer.reduce(state, NotificationEvent.Posted(child))
@@ -243,8 +244,9 @@ class NotificationReducerTest {
 
     @Test
     fun lateGroupSummaryIsIgnoredWhenChildrenAlreadyExist() {
-        val child = notification("child", false, 20).copy(groupKey = "messages")
+        val child = notification("child", false, 20).copy(packageName = "test.messages", groupKey = "messages")
         val summary = notification("summary", false, 30).copy(
+            packageName = "test.messages",
             groupKey = "messages",
             isGroupSummary = true
         )

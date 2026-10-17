@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Switch
+import ai.emots.kishan_dynamic.ui.kit.AppSwitch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -137,13 +137,15 @@ fun QuickControlScreen(
         }
     }
 
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Action Island",
-            subtitle = "Choose what appears in your long-press control surface",
-            onBack = onBack
-        )
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Action Island",
+                subtitle = "Choose what appears in your long-press control surface",
+                onBack = onBack
+            )
+        }
+    ) {
 
         AppCard(modifier = Modifier.appReveal(1)) {
             AppToggleRow(
@@ -645,7 +647,7 @@ private fun PinnedAppRow(
             onMoveUp = onMoveUp,
             onMoveDown = onMoveDown
         )
-        Switch(checked = enabled, onCheckedChange = onEnabledChange)
+        AppSwitch(checked = enabled, onCheckedChange = onEnabledChange)
         AppIconButton(glyph = AppleGlyph.Close, onClick = onRemove, tint = AppTheme.colors.textSecondary)
     }
 }
@@ -720,7 +722,7 @@ private fun PinnedContactRow(
             onMoveUp = onMoveUp,
             onMoveDown = onMoveDown
         )
-        Switch(checked = enabled, onCheckedChange = onEnabledChange)
+        AppSwitch(checked = enabled, onCheckedChange = onEnabledChange)
         AppIconButton(glyph = AppleGlyph.Close, onClick = onRemove, tint = AppTheme.colors.textSecondary)
     }
 }

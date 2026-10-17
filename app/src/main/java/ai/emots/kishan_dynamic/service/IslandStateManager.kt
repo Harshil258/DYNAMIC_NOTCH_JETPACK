@@ -6,6 +6,8 @@ import ai.emots.kishan_dynamic.data.model.IslandPresentationOwnershipPolicy
 import ai.emots.kishan_dynamic.data.battery.BatterySurfacePolicy
 import ai.emots.kishan_dynamic.data.model.LiveActivityInfo
 import ai.emots.kishan_dynamic.data.model.LiveActivityKind
+import ai.emots.kishan_dynamic.data.model.defaultTransientDurationMillis
+import ai.emots.kishan_dynamic.data.model.isTransientAlert
 import ai.emots.kishan_dynamic.data.liveactivity.LiveActivityPrioritizer
 import ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySurfacePolicy
 import ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicy
@@ -25,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ai.emots.kishan_dynamic.data.model.presentationPhase
 
 /**
  * Thread-safe State Manager & Priority Reducer for Dynamic Island.
@@ -57,11 +60,20 @@ object IslandStateManager {
     val observedMediaVolume: StateFlow<Float?> = _observedMediaVolume.asStateFlow()
     private val _observedRingerVolume = MutableStateFlow<Float?>(null)
     val observedRingerVolume: StateFlow<Float?> = _observedRingerVolume.asStateFlow()
+    private val _isPaywallActive = MutableStateFlow(false)
+    val isPaywallActive: StateFlow<Boolean> = _isPaywallActive.asStateFlow()
+
+    fun setPaywallActive(active: Boolean) {
+        _isPaywallActive.value = active
+    }
     private val notificationReducer = NotificationReducer()
     private var notificationQueue = NotificationQueueState()
     private var notificationAutoExpand = false
     private var notificationDisplaySeconds = 5
+    private val notificationDeadlines = mutableMapOf<String, Long>()
+    private val notificationReplayGuard = ai.emots.kishan_dynamic.data.notification.NotificationReplayGuard()
     private val specializedNotificationIds = mutableSetOf<String>()
+    fun notificationSourceIds(): Set<String> = notificationQueue.notifications.mapTo(mutableSetOf()) { it.id }
 
     fun postIncomingCall(contact: ContactInfo) {
         rememberPresentationBeforeIncomingCall()
@@ -261,7 +273,20 @@ object IslandStateManager {
     }
 
     fun postNotification(notification: NotificationInfo, autoExpand: Boolean, displaySeconds: Int) {
-        notificationAutoExpand = autoExpand
+        val decision = ai.emots.kishan_dynamic.data.notification.NotificationEventPolicy.evaluate(
+            notification, recognizedActivity = notification.id in specializedNotificationIds
+        )
+        if (decision.kind == ai.emots.kishan_dynamic.data.notification.NotificationEventKind.IGNORED) {
+            removeNotification(notification.id)
+            return
+        }
+        val existing = notificationQueue.notifications.firstOrNull { it.id == notification.id }
+        if (notificationReplayGuard.isDuplicate(notification)) {
+            NotificationDiagnostics.lifecycle("duplicate", notification.id, "no_meaningful_change")
+            return
+        }
+        notificationAutoExpand = autoExpand && existing == null &&
+            decision.kind == ai.emots.kishan_dynamic.data.notification.NotificationEventKind.TRANSIENT
         notificationDisplaySeconds = displaySeconds.coerceIn(1, 60)
 
         // Edge case: If a missed-call alert arrives while in an incoming or ongoing call state,
@@ -316,6 +341,8 @@ object IslandStateManager {
             }
         }
         applyNotificationPresentation(presentationDecision)
+        NotificationDiagnostics.lifecycle("queued", notification.id,
+            "kind=${decision.kind} size=${notificationQueue.notifications.size} presentation=${_currentState.value.presentationPhase()}")
     }
 
     /** Keeps the source notification queued while its richer activity owns the island. */
@@ -325,6 +352,8 @@ object IslandStateManager {
     }
 
     fun removeNotification(notificationId: String) {
+        notificationReplayGuard.forget(notificationId)
+        notificationDeadlines.remove(notificationId)
         val removedWasVisibleCritical = notificationQueue.activeNotification?.let { active ->
             active.id == notificationId && NotificationInterruptionPolicy.isCriticalInterruption(active)
         } == true
@@ -361,6 +390,8 @@ object IslandStateManager {
     }
 
     fun clearNotificationSources() {
+        notificationReplayGuard.clear()
+        notificationDeadlines.clear()
         val hadVisibleCritical = notificationQueue.activeNotification
             ?.let(NotificationInterruptionPolicy::isCriticalInterruption) == true
         val presentationDecision = NotificationInterruptionPolicy.decide(_currentState.value)
@@ -383,8 +414,10 @@ object IslandStateManager {
         if (expanded?.isExpanded == true) {
             _currentState.value = expanded.copy(
                 notifications = notificationQueue.notifications,
-                activeIndex = notificationQueue.activeIndex
+                activeIndex = notificationQueue.activeIndex,
+                expandedByUser = true
             )
+            dismissTimerJob?.cancel()
         } else {
             renderNotificationSurface()
         }
@@ -456,15 +489,21 @@ object IslandStateManager {
 
     fun postLiveActivity(activity: LiveActivityInfo) {
         val existingActivity = activeLiveActivities[activity.id]
-        val normalizedActivity = if (activity.kind == LiveActivityKind.TIMER) {
+        val resolvedExpiry = activity.expiresAtMillis ?: if (activity.kind.isTransientAlert) {
+            System.currentTimeMillis() + activity.kind.defaultTransientDurationMillis
+        } else null
+
+        val normalizedActivity = (if (activity.kind == LiveActivityKind.TIMER) {
             val isSameTimer = existingActivity?.kind == LiveActivityKind.TIMER
             if (!isSameTimer) _timerRunning.value = activity.isRunning
             activity.copy(isRunning = _timerRunning.value)
         } else {
             activity
-        }.let { normalized ->
-            if (existingActivity?.isExpanded == true) normalized.copy(isExpanded = true) else normalized
-        }
+        }).let { normalized ->
+            if (existingActivity?.isExpanded == true && existingActivity.expandedByUser) {
+                normalized.copy(isExpanded = true, expandedByUser = true)
+            } else normalized
+        }.copy(expiresAtMillis = resolvedExpiry)
 
         // Remove/reinsert so a refreshed source becomes the most recent source
         // when priorities are equal, without duplicating its registered ID.
@@ -480,6 +519,7 @@ object IslandStateManager {
         }
         val visibleActivity = (_currentState.value as? IslandState.LiveActivity)?.activity
         val anotherExpandedActivityOwnsSurface = visibleActivity?.isExpanded == true &&
+            visibleActivity.expandedByUser &&
             visibleActivity.id != normalizedActivity.id
         if (!IslandPresentationOwnershipPolicy.isUserOwned(_currentState.value) ||
             visibleActivity?.id == normalizedActivity.id
@@ -710,9 +750,13 @@ object IslandStateManager {
                 _currentState.value = current.copy(isExpanded = false)
             }
             is IslandState.LiveActivity -> if (current.activity.isExpanded) {
-                val activity = current.activity.copy(isExpanded = false)
-                activeLiveActivities[activity.id] = activity
-                _currentState.value = current.copy(activity = activity)
+                if (current.activity.kind.isTransientAlert) {
+                    clearLiveActivity(current.activity.id)
+                } else {
+                    val activity = current.activity.copy(isExpanded = false, expandedByUser = false)
+                    activeLiveActivities[activity.id] = activity
+                    _currentState.value = current.copy(activity = activity)
+                }
             }
             is IslandState.RingerMode -> if (current.isExpanded) {
                 _currentState.value = current.copy(isExpanded = false)
@@ -765,10 +809,14 @@ object IslandStateManager {
                 resumeBaseState()
                 scheduleNotificationExpiry()
             }
-            is IslandState.LiveActivity -> if (current.activity.isExpanded) {
-                val activity = current.activity.copy(isExpanded = false)
-                activeLiveActivities[activity.id] = activity
-                _currentState.value = current.copy(activity = activity)
+            is IslandState.LiveActivity -> {
+                if (current.activity.kind.isTransientAlert) {
+                    clearLiveActivity(current.activity.id)
+                } else if (current.activity.isExpanded) {
+                    val activity = current.activity.copy(isExpanded = false, expandedByUser = false)
+                    activeLiveActivities[activity.id] = activity
+                    _currentState.value = current.copy(activity = activity)
+                }
             }
             is IslandState.RingerMode -> if (current.isExpanded) {
                 _currentState.value = current.copy(isExpanded = false)
@@ -814,7 +862,7 @@ object IslandStateManager {
             }
             _currentState.value = notificationState().let { state ->
                 when (state) {
-                    is IslandState.Notification -> state.copy(isExpanded = true)
+                    is IslandState.Notification -> state.copy(isExpanded = true, expandedByUser = true)
                     is IslandState.NotificationWithMusic -> IslandState.Notification(
                         notifications = state.notifications,
                         isExpanded = true,
@@ -851,7 +899,7 @@ object IslandStateManager {
                 } else {
                     scheduleNotificationExpiry()
                 }
-                current.copy(isExpanded = willExpand)
+                current.copy(isExpanded = willExpand, expandedByUser = willExpand)
             }
             is IslandState.NotificationWithMusic -> {
                 dismissTimerJob?.cancel()
@@ -861,10 +909,21 @@ object IslandStateManager {
                     activeIndex = 0
                 )
             }
-            is IslandState.LiveActivity -> current.copy(
-                activity = current.activity.copy(isExpanded = !current.activity.isExpanded)
-            ).also { updated ->
-                activeLiveActivities[updated.activity.id] = updated.activity
+            is IslandState.LiveActivity -> {
+                if (current.activity.kind.isTransientAlert && current.activity.isExpanded) {
+                    clearLiveActivity(current.activity.id)
+                    _currentState.value
+                } else {
+                    val willExpand = !current.activity.isExpanded
+                    current.copy(
+                        activity = current.activity.copy(
+                            isExpanded = willExpand,
+                            expandedByUser = willExpand
+                        )
+                    ).also { updated ->
+                        activeLiveActivities[updated.activity.id] = updated.activity
+                    }
+                }
             }
             is IslandState.Minimal -> {
                 dismissTimerJob?.cancel()
@@ -880,6 +939,14 @@ object IslandStateManager {
             }
             else -> current
         }
+        scheduleNotificationExpiry()
+    }
+
+    fun claimNotificationInteraction() {
+        val current = _currentState.value as? IslandState.Notification ?: return
+        if (!current.isExpanded) return
+        _currentState.value = current.copy(expandedByUser = true)
+        dismissTimerJob?.cancel()
     }
 
     fun collapseExpandedState() {
@@ -921,9 +988,13 @@ object IslandStateManager {
             }
             is IslandState.LiveActivity -> {
                 if (current.activity.isExpanded) {
-                    val updated = current.activity.copy(isExpanded = false)
-                    activeLiveActivities[updated.id] = updated
-                    _currentState.value = current.copy(activity = updated)
+                    if (current.activity.kind.isTransientAlert) {
+                        clearLiveActivity(current.activity.id)
+                    } else {
+                        val updated = current.activity.copy(isExpanded = false, expandedByUser = false)
+                        activeLiveActivities[updated.id] = updated
+                        _currentState.value = current.copy(activity = updated)
+                    }
                 }
             }
             is IslandState.Charging,
@@ -946,7 +1017,7 @@ object IslandStateManager {
                 showDuration = callTimerEnabled,
                 isDialing = false
             )
-            primaryLiveActivity() != null -> IslandState.LiveActivity(primaryLiveActivity()!!)
+            primaryOngoingLiveActivity() != null -> IslandState.LiveActivity(primaryOngoingLiveActivity()!!)
             pendingCallSummary != null -> IslandState.CallSummary(pendingCallSummary!!)
             notificationQueue.notifications.isNotEmpty() -> notificationState()
             activeMusicTrack != null -> IslandState.Music(activeMusicTrack!!, isPlaying = isMusicPlaying)
@@ -955,6 +1026,9 @@ object IslandStateManager {
         _currentState.value = nextState
         if (nextState is IslandState.CallSummary) scheduleCallSummaryExpiry()
     }
+
+    private fun primaryOngoingLiveActivity(): LiveActivityInfo? =
+        LiveActivityPrioritizer.primary(activeLiveActivities.values.filter { !it.kind.isTransientAlert })
 
     private fun rememberPresentationBeforeIncomingCall() {
         val current = _currentState.value
@@ -1139,6 +1213,7 @@ object IslandStateManager {
             IslandState.Notification(
                 notifications = notificationQueue.notifications,
                 isExpanded = notificationAutoExpand,
+                expandedByUser = false,
                 activeIndex = notificationQueue.notifications.indexOfFirst { it.id == active.id }
                     .coerceAtLeast(0)
             )
@@ -1151,13 +1226,32 @@ object IslandStateManager {
             _currentState.value !is IslandState.NotificationWithMusic
         ) return
         // Suspend auto-expiry if the user has expanded the notification to read / reply
-        if ((_currentState.value as? IslandState.Notification)?.isExpanded == true) return
+        val expanded = _currentState.value as? IslandState.Notification
+        if (expanded?.isExpanded == true && expanded.expandedByUser) return
         dismissTimerJob?.cancel()
         val activeId = notificationQueue.activeNotification?.id ?: return
         val activeNotification = notificationQueue.activeNotification ?: return
-        if (activeNotification.isOngoing || !activeNotification.isClearable) return
+        // Persistent sources remain queued, but their automatic peek still closes.
+        if (ai.emots.kishan_dynamic.data.notification.NotificationEventPolicy.evaluate(
+                activeNotification, recognizedActivity = activeId in specializedNotificationIds
+            ).kind == ai.emots.kishan_dynamic.data.notification.NotificationEventKind.ONGOING &&
+            expanded?.isExpanded != true) return
+        val now = android.os.SystemClock.elapsedRealtime()
+        val deadline = ai.emots.kishan_dynamic.data.notification.NotificationEventPolicy.deadline(
+            notificationDeadlines[activeId], now, notificationDisplaySeconds * 1000L
+        )
+        notificationDeadlines[activeId] = deadline
+        notificationDeadlines.keys.retainAll(notificationQueue.notifications.map { it.id }.toSet())
         dismissTimerJob = scope.launch {
-            delay(notificationDisplaySeconds * 1000L)
+            delay(ai.emots.kishan_dynamic.data.notification.NotificationEventPolicy.remainingMillis(
+                deadline, android.os.SystemClock.elapsedRealtime()))
+            val peek = _currentState.value as? IslandState.Notification
+            if (peek?.isExpanded == true && !peek.expandedByUser &&
+                peek.notifications.getOrNull(peek.activeIndex)?.id == activeId) {
+                _currentState.value = peek.copy(isExpanded = false)
+                scheduleNotificationExpiry()
+                return@launch
+            }
             val expiredWasCritical = notificationQueue.activeNotification?.let { active ->
                 active.id == activeId && NotificationInterruptionPolicy.isCriticalInterruption(active)
             } == true
@@ -1165,6 +1259,8 @@ object IslandStateManager {
                 notificationQueue,
                 NotificationEvent.Expired(activeId)
             )
+            notificationDeadlines.remove(activeId)
+            NotificationDiagnostics.lifecycle("expired", activeId, "presentation_deadline")
             if (expiredWasCritical && !hasQueuedCriticalNotification() &&
                 restoreCriticalInterruptedPresentation()
             ) {

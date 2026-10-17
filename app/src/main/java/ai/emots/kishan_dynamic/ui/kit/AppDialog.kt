@@ -6,6 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -70,6 +73,7 @@ fun AppDialog(
                 .background(AppTheme.colors.scrim)
                 .statusBarsPadding()
                 .navigationBarsPadding()
+                .imePadding()
                 .padding(AppTheme.spacing.xl),
             contentAlignment = Alignment.Center
         ) {
@@ -127,17 +131,19 @@ fun AppSheet(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
                 .background(AppTheme.colors.scrim)
-                .statusBarsPadding(),
+                .safeDrawingPadding()
+                .imePadding(),
             contentAlignment = Alignment.BottomCenter
         ) {
             Column(
                 modifier = modifier
                     .widthIn(max = 520.dp)
                     .fillMaxWidth()
+                    .heightIn(max = maxHeight)
                     .shadow(
                         elevation = AppTheme.elevation.sheet,
                         shape = RoundedCornerShape(
@@ -161,6 +167,7 @@ fun AppSheet(
                         )
                     )
                     .navigationBarsPadding()
+                    .verticalScroll(rememberScrollState())
                     .padding(
                         start = AppTheme.spacing.xxl,
                         end = AppTheme.spacing.xxl,
@@ -190,9 +197,6 @@ fun AppSheet(
                 Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
 
                 Column(
-                    modifier = Modifier
-                        .heightIn(max = 520.dp)
-                        .verticalScroll(rememberScrollState()),
                     content = content
                 )
             }

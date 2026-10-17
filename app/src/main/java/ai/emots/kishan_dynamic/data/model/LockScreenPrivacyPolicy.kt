@@ -16,6 +16,7 @@ object LockScreenPrivacyPolicy {
             subText = null,
             inboxLines = emptyList(),
             imagePath = null,
+            picturePath = null,
             actions = emptyList(),
             hasContentIntent = false
         )

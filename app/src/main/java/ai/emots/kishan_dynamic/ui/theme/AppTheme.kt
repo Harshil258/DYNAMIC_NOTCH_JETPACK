@@ -2,6 +2,7 @@ package ai.emots.kishan_dynamic.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Brush
@@ -40,6 +41,7 @@ enum class AppThemeMode(val storageValue: String, val label: String) {
 // 2. DESIGN TOKEN DATA STRUCTURES
 // =============================================================================
 
+@Immutable
 data class AppColorTokens(
     val background: Color,
     val surface: Color,
@@ -70,10 +72,18 @@ data class AppColorTokens(
     val stageTop: Color,
     val stageMid: Color,
     val stageBottom: Color,
-    val stageStroke: Color
+    val stageStroke: Color,
+    // Aurora Pro Brand Tokens
+    val auroraCyan: Color = Color(0xFF00E5FF),
+    val auroraElectricBlue: Color = Color(0xFF2979FF),
+    val auroraViolet: Color = Color(0xFF7C4DFF),
+    val auroraObsidian: Color = Color(0xFF090C15),
+    val auroraSurfaceElevated: Color = Color(0xFF131826),
+    val auroraSpecular: Color = Color(0x26FFFFFF)
 )
 
 /** Font roles shared by every app-owned surface. */
+@Immutable
 data class AppFontTokens(
     val display: FontFamily = FontFamily.SansSerif,
     val body: FontFamily = FontFamily.SansSerif,
@@ -89,6 +99,103 @@ fun AppColorTokens.accentGradient(): Brush = Brush.linearGradient(
     listOf(accent, info)
 )
 
+/** Dedicated Aurora Pro named gradients */
+fun AppColorTokens.auroraHeroGradient(): Brush = Brush.verticalGradient(
+    listOf(
+        Color(0xFF151C30),
+        Color(0xFF0E1322),
+        Color(0xFF070A11)
+    )
+)
+
+fun AppColorTokens.auroraProCardGradient(selected: Boolean): Brush = if (selected) {
+    if (textPrimary == Color.White) {
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFF16213B),
+                Color(0xFF10172A),
+                Color(0xFF0B0E18)
+            )
+        )
+    } else {
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFFF0F5FF),
+                Color(0xFFE6EFFD),
+                Color(0xFFDCE9FA)
+            )
+        )
+    }
+} else {
+    if (textPrimary == Color.White) {
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFF111522),
+                Color(0xFF0C0E17)
+            )
+        )
+    } else {
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFFFFFFFF),
+                Color(0xFFF9FAFD)
+            )
+        )
+    }
+}
+
+fun AppColorTokens.auroraActionGradient(): Brush = Brush.horizontalGradient(
+    listOf(
+        Color(0xFF2979FF),
+        Color(0xFF00B0FF),
+        Color(0xFF00E5FF)
+    )
+)
+
+fun AppColorTokens.auroraBadgeGradient(): Brush = Brush.horizontalGradient(
+    listOf(
+        Color(0xFF7C4DFF),
+        Color(0xFF2979FF)
+    )
+)
+
+fun AppColorTokens.auroraBorderBrush(selected: Boolean): Brush = if (selected) {
+    if (textPrimary == Color.White) {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFF00E5FF).copy(alpha = 0.85f),
+                Color(0xFF7C4DFF).copy(alpha = 0.65f),
+                Color(0x33FFFFFF)
+            )
+        )
+    } else {
+        Brush.linearGradient(
+            listOf(
+                Color(0xFF0091EA),
+                Color(0xFF1A73E8),
+                Color(0xFF6200EA)
+            )
+        )
+    }
+} else {
+    if (textPrimary == Color.White) {
+        Brush.linearGradient(
+            listOf(
+                Color(0x1FFFFFFF),
+                Color(0x0AFFFFFF)
+            )
+        )
+    } else {
+        Brush.linearGradient(
+            listOf(
+                Color(0x1F000000),
+                Color(0x0C000000)
+            )
+        )
+    }
+}
+
+@Immutable
 data class AppElevationTokens(
     val none: Dp = 0.dp,
     val card: Dp = 3.dp,
@@ -98,12 +205,14 @@ data class AppElevationTokens(
     val stage: Dp = 6.dp
 )
 
+@Immutable
 data class AppMotionTokens(
     val fastMillis: Int = 160,
     val standardMillis: Int = 240,
     val emphasisMillis: Int = 320
 )
 
+@Immutable
 data class AppTypographyTokens(
     val h1: TextStyle,
     val h2: TextStyle,
@@ -119,6 +228,7 @@ data class AppTypographyTokens(
     val badge: TextStyle
 )
 
+@Immutable
 data class AppSpacingTokens(
     val zero: Dp = 0.dp,
     val xxs: Dp = 2.dp,
@@ -131,6 +241,7 @@ data class AppSpacingTokens(
     val xxxl: Dp = 32.dp
 )
 
+@Immutable
 data class AppRadiusTokens(
     val none: Dp = 0.dp,
     val xs: Dp = 4.dp,
@@ -142,6 +253,7 @@ data class AppRadiusTokens(
     val pill: Dp = 999.dp
 )
 
+@Immutable
 data class AppLayoutTokens(
     val windowSize: AppWindowSize,
     val screenGutter: Dp,
@@ -168,6 +280,7 @@ data class AppLayoutTokens(
  *   expanded sheet     371.0 wide, corner 42 (160pt template uses 44)
  *   top inset          11.0 from the top edge of the display
  */
+@Immutable
 data class AppIslandTokens(
     /**
      * Canonical height for every idle, minimal, and compact presentation.
@@ -179,6 +292,10 @@ data class AppIslandTokens(
     val compactHeight: Dp = 36.67.dp,
     /** True iOS idle capsule width — never stretch this to the screen. */
     val compactWidth: Dp = 126.dp,
+    val compactMaxWidth: Dp = 250.dp,
+    /** Android does not expose exact status-icon bounds; preserve a central budget. */
+    val compactStatusSideReserve: Dp = 72.dp,
+    val compactIconSize: Dp = 20.dp,
     /** Compact media capsule: from iPhone 15 Pro-1.svg (190pt x 38pt). */
     val mediaCompactWidth: Dp = 190.dp,
     /** Compact timer width from Prototype.svg (222pt x 37pt). */
@@ -215,8 +332,9 @@ data class AppIslandTokens(
      * minimum width: a minimum wider than a small window would clip the island.
      */
     fun expandedWidth(screenWidth: Dp): Dp {
-        val available = (screenWidth - expandedSideMargin * 2).coerceAtLeast(0.dp)
-        return available.coerceAtMost(expandedMaxWidth)
+        return ai.emots.kishan_dynamic.data.model.IslandGeometryConstraints.expandedWidth(
+            screenWidth.value, expandedSideMargin.value, expandedMaxWidth.value
+        ).dp
     }
 }
 
@@ -254,7 +372,13 @@ val DarkColorTokens = AppColorTokens(
     stageTop = Color(0xFF0C0C0F),
     stageMid = Color(0xFF131317),
     stageBottom = Color(0xFF0A0A0C),
-    stageStroke = Color(0x26FFFFFF)
+    stageStroke = Color(0x26FFFFFF),
+    auroraCyan = Color(0xFF00E5FF),
+    auroraElectricBlue = Color(0xFF2979FF),
+    auroraViolet = Color(0xFF7C4DFF),
+    auroraObsidian = Color(0xFF090C15),
+    auroraSurfaceElevated = Color(0xFF131826),
+    auroraSpecular = Color(0x26FFFFFF)
 )
 
 val LightColorTokens = AppColorTokens(
@@ -287,7 +411,13 @@ val LightColorTokens = AppColorTokens(
     stageTop = Color.White,
     stageMid = Color(0xFFF4F5F7),
     stageBottom = Color(0xFFF8F9FB),
-    stageStroke = Color(0x14000000)
+    stageStroke = Color(0x14000000),
+    auroraCyan = Color(0xFF0091EA),
+    auroraElectricBlue = Color(0xFF1A73E8),
+    auroraViolet = Color(0xFF6200EA),
+    auroraObsidian = Color(0xFFF1F3F9),
+    auroraSurfaceElevated = Color(0xFFFFFFFF),
+    auroraSpecular = Color(0x14000000)
 )
 
 // =============================================================================

@@ -84,18 +84,22 @@ fun CallSettingsScreen(
     var showCallSummaryDialog by remember { mutableStateOf(false) }
     var showCallHistorySheet by remember { mutableStateOf(false) }
 
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Phone calls",
-            subtitle = "Caller HUD and live call timer",
-            onBack = onBack
-        )
+    val stageTargetHeight = if (isExpandedCall) 218.dp else 116.dp
 
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Phone calls",
+                subtitle = "Caller HUD and live call timer",
+                onBack = onBack
+            )
+        }
+    ) {
         AppStage(
             modifier = Modifier.appReveal(1),
             caption = if (isExpandedCall) "Tap the island to collapse" else "Tap the island to expand",
-            minHeight = 190.dp
+            targetHeight = stageTargetHeight,
+            showStatusBar = !isExpandedCall
         ) {
             DynamicIslandPill(
                 state = if (isExpandedCall) IslandDemoState.CallExpanded else IslandDemoState.CallCompact,
@@ -129,11 +133,11 @@ fun CallSettingsScreen(
                 glyph = AppleGlyph.History,
                 checked = effectiveCallSummaryEnabled,
                 trailingLabel = if (!isProActive) "PRO" else null,
-                onCheckedChange = {
-                    if (!isProActive && !it) {
-                        onNavigateToPremium()
+                onCheckedChange = { checked ->
+                    if (isProActive) {
+                        scope.launch { preferences.setCallSummaryEnabled(checked) }
                     } else {
-                        scope.launch { preferences.setCallSummaryEnabled(it) }
+                        onNavigateToPremium()
                     }
                 }
             )

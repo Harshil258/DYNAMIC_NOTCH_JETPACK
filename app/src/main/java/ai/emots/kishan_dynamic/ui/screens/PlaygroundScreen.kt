@@ -48,9 +48,15 @@ import ai.emots.kishan_dynamic.data.model.NotificationInfo
 import ai.emots.kishan_dynamic.data.model.NotificationActionInfo
 import ai.emots.kishan_dynamic.data.model.ActionCustomShortcut
 import ai.emots.kishan_dynamic.data.model.ActionAppShortcut
+import ai.emots.kishan_dynamic.data.model.IslandActivationPolicy
+import ai.emots.kishan_dynamic.data.model.IslandActivationStatus
+import ai.emots.kishan_dynamic.ui.components.IslandActivationCard
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsEventNames
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsTracker
+import ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker
 import ai.emots.kishan_dynamic.ui.components.IslandControlAction
 import ai.emots.kishan_dynamic.ui.components.IslandDemoState
 import ai.emots.kishan_dynamic.ui.kit.AppButton
@@ -94,7 +100,7 @@ private fun PlaygroundStateItem.experienceCategory(): String = when (label) {
 
 /**
  * Island tab — the live preview hub.
- * Structure: title → live stage → state picker → setup status → shortcuts → service switch.
+ * Structure: title → activation card → live stage → state picker → customization.
  */
 @Composable
 fun PlaygroundScreen(
@@ -106,21 +112,30 @@ fun PlaygroundScreen(
     onNavigateSoundSettings: () -> Unit,
     onNavigateQuickControl: () -> Unit,
     onNavigatePermissions: () -> Unit,
-    onNavigateVault: () -> Unit
+    onNavigateVault: () -> Unit,
+    onNavigateToPremium: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val scope = rememberCoroutineScope()
     val preferences = remember { AuroraPreferences(context) }
+    val analyticsTracker = remember { FirebaseAnalyticsTracker(context) }
+    val entitlementManager = remember { ai.emots.kishan_dynamic.data.premium.EntitlementManager.getInstance(context) }
+    val entitlementSnapshot by entitlementManager.entitlement.collectAsState()
+    var showRewardDialog by remember { mutableStateOf(false) }
 
     val isIslandEnabled by preferences.islandEnabled.collectAsState(initial = true)
 
-    var hasAccessibility by remember { mutableStateOf(false) }
-    var hasNotification by remember { mutableStateOf(false) }
+    var hasAccessibilityGranted by remember { mutableStateOf(false) }
+    var hasAccessibilityConnected by remember { mutableStateOf(false) }
+    var hasNotificationGranted by remember { mutableStateOf(false) }
+    var hasNotificationConnected by remember { mutableStateOf(false) }
 
     fun refreshHealth() {
-        hasAccessibility = PermissionUtils.isAccessibilityServiceWorking(context)
-        hasNotification = PermissionUtils.isNotificationListenerWorking(context)
+        hasAccessibilityGranted = PermissionUtils.isAccessibilityServiceEnabled(context)
+        hasAccessibilityConnected = PermissionUtils.isAccessibilityServiceWorking(context)
+        hasNotificationGranted = PermissionUtils.isNotificationListenerEnabled(context)
+        hasNotificationConnected = PermissionUtils.isNotificationListenerWorking(context)
     }
 
     DisposableEffect(lifecycleOwner, context) {
@@ -151,7 +166,21 @@ fun PlaygroundScreen(
         }
     }
 
-    val permissionsGranted = hasAccessibility && hasNotification
+    val activationSnapshot = remember(
+        hasAccessibilityGranted,
+        hasAccessibilityConnected,
+        hasNotificationGranted,
+        hasNotificationConnected,
+        isIslandEnabled
+    ) {
+        IslandActivationPolicy.evaluate(
+            overlayGranted = hasAccessibilityGranted,
+            overlayConnected = hasAccessibilityConnected,
+            notificationsGranted = hasNotificationGranted,
+            notificationsConnected = hasNotificationConnected,
+            islandEnabled = isIslandEnabled
+        )
+    }
 
     var selectedIndex by remember { mutableIntStateOf(0) }
     var isExpanded by remember { mutableStateOf(true) }
@@ -555,18 +584,23 @@ fun PlaygroundScreen(
         else -> 156.dp
     }
 
-    val serviceRunning = isIslandEnabled && permissionsGranted
+    val serviceRunning = activationSnapshot.isRunning
     val categories = remember { listOf("All", "Media", "Calls", "Alerts", "Live", "Capture", "Controls", "System") }
     var selectedCategory by remember { mutableStateOf("All") }
-    val visibleStates = states.filter { item ->
-        selectedCategory == "All" || item.experienceCategory() == selectedCategory
+    val visibleStates = remember(selectedCategory, states) {
+        states.filter { item ->
+            selectedCategory == "All" || item.experienceCategory() == selectedCategory
+        }
     }
 
     AppScreen(
         bottomInset = BottomDockInset
     ) {
+        // ---------------------------------------------------------------
+        // 1. Product identity & Brand Header
+        // ---------------------------------------------------------------
         AppLargeTitle(
-            title = "Island",
+            title = "Dynamic Island",
             subtitle = "Live status, controls, and device previews",
             trailing = {
                 AppIconButton(
@@ -578,10 +612,56 @@ fun PlaygroundScreen(
         )
 
         // ---------------------------------------------------------------
-        // Live stage — the island itself remains unchanged.
+        // 1.5. Aurora Pro Status Card (FIRST VIEWPORT DISCOVERABILITY)
+        // Shows Pro Activated, 7-day trial countdown, or Ad Pass reward options
         // ---------------------------------------------------------------
+        ai.emots.kishan_dynamic.ui.components.HomePremiumStatusCard(
+            snapshot = entitlementSnapshot,
+            onNavigateToPremium = onNavigateToPremium,
+            onOpenRewardDialog = { showRewardDialog = true },
+            modifier = Modifier.appReveal(0)
+        )
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+        // ---------------------------------------------------------------
+        // 2. Real Island Activation Card (FIRST VIEWPORT PRIORITY)
+        // Immediately visible on every supported screen without scrolling.
+        // Accurately reflects runtime service connection and user preference.
+        // ---------------------------------------------------------------
+        IslandActivationCard(
+            snapshot = activationSnapshot,
+            onPrimaryAction = {
+                when (activationSnapshot.status) {
+                    IslandActivationStatus.SETUP_REQUIRED,
+                    IslandActivationStatus.PERMISSION_NEEDED -> onNavigatePermissions()
+                    IslandActivationStatus.SERVICE_PAUSED -> PermissionUtils.openAccessibilitySettings(context)
+                    IslandActivationStatus.READY_OFF -> {
+                        analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_STATE_TOGGLED, mapOf("enabled" to true))
+                        scope.launch { preferences.setIslandEnabled(true) }
+                    }
+                    IslandActivationStatus.RUNNING -> {
+                        analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_STATE_TOGGLED, mapOf("enabled" to false))
+                        scope.launch { preferences.setIslandEnabled(false) }
+                    }
+                    else -> onNavigatePermissions()
+                }
+            },
+            onToggle = { enabled ->
+                analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_STATE_TOGGLED, mapOf("enabled" to enabled))
+                scope.launch { preferences.setIslandEnabled(enabled) }
+            },
+            modifier = Modifier.appReveal(0)
+        )
+
+        AppSectionSpacer()
+
+        // ---------------------------------------------------------------
+        // 3. Live Stage & Interactive Preview (Secondary to actual product activation)
+        // ---------------------------------------------------------------
+        AppSectionTitle("Live Preview")
         AppStage(
-            modifier = Modifier.appReveal(0),
+            modifier = Modifier.appReveal(1),
             caption = if (currentItem.supportsExpand) {
                 if (isExpanded) "Tap the island to collapse" else "Tap the island to expand"
             } else null,
@@ -669,16 +749,26 @@ fun PlaygroundScreen(
                     color = AppTheme.colors.textTertiary
                 )
                 Spacer(modifier = Modifier.height(AppTheme.spacing.xxs))
-                AppText(
-                    text = currentItem.label,
-                    style = AppTheme.typography.h3,
-                    color = AppTheme.colors.textPrimary
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AppText(
+                        text = currentItem.label,
+                        style = AppTheme.typography.h3,
+                        color = AppTheme.colors.textPrimary
+                    )
+                }
+            }
+            val isSimulation = currentItem.label in listOf("AirDrop", "Satellite", "Find My", "Moved to iPhone", "Video remote", "Screen mirroring")
+            if (isSimulation) {
+                AppStatusPill(
+                    text = "Simulation",
+                    color = AppTheme.colors.info
+                )
+            } else {
+                AppStatusPill(
+                    text = if (serviceRunning) "Live Preview" else "Preview only",
+                    color = if (serviceRunning) AppTheme.colors.success else AppTheme.colors.textTertiary
                 )
             }
-            AppStatusPill(
-                text = if (serviceRunning) "Ready" else "Setup needed",
-                color = if (serviceRunning) AppTheme.colors.success else AppTheme.colors.warning
-            )
         }
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.md))
@@ -726,11 +816,11 @@ fun PlaygroundScreen(
         AppSectionSpacer()
 
         // ---------------------------------------------------------------
-        // Experience browser — category filtering keeps the home screen calm
+        // 4. Experience browser — category filtering keeps the screen calm
         // while every audited island remains one tap away.
         // ---------------------------------------------------------------
-        AppSectionTitle("Preview")
-        AppListCard(modifier = Modifier.appReveal(1)) {
+        AppSectionTitle("Experiences")
+        AppListCard(modifier = Modifier.appReveal(2)) {
             Column(
                 modifier = Modifier.padding(
                     horizontal = AppTheme.layout.cardPadding,
@@ -801,49 +891,7 @@ fun PlaygroundScreen(
         AppSectionSpacer()
 
         // ---------------------------------------------------------------
-        // Setup status
-        // ---------------------------------------------------------------
-        AppSectionTitle("Status")
-        AppCard(modifier = Modifier.appReveal(2)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AppText(
-                    text = if (serviceRunning) "Island is active" else "Setup required",
-                    style = AppTheme.typography.h3,
-                    color = AppTheme.colors.textPrimary,
-                    modifier = Modifier.weight(1f)
-                )
-                AppStatusPill(
-                    text = if (serviceRunning) "Ready" else "Action needed",
-                    color = if (serviceRunning) AppTheme.colors.success else AppTheme.colors.warning
-                )
-            }
-            Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
-            AppText(
-                text = if (serviceRunning) {
-                    "The island is running above your apps."
-                } else {
-                    "Grant accessibility and notification access so the island can appear over your apps."
-                },
-                style = AppTheme.typography.bodySmall,
-                color = AppTheme.colors.textSecondary
-            )
-            if (!permissionsGranted) {
-                Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
-                AppButton(
-                    text = "Complete setup",
-                    onClick = onNavigatePermissions,
-                    glyph = AppleGlyph.Shield
-                )
-            }
-        }
-
-        AppSectionSpacer()
-
-        // ---------------------------------------------------------------
-        // Settings grouped like an iOS Settings page.
+        // 5. Settings grouped like an iOS Settings page.
         // ---------------------------------------------------------------
         AppSectionTitle("Customize")
         AppListCard(modifier = Modifier.appReveal(3)) {
@@ -905,20 +953,14 @@ fun PlaygroundScreen(
         }
 
         AppSectionSpacer()
+        AppFootnote("Dynamic Island runs securely on-device and respects your system privacy.")
+    }
 
-        AppSectionTitle("Service")
-        AppListCard(modifier = Modifier.appReveal(4)) {
-            AppToggleRow(
-                title = "Enable Dynamic Island",
-                subtitle = if (isIslandEnabled) "Running over your apps" else "Currently paused",
-                glyph = AppleGlyph.Power,
-                checked = isIslandEnabled,
-                onCheckedChange = { checked ->
-                    scope.launch { preferences.setIslandEnabled(checked) }
-                }
-            )
-        }
-        AppFootnote("Turning the service off keeps your settings but hides the island everywhere.")
+    if (showRewardDialog) {
+        ai.emots.kishan_dynamic.ui.dialogs.AdRewardDialog(
+            onDismiss = { showRewardDialog = false },
+            onNavigateToPremium = onNavigateToPremium
+        )
     }
 }
 

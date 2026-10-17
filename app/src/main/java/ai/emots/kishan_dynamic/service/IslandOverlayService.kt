@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,13 +49,17 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import ai.emots.kishan_dynamic.data.model.IslandState
+import ai.emots.kishan_dynamic.data.model.IslandPresentationMode
+import ai.emots.kishan_dynamic.data.model.presentationMode
 import ai.emots.kishan_dynamic.data.model.IslandInteractionAction
 import ai.emots.kishan_dynamic.data.model.IslandInteractionPolicy
 import ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicy
 import ai.emots.kishan_dynamic.data.model.OverlayDisplayPolicy
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
+import ai.emots.kishan_dynamic.data.premium.EntitlementManager
 import ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicy
 import ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicy
+import ai.emots.kishan_dynamic.data.release.AppReleaseRuntimeConfig
 import ai.emots.kishan_dynamic.data.repository.ActionIslandRepository
 import ai.emots.kishan_dynamic.data.model.ActionSystemTile
 import ai.emots.kishan_dynamic.data.model.ActionUtilityAction
@@ -63,6 +68,9 @@ import ai.emots.kishan_dynamic.ui.NotificationReplyActivity
 import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
 import ai.emots.kishan_dynamic.ui.components.IslandDemoState
 import ai.emots.kishan_dynamic.ui.components.IslandControlAction
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsEventNames
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsTracker
+import ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,13 +80,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.cancel
 
 /**
  * System Accessibility Overlay Service that renders the Dynamic Island on top of all Android windows.
  */
 class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelStoreOwner, SavedStateRegistryOwner {
 
+    private val analyticsTracker: AnalyticsTracker by lazy { FirebaseAnalyticsTracker(applicationContext) }
     private val scope = CoroutineScope(Dispatchers.Main + Job())
     private lateinit var windowManager: WindowManager
     private lateinit var preferences: AuroraPreferences
@@ -92,6 +101,28 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
     private lateinit var satelliteActivityMonitor: SatelliteActivityMonitor
     private var composeView: ComposeView? = null
     private var windowLayoutParams: WindowManager.LayoutParams? = null
+    private var replyingNotificationId by mutableStateOf<String?>(null)
+    private val systemSurfaceSuppressed = kotlinx.coroutines.flow.MutableStateFlow(false)
+    private var replyingAction by mutableStateOf<ai.emots.kishan_dynamic.data.model.NotificationActionInfo?>(null)
+
+    private fun enableOverlayFocusable() {
+        windowLayoutParams?.let { params ->
+            params.flags = params.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
+            composeView?.let { view ->
+                runCatching { windowManager.updateViewLayout(view, params) }
+            }
+        }
+    }
+
+    private fun restoreOverlayNonFocusable() {
+        windowLayoutParams?.let { params ->
+            params.flags = params.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+            composeView?.let { view ->
+                runCatching { windowManager.updateViewLayout(view, params) }
+            }
+        }
+    }
+
     private val deviceLocked = MutableStateFlow(false)
     private val systemIslandReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -187,6 +218,9 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                         BluetoothProfile.EXTRA_STATE,
                         BluetoothProfile.STATE_DISCONNECTED
                     )
+                    if (::bluetoothAccessoryMonitor.isInitialized) {
+                        bluetoothAccessoryMonitor.onBluetoothEvent()
+                    }
                     when (state) {
                         BluetoothProfile.STATE_CONNECTING -> IslandStateManager.postBluetoothDevice(
                             deviceName = if (canReadName) device?.name ?: "Bluetooth device" else "Bluetooth device",
@@ -229,11 +263,14 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
     override fun onServiceConnected() {
         super.onServiceConnected()
         isServiceActuallyConnected = true
+        analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_ACTIVATED)
         PermissionUtils.sendPermissionsChangedBroadcast(this)
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         isServiceActuallyConnected = false
+        PermissionUtils.sendPermissionsChangedBroadcast(this)
+        removeWindow()
         return super.onUnbind(intent)
     }
 
@@ -316,19 +353,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
     private fun initializeWindow() {
         if (composeView != null) return
 
-        val initialVerticalOffset = runCatching {
-            runBlocking { preferences.verticalOffset.first() }
-        }.getOrDefault(AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP)
-
-        val initialHorizontalOffset = runCatching {
-            runBlocking {
-                if (PremiumFeaturePolicy.horizontalOffsetEnabled(preferences.isProActive.first())) {
-                    preferences.horizontalOffset.first()
-                } else {
-                    AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP
-                }
-            }
-        }.getOrDefault(AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP)
+        val initialVerticalOffset = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP
+        val initialHorizontalOffset = AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP
 
         val layoutParams = WindowManager.LayoutParams().apply {
             width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -356,6 +382,11 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
 
             setOnTouchListener { _, event ->
                 if (event.action == android.view.MotionEvent.ACTION_OUTSIDE) {
+                    if (replyingNotificationId != null) {
+                        replyingNotificationId = null
+                        replyingAction = null
+                        restoreOverlayNonFocusable()
+                    }
                     IslandStateManager.collapseExpandedState()
                     true
                 } else {
@@ -388,13 +419,15 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val actionSystemSnapshot by actionSystemController.snapshot.collectAsState()
                 val observedMediaVolume by IslandStateManager.observedMediaVolume.collectAsState()
 
-                // The island drops out of the cutout rather than popping in.
+                val systemSurfaceActive by systemSurfaceSuppressed.collectAsState()
+                // System controls always win; source state continues independently.
                 androidx.compose.animation.AnimatedVisibility(
                     visible = OverlayDisplayPolicy(
                         islandEnabled = isEnabled,
                         alwaysOnTop = alwaysOnTop,
                         showOnLockScreen = showOnLockScreen,
-                        deviceLocked = isDeviceLocked
+                        deviceLocked = isDeviceLocked,
+                        systemSurfaceActive = systemSurfaceActive
                     ).shouldRender(islandState is IslandState.Hidden),
                     enter = if (reduceMotion) {
                         androidx.compose.animation.fadeIn(
@@ -488,6 +521,16 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     hideSensitiveContent = hideSensitiveContent
                                 )
                             }
+                            LaunchedEffect(notificationItems, replyingNotificationId, replyingAction) {
+                                if (replyingNotificationId != null &&
+                                    !ai.emots.kishan_dynamic.data.notification.NotificationReplyLifecyclePolicy.canKeepEditor(
+                                        replyingNotificationId, replyingAction?.id, notificationItems
+                                    )) {
+                                    replyingNotificationId = null
+                                    replyingAction = null
+                                    restoreOverlayNonFocusable()
+                                }
+                            }
                             val notificationActiveIndex = when (renderedState) {
                                 is IslandState.Notification -> renderedState.activeIndex
                                 is IslandState.NotificationWithMusic -> renderedState.activeIndex
@@ -502,6 +545,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 state = demoState,
                                 horizontalScale = widthScale,
                                 onTap = {
+                                    analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_EXPAND, mapOf("source" to "overlay_tap"))
                                     if (!(compactMusicControlsEnabled && islandState is IslandState.Music)) {
                                         performIslandInteraction(
                                             IslandInteractionPolicy.mainTap(islandState),
@@ -530,6 +574,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 mainContentDescription = islandMainContentDescription(renderedState),
                                 companionContentDescription = islandCompanionContentDescription(renderedState),
                                 onSwipeDismiss = {
+                                    analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_SWIPE_DISMISS)
                                     if (swipeUpDismiss) {
                                         IslandStateManager.handleSwipeDismiss()?.let { notificationId ->
                                             IslandNotificationListener.instance?.cancelNotification(notificationId)
@@ -553,6 +598,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     actionSystemController.executeCustomAction(actionId)
                                 },
                                 onSystemTileClick = { tile ->
+                                    analyticsTracker.logEvent(AnalyticsEventNames.QUICK_CONTROL_TAPPED, mapOf("tile" to tile.name.lowercase()))
                                     if (tile == ActionSystemTile.SCREENSHOT && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                                         performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
                                     } else {
@@ -561,25 +607,56 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 },
                                 notifications = notificationItems,
                                 notificationActiveIndex = notificationActiveIndex,
+                                replyingNotificationId = replyingNotificationId,
+                                replyAction = replyingAction,
+                                onSendReply = { replyText ->
+                                    val notifId = replyingNotificationId
+                                    val act = replyingAction
+                                    val dispatched = if (notifId != null && act != null) {
+                                        NotificationActionRegistry.sendReply(this@IslandOverlayService, notifId, act.id, replyText)
+                                    } else false
+                                    if (dispatched) {
+                                        replyingNotificationId = null
+                                        replyingAction = null
+                                        restoreOverlayNonFocusable()
+                                    }
+                                    android.widget.Toast.makeText(this@IslandOverlayService,
+                                        if (dispatched) "Reply handed to the app" else "Reply unavailable. Your draft is kept; open the app to reply.",
+                                        android.widget.Toast.LENGTH_SHORT).show()
+                                },
+                                onCancelReply = {
+                                    replyingNotificationId = null
+                                    replyingAction = null
+                                    restoreOverlayNonFocusable()
+                                },
                                 onNotificationAction = { notification, action ->
+                                    IslandStateManager.claimNotificationInteraction()
                                     if (action.isReply && NotificationActionRegistry.hasReplyTarget(notification.id, action.id)) {
-                                        startActivity(
-                                            Intent(this@IslandOverlayService, NotificationReplyActivity::class.java)
-                                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                .putExtra(NotificationReplyActivity.EXTRA_NOTIFICATION_ID, notification.id)
-                                                .putExtra(NotificationReplyActivity.EXTRA_ACTION_ID, action.id)
-                                                .putExtra(NotificationReplyActivity.EXTRA_APP_NAME, notification.appName)
-                                                .putExtra(NotificationReplyActivity.EXTRA_SENDER, notification.title)
-                                                .putExtra(NotificationReplyActivity.EXTRA_MESSAGE, notification.text)
-                                        )
+                                        replyingNotificationId = notification.id
+                                        replyingAction = action
+                                        enableOverlayFocusable()
                                     } else {
-                                        NotificationActionRegistry.send(notification.id, action.id)
+                                        if (!NotificationActionRegistry.send(notification.id, action.id)) {
+                                            android.widget.Toast.makeText(this@IslandOverlayService,
+                                                "This action is no longer available. Open the source app.",
+                                                android.widget.Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 },
                                 onNotificationSelect = { notificationId ->
+                                    if (replyingNotificationId != null && replyingNotificationId != notificationId) {
+                                        replyingNotificationId = null
+                                        replyingAction = null
+                                        restoreOverlayNonFocusable()
+                                    }
                                     IslandStateManager.selectNotification(notificationId)
                                 },
                                 onNotificationDismiss = { notificationId ->
+                                    if (replyingNotificationId == notificationId) {
+                                        replyingNotificationId = null
+                                        replyingAction = null
+                                        restoreOverlayNonFocusable()
+                                    }
                                     val notification = notificationItems.firstOrNull { it.id == notificationId }
                                     if (notification?.isClearable == true) {
                                         IslandStateManager.removeNotification(notificationId)
@@ -676,20 +753,22 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
     }
 
     private fun removeWindow() {
-        composeView?.let { view ->
-            try {
-                windowManager.removeView(view)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        val view = composeView ?: return
         composeView = null
         windowLayoutParams = null
+        view.setOnTouchListener(null)
+        try {
+            if (view.isAttachedToWindow) windowManager.removeView(view)
+        } catch (_: Exception) {
+            android.util.Log.w(NotificationDiagnostics.TAG, "event=window_remove outcome=failed")
+        } finally {
+            view.disposeComposition()
+        }
     }
 
     private fun mapToDemoState(state: IslandState): IslandDemoState {
         return when (state) {
-            is IslandState.Hidden, is IslandState.Minimal -> IslandDemoState.Minimal
+            is IslandState.Hidden, is IslandState.Minimal -> IslandDemoState.Idle
             is IslandState.Music -> if (state.isExpanded) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact
             is IslandState.OngoingCall -> if (state.isExpanded) IslandDemoState.CallExpanded else IslandDemoState.CallCompact
             is IslandState.CallSummary -> IslandDemoState.CallSummaryExpanded
@@ -728,24 +807,25 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.FLIGHT -> if (isExpanded) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.SPORTS -> if (isExpanded) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION -> if (isExpanded) IslandDemoState.ColorOptions else IslandDemoState.NavigationCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VOICE_MEMO -> IslandDemoState.VoiceMemoExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_RECORDING -> IslandDemoState.ScreenRecordingExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SHORTCUT -> IslandDemoState.ShortcutExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FOCUS_MODE -> IslandDemoState.FocusModeExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIR_DROP -> IslandDemoState.AirDropActivity
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPODS -> IslandDemoState.AirPodsConnected
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SATELLITE -> IslandDemoState.SatelliteConnected
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FIND_MY -> IslandDemoState.FindMyAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOVED_TO_IPHONE -> IslandDemoState.MovedToIPhone
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VIDEO_REMOTE -> IslandDemoState.VideoRemoteExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPLANE_ALERT -> IslandDemoState.AirplaneAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_MIRRORING_ALERT -> IslandDemoState.ScreenMirroringAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOBILE_DATA_ALERT -> IslandDemoState.MobileDataAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TRANSIT_ROUTE_ALERT -> IslandDemoState.TransitRouteAlert
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VOICE_MEMO -> if (isExpanded) IslandDemoState.VoiceMemoExpanded else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_RECORDING -> if (isExpanded) IslandDemoState.ScreenRecordingExpanded else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SHORTCUT -> if (isExpanded) IslandDemoState.ShortcutExpanded else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FOCUS_MODE -> if (isExpanded) IslandDemoState.FocusModeExpanded else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIR_DROP -> if (isExpanded) IslandDemoState.AirDropActivity else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPODS -> if (isExpanded) IslandDemoState.AirPodsConnected else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SATELLITE -> if (isExpanded) IslandDemoState.SatelliteConnected else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FIND_MY -> if (isExpanded) IslandDemoState.FindMyAlert else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOVED_TO_IPHONE -> if (isExpanded) IslandDemoState.MovedToIPhone else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VIDEO_REMOTE -> if (isExpanded) IslandDemoState.VideoRemoteExpanded else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPLANE_ALERT -> if (isExpanded) IslandDemoState.AirplaneAlert else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_MIRRORING_ALERT -> if (isExpanded) IslandDemoState.ScreenMirroringAlert else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOBILE_DATA_ALERT -> if (isExpanded) IslandDemoState.MobileDataAlert else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TRANSIT_ROUTE_ALERT -> if (isExpanded) IslandDemoState.TransitRouteAlert else IslandDemoState.Minimal
         }
     }
 
     private fun handleIslandControlAction(action: IslandControlAction) {
+        analyticsTracker.logEvent(AnalyticsEventNames.MEDIA_CONTROL_USED, mapOf("action" to action.name.lowercase()))
         when (action) {
             IslandControlAction.MusicPlayPause -> MediaPlaybackRegistry.playPause()
             IslandControlAction.MusicNext -> MediaPlaybackRegistry.skipNext()
@@ -754,8 +834,14 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             IslandControlAction.VideoSkipBackward -> MediaPlaybackRegistry.seekBy(-15_000L)
             IslandControlAction.VideoPlayPause -> MediaPlaybackRegistry.playPause()
             IslandControlAction.VideoSkipForward -> MediaPlaybackRegistry.seekBy(15_000L)
-            IslandControlAction.OpenSettings -> actionSystemController.openSettings()
-            IslandControlAction.MobileDataSettings -> actionSystemController.execute(ActionSystemTile.MOBILE_DATA)
+            IslandControlAction.OpenSettings -> {
+                actionSystemController.openSettings()
+                currentLiveActivity()?.let { IslandStateManager.clearLiveActivity(it.id) }
+            }
+            IslandControlAction.MobileDataSettings -> {
+                actionSystemController.execute(ActionSystemTile.MOBILE_DATA)
+                currentLiveActivity()?.let { IslandStateManager.clearLiveActivity(it.id) }
+            }
             IslandControlAction.CallAccept -> {
                 val incoming = IslandStateManager.currentState.value as? IslandState.IncomingCall
                 if (incoming?.sourceNotificationId != null && incoming.acceptActionId != null) {
@@ -839,8 +925,14 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val actionId = activity.sourceActionId ?: return
                 NotificationActionRegistry.send(sourceId, actionId)
             }
-            IslandControlAction.AirPodsOpen -> actionSystemController.execute(ActionSystemTile.BLUETOOTH)
-            IslandControlAction.SatelliteMessage -> actionSystemController.openSettings()
+            IslandControlAction.AirPodsOpen -> {
+                actionSystemController.execute(ActionSystemTile.BLUETOOTH)
+                currentLiveActivity()?.let { IslandStateManager.clearLiveActivity(it.id) }
+            }
+            IslandControlAction.SatelliteMessage -> {
+                actionSystemController.openSettings()
+                currentLiveActivity()?.let { IslandStateManager.clearLiveActivity(it.id) }
+            }
             IslandControlAction.ShortcutOpen -> openMainActivity(MainActivity.EXTRA_OPEN_LIVE_ACTIVITY)
             IslandControlAction.PremiumWatchAd -> openMainActivity(MainActivity.EXTRA_OPEN_REWARDED_PASS)
             IslandControlAction.PremiumBuy -> openMainActivity(MainActivity.EXTRA_OPEN_PREMIUM)
@@ -906,7 +998,14 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         when (action) {
             IslandInteractionAction.NONE -> Unit
             IslandInteractionAction.OPEN_QUICK_CONTROLS -> {
-                if (quickControlsEnabled) IslandStateManager.openActionControl()
+                val entitlement = EntitlementManager.getInstance(applicationContext).entitlement.value
+                val isDebug = (applicationInfo.flags and android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+                val releaseConfig = AppReleaseRuntimeConfig.provider(applicationContext, isDebug).config.value
+                if (entitlement.shouldShowExpiryIsland() && releaseConfig.premiumExpiryIslandEnabled) {
+                    IslandStateManager.postPremiumExpiry(0)
+                } else if (quickControlsEnabled) {
+                    IslandStateManager.openActionControl()
+                }
             }
             IslandInteractionAction.OPEN_NOTIFICATIONS -> IslandStateManager.openNotifications()
             IslandInteractionAction.OPEN_NEXT_NOTIFICATION -> {
@@ -1033,36 +1132,51 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 }
         }
 
-        // Dynamic window width for expanded vs compact states
+        // Dynamic window width and touch bounds for expanded vs compact vs hidden states
         scope.launch {
-            IslandStateManager.currentState.collectLatest { state ->
+            kotlinx.coroutines.flow.combine(
+                IslandStateManager.currentState,
+                systemSurfaceSuppressed,
+                IslandStateManager.isPaywallActive
+            ) { state, suppressed, paywallActive ->
+                Triple(state, suppressed, paywallActive)
+            }.collectLatest { (state, suppressed, paywallActive) ->
                 windowLayoutParams?.let { params ->
                     val displayMetrics = resources.displayMetrics
                     val screenWidthPx = displayMetrics.widthPixels
                     val density = displayMetrics.density
-                    val expandedWidthPx = (screenWidthPx - (16 * density)).toInt().coerceAtLeast(0)
+                    val expandedWidthPx = (ai.emots.kishan_dynamic.ui.theme.AppIslandTokens()
+                        .expandedWidth((screenWidthPx / density).dp).value * density).toInt().coerceAtLeast(0)
 
-                    val isExpanded = when (state) {
-                        is IslandState.ActionControl -> true
-                        is IslandState.CallSummary -> true
-                        is IslandState.IncomingCall -> true
-                        is IslandState.PremiumExpiry -> true
-                        is IslandState.Music -> state.isExpanded
-                        is IslandState.OngoingCall -> state.isExpanded
-                        is IslandState.Notification -> state.isExpanded
-                        is IslandState.RingerMode -> state.isExpanded
-                        is IslandState.LiveActivity -> state.activity.isExpanded
-                        else -> false
-                    }
+                    val isHidden = state is IslandState.Hidden || suppressed || paywallActive
+                    // Some OEM compositors retain the last buffer of a zero-sized window.
+                    // Hide the actual view as well: protected surfaces must never wait for
+                    // a Compose exit animation or retain a stale visible overlay buffer.
+                    composeView?.visibility = if (isHidden) android.view.View.INVISIBLE else android.view.View.VISIBLE
+                    val isExpanded = state.presentationMode == ai.emots.kishan_dynamic.data.model.IslandPresentationMode.EXPANDED
 
-                    val targetWidthPx = if (isExpanded) {
-                        expandedWidthPx
+                    val newFlags = if (isHidden) {
+                        params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                     } else {
-                        WindowManager.LayoutParams.WRAP_CONTENT
+                        (params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()) or
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
                     }
 
-                    if (params.width != targetWidthPx) {
+                    val targetWidthPx = when {
+                        isHidden -> 0
+                        isExpanded -> expandedWidthPx
+                        else -> WindowManager.LayoutParams.WRAP_CONTENT
+                    }
+                    val targetHeightPx = when {
+                        isHidden -> 0
+                        else -> WindowManager.LayoutParams.WRAP_CONTENT
+                    }
+
+                    if (params.width != targetWidthPx || params.height != targetHeightPx || params.flags != newFlags) {
+                        params.flags = newFlags
                         params.width = targetWidthPx
+                        params.height = targetHeightPx
                         composeView?.let { view ->
                             runCatching { windowManager.updateViewLayout(view, params) }
                         }
@@ -1072,24 +1186,42 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         }
 
         scope.launch {
-            preferences.proExpiresAt
-                .combine(preferences.isProActive) { expiresAt, active ->
-                    if (!active || expiresAt == null) null
-                    else PremiumExpiryPolicy.remainingWarningHours(
-                        expiresAtMillis = expiresAt,
-                        nowMillis = System.currentTimeMillis()
-                    )
-                }
-                .collectLatest { hoursRemaining ->
-                    if (hoursRemaining != null) {
-                        IslandStateManager.postPremiumExpiry(hoursRemaining)
+            EntitlementManager.getInstance(applicationContext).entitlement
+                .collectLatest { snapshot ->
+                    if (snapshot.isActive && snapshot.expiresAtMillis != null) {
+                        val hoursRemaining = PremiumExpiryPolicy.remainingWarningHours(
+                            expiresAtMillis = snapshot.expiresAtMillis,
+                            nowMillis = System.currentTimeMillis()
+                        )
+                        if (hoursRemaining != null) {
+                            IslandStateManager.postPremiumExpiry(hoursRemaining)
+                        }
                     }
                 }
         }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        // Can be used for lock screen detection or window state changes
+        val currentEvent = event ?: return
+        if (currentEvent.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+            currentEvent.eventType != AccessibilityEvent.TYPE_WINDOWS_CHANGED) return
+        val suppress = runCatching {
+            windows.orEmpty().any { window ->
+                if (!window.isFocused && !window.isActive) return@any false
+                val ownOverlay = window.type == android.view.accessibility.AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY
+                val root = window.root
+                val owner = try { root?.packageName?.toString() } finally { root?.recycle() }
+                ai.emots.kishan_dynamic.data.model.OverlaySystemSurfacePolicy.shouldSuppress(
+                    window.type == android.view.accessibility.AccessibilityWindowInfo.TYPE_SYSTEM,
+                    owner, ownOverlay
+                )
+            }
+        }.getOrDefault(currentEvent.packageName?.toString() == "com.android.systemui")
+        if (systemSurfaceSuppressed.value != suppress) {
+            systemSurfaceSuppressed.value = suppress
+            NotificationDiagnostics.surface(suppress)
+            if (suppress) restoreOverlayNonFocusable()
+        }
     }
 
     override fun onInterrupt() {
@@ -1098,6 +1230,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
     override fun onDestroy() {
         super.onDestroy()
         isServiceActuallyConnected = false
+        PermissionUtils.sendPermissionsChangedBroadcast(this)
+        scope.cancel()
         unregisterReceiver(systemIslandReceiver)
         if (::audioVolumeObserver.isInitialized) audioVolumeObserver.unregister()
         if (::actionSystemController.isInitialized) actionSystemController.close()

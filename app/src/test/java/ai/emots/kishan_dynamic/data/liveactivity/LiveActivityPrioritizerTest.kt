@@ -49,4 +49,23 @@ class LiveActivityPrioritizerTest {
 
         assertEquals(navigation, LiveActivityPrioritizer.primary(listOf(recording, navigation)))
     }
+
+    @Test
+    fun expiredActivityIsIgnoredByPrioritizer() {
+        val expiredAlert = LiveActivityInfo(
+            id = "expired",
+            kind = LiveActivityKind.MOBILE_DATA_ALERT,
+            title = "Mobile Data",
+            expiresAtMillis = System.currentTimeMillis() - 1000L
+        )
+        val activeTimer = LiveActivityInfo(
+            id = "timer",
+            kind = LiveActivityKind.TIMER,
+            title = "Timer",
+            expiresAtMillis = System.currentTimeMillis() + 60_000L
+        )
+
+        assertEquals(activeTimer, LiveActivityPrioritizer.primary(listOf(expiredAlert, activeTimer)))
+        assertEquals(null, LiveActivityPrioritizer.primary(listOf(expiredAlert)))
+    }
 }

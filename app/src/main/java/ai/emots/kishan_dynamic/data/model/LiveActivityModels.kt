@@ -49,6 +49,30 @@ internal val LiveActivityKind.displayPriority: Int
         LiveActivityKind.SHORTCUT -> 10
     }
 
+/** True when the activity is a temporary status announcement rather than an ongoing task. */
+val LiveActivityKind.isTransientAlert: Boolean
+    get() = when (this) {
+        LiveActivityKind.MOBILE_DATA_ALERT,
+        LiveActivityKind.AIRPLANE_ALERT,
+        LiveActivityKind.AIRPODS,
+        LiveActivityKind.FIND_MY,
+        LiveActivityKind.MOVED_TO_IPHONE,
+        LiveActivityKind.SHORTCUT -> true
+        else -> false
+    }
+
+/** Calibrated display durations for transient alert categories. */
+val LiveActivityKind.defaultTransientDurationMillis: Long
+    get() = when (this) {
+        LiveActivityKind.SHORTCUT -> 2500L
+        LiveActivityKind.AIRPODS,
+        LiveActivityKind.MOVED_TO_IPHONE -> 3000L
+        LiveActivityKind.AIRPLANE_ALERT,
+        LiveActivityKind.MOBILE_DATA_ALERT,
+        LiveActivityKind.FIND_MY -> 4000L
+        else -> 3500L
+    }
+
 @Immutable
 data class LiveActivityInfo(
     val id: String,
@@ -63,6 +87,7 @@ data class LiveActivityInfo(
     val isRunning: Boolean = true,
     val startedAtMillis: Long = System.currentTimeMillis(),
     val expiresAtMillis: Long? = null,
+    val expandedByUser: Boolean = isExpanded,
     /** Optional notification source retained outside the Compose layer. */
     val sourceNotificationId: String? = null,
     /** Optional source action, such as Open or Undo, for this activity. */

@@ -19,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,7 +52,8 @@ import ai.emots.kishan_dynamic.ui.theme.accentGradient
 fun AboutScreen(
     onBack: () -> Unit,
     onRate: () -> Unit = {},
-    onShare: () -> Unit = {}
+    onShare: () -> Unit = {},
+    onNavigateFeedback: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val preferences = remember { AuroraPreferences(context) }
@@ -70,12 +70,15 @@ fun AboutScreen(
         packageInfo?.versionCode?.toString() ?: "—"
     }
 
-    AppScreen {
-        AppTopBar(
-            title = "About Aurora",
-            subtitle = "Your island, your device, your control",
-            onBack = onBack
-        )
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "About Aurora",
+                subtitle = "Your island, your device, your control",
+                onBack = onBack
+            )
+        }
+    ) {
 
         AppCard {
             Row(
@@ -128,6 +131,10 @@ fun AboutScreen(
             AppRowDivider()
             AppInfoRow(title = "App version", value = "$versionName ($versionCode)")
             AppRowDivider()
+            AppInfoRow(title = "Developer", value = "Surya Developer")
+            AppRowDivider()
+            AppInfoRow(title = "Support", value = "suryadevelopers07@gmail.com")
+            AppRowDivider()
             AppInfoRow(
                 title = "Theme",
                 value = if (AppTheme.isDark) "Dark" else "Light"
@@ -150,7 +157,7 @@ fun AboutScreen(
                 subtitle = "Share an idea or report a problem",
                 glyph = AppleGlyph.Sparkles,
                 accent = AppTheme.colors.info,
-                onClick = { showFeedback = true }
+                onClick = onNavigateFeedback
             )
             AppRowDivider()
             AppNavRow(

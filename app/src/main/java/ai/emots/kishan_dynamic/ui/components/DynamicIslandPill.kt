@@ -55,6 +55,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.Image
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -353,6 +354,10 @@ fun DynamicIslandPill(
     onSystemTileClick: (ActionSystemTile) -> Unit = {},
     notifications: List<NotificationInfo> = emptyList(),
     notificationActiveIndex: Int = 0,
+    replyingNotificationId: String? = null,
+    replyAction: NotificationActionInfo? = null,
+    onSendReply: (String) -> Unit = {},
+    onCancelReply: () -> Unit = {},
     onNotificationAction: (NotificationInfo, NotificationActionInfo) -> Unit = { _, _ -> },
     onNotificationSelect: (String) -> Unit = {},
     onNotificationDismiss: (String) -> Unit = {},
@@ -468,7 +473,12 @@ fun DynamicIslandPill(
     val splitExtras = if (isSplit) islandTokens.splitGap + islandTokens.sideSize else 0.dp
     val maxMainWidth = (maxExpanded - splitExtras).coerceAtLeast(islandTokens.compactHeight)
     val requestedWidth = if (isCompact) baseWidth * safeHorizontalScale else baseWidth
-    val targetWidth = requestedWidth.coerceAtMost(maxMainWidth)
+    val targetWidth = if (isCompact) {
+        ai.emots.kishan_dynamic.data.model.IslandGeometryConstraints.compactWidth(
+            requestedWidth.value, screenWidth.value, islandTokens.compactStatusSideReserve.value,
+            splitExtras.value, islandTokens.compactMaxWidth.value
+        ).dp
+    } else requestedWidth.coerceAtMost(maxMainWidth)
 
     // Exact Apple prototype heights per state type (from Figma):
     // - Compact / Minimal: 36.67dp (shared hardware-height token)
@@ -481,12 +491,36 @@ fun DynamicIslandPill(
     //   - Active Call (5 action buttons): 166dp
     //   - Music Player (scrubber & controls): 177dp
     //   - Turn-by-Turn Navigation: 185.3dp
+    val activeNotification = notifications.getOrNull(notificationActiveIndex) ?: notifications.firstOrNull()
+    var isNotificationCardExpanded by remember { mutableStateOf(false) }
+    var dynamicNotificationHeight by remember { mutableStateOf(78.dp) }
+    val isReplyingNotification = state == IslandDemoState.NotificationExpanded &&
+        replyingNotificationId != null &&
+        (activeNotification?.id == replyingNotificationId || notifications.any { it.id == replyingNotificationId })
+    val hasLargePicture = state == IslandDemoState.NotificationExpanded &&
+        activeNotification?.picturePath != null
+    val isNotificationExpanded = isNotificationCardExpanded || isReplyingNotification || hasLargePicture
+
+    LaunchedEffect(state, notifications.isEmpty()) {
+        if (state != IslandDemoState.NotificationExpanded || notifications.isEmpty()) {
+            isNotificationCardExpanded = false
+        }
+    }
+
     val targetHeight = if (state == IslandDemoState.ActionControlExpanded) {
         var base = 180.dp
         if (actionCustomActions.isNotEmpty()) base += 52.dp
         if (actionApps.isNotEmpty()) base += 52.dp
         if (actionContacts.isNotEmpty()) base += 52.dp
         base
+    } else if (isReplyingNotification) {
+        160.dp
+    } else if (state == IslandDemoState.NotificationExpanded) {
+        if (isNotificationExpanded) {
+            dynamicNotificationHeight.coerceIn(100.dp, 255.dp)
+        } else {
+            dynamicNotificationHeight.coerceIn(74.dp, 88.dp)
+        }
     } else {
         state.resolvedHeight(islandTokens)
     }
@@ -518,7 +552,7 @@ fun DynamicIslandPill(
         IslandDemoState.SportsCompact,
         IslandDemoState.NavigationCompact -> islandTokens.compactHeight / 2
 
-        IslandDemoState.NotificationExpanded,
+        IslandDemoState.NotificationExpanded -> if (isNotificationExpanded) islandTokens.expandedCorner else 39.dp
         IslandDemoState.SilentModeExpanded,
         IslandDemoState.TimerExpanded,
         IslandDemoState.ChargingExpanded,
@@ -583,11 +617,11 @@ fun DynamicIslandPill(
     )
 
     // Breathing Ambient Specular Aura (iOS Dynamic Island glow)
-    val auraAlpha = if (reduceMotion) {
-        0.08f
+    val auraAlphaState: androidx.compose.runtime.State<Float> = if (reduceMotion) {
+        remember { mutableStateOf(0.08f) }
     } else {
         val infiniteTransition = rememberInfiniteTransition(label = "aura_pulse")
-        val animatedAuraAlpha by infiniteTransition.animateFloat(
+        infiniteTransition.animateFloat(
             initialValue = 0.08f,
             targetValue = 0.25f,
             animationSpec = infiniteRepeatable(
@@ -599,7 +633,6 @@ fun DynamicIslandPill(
             ),
             label = "aura_alpha"
         )
-        animatedAuraAlpha
     }
 
     val auraColor = when (state) {
@@ -650,27 +683,44 @@ fun DynamicIslandPill(
                 .height(animatedHeight + 8.dp)
                 .graphicsLayer {
                     translationY = dragOffsetY.value
+                    alpha = if (isCompact) 0f else auraAlphaState.value * 0.10f
                 }
                 .clip(cornerRadius)
-                .background(auraColor.copy(alpha = auraAlpha * 0.22f))
+                .background(auraColor)
         )
 
         Row(
             modifier = modifier
-                .pointerInput(onSwipeDismiss) {
+                .pointerInput(onSwipeDismiss, isNotificationExpanded, state) {
                     detectVerticalDragGestures(
                         onDragStart = { },
                         onVerticalDrag = { change, dragAmount ->
                             coroutineScope.launch {
                                 val current = dragOffsetY.value
                                 // Apple iOS rubber-band drag resistance (55% tracking coefficient)
-                                val updated = (current + dragAmount * 0.55f).coerceAtMost(0f)
+                                val updated = (current + dragAmount * 0.55f).coerceIn(-100f, 60f)
                                 dragOffsetY.snapTo(updated)
                             }
                             change.consume()
                         },
                         onDragEnd = {
-                            if (dragOffsetY.value < -36f) {
+                            if (dragOffsetY.value > 24f && state == IslandDemoState.NotificationExpanded && !isNotificationExpanded) {
+                                if (hapticEnabled) {
+                                    islandView.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                                }
+                                isNotificationCardExpanded = true
+                                coroutineScope.launch {
+                                    dragOffsetY.animateTo(0f, animationSpec = AppMotion.islandSpring())
+                                }
+                            } else if (dragOffsetY.value < -28f && state == IslandDemoState.NotificationExpanded && isNotificationExpanded && !isReplyingNotification) {
+                                if (hapticEnabled) {
+                                    islandView.performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP)
+                                }
+                                isNotificationCardExpanded = false
+                                coroutineScope.launch {
+                                    dragOffsetY.animateTo(0f, animationSpec = AppMotion.islandSpring())
+                                }
+                            } else if (dragOffsetY.value < -36f) {
                                 if (hapticEnabled) {
                                     islandView.performHapticFeedback(
                                         android.view.HapticFeedbackConstants.KEYBOARD_TAP
@@ -935,9 +985,16 @@ fun DynamicIslandPill(
                         IslandDemoState.NotificationExpanded -> NotificationExpandedContent(
                             notifications = notifications,
                             activeIndex = notificationActiveIndex,
+                            isCardExpanded = isNotificationExpanded,
+                            onToggleExpand = { isNotificationCardExpanded = !isNotificationCardExpanded },
+                            replyingNotificationId = replyingNotificationId,
+                            replyAction = replyAction,
+                            onSendReply = onSendReply,
+                            onCancelReply = onCancelReply,
                             onNotificationAction = onNotificationAction,
                             onNotificationSelect = onNotificationSelect,
-                            onNotificationDismiss = onNotificationDismiss
+                            onNotificationDismiss = onNotificationDismiss,
+                            onHeightChange = { dynamicNotificationHeight = it }
                         )
                         IslandDemoState.SilentModeCompact -> SilentModeCompactContent()
                         IslandDemoState.SilentModeExpanded -> SilentModeExpandedContent(onControlAction)
@@ -1380,7 +1437,7 @@ private fun IdleCutoutContent() {
 private fun MinimalPillContent() {
     // Figma Minimal.svg uses the shared 36.67pt compact height.
     // Not a split pill - just a breathing status dot
-    val pulse by ai.emots.kishan_dynamic.ui.motion.rememberBreathing(
+    val pulseState = ai.emots.kishan_dynamic.ui.motion.rememberBreathing(
         min = 0.85f,
         max = 1f,
         durationMillis = 2200
@@ -1389,8 +1446,9 @@ private fun MinimalPillContent() {
     Box(
         modifier = Modifier
             .size(12.dp)
+            .graphicsLayer { alpha = pulseState.value }
             .clip(CircleShape)
-            .background(IslandColors.Green.copy(alpha = pulse))
+            .background(IslandColors.Green)
     )
 }
 
@@ -1581,14 +1639,16 @@ private fun NotificationCompactContent(notification: NotificationInfo?) {
             PackageIcon(
                 packageName = notification?.packageName,
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.compactIconSize)
                     .clip(CircleShape),
                 contentDescription = "${notification?.appName ?: "Notification"} icon"
             )
         },
         trailing = {
             Text(
-                text = notification?.let { it.title.ifBlank { it.appName } } ?: "Notification",
+                text = notification?.let {
+                    if (it.progressMax > 0) "${(it.progress.toLong() * 100 / it.progressMax).coerceIn(0, 100)}%" else "1"
+                } ?: "",
                 fontSize = 11.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = Color.White,
@@ -1632,7 +1692,7 @@ private fun NotificationStackedMainContent(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = primary.title.ifBlank { primary.appName },
+                text = notifications.size.toString(),
                 color = Color.White,
                 fontSize = 11.5.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -1648,7 +1708,7 @@ private fun NotificationStackedMainContent(
                 )
             } else if (primary.isOngoing && primary.progressMax > 0) {
                 Text(
-                    text = "${(primary.progress * 100 / primary.progressMax).coerceIn(0, 100)}%",
+                    text = "${(primary.progress.toLong() * 100 / primary.progressMax).coerceIn(0, 100)}%",
                     color = Color(0xFF64B5F6),
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Medium,
@@ -1814,9 +1874,16 @@ private fun NotificationWithMusicSideContent(
 private fun NotificationExpandedContent(
     notifications: List<NotificationInfo>,
     activeIndex: Int,
+    isCardExpanded: Boolean = false,
+    onToggleExpand: (() -> Unit)? = null,
+    replyingNotificationId: String? = null,
+    replyAction: NotificationActionInfo? = null,
+    onSendReply: (String) -> Unit = {},
+    onCancelReply: () -> Unit = {},
     onNotificationAction: (NotificationInfo, NotificationActionInfo) -> Unit,
     onNotificationSelect: (String) -> Unit,
-    onNotificationDismiss: (String) -> Unit
+    onNotificationDismiss: (String) -> Unit,
+    onHeightChange: ((androidx.compose.ui.unit.Dp) -> Unit)? = null
 ) {
     val displayList = remember(notifications) {
         if (notifications.isNotEmpty()) {
@@ -1824,12 +1891,59 @@ private fun NotificationExpandedContent(
         } else {
             listOf(
                 NotificationInfo(
+                    id = "demo_meesup",
+                    packageName = "com.google.android.apps.messaging",
+                    appName = "Messages",
+                    title = "VM-MEESUP-S",
+                    text = "RTO Delivery: 2 shipments are out for delivery. OTP will be sent during delivery and is available on the Seller Panel - Meesho",
+                    expandedText = "RTO Delivery: 2 shipments are out for delivery. OTP will be sent during delivery and is available on the Seller Panel - Meesho",
+                    actions = listOf(
+                        NotificationActionInfo(id = "read", label = "Mark as read"),
+                        NotificationActionInfo(id = "reply", label = "Reply", isReply = true)
+                    )
+                ),
+                NotificationInfo(
+                    id = "demo_launcher",
+                    packageName = "com.coloros.systemlauncher",
+                    appName = "System Launcher",
+                    title = "System Launcher",
+                    text = "",
+                    actions = listOf(NotificationActionInfo(id = "open", label = "Open"))
+                ),
+                NotificationInfo(
+                    id = "demo_heytap",
+                    packageName = "com.heytap.accessory",
+                    appName = "Heytap Accessory",
+                    title = "Permission request",
+                    text = "\"Quick device connect\" wants to obtain your location to scan for devices.",
+                    actions = listOf(NotificationActionInfo(id = "open", label = "Open"))
+                ),
+                NotificationInfo(
+                    id = "demo_chatgpt",
+                    packageName = "com.heytap.themestore",
+                    appName = "Theme Store",
+                    title = "ChatGPT",
+                    text = "कार्यक्रम योजना कैसे बनाएं?",
+                    actions = listOf(NotificationActionInfo(id = "open", label = "Open"))
+                ),
+                NotificationInfo(
                     id = "demo_chat",
                     packageName = "com.whatsapp",
                     appName = "WhatsApp",
                     title = "Tamia Castillo",
                     text = "Hey, are you free tonight? 🍕",
                     actions = listOf(NotificationActionInfo(id = "reply", label = "Reply", isReply = true))
+                ),
+                NotificationInfo(
+                    id = "demo_youtube",
+                    packageName = "com.google.android.youtube",
+                    appName = "YouTube",
+                    title = "MKBHD: iPhone 16 Pro Review: The Truth!",
+                    text = "Marques Brownlee · 1.2M views · 2 hours ago",
+                    actions = listOf(
+                        NotificationActionInfo(id = "watch_later", label = "Watch Later"),
+                        NotificationActionInfo(id = "play", label = "Play")
+                    )
                 ),
                 NotificationInfo(
                     id = "demo_nav",
@@ -1859,6 +1973,60 @@ private fun NotificationExpandedContent(
                     progress = 74,
                     progressMax = 100,
                     actions = listOf(NotificationActionInfo(id = "cancel", label = "Cancel"))
+                ),
+                NotificationInfo(
+                    id = "demo_bank_otp",
+                    packageName = "com.snapwork.hdfc",
+                    appName = "HDFC Bank",
+                    title = "Transaction OTP Alert",
+                    text = "AX-HDFCBK: OTP for Rs. 4,500 at Amazon Pay is 849201. Valid for 10 min. Do not share with anyone.",
+                    expandedText = "AX-HDFCBK: OTP for Rs. 4,500 at Amazon Pay is 849201. Valid for 10 min. Do not share with anyone.",
+                    actions = listOf(
+                        NotificationActionInfo(id = "copy_otp", label = "Copy 849201")
+                    )
+                ),
+                NotificationInfo(
+                    id = "demo_swiggy",
+                    packageName = "in.swiggy.android",
+                    appName = "Swiggy",
+                    title = "Order on the way! 🛵",
+                    text = "Santosh is 8 mins away with your Behrouz Biryani feast.",
+                    actions = listOf(
+                        NotificationActionInfo(id = "track", label = "Track Order"),
+                        NotificationActionInfo(id = "call_delivery", label = "Call Driver")
+                    )
+                ),
+                NotificationInfo(
+                    id = "demo_instagram",
+                    packageName = "com.instagram.android",
+                    appName = "Instagram",
+                    title = "alex_rivers and 14 others",
+                    text = "liked your story: Sunset at Marina Beach 🌅",
+                    actions = listOf(
+                        NotificationActionInfo(id = "view_story", label = "View")
+                    )
+                ),
+                NotificationInfo(
+                    id = "demo_gmail",
+                    packageName = "com.google.android.gm",
+                    appName = "Gmail",
+                    title = "Harshil Vekariya",
+                    text = "Sprint 24 Planning: Island UI polish, content-adaptive layouts & release verification checklist.",
+                    expandedText = "Sprint 24 Planning: Island UI polish, content-adaptive layouts & release verification checklist. Let's sync tomorrow at 10 AM.",
+                    actions = listOf(
+                        NotificationActionInfo(id = "archive", label = "Archive"),
+                        NotificationActionInfo(id = "reply_email", label = "Reply", isReply = true)
+                    )
+                ),
+                NotificationInfo(
+                    id = "demo_calendar",
+                    packageName = "com.google.android.calendar",
+                    appName = "Calendar",
+                    title = "Design Review with Core Team",
+                    text = "In 15 mins · meet.google.com/xyz-abcd-efg",
+                    actions = listOf(
+                        NotificationActionInfo(id = "join_meet", label = "Join Meet")
+                    )
                 )
             )
         }
@@ -1867,8 +2035,24 @@ private fun NotificationExpandedContent(
     NotificationIslandExpandedPager(
         notifications = displayList,
         activeIndex = activeIndex,
+        isCardExpanded = isCardExpanded,
+        onToggleExpand = onToggleExpand?.let { toggle ->
+            {
+                displayList.getOrNull(activeIndex)?.let { onNotificationSelect(it.id) }
+                toggle()
+            }
+        },
+        replyingNotificationId = replyingNotificationId,
+        replyAction = replyAction,
+        onSendReply = onSendReply,
+        onCancelReply = onCancelReply,
+        onUserInteraction = {
+            displayList.getOrNull(activeIndex)?.let { onNotificationSelect(it.id) }
+        },
         onPageChanged = { newIdx ->
-            if (newIdx in 0..displayList.lastIndex) {
+            // Pager emits its initial/programmatic page as well as user changes.
+            // Do not turn an automatic peek into a sticky interaction on mount.
+            if (newIdx in 0..displayList.lastIndex && newIdx != activeIndex) {
                 onNotificationSelect(displayList[newIdx].id)
             }
         },
@@ -1877,7 +2061,8 @@ private fun NotificationExpandedContent(
         },
         onDismiss = { notif ->
             onNotificationDismiss(notif.id)
-        }
+        },
+        onHeightChange = onHeightChange
     )
 }
 
@@ -2044,7 +2229,10 @@ private fun VolumeIndicatorContent(
             glyph = glyph,
             tint = tint,
             size = 16.dp,
-            modifier = Modifier.scale(pulse)
+            modifier = Modifier.graphicsLayer {
+                scaleX = pulse
+                scaleY = pulse
+            }
         )
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
             Row(
@@ -2510,58 +2698,75 @@ private fun PremiumExpiryExpandedContent(
     hoursRemaining: Int,
     onControlAction: (IslandControlAction) -> Unit
 ) {
+    val isExpired = hoursRemaining <= 0
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 18.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(38.dp)
                 .clip(CircleShape)
-                .background(Brush.linearGradient(listOf(IslandColors.TimerCyan, IslandColors.Purple))),
+                .background(
+                    Brush.linearGradient(
+                        if (isExpired) listOf(IslandColors.Purple, IslandColors.TimerCyan)
+                        else listOf(IslandColors.TimerCyan, IslandColors.Purple)
+                    )
+                ),
             contentAlignment = Alignment.Center
         ) {
-            AppleIcon(glyph = AppleGlyph.Crown, tint = Color.White, size = 21.dp)
+            AppleIcon(glyph = AppleGlyph.Crown, tint = Color.White, size = 20.dp)
         }
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(text = "Premium ends soon", color = Color.White, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-            Text(text = "Keep your island unlocked", color = IslandColors.TextSecondary, fontSize = 10.sp)
-        }
-        Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = "${hoursRemaining.coerceAtLeast(1)}h",
-                color = IslandColors.TimerCyan,
-                fontSize = 16.sp,
+                text = if (isExpired) "Premium access ended" else "Premium ends soon",
+                color = Color.White,
+                fontSize = 12.5.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-                Text(
-                    text = "Watch ad",
-                    color = Color.White,
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(IslandColors.Gray6)
-                        .clickable { onControlAction(IslandControlAction.PremiumWatchAd) }
-                        .padding(horizontal = 7.dp, vertical = 5.dp)
-                )
-                Text(
-                    text = "Upgrade",
-                    color = Color.White,
-                    fontSize = 8.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(IslandColors.Purple.copy(alpha = 0.8f))
-                        .clickable { onControlAction(IslandControlAction.PremiumBuy) }
-                        .padding(horizontal = 7.dp, vertical = 5.dp)
-                )
-            }
+            Text(
+                text = if (isExpired) "Watch ads or upgrade for Pro" else "Keep your island unlocked",
+                color = IslandColors.TextSecondary,
+                fontSize = 9.5.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = "Watch Ads",
+                color = Color.White,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(IslandColors.Gray6)
+                    .clickable { onControlAction(IslandControlAction.PremiumWatchAd) }
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+            )
+            Text(
+                text = "Buy Premium",
+                color = Color.White,
+                fontSize = 9.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(IslandColors.Purple, Color(0xFF6366F1))
+                        )
+                    )
+                    .clickable { onControlAction(IslandControlAction.PremiumBuy) }
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+            )
         }
     }
 }
@@ -4573,7 +4778,7 @@ private fun VoiceMemoExpandedContent(onControlAction: (IslandControlAction) -> U
 @Composable
 private fun ScreenRecordingExpandedContent(onControlAction: (IslandControlAction) -> Unit = {}) {
     // Dynamic Island-4.svg: 12dp red pulsing dot + "00:06" (#FA3532) on row 1, "Screen Recording" on row 2, 50.5dp Stop button
-    val pulse by rememberBreathing(min = 0.85f, max = 1.0f, durationMillis = 1000)
+    val pulseState = rememberBreathing(min = 0.85f, max = 1.0f, durationMillis = 1000)
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
         val buttonSize = (50.5.dp * scale)
@@ -4598,8 +4803,9 @@ private fun ScreenRecordingExpandedContent(onControlAction: (IslandControlAction
                     Box(
                         modifier = Modifier
                             .size(12.dp * scale)
+                            .graphicsLayer { alpha = pulseState.value }
                             .clip(CircleShape)
-                            .background(Color(0xFFFA3532).copy(alpha = pulse))
+                            .background(Color(0xFFFA3532))
                     )
                     Text(
                         text = "00:06",

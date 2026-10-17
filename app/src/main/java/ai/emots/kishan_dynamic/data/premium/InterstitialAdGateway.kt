@@ -47,8 +47,29 @@ data class InterstitialAdConfiguration(
     }
 }
 
-/** Policy mirrors the reference threshold behavior without copying its state manager. */
+/**
+ * Master Codex Phase 8: Respectful monetization policy.
+ * Interstitials must never disrupt focused user tasks, never trigger on click counts,
+ * and enforce a minimum transition threshold and cooldown period.
+ */
 object InterstitialAdFrequencyPolicy {
+    const val MINIMUM_COOLDOWN_MILLIS = 90_000L // 90 seconds cooldown between full-screen ads
+
+    fun shouldShow(
+        screenCount: Int,
+        screenEvery: Int,
+        startFromScreen: Int,
+        lastShownMillis: Long = 0L,
+        nowMillis: Long = System.currentTimeMillis()
+    ): Boolean {
+        if (screenCount < startFromScreen) return false
+        val effectiveScreenEvery = screenEvery.coerceAtLeast(4)
+        val screenHit = screenCount > 0 && screenCount % effectiveScreenEvery == 0
+        val cooldownPassed = (nowMillis - lastShownMillis) >= MINIMUM_COOLDOWN_MILLIS
+        return screenHit && cooldownPassed
+    }
+
+    /** Compatibility overload preserving legacy boundary checks for existing tests. */
     fun shouldShow(
         screenCount: Int,
         clickCount: Int,
@@ -63,7 +84,7 @@ object InterstitialAdFrequencyPolicy {
     }
 }
 
-/** Lightweight persisted counters used only to decide whether a transition may show an ad. */
+/** Persisted counters and timestamp used to decide whether a transition may show an ad. */
 class InterstitialAdFrequencyRepository(context: Context) {
     private val preferences = context.getSharedPreferences("ad_frequency", Context.MODE_PRIVATE)
 
@@ -72,6 +93,14 @@ class InterstitialAdFrequencyRepository(context: Context) {
 
     @Synchronized
     fun recordNavigationClick(): Int = record("click_count")
+
+    @Synchronized
+    fun recordAdShown(now: Long = System.currentTimeMillis()) {
+        preferences.edit().putLong("last_shown_millis", now).apply()
+    }
+
+    @Synchronized
+    fun lastShownMillis(): Long = preferences.getLong("last_shown_millis", 0L)
 
     private fun record(key: String): Int {
         val next = preferences.getInt(key, 0) + 1
@@ -84,7 +113,11 @@ class InterstitialAdFrequencyRepository(context: Context) {
 class MobileAdsInterstitialGateway(
     context: Context,
     private val configuration: InterstitialAdConfiguration,
-    private val analytics: AnalyticsSink = AppAnalytics
+    private val analytics: AnalyticsSink = AppAnalytics,
+    private val revenueTracker: ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker =
+        ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker(
+            ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker(context)
+        )
 ) : AutoCloseable {
     private val appContext = context.applicationContext
     private val fullscreenLease = Any()
@@ -117,18 +150,20 @@ class MobileAdsInterstitialGateway(
                     analytics.track(AnalyticsEvent("interstitial_ad_loaded"))
                 }
 
-                override fun onAdFailedToLoad(error: LoadAdError) {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
                     loading = false
                     analytics.track(
                         AnalyticsEvent(
                             "interstitial_ad_load_failed",
-                            mapOf("error_code" to error.code.toString())
+                            mapOf("error_code" to adError.code.toString())
                         )
                     )
                 }
             }
         )
     }
+
+    fun isAdAvailable(): Boolean = activeAd != null
 
     fun showIfReady(activity: Activity, onComplete: () -> Unit) {
         if (closed || activity.isFinishing || activity.isDestroyed) {
@@ -155,11 +190,11 @@ class MobileAdsInterstitialGateway(
         }
         ad.adEventCallback = object : InterstitialAdEventCallback {
             override fun onAdDismissedFullScreenContent() = complete()
-            override fun onAdFailedToShowFullScreenContent(error: FullScreenContentError) {
+            override fun onAdFailedToShowFullScreenContent(fullScreenContentError: FullScreenContentError) {
                 analytics.track(
                     AnalyticsEvent(
                         "interstitial_ad_show_failed",
-                        mapOf("error_code" to error.code.toString())
+                        mapOf("error_code" to fullScreenContentError.code.toString())
                     )
                 )
                 complete()
@@ -169,6 +204,14 @@ class MobileAdsInterstitialGateway(
             override fun onAdClicked() = Unit
             override fun onAdImpression() {
                 analytics.track(AnalyticsEvent("interstitial_ad_impression"))
+            }
+            override fun onAdPaid(value: com.google.android.libraries.ads.mobile.sdk.common.AdValue) {
+                revenueTracker.trackAdRevenue(
+                    adValue = value,
+                    adFormat = "interstitial",
+                    adUnitId = configuration.adUnitId,
+                    placement = "screen_transition"
+                )
             }
         }
         analytics.track(AnalyticsEvent("interstitial_ad_started"))

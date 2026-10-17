@@ -6,6 +6,12 @@ import org.junit.Test
 
 class IslandPresentationOwnershipPolicyTest {
 
+    @Test fun automaticPeekIsNotUserOwned() {
+        assertFalse(IslandPresentationOwnershipPolicy.isUserOwned(
+            IslandState.Notification(listOf(notification()), isExpanded = true, expandedByUser = false)
+        ))
+    }
+
     @Test
     fun controlsAndExpandedContentAreUserOwned() {
         assertTrue(IslandPresentationOwnershipPolicy.isUserOwned(IslandState.ActionControl()))
@@ -57,6 +63,27 @@ class IslandPresentationOwnershipPolicyTest {
                 IslandState.Music(MusicTrack("Song", "Artist"), isExpanded = false)
             )
         )
+    }
+
+    @Test
+    fun transientAlertsAreNeverUserOwnedEvenWhenExpanded() {
+        val mobileDataAlert = IslandState.LiveActivity(
+            LiveActivityInfo("net", LiveActivityKind.MOBILE_DATA_ALERT, "Mobile Data", isExpanded = true, expandedByUser = false)
+        )
+        assertFalse(IslandPresentationOwnershipPolicy.isUserOwned(mobileDataAlert))
+
+        val airplaneAlert = IslandState.LiveActivity(
+            LiveActivityInfo("air", LiveActivityKind.AIRPLANE_ALERT, "Airplane", isExpanded = true, expandedByUser = true)
+        )
+        assertFalse(IslandPresentationOwnershipPolicy.isUserOwned(airplaneAlert))
+    }
+
+    @Test
+    fun transientAlertsDoNotBlockTransientConfirmations() {
+        val mobileDataAlert = IslandState.LiveActivity(
+            LiveActivityInfo("net", LiveActivityKind.MOBILE_DATA_ALERT, "Mobile Data", isExpanded = false)
+        )
+        assertFalse(IslandPresentationOwnershipPolicy.blocksTransient(mobileDataAlert))
     }
 
     private fun notification() = NotificationInfo(

@@ -3,6 +3,7 @@ package ai.emots.kishan_dynamic.data.release
 import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Safe app-owned defaults for release-controlled switches. A remote provider
@@ -29,8 +30,15 @@ data class ReleaseRuntimeConfig(
     val rewardedAdUnitId: String = "",
     val resumeAdEnabled: Boolean = true,
     val preloadAppOpen: Boolean = true,
+    val isSplashInterstitialEnabled: Boolean = false,
+    val isBackInterstitialEnabled: Boolean = false,
+    val isExitNativeEnabled: Boolean = true,
+    val isPreloadInterstitial: Boolean = true,
+    val isPreloadNative: Boolean = true,
+    val isPreloadBanner: Boolean = true,
+    val bigNativePercentage: Int = 100,
     val screenCounterForInterstitial: Int = 4,
-    val clickCounterForInterstitial: Int = 3,
+    val clickCounterForInterstitial: Int = 30,
     val adsStartFromScreen: Int = 0,
     val adsTestMode: Boolean = false,
     val premiumEnabled: Boolean = true,
@@ -54,11 +62,26 @@ data class ReleaseRuntimeConfig(
     val trustStat2Value: String = "4.9+",
     val trustStat2Label: String = "Ratings",
     val trustStat3Value: String = "30+",
-    val trustStat3Label: String = "Reviews"
+    val trustStat3Label: String = "Reviews",
+    val premiumInstallTrialDays: Int = 7,
+    val premiumExpiryIslandEnabled: Boolean = true,
+    val premiumRewardedAccessEnabled: Boolean = true,
+    val premiumRewardDaysPerAd: Int = 1,
+    val rewardedAdCooldownSeconds: Int = 15,
+    val rewardedAccessMaxVisibleDays: Int = 7,
+    val premiumPaywallEnabled: Boolean = true,
+    val premiumWeeklyEnabled: Boolean = true,
+    val premiumMonthlyEnabled: Boolean = true,
+    val premiumYearlyEnabled: Boolean = true,
+    val premiumLifetimeEnabled: Boolean = true,
+    val callEndPremiumControlEnabled: Boolean = true,
+    val premiumFeatureGatesEnabled: Boolean = true,
+    val islandIdleAutoHideEnabled: Boolean = true
 )
 
 interface ReleaseRuntimeConfigProvider {
-    val config: Flow<ReleaseRuntimeConfig>
+    val config: StateFlow<ReleaseRuntimeConfig>
+    val lastRefreshError: StateFlow<String?>
     suspend fun refresh()
 }
 
@@ -68,7 +91,8 @@ class LocalReleaseRuntimeConfigProvider(
 ) : ReleaseRuntimeConfigProvider {
     private val snapshot = MutableStateFlow(initial)
 
-    override val config: Flow<ReleaseRuntimeConfig> = snapshot
+    override val config: StateFlow<ReleaseRuntimeConfig> = snapshot
+    override val lastRefreshError: StateFlow<String?> = MutableStateFlow(null)
 
     override suspend fun refresh() = Unit
 }
@@ -76,10 +100,10 @@ class LocalReleaseRuntimeConfigProvider(
 /** One process-wide release snapshot shared by settings and ad navigation. */
 object AppReleaseRuntimeConfig {
     @Volatile
-    private var sharedProvider: RemoteReleaseRuntimeConfigProvider? = null
+    private var sharedProvider: ReleaseRuntimeConfigProvider? = null
 
     @Synchronized
-    fun provider(context: Context, isDebugBuild: Boolean): RemoteReleaseRuntimeConfigProvider {
+    fun provider(context: Context, isDebugBuild: Boolean): ReleaseRuntimeConfigProvider {
         sharedProvider?.let { return it }
         val initial = if (isDebugBuild) {
             ReleaseRuntimeConfig(
@@ -90,8 +114,9 @@ object AppReleaseRuntimeConfig {
         } else {
             ReleaseRuntimeConfig()
         }
-        return RemoteReleaseRuntimeConfigProvider(
-            endpoint = context.getString(ai.emots.kishan_dynamic.R.string.release_config_endpoint),
+        return FirebaseRemoteConfigRuntimeProvider(
+            context = context.applicationContext,
+            isDebug = isDebugBuild,
             initial = initial
         ).also { sharedProvider = it }
     }

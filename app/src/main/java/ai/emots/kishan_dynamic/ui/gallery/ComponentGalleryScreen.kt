@@ -97,20 +97,23 @@ fun ComponentGalleryScreen(
     var showSurfaceDialog by remember { mutableStateOf(false) }
     var showSurfaceSheet by remember { mutableStateOf(false) }
 
-    AppScreen {
-        AppTopBar(
-            title = "Component gallery",
-            subtitle = "Our interactive reference surface",
-            onBack = onBack,
-            trailing = {
-                AppStatusPill(
-                    text = if (isDarkTheme) "Dark" else "Light",
-                    color = AppTheme.colors.accent,
-                    showDot = false,
-                    modifier = Modifier.clip(RoundedCornerShape(AppTheme.radius.pill))
-                )
-            }
-        )
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Component gallery",
+                subtitle = "Our interactive reference surface",
+                onBack = onBack,
+                trailing = {
+                    AppStatusPill(
+                        text = if (isDarkTheme) "Dark" else "Light",
+                        color = AppTheme.colors.accent,
+                        showDot = false,
+                        modifier = Modifier.clip(RoundedCornerShape(AppTheme.radius.pill))
+                    )
+                }
+            )
+        }
+    ) {
 
         AppButton(
             text = if (isDarkTheme) "Switch to light theme" else "Switch to dark theme",

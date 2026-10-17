@@ -63,6 +63,25 @@ class AuroraPreferences(private val context: Context) {
         private val KEY_MUTE_INDICATOR = booleanPreferencesKey("mute_indicator")
         private val KEY_VIBRATE_INDICATOR = booleanPreferencesKey("vibrate_indicator")
         private val KEY_HAPTIC_FEEDBACK = booleanPreferencesKey("haptic_feedback")
+
+        // Trial, Rewarded & Feature Control Keys
+        private val KEY_TRIAL_START_TIME = longPreferencesKey("trial_start_time")
+        private val KEY_TRIAL_DURATION_DAYS = intPreferencesKey("trial_duration_days")
+        private val KEY_TRIAL_EXPIRES_AT = longPreferencesKey("trial_expires_at")
+        private val KEY_LAST_OBSERVED_TIMESTAMP = longPreferencesKey("last_observed_timestamp")
+        private val KEY_REWARD_PREMIUM_EXPIRY = longPreferencesKey("reward_premium_expiry")
+        private val KEY_LAST_AD_WATCH_TIMESTAMP = longPreferencesKey("last_ad_watch_timestamp")
+        private val KEY_AD_REWARD_DAYS_JSON = stringPreferencesKey("ad_reward_days_json")
+        private val KEY_QUICK_CONTROLS_ENABLED = booleanPreferencesKey("quick_controls_enabled")
+        private val KEY_IDLE_AUTO_HIDE_ENABLED = booleanPreferencesKey("idle_auto_hide_enabled")
+        private val KEY_IDLE_AUTO_HIDE_TIMEOUT_SECONDS = intPreferencesKey("idle_auto_hide_timeout_seconds")
+        private val KEY_CAMERA_CUTOUT_MODE = booleanPreferencesKey("camera_cutout_mode")
+        private val KEY_CUTOUT_SIZE_PX = intPreferencesKey("cutout_size_px")
+        private val KEY_NOTCH_FLAT_TOP = booleanPreferencesKey("notch_flat_top")
+        private val KEY_NOTCH_WIDTH_PX = intPreferencesKey("notch_width_px")
+        private val KEY_NOTCH_HEIGHT_PX = intPreferencesKey("notch_height_px")
+        private val KEY_NOTCH_BACKGROUND_ARGB = intPreferencesKey("notch_background_argb")
+        private val KEY_NOTCH_FOREGROUND_ARGB = intPreferencesKey("notch_foreground_argb")
     }
 
     // Flows
@@ -89,10 +108,25 @@ class AuroraPreferences(private val context: Context) {
         preferences[KEY_PRO_EXPIRES_AT]?.takeIf { it > 0L }
     }
     val proSource: Flow<String> = context.auroraDataStore.data.map { it[KEY_PRO_SOURCE] ?: "none" }
-    val isProActive: Flow<Boolean> = context.auroraDataStore.data.map { preferences ->
+    val isPaidPro: Flow<Boolean> = context.auroraDataStore.data.map { preferences ->
         val enabled = preferences[KEY_PRO_ACTIVE] ?: false
         val expiresAt = preferences[KEY_PRO_EXPIRES_AT] ?: 0L
         enabled && (expiresAt == 0L || expiresAt > System.currentTimeMillis())
+    }
+    val isAdFree: Flow<Boolean> = isPaidPro
+    val isProActive: Flow<Boolean> = context.auroraDataStore.data.map { preferences ->
+        val now = System.currentTimeMillis()
+        val paidEnabled = preferences[KEY_PRO_ACTIVE] ?: false
+        val paidExpiresAt = preferences[KEY_PRO_EXPIRES_AT] ?: 0L
+        val isPaid = paidEnabled && (paidExpiresAt == 0L || paidExpiresAt > now)
+
+        val trialExpires = preferences[KEY_TRIAL_EXPIRES_AT] ?: 0L
+        val isTrial = trialExpires > now
+
+        val rewardExpires = preferences[KEY_REWARD_PREMIUM_EXPIRY] ?: 0L
+        val isReward = rewardExpires > now
+
+        isPaid || isTrial || isReward
     }
     val themeMode: Flow<String> = context.auroraDataStore.data.map { it[KEY_THEME_MODE] ?: "system" }
     val alwaysOnTop: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_ALWAYS_ON_TOP] ?: true }
@@ -126,6 +160,25 @@ class AuroraPreferences(private val context: Context) {
     // Reference-compatible names for the sound settings surface.
     val showRingerModeIndicator: Flow<Boolean> = ringerMode
     val showVolumeIndicator: Flow<Boolean> = volumeHud
+
+    // Trial, Rewarded & Feature Control Flows
+    val trialStartTime: Flow<Long> = context.auroraDataStore.data.map { it[KEY_TRIAL_START_TIME] ?: 0L }
+    val trialDurationDays: Flow<Int> = context.auroraDataStore.data.map { it[KEY_TRIAL_DURATION_DAYS] ?: 0 }
+    val trialExpiresAt: Flow<Long> = context.auroraDataStore.data.map { it[KEY_TRIAL_EXPIRES_AT] ?: 0L }
+    val lastObservedTimestamp: Flow<Long> = context.auroraDataStore.data.map { it[KEY_LAST_OBSERVED_TIMESTAMP] ?: 0L }
+    val rewardPremiumExpiry: Flow<Long> = context.auroraDataStore.data.map { it[KEY_REWARD_PREMIUM_EXPIRY] ?: 0L }
+    val lastAdWatchTimestamp: Flow<Long> = context.auroraDataStore.data.map { it[KEY_LAST_AD_WATCH_TIMESTAMP] ?: 0L }
+    val adRewardDaysJson: Flow<String> = context.auroraDataStore.data.map { it[KEY_AD_REWARD_DAYS_JSON] ?: "{}" }
+    val quickControlsEnabled: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_QUICK_CONTROLS_ENABLED] ?: true }
+    val idleAutoHideEnabled: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_IDLE_AUTO_HIDE_ENABLED] ?: false }
+    val idleAutoHideTimeoutSeconds: Flow<Int> = context.auroraDataStore.data.map { it[KEY_IDLE_AUTO_HIDE_TIMEOUT_SECONDS] ?: 10 }
+    val cameraCutoutMode: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_CAMERA_CUTOUT_MODE] ?: false }
+    val cutoutSizePx: Flow<Int> = context.auroraDataStore.data.map { it[KEY_CUTOUT_SIZE_PX] ?: 80 }
+    val notchFlatTop: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_NOTCH_FLAT_TOP] ?: false }
+    val notchWidthPx: Flow<Int> = context.auroraDataStore.data.map { it[KEY_NOTCH_WIDTH_PX] ?: -1 }
+    val notchHeightPx: Flow<Int> = context.auroraDataStore.data.map { it[KEY_NOTCH_HEIGHT_PX] ?: -1 }
+    val notchBackgroundArgb: Flow<Int> = context.auroraDataStore.data.map { it[KEY_NOTCH_BACKGROUND_ARGB] ?: 0xFF000000.toInt() }
+    val notchForegroundArgb: Flow<Int> = context.auroraDataStore.data.map { it[KEY_NOTCH_FOREGROUND_ARGB] ?: 0xFFFFFFFF.toInt() }
 
     // Setters
     suspend fun setIslandEnabled(enabled: Boolean) {
@@ -291,4 +344,88 @@ class AuroraPreferences(private val context: Context) {
     suspend fun setShowRingerModeIndicator(enabled: Boolean) = setRingerMode(enabled)
 
     suspend fun setShowVolumeIndicator(enabled: Boolean) = setVolumeHud(enabled)
+
+    // Trial, Rewarded & Feature Control Setters
+    suspend fun setTrial(startTime: Long, durationDays: Int, expiresAt: Long) {
+        context.auroraDataStore.edit {
+            it[KEY_TRIAL_START_TIME] = startTime
+            it[KEY_TRIAL_DURATION_DAYS] = durationDays
+            it[KEY_TRIAL_EXPIRES_AT] = expiresAt
+            it[KEY_LAST_OBSERVED_TIMESTAMP] = startTime
+        }
+    }
+
+    suspend fun updateObservedTimestamp(timestamp: Long) {
+        context.auroraDataStore.edit {
+            val current = it[KEY_LAST_OBSERVED_TIMESTAMP] ?: 0L
+            if (timestamp > current) {
+                it[KEY_LAST_OBSERVED_TIMESTAMP] = timestamp
+            }
+        }
+    }
+
+    suspend fun setRewardPremium(expiry: Long, lastWatchTime: Long, daysJson: String) {
+        context.auroraDataStore.edit {
+            it[KEY_REWARD_PREMIUM_EXPIRY] = expiry
+            it[KEY_LAST_AD_WATCH_TIMESTAMP] = lastWatchTime
+            it[KEY_AD_REWARD_DAYS_JSON] = daysJson
+        }
+    }
+
+    suspend fun setLastAdWatchTimestamp(timestamp: Long) {
+        context.auroraDataStore.edit { it[KEY_LAST_AD_WATCH_TIMESTAMP] = timestamp }
+    }
+
+    suspend fun setQuickControlsEnabled(enabled: Boolean) {
+        context.auroraDataStore.edit { it[KEY_QUICK_CONTROLS_ENABLED] = enabled }
+    }
+
+    suspend fun setIdleAutoHideEnabled(enabled: Boolean) {
+        context.auroraDataStore.edit { it[KEY_IDLE_AUTO_HIDE_ENABLED] = enabled }
+    }
+
+    suspend fun setIdleAutoHideTimeoutSeconds(seconds: Int) {
+        context.auroraDataStore.edit { it[KEY_IDLE_AUTO_HIDE_TIMEOUT_SECONDS] = seconds }
+    }
+
+    suspend fun setCameraCutoutMode(enabled: Boolean) {
+        context.auroraDataStore.edit { it[KEY_CAMERA_CUTOUT_MODE] = enabled }
+    }
+
+    suspend fun setCutoutSizePx(sizePx: Int) {
+        context.auroraDataStore.edit { it[KEY_CUTOUT_SIZE_PX] = sizePx }
+    }
+
+    suspend fun setNotchFlatTop(flatTop: Boolean) {
+        context.auroraDataStore.edit { it[KEY_NOTCH_FLAT_TOP] = flatTop }
+    }
+
+    suspend fun setNotchWidthPx(widthPx: Int) {
+        context.auroraDataStore.edit { it[KEY_NOTCH_WIDTH_PX] = widthPx }
+    }
+
+    suspend fun setNotchHeightPx(heightPx: Int) {
+        context.auroraDataStore.edit { it[KEY_NOTCH_HEIGHT_PX] = heightPx }
+    }
+
+    suspend fun setNotchBackgroundArgb(argb: Int) {
+        context.auroraDataStore.edit { it[KEY_NOTCH_BACKGROUND_ARGB] = argb }
+    }
+
+    suspend fun setNotchForegroundArgb(argb: Int) {
+        context.auroraDataStore.edit { it[KEY_NOTCH_FOREGROUND_ARGB] = argb }
+    }
+
+    suspend fun resetNotchDisplayToDefaults() {
+        context.auroraDataStore.edit {
+            it[KEY_VERTICAL_OFFSET] = DEFAULT_VERTICAL_OFFSET_DP
+            it[KEY_HORIZONTAL_OFFSET] = DEFAULT_HORIZONTAL_OFFSET_DP
+            it[KEY_WIDTH_SCALE] = DEFAULT_WIDTH_SCALE
+            it[KEY_NOTCH_FLAT_TOP] = false
+            it.remove(KEY_NOTCH_WIDTH_PX)
+            it.remove(KEY_NOTCH_HEIGHT_PX)
+            it[KEY_NOTCH_BACKGROUND_ARGB] = 0xFF000000.toInt()
+            it[KEY_NOTCH_FOREGROUND_ARGB] = 0xFFFFFFFF.toInt()
+        }
+    }
 }

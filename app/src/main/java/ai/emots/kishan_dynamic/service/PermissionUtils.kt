@@ -52,15 +52,11 @@ object PermissionUtils {
      */
     fun isNotificationListenerEnabled(context: Context): Boolean {
         // Method 1: NotificationManagerCompat (primary)
-        val enabledPackages = NotificationManagerCompat.getEnabledListenerPackages(context)
-        if (enabledPackages.contains(context.packageName)) return true
-
-        // Method 2: Check via Settings.Secure fallback
+        val expected = ComponentName(context, IslandNotificationListener::class.java)
         val listeners = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
-        if (listeners?.contains(context.packageName) == true) return true
-
-        // Method 3: Direct runtime instance check
-        return IslandNotificationListener.instance != null
+        return listeners?.split(':')?.any {
+            ComponentName.unflattenFromString(it) == expected
+        } == true
     }
 
     /**
@@ -194,4 +190,3 @@ object PermissionUtils {
         }
     }
 }
-

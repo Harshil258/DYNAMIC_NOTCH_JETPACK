@@ -10,10 +10,11 @@ data class OverlayDisplayPolicy(
     val islandEnabled: Boolean,
     val alwaysOnTop: Boolean,
     val showOnLockScreen: Boolean,
-    val deviceLocked: Boolean
+    val deviceLocked: Boolean,
+    val systemSurfaceActive: Boolean = false
 ) {
     fun shouldRender(isHiddenState: Boolean): Boolean =
-        islandEnabled && alwaysOnTop &&
+        islandEnabled && alwaysOnTop && !systemSurfaceActive &&
             (showOnLockScreen || !deviceLocked) &&
             !isHiddenState
 }

@@ -57,7 +57,11 @@ class MobileAdsBannerGateway(
     context: Context,
     private val configuration: BannerAdConfiguration,
     private val adSize: AdSize,
-    private val analytics: AnalyticsSink = AppAnalytics
+    private val analytics: AnalyticsSink = AppAnalytics,
+    private val revenueTracker: ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker =
+        ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker(
+            ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker(context)
+        )
 ) : AutoCloseable {
     private val appContext = context.applicationContext
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -93,6 +97,16 @@ class MobileAdsBannerGateway(
             )) {
                 is AdLoadResult.Success -> {
                     loading = false
+                    result.ad.adEventCallback = object : com.google.android.libraries.ads.mobile.sdk.banner.BannerAdEventCallback {
+                        override fun onAdPaid(value: com.google.android.libraries.ads.mobile.sdk.common.AdValue) {
+                            revenueTracker.trackAdRevenue(
+                                adValue = value,
+                                adFormat = "banner",
+                                adUnitId = configuration.adUnitId,
+                                placement = "settings_banner"
+                            )
+                        }
+                    }
                     activeAd = result.ad
                     _status.value = BannerAdStatus.Ready(result.ad)
                     analytics.track(AnalyticsEvent("banner_ad_loaded"))

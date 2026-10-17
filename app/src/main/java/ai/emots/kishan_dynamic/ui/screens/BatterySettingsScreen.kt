@@ -3,7 +3,6 @@ package ai.emots.kishan_dynamic.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,18 +45,22 @@ fun BatterySettingsScreen(
     var isExpandedCharging by remember { mutableStateOf(true) }
     var showOptimizationDialog by remember { mutableStateOf(false) }
 
-    AppScreen {
-        AppTopBar(
-            modifier = Modifier.appReveal(0),
-            title = "Battery & charging",
-            subtitle = "Charging animation and low-power alerts",
-            onBack = onBack
-        )
+    val stageTargetHeight = if (isExpandedCharging) 156.dp else 116.dp
 
+    AppScreen(
+        topBar = {
+            AppTopBar(
+                title = "Battery & charging",
+                subtitle = "Charging animation and low-power alerts",
+                onBack = onBack
+            )
+        }
+    ) {
         AppStage(
             modifier = Modifier.appReveal(1),
             caption = if (isExpandedCharging) "Expanded charging HUD" else "Compact battery pill",
-            minHeight = 190.dp
+            targetHeight = stageTargetHeight,
+            showStatusBar = !isExpandedCharging
         ) {
             DynamicIslandPill(
                 state = if (isExpandedCharging) IslandDemoState.ChargingExpanded

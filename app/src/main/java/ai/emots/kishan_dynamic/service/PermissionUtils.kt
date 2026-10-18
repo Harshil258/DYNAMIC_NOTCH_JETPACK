@@ -14,7 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 
 object PermissionUtils {
 
-    const val ACTION_PERMISSIONS_CHANGED = "ai.emots.kishan_dynamic.ACTION_PERMISSIONS_CHANGED"
+    const val ACTION_PERMISSIONS_CHANGED = "com.island.dynamicnotch.ACTION_PERMISSIONS_CHANGED"
     private const val TAG = "PermissionUtils"
 
     fun isAccessibilityServiceEnabled(context: Context): Boolean {
@@ -86,11 +86,19 @@ object PermissionUtils {
         Log.d(TAG, "Sent ACTION_PERMISSIONS_CHANGED broadcast")
     }
 
+    @Volatile
+    var isAwaitingAccessibilityReturn: Boolean = false
+
+    @Volatile
+    var isAwaitingNotificationReturn: Boolean = false
+
     /**
      * Direct navigation to the app's accessibility service entry in system settings,
      * attempting Samsung's dedicated service activity first, and adding fragment arguments.
      */
-    fun openAccessibilitySettings(context: Context) {
+    fun openAccessibilitySettings(context: Context, startMonitoring: (() -> Unit)? = null) {
+        isAwaitingAccessibilityReturn = true
+        startMonitoring?.invoke()
         val showArgs = "${context.packageName}/${IslandOverlayService::class.java.name}"
         val extraFragmentKey = ":settings:fragment_args_key"
         val extraShowFragmentArgs = ":settings:show_fragment_args"
@@ -139,7 +147,9 @@ object PermissionUtils {
      * Direct navigation to notification listener settings with fragment arguments
      * pointing to our listener service.
      */
-    fun openNotificationListenerSettings(context: Context) {
+    fun openNotificationListenerSettings(context: Context, startMonitoring: (() -> Unit)? = null) {
+        isAwaitingNotificationReturn = true
+        startMonitoring?.invoke()
         val showArgs = "${context.packageName}/${IslandNotificationListener::class.java.name}"
         val extraFragmentKey = ":settings:fragment_args_key"
         val extraShowFragmentArgs = ":settings:show_fragment_args"

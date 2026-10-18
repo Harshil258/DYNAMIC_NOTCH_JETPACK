@@ -73,16 +73,6 @@ object IslandActivationPolicy {
                 canToggleDirectly = false,
                 isRunning = false
             )
-            !overlayConnected -> IslandActivationSnapshot(
-                status = IslandActivationStatus.SERVICE_PAUSED,
-                title = "Island paused",
-                subtitle = "Android has paused the required service in the background.",
-                badgeLabel = "Paused",
-                badgeType = IslandActivationSnapshot.BadgeType.ERROR,
-                primaryActionText = "Reactivate Island",
-                canToggleDirectly = false,
-                isRunning = false
-            )
             !islandEnabled -> IslandActivationSnapshot(
                 status = IslandActivationStatus.READY_OFF,
                 title = "Island is off",
@@ -91,6 +81,16 @@ object IslandActivationPolicy {
                 badgeType = IslandActivationSnapshot.BadgeType.NEUTRAL,
                 primaryActionText = "Turn on Island",
                 canToggleDirectly = true,
+                isRunning = false
+            )
+            !overlayConnected -> IslandActivationSnapshot(
+                status = IslandActivationStatus.SERVICE_PAUSED,
+                title = "Island paused",
+                subtitle = "Android has paused the required service in the background.",
+                badgeLabel = "Paused",
+                badgeType = IslandActivationSnapshot.BadgeType.ERROR,
+                primaryActionText = "Reactivate Island",
+                canToggleDirectly = false,
                 isRunning = false
             )
             else -> IslandActivationSnapshot(

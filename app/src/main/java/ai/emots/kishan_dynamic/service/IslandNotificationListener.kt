@@ -23,6 +23,7 @@ import ai.emots.kishan_dynamic.data.model.NotificationInfo
 import ai.emots.kishan_dynamic.data.model.NotificationActionInfo
 import ai.emots.kishan_dynamic.data.model.ContactInfo
 import ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapper
+import ai.emots.kishan_dynamic.data.notification.NotificationArtworkRepository
 import ai.emots.kishan_dynamic.data.notification.ClockNotificationKind
 import ai.emots.kishan_dynamic.data.notification.NotificationChronometerPolicy
 import ai.emots.kishan_dynamic.data.notification.CallNotificationPolicy
@@ -32,8 +33,10 @@ import ai.emots.kishan_dynamic.data.notification.resolveNotificationContent
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.media.session.MediaSessionManager
 import android.util.Log
+import ai.emots.kishan_dynamic.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -59,6 +62,7 @@ class IslandNotificationListener : NotificationListenerService() {
     private val scope = CoroutineScope(Dispatchers.Main + listenerJob)
     private val mappedLiveActivityIds = mutableSetOf<String>()
     private lateinit var preferences: AuroraPreferences
+    private lateinit var artworkRepository: NotificationArtworkRepository
     private var mediaSessionManager: MediaSessionManager? = null
 
     private val activeSessionsListener = MediaSessionManager.OnActiveSessionsChangedListener { controllers ->
@@ -68,6 +72,7 @@ class IslandNotificationListener : NotificationListenerService() {
     override fun onCreate() {
         super.onCreate()
         preferences = AuroraPreferences(applicationContext)
+        artworkRepository = NotificationArtworkRepository(applicationContext)
         MediaPlaybackRegistry.initialize(applicationContext)
         scope.launch {
             MediaPlaybackRegistry.snapshot.collectLatest { snapshot ->
@@ -106,6 +111,26 @@ class IslandNotificationListener : NotificationListenerService() {
         android.util.Log.i(NotificationDiagnostics.TAG, "event=listener_connected snapshotSize=${currentNotifications.size}")
         IslandStateManager.reconcileNotificationSources(currentNotifications.mapTo(mutableSetOf()) { it.key })
         currentNotifications.forEach { processNotification(it, restored = true) }
+
+        scope.launch {
+            if (PermissionUtils.isAccessibilityServiceEnabled(applicationContext)) {
+                preferences.setIslandEnabled(true)
+                preferences.setSetupDone(true)
+            }
+        }
+
+        if (PermissionUtils.isAwaitingNotificationReturn) {
+            PermissionUtils.isAwaitingNotificationReturn = false
+            try {
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    putExtra("permission_auto_resumed", true)
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to launch MainActivity onListenerConnected", e)
+            }
+        }
     }
 
     override fun onListenerDisconnected() {
@@ -176,7 +201,16 @@ class IslandNotificationListener : NotificationListenerService() {
             return
         }
 
-        val activeController = controllers.firstOrNull { controller ->
+        // AUR-P2-018: Prioritize actively playing audio-first app session (Spotify, YT Music, etc.)
+        // over video sessions to avoid session collisions and UI oscillation
+        val activeAudioController = controllers.firstOrNull { controller ->
+            val isPlaying = controller.playbackState?.let {
+                it.state == PlaybackState.STATE_PLAYING || it.state == PlaybackState.STATE_BUFFERING
+            } == true
+            isPlaying && MediaPlaybackRegistry.isAudioFirstApp(controller.packageName)
+        }
+
+        val activeController = activeAudioController ?: controllers.firstOrNull { controller ->
             val state = controller.playbackState?.state
             state == PlaybackState.STATE_PLAYING || state == PlaybackState.STATE_BUFFERING
         } ?: controllers.first()
@@ -231,7 +265,9 @@ class IslandNotificationListener : NotificationListenerService() {
         val clockKind = classifyClockNotification(
             packageName = sbn.packageName,
             channelId = channelId,
-            hasCustomContent = notification.contentView != null
+            hasCustomContent = notification.contentView != null,
+            notificationCategory = notification.category,
+            title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()
         )
         val customClockCopy = clockKind?.let { extractCustomClockCopy(notification, it) }
 
@@ -369,8 +405,20 @@ class IslandNotificationListener : NotificationListenerService() {
             return
         }
         // Ignored foreground noise must not decode or write artwork on the UI thread.
-        notifInfo = notifInfo.copy(imagePath = cacheNotificationAvatar(sbn.key, extras),
-            picturePath = cacheNotificationPicture(sbn.key, extras))
+        // Fast O(1) in-memory cache lookup on main thread:
+        val cachedAvatar = artworkRepository.getCachedAvatarPath(sbn.key)
+        val cachedPicture = artworkRepository.getCachedPicturePath(sbn.key)
+        notifInfo = notifInfo.copy(imagePath = cachedAvatar, picturePath = cachedPicture)
+
+        // Asynchronously process avatar and picture off the main looper with generational protection
+        val notifKey = sbn.key
+        artworkRepository.processArtworkAsync(
+            notificationId = notifKey,
+            extras = extras,
+            isSensitive = notifInfo.isSensitive
+        ) { avatarPath, picturePath ->
+            IslandStateManager.updateNotificationArtwork(notifKey, avatarPath, picturePath)
+        }
 
         val incomingCallActionIds = CallNotificationPolicy.incomingActionIds(notifInfo)
         val acceptActionId = incomingCallActionIds.first
@@ -443,13 +491,24 @@ class IslandNotificationListener : NotificationListenerService() {
             val isEnabled = preferences.islandEnabled.first()
             if (!isEnabled) return@launch
 
+            val blockedPackages = preferences.blockedNotificationPackages.first()
+            if (sbn.packageName in blockedPackages) {
+                NotificationDiagnostics.lifecycle("dropped", sbn.key, "package_blocked_by_user")
+                return@launch
+            }
+
             if (isMedia) {
-                val track = mediaTrack(notification, sbn.packageName)
-                if (track != null) {
-                    if (preferences.musicIslandEnabled.first()) {
-                        if (!sourceEpochs.isCurrent(sbn.key, sourceEpoch)) return@launch
-                        IslandStateManager.postMusicPlayback(track, mediaIsPlaying(notification))
+                val isPlaying = mediaIsPlaying(notification)
+                if (MediaPlaybackRegistry.canTakeOwnership(sbn.packageName, isPlaying)) {
+                    val track = mediaTrack(notification, sbn.packageName)
+                    if (track != null) {
+                        if (preferences.musicIslandEnabled.first()) {
+                            if (!sourceEpochs.isCurrent(sbn.key, sourceEpoch)) return@launch
+                            IslandStateManager.postMusicPlayback(track, isPlaying)
+                        }
+                        return@launch
                     }
+                } else {
                     return@launch
                 }
             }
@@ -460,6 +519,8 @@ class IslandNotificationListener : NotificationListenerService() {
             val durationSeconds = NotificationDisplayDurationPolicy.sanitize(
                 preferences.displayDuration.first()
             )
+            val effectiveDuration = ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy
+                .recommendedDisplaySeconds(notifInfo, durationSeconds)
             if (!sourceEpochs.isCurrent(sbn.key, sourceEpoch)) {
                 NotificationDiagnostics.lifecycle("dropped", sbn.key, "obsolete_callback")
                 return@launch
@@ -478,7 +539,7 @@ class IslandNotificationListener : NotificationListenerService() {
             IslandStateManager.postNotification(
                 notification = notifInfo,
                 autoExpand = if (eventDecision.kind == ai.emots.kishan_dynamic.data.notification.NotificationEventKind.ONGOING || isSilentProgressUpdate) false else autoExpand,
-                displaySeconds = durationSeconds
+                displaySeconds = effectiveDuration
             )
         }
     }
@@ -496,7 +557,7 @@ class IslandNotificationListener : NotificationListenerService() {
             MediaPlaybackRegistry.stopIfPackage(sbn.packageName)
             IslandStateManager.stopMusic(sbn.packageName)
         }
-        removeCachedNotificationImage(sbn.key)
+        artworkRepository.removeCachedArtwork(sbn.key)
         mappedLiveActivityIds.remove(sbn.key)
         IslandStateManager.clearLiveActivity(sbn.key)
         IslandStateManager.removeNotification(sbn.key)
@@ -564,7 +625,10 @@ class IslandNotificationListener : NotificationListenerService() {
             @Suppress("DEPRECATION")
             extras.getParcelable(Notification.EXTRA_MEDIA_SESSION) as? MediaSession.Token
         }
-        token?.let(MediaPlaybackRegistry::replace)
+        val isPlaying = mediaIsPlaying(notification)
+        if (token != null && MediaPlaybackRegistry.canTakeOwnership(packageName, isPlaying)) {
+            MediaPlaybackRegistry.replace(token)
+        }
         val metadata = token?.let { runCatching { MediaController(this, it).metadata }.getOrNull() }
         val title = metadata?.getString(MediaMetadata.METADATA_KEY_TITLE)
             ?: extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()
@@ -581,77 +645,6 @@ class IslandNotificationListener : NotificationListenerService() {
         )
     }
 
-    private fun cacheNotificationAvatar(notificationId: String, extras: android.os.Bundle): String? {
-        val bitmap = readBitmapExtra(extras, Notification.EXTRA_LARGE_ICON_BIG)
-            ?: readBitmapExtra(extras, Notification.EXTRA_LARGE_ICON)
-            ?: readIconExtra(extras, Notification.EXTRA_LARGE_ICON_BIG)?.let { drawable -> drawable.toBitmap() }
-            ?: readIconExtra(extras, Notification.EXTRA_LARGE_ICON)?.let { drawable -> drawable.toBitmap() }
-            ?: extractMessagingSenderIcon(extras)
-            ?: return null
-
-        return saveBitmapToCache(bitmap, "${notificationId.hashCode()}_avatar.png")
-    }
-
-    private fun cacheNotificationPicture(notificationId: String, extras: android.os.Bundle): String? {
-        val bitmap = readBitmapExtra(extras, Notification.EXTRA_PICTURE)
-            ?: (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                readIconExtra(extras, Notification.EXTRA_PICTURE_ICON)?.let { it.toBitmap() }
-            } else null)
-            ?: return null
-
-        return saveBitmapToCache(bitmap, "${notificationId.hashCode()}_picture.png")
-    }
-
-    private fun extractMessagingSenderIcon(extras: android.os.Bundle): Bitmap? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return null
-        return runCatching {
-            @Suppress("DEPRECATION")
-            val person = extras.getParcelable(Notification.EXTRA_MESSAGING_PERSON) as? android.app.Person
-            person?.icon?.loadDrawable(this)?.toBitmap()
-        }.getOrNull()
-    }
-
-    private fun saveBitmapToCache(bitmap: Bitmap, filename: String): String? {
-        val directory = File(cacheDir, "notification_artwork").apply { mkdirs() }
-        val file = File(directory, filename)
-        return runCatching {
-            file.outputStream().use { output ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, output)
-            }
-            directory.listFiles()
-                ?.sortedByDescending { it.lastModified() }
-                ?.drop(40)
-                ?.forEach { it.delete() }
-            file.absolutePath
-        }.getOrNull()
-    }
-
-    private fun removeCachedNotificationImage(notificationId: String) {
-        val hash = notificationId.hashCode()
-        File(cacheDir, "notification_artwork/${hash}.png").delete()
-        File(cacheDir, "notification_artwork/${hash}_avatar.png").delete()
-        File(cacheDir, "notification_artwork/${hash}_picture.png").delete()
-    }
-
-    @Suppress("DEPRECATION")
-    private fun readBitmapExtra(extras: android.os.Bundle, key: String): Bitmap? =
-        extras.get(key) as? Bitmap
-
-    @Suppress("DEPRECATION")
-    private fun readIconExtra(extras: android.os.Bundle, key: String): Drawable? {
-        val icon = extras.get(key) as? android.graphics.drawable.Icon
-        return runCatching { icon?.loadDrawable(this) }.getOrNull()
-    }
-
-    private fun Drawable.toBitmap(): Bitmap {
-        val width = intrinsicWidth.coerceAtLeast(1)
-        val height = intrinsicHeight.coerceAtLeast(1)
-        return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).also { bitmap ->
-            val canvas = Canvas(bitmap)
-            setBounds(0, 0, canvas.width, canvas.height)
-            draw(canvas)
-        }
-    }
 
     private fun mediaIsPlaying(notification: Notification): Boolean {
         val extras = notification.extras ?: return true

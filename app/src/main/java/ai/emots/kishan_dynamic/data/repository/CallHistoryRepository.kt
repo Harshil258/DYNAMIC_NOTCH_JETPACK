@@ -51,7 +51,8 @@ class CallHistoryRepository(private val context: Context) {
             record.avatarUri.orEmpty(),
             record.startedAtMillis.toString(),
             record.durationSeconds.toString(),
-            record.direction.name
+            record.direction.name,
+            record.durationAccuracy.name
         ).joinToString(FIELD_SEPARATOR) { value ->
             Base64.encodeToString(value.toByteArray(Charsets.UTF_8), Base64.NO_WRAP)
         }
@@ -65,7 +66,13 @@ class CallHistoryRepository(private val context: Context) {
                     String(Base64.decode(field, Base64.NO_WRAP), Charsets.UTF_8)
                 }.getOrNull()
             }
-            if (fields.size != 7) return@mapNotNull null
+            if (fields.size < 7) return@mapNotNull null
+            val accuracy = if (fields.size >= 8) {
+                runCatching { ai.emots.kishan_dynamic.data.model.DurationAccuracy.valueOf(fields[7]) }
+                    .getOrDefault(ai.emots.kishan_dynamic.data.model.DurationAccuracy.RELIABLE_MONOTONIC)
+            } else {
+                ai.emots.kishan_dynamic.data.model.DurationAccuracy.RELIABLE_MONOTONIC
+            }
             CallRecord(
                 id = fields[0],
                 contactName = fields[1],
@@ -74,7 +81,8 @@ class CallHistoryRepository(private val context: Context) {
                 startedAtMillis = fields[4].toLongOrNull() ?: return@mapNotNull null,
                 durationSeconds = fields[5].toLongOrNull() ?: return@mapNotNull null,
                 direction = runCatching { CallDirection.valueOf(fields[6]) }.getOrNull()
-                    ?: return@mapNotNull null
+                    ?: return@mapNotNull null,
+                durationAccuracy = accuracy
             )
         }
     }

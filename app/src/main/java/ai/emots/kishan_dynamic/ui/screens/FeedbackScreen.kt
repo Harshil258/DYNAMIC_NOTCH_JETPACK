@@ -56,10 +56,10 @@ import ai.emots.kishan_dynamic.ui.kit.AppTopBar
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 enum class FeedbackCategory(val label: String, val glyph: AppleGlyph) {
-    BUG("Bug report", AppleGlyph.Info),
-    FEATURE("Feature request", AppleGlyph.Sparkles),
-    GENERAL("General feedback", AppleGlyph.Check),
-    SUPPORT("Help & Support", AppleGlyph.Info)
+    BUG("Report Bug", AppleGlyph.Info),
+    FEATURE("Suggest Feature", AppleGlyph.Sparkles),
+    GENERAL("Share Feedback", AppleGlyph.Check),
+    SUPPORT("Contact Support", AppleGlyph.Phone)
 }
 
 private const val SUPPORT_EMAIL = "suryadevelopers07@gmail.com"
@@ -69,15 +69,17 @@ fun FeedbackScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    var selectedRating by remember { mutableIntStateOf(5) }
+    var selectedRating by remember { mutableIntStateOf(0) }
     var selectedCategory by remember { mutableStateOf(FeedbackCategory.FEATURE) }
     var feedbackText by remember { mutableStateOf("") }
+    var submissionStatus by remember { mutableStateOf<String?>(null) }
 
     val isDark = AppTheme.isDark
     val textPrimary = if (isDark) Color.White else AppTheme.colors.textPrimary
     val textSecondary = if (isDark) Color(0xFF94A3B8) else AppTheme.colors.textSecondary
 
     AppScreen(
+        screenName = "feedback",
         topBar = {
             AppTopBar(
                 title = "Send feedback",
@@ -87,7 +89,7 @@ fun FeedbackScreen(
         }
     ) {
         // Star Rating Card
-        AppSectionTitle("Rating")
+        AppSectionTitle("Rating (Optional)")
         AppCard(padding = AppTheme.spacing.lg) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -106,7 +108,7 @@ fun FeedbackScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     for (star in 1..5) {
-                        val isSelected = star <= selectedRating
+                        val isSelected = selectedRating > 0 && star <= selectedRating
                         val scale by animateFloatAsState(
                             targetValue = if (isSelected) 1.15f else 1f,
                             animationSpec = spring(dampingRatio = 0.5f),
@@ -134,17 +136,18 @@ fun FeedbackScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 val ratingDescription = when (selectedRating) {
-                    1 -> "Needs improvement"
-                    2 -> "Below average"
-                    3 -> "Good"
-                    4 -> "Very good"
-                    5 -> "Excellent! 🎉"
+                    0 -> "Tap to add an optional star rating"
+                    1 -> "1 star · Needs improvement"
+                    2 -> "2 stars · Below average"
+                    3 -> "3 stars · Good"
+                    4 -> "4 stars · Very good"
+                    5 -> "5 stars · Excellent! 🎉"
                     else -> ""
                 }
                 AppText(
                     text = ratingDescription,
                     style = AppTheme.typography.caption.copy(fontWeight = FontWeight.SemiBold),
-                    color = AppTheme.colors.gold
+                    color = if (selectedRating > 0) AppTheme.colors.gold else textSecondary
                 )
             }
         }
@@ -261,6 +264,11 @@ fun FeedbackScreen(
 
         AppSectionSpacer()
 
+        if (feedbackText.isBlank()) {
+            AppFootnote("Please enter a message above to enable submission.")
+            Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
+        }
+
         // Submit Action Button
         AppButton(
             text = "Submit feedback",
@@ -268,6 +276,7 @@ fun FeedbackScreen(
             style = AppButtonStyle.Primary,
             enabled = feedbackText.isNotBlank(),
             onClick = {
+                val ratingStr = if (selectedRating > 0) "$selectedRating/5" else "Not provided"
                 val deviceInfo = """
                     
                     ---
@@ -276,7 +285,7 @@ fun FeedbackScreen(
                     Version: 1.0.0
                     Device: ${Build.MANUFACTURER} ${Build.MODEL}
                     Android: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})
-                    Rating: $selectedRating/5
+                    Rating: $ratingStr
                     Category: ${selectedCategory.label}
                 """.trimIndent()
 
@@ -292,13 +301,39 @@ fun FeedbackScreen(
 
                 try {
                     context.startActivity(chooser)
+                    submissionStatus = "Opening email client... Complete sending to submit your feedback."
                     Toast.makeText(context, "Opening email to submit feedback...", Toast.LENGTH_SHORT).show()
                 } catch (_: Exception) {
-                    Toast.makeText(context, "No email client found. Please write to $SUPPORT_EMAIL", Toast.LENGTH_LONG).show()
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? android.content.ClipboardManager
+                    clipboard?.setPrimaryClip(android.content.ClipData.newPlainText("Aurora Feedback", "$feedbackText\n$deviceInfo"))
+                    submissionStatus = "No email app found. Feedback & developer email copied to clipboard."
+                    Toast.makeText(context, "No email client found. Details copied to clipboard. Write to $SUPPORT_EMAIL", Toast.LENGTH_LONG).show()
                 }
             }
         )
 
-        AppFootnote("We review all submissions directly at Surya Developer to continuously improve your experience.")
+        submissionStatus?.let { status ->
+            Spacer(modifier = Modifier.height(10.dp))
+            AppCard(padding = AppTheme.spacing.sm) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.Info,
+                        tint = AppTheme.colors.primary,
+                        size = 16.dp
+                    )
+                    AppText(
+                        text = status,
+                        style = AppTheme.typography.caption,
+                        color = AppTheme.colors.textPrimary
+                    )
+                }
+            }
+        }
+
+        AppFootnote("We review all submissions directly at Surya Developer ($SUPPORT_EMAIL) to continuously improve your experience.")
     }
 }

@@ -27,12 +27,16 @@ data class AdConsentSnapshot(
 interface AdConsentGateway : AutoCloseable {
     val state: StateFlow<AdConsentSnapshot>
     fun request(activity: Activity)
+    fun showPrivacyOptions(activity: Activity, onComplete: (String?) -> Unit = {})
 }
 
 /** Pure gate shared by rewarded, banner, native, and future full-screen ads. */
 object AdConsentPolicy {
     fun canRequestAds(snapshot: AdConsentSnapshot): Boolean =
         snapshot.status == AdConsentStatus.READY && snapshot.canRequestAds
+
+    fun isPrivacyOptionsRequired(snapshot: AdConsentSnapshot): Boolean =
+        snapshot.privacyOptionsRequired
 }
 
 /** UMP adapter kept outside Compose and outside individual ad gateways. */
@@ -92,6 +96,21 @@ class UmpAdConsentGateway(
     override fun close() {
         closed = true
         requestInProgress = false
+    }
+
+    override fun showPrivacyOptions(activity: Activity, onComplete: (String?) -> Unit) {
+        if (closed) {
+            onComplete("Consent gateway is closed")
+            return
+        }
+        UserMessagingPlatform.showPrivacyOptionsForm(activity) { formError ->
+            _state.value = _state.value.copy(
+                canRequestAds = consentInformation.canRequestAds(),
+                privacyOptionsRequired = consentInformation.privacyOptionsRequirementStatus ==
+                    ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED
+            )
+            onComplete(formError?.let { "[${it.errorCode}] ${it.message}" })
+        }
     }
 
     private fun publishReady() {

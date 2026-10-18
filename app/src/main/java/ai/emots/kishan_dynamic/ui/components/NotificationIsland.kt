@@ -1009,10 +1009,12 @@ fun NotificationProgressCard(
                         .background(Color(0xFF2C2C2E)),
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Charging,
-                        tint = Color(0xFF34C759),
-                        size = 20.dp * scale
+                    PackageIcon(
+                        packageName = notification.packageName,
+                        modifier = Modifier
+                            .size(iconSize * 0.72f)
+                            .clip(CircleShape),
+                        contentDescription = "${notification.appName} icon"
                     )
                 }
 
@@ -1022,13 +1024,27 @@ fun NotificationProgressCard(
                     verticalArrangement = Arrangement.Center,
                     modifier = Modifier.weight(1f)
                 ) {
+                    val effectiveCaption = if (pagerLabel == null) {
+                        notification.appName
+                    } else {
+                        "${notification.appName} · $pagerLabel"
+                    }
+                    val effectiveTitle = if (notification.title.isNotBlank() &&
+                        !notification.title.equals(notification.appName, ignoreCase = true)
+                    ) {
+                        notification.title
+                    } else if (notification.text.isNotBlank()) {
+                        notification.text
+                    } else {
+                        "Progress"
+                    }
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         AppText(
-                            text = if (pagerLabel == null) notification.appName else "${notification.appName} · $pagerLabel",
+                            text = effectiveCaption,
                             style = AppTheme.typography.caption,
                             fontSize = (11f * scale).sp,
                             color = Color(0xFFA4A4A9),
@@ -1044,7 +1060,7 @@ fun NotificationProgressCard(
                     }
                     Spacer(modifier = Modifier.height(1.dp * scale))
                     AppText(
-                        text = notification.title.ifBlank { "Download in progress" },
+                        text = effectiveTitle,
                         style = AppTheme.typography.islandTitle,
                         fontSize = (15.5f * scale).sp,
                         color = Color.White,
@@ -1530,7 +1546,7 @@ fun NotificationIslandExpandedPager(
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxWidth(),
-            key = { notifications[it].id },
+            key = { page -> notifications.getOrNull(page)?.id ?: page.toString() },
             beyondViewportPageCount = 1
         ) { page ->
             val item = notifications.getOrNull(page) ?: return@HorizontalPager

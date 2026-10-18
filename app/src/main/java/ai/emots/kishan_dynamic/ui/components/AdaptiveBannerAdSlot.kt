@@ -35,9 +35,10 @@ private fun Context.findActivity(): Activity? {
 @Composable
 fun AdaptiveBannerAdSlot(
     configuration: BannerAdConfiguration,
-    isProActive: Boolean,
+    isAdFree: Boolean,
     canRequestAds: Boolean,
     modifier: Modifier = Modifier,
+    placement: String = "settings_banner",
     onAdLoaded: () -> Unit = {},
     onAdFailed: (String) -> Unit = {}
 ) {
@@ -51,14 +52,14 @@ fun AdaptiveBannerAdSlot(
 
     if (isPreview || !AdSurfacePolicy.shouldShowBanner(
             adsEnabled = configuration.enabled,
-            isProActive = isProActive,
+            isAdFree = isAdFree,
             adUnitConfigured = configuration.adUnitId.isNotBlank(),
             canRequestAds = canRequestAds
         )
     ) return
 
-    val gateway = remember(configuration, adaptiveSize) {
-        MobileAdsBannerGateway(context, configuration, adaptiveSize)
+    val gateway = remember(configuration, adaptiveSize, placement) {
+        MobileAdsBannerGateway(context, configuration, adaptiveSize, placement = placement)
     }
     val status by gateway.status.collectAsState()
 

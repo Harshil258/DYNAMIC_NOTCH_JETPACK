@@ -1,13 +1,13 @@
 # Google Analytics 4 (GA4) & Firebase Analytics Event Catalog
 
 ## Overview
-This document specifies the centralized analytics tracking schema for the **Android Dynamic Island** application (`ai.emots.kishan_dynamic`). All events are routed through `AnalyticsTracker` (`FirebaseAnalyticsTracker` in production, `FakeAnalyticsTracker` in automated test suites).
+This document specifies the centralized analytics tracking schema for the **Android Dynamic Island** application (`ai.emots.kishan_dynamic`). All events are routed through `AnalyticsTracker` (`FirebaseAnalyticsTracker` in production, `FakeAnalyticsTracker` in automated test suites), enforced at compile-time by the typed `AnalyticsEvent` hierarchy and at runtime by `AnalyticsSchemaValidator`.
 
 ---
 
 ## 1. Screen View Architecture & Deduplication
 
-Screen views are tracked using the canonical GA4 `screen_view` event. To prevent duplicate events caused by Jetpack Compose recomposition or redundant state emissions, all screens are mediated through `ScreenDeduplicator`.
+Screen views are tracked using the canonical GA4 `screen_view` event. To prevent duplicate events caused by Jetpack Compose recomposition or redundant state emissions, all screens are mediated through `ScreenDeduplicator` and lifecycle-aware `TrackScreenView` (`ON_RESUME`).
 
 | Screen Name | Trigger | Screen Class | Parameters |
 | :--- | :--- | :--- | :--- |
@@ -51,7 +51,7 @@ Screen views are tracked using the canonical GA4 `screen_view` event. To prevent
 ## 3. Dynamic Island Core Interaction Events (Zero PII)
 
 > [!IMPORTANT]
-> In strict compliance with product privacy standards, no notification text, message bodies, sender identities, contact names, phone numbers, OTPs, or browsing data are ever logged.
+> In strict compliance with product privacy standards, no notification text, message bodies, sender identities, contact names, phone numbers, OTPs, or financial data are ever collected.
 
 | Event Name | Trigger | Parameters | Example Values |
 | :--- | :--- | :--- | :--- |
@@ -62,6 +62,11 @@ Screen views are tracked using the canonical GA4 `screen_view` event. To prevent
 | `media_control_used` | User taps playback control on expanded media island | `action` (String) | `action="musicplaypause"`, `action="musicnext"` |
 | `quick_control_tapped` | User taps quick action system tile in expanded island | `tile` (String) | `tile="flashlight"`, `tile="screenshot"` |
 | `preview_started` | User previews an island demo state on the Live stage | `item` (String) | `item="AirDrop"` |
+| `preview_stopped` | User closes active demo state on the Live stage | `item` (String) | `item="AirDrop"` |
+| `theme_selected` | User selects an Aurora visual theme | `theme` (String) | `theme="Obsidian Aurora"` |
+| `setting_changed` | User toggles or slides a configuration preference | `setting_name` (String)<br>`setting_value` (String) | `setting_name="vertical_offset"`, `setting_value="14"` |
+| `notification_page_swiped` | User pages through multi-notification bubble stack | `page_index` (Int)<br>`total_pages` (Int) | `page_index=1`, `total_pages=3` |
+| `notification_action_tapped` | User taps interactive action button in notification | `action_index` (Int)<br>`is_quick_reply` (Boolean) | `action_index=0`, `is_quick_reply=false` |
 
 ---
 
@@ -79,6 +84,8 @@ Screen views are tracked using the canonical GA4 `screen_view` event. To prevent
 | `purchase_canceled` | Custom | User dismissed the Google Play purchase bottom sheet | `plan_id` (String) |
 | `purchase_failed` | Custom | Google Play purchase encountered an error | `plan_id` (String)<br>`response_code` (Int)<br>`reason` (String) |
 | `subscription_restored` | Custom | User restored active subscription from Google Play | `source` (String: `"google_play"`) |
+| `trial_status_transition` | Custom | 7-day install trial state changes | `previous_state` (String)<br>`new_state` (String)<br>`days_remaining` (Int) |
+| `rewarded_pass_transition` | Custom | Rewarded video 24h pass earned or stacked | `action` (String)<br>`hours_remaining` (Long)<br>`days_stacked` (Int) |
 
 ---
 
@@ -111,11 +118,61 @@ Logged on every successful ad impression across all formats using the canonical 
 
 ---
 
-## 7. User Properties
+## 7. User Properties (Low-Cardinality, Privacy-Safe)
 
-| Property Name | Values | Purpose |
+User properties are synchronized immediately on cold startup via `AnalyticsUserPropertyManager.syncImmediate()` and updated reactively whenever state changes.
+
+| Property Name | Example Values | Purpose & Resolution |
 | :--- | :--- | :--- |
-| `is_pro` | `"true"` / `"false"` | Segment subscribers vs. ad-supported free users |
-| `app_theme` | `"system"`, `"light"`, `"dark"` | Personalization preference tracking |
-| `notch_preset` | `"center"`, `"left"`, `"right"` | Hardware calibration distribution |
-| `app_language` | `"en"`, `"es"`, `"hi"`, etc. | Localization usage distribution |
+| `entitlement_tier` | `"free"`, `"install_trial"`, `"rewarded_access"`, `"weekly"`, `"monthly"`, `"yearly"`, `"lifetime"` | Primary revenue segmentation cohort |
+| `is_pro` | `"true"`, `"false"` | Binary entitlement filter across all events |
+| `trial_day` | `"day_1"` .. `"day_7"`, `"expired"`, `"none"` | Granular conversion progression stage |
+| `install_cohort` | `"2026_09"`, `"2026_10"` | Install month cohort for retention modeling |
+| `app_theme` | `"system"`, `"light"`, `"dark"` | UI theme customization preference |
+| `notch_preset` | `"center"`, `"left"`, `"right"` | Hardware calibration geometry distribution |
+| `app_language` | `"en"`, `"hi"`, `"es"`, etc. | App localization language selection |
+
+---
+
+## 8. Google Ads Attribution & Measurement Readiness
+
+Aurora implements full readiness for automated Google Ads Return on Ad Spend (tROAS) and Target Cost Per Action (tCPA) smart bidding campaigns.
+
+### Primary vs. Secondary Conversion Actions
+1. **Primary Conversion Action (Bid Optimization):**
+   - **`purchase`**: Fired exclusively on confirmed, settled Google Play Billing transactions with verified monetary values and currency codes.
+   - **`ad_impression`**: Configured as a secondary conversion action (or imported into Google Ads via Firebase ILAR linking) to power value-based ROAS bidding.
+2. **Secondary Conversion Actions (Observation Only):**
+   - **`begin_checkout`**: Funnel health and abandoned checkout tracking.
+   - **`paywall_viewed`**: Paywall reach and click-through-rate measurement.
+   - **`onboarding_completed`**: Activation funnel efficiency.
+
+### External Console Linking Checklist
+To activate automated Google Ads conversion tracking:
+1. **Link Firebase to Google Analytics 4:**
+   - In Firebase Console: Project Settings > Integrations > Google Analytics (Active).
+2. **Link Firebase / GA4 to Google Ads:**
+   - In Google Ads Console: Tools and Settings > Linked Accounts > Google Analytics (GA4) and Firebase.
+   - Select the Aurora GA4 property (`ai.emots.kishan_dynamic`).
+3. **Import Conversions:**
+   - In Google Ads Console: Goals > Conversions > Summary > New Conversion Action > Import > Google Analytics 4 properties > App.
+   - Import `purchase` as **Primary** conversion action.
+   - Import `first_open` as **Secondary** conversion action.
+
+---
+
+## 9. Purchase Idempotency Guarantee
+
+All purchase tracking routes through `SubscriptionConversionTracker`. Double-counting is permanently prevented via:
+1. **In-Memory Dedup Set**: Transaction IDs and tokens are verified prior to firing any `purchase` event.
+2. **Persistent Storage**: Recorded transaction IDs are persisted in DataStore (`recorded_transaction_ids`).
+3. **Strict State Assertion**: Purchases in `PurchaseState.PENDING` or `PurchaseState.UNSPECIFIED_STATE` are strictly rejected. Only `PurchaseState.PURCHASED` triggers purchase tracking.
+
+---
+
+## 10. Crashlytics Grouping Integrity & Rate Limiting
+
+To avoid issue report fragmentation in Firebase Crashlytics:
+- Diagnostic exceptions use stable, unparameterized message templates (e.g. `BillingConnectionException("Google Play Billing connection dropped: $failureType")`).
+- Dynamic values (retry counts, timestamps, SDK versions) are set strictly via Crashlytics custom keys (`component`, `failure_type`, `billing_phase`, `billing_response_code`, `retry_attempt`, `app_version`).
+- Flapping drops are rate-limited to at most 1 exception per 60-second cooldown window.

@@ -25,12 +25,6 @@ import ai.emots.kishan_dynamic.data.model.ActionTileExecutionPath
 import ai.emots.kishan_dynamic.data.model.ActionTileExecutionPolicy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 /**
  * Safe command boundary for Action Island system tiles.
@@ -48,8 +42,6 @@ class ActionSystemController(private val context: Context) {
     private val _snapshot = MutableStateFlow(ActionSystemSnapshot())
     val snapshot: StateFlow<ActionSystemSnapshot> = _snapshot
     private var torchEnabled = false
-    private val refreshScope = CoroutineScope(Dispatchers.Main + Job())
-    private var refreshJob: Job? = null
 
     private val torchCallback = object : CameraManager.TorchCallback() {
         override fun onTorchModeChanged(cameraId: String, enabled: Boolean) {
@@ -63,12 +55,6 @@ class ActionSystemController(private val context: Context) {
             cameraManager?.registerTorchCallback(torchCallback, Handler(Looper.getMainLooper()))
         }
         refresh()
-        refreshJob = refreshScope.launch {
-            while (isActive) {
-                delay(1500L)
-                refresh()
-            }
-        }
     }
 
     fun execute(tile: ActionSystemTile) {
@@ -93,8 +79,6 @@ class ActionSystemController(private val context: Context) {
 
     fun close() {
         runCatching { cameraManager?.unregisterTorchCallback(torchCallback) }
-        refreshJob?.cancel()
-        refreshScope.coroutineContext[Job]?.cancel()
     }
 
     private fun readState(tile: ActionSystemTile): Boolean? = runCatching {

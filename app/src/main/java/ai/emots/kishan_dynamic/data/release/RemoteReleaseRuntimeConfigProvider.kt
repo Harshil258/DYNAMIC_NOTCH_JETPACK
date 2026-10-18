@@ -61,7 +61,7 @@ object ReleaseRuntimeConfigDecoder {
         fun intValue(default: Int, vararg keys: String): Int =
             raw(*keys)?.toIntOrNull() ?: default
 
-        val featuresRegex = Regex("\"features\"\\s*:\\s*\\[([^\\]]*)\\]")
+        val featuresRegex = Regex("\"(?:features|premiumFeatures|premium_features)\"\\s*:\\s*\\[([^\\]]*)\\]")
         val featuresList = featuresRegex.find(payload)?.groupValues?.get(1)?.let { rawFeatures ->
             Regex("\"([^\"]+)\"").findAll(rawFeatures).map { it.groupValues[1] }.toList()
         } ?: fallback.premiumFeatures
@@ -110,7 +110,8 @@ object ReleaseRuntimeConfigDecoder {
                 fallback.interstitialAdUnitId,
                 "interstitialAdUnitId",
                 "interstitial_ad_unit_id",
-                "admobInterstitialId"
+                "admobInterstitialId",
+                "splashInterstitialId"
             ),
             appOpenAdUnitId = stringValue(
                 fallback.appOpenAdUnitId,
@@ -188,7 +189,7 @@ object ReleaseRuntimeConfigDecoder {
             yearlyPlanId = stringValue(fallback.yearlyPlanId, "yearlyPlanId", "yearly_plan_id"),
             lifetimePlanId = stringValue(fallback.lifetimePlanId, "lifetimePlanId", "lifetime_plan_id"),
             premiumFeatures = featuresList,
-            trustSectionVisible = booleanValue(fallback.trustSectionVisible, "trustSectionVisible", "isVisible"),
+            trustSectionVisible = booleanValue(fallback.trustSectionVisible, "trustSectionVisible", "isTrustSectionVisible", "trust_section_visible", "isVisible"),
             trustSectionTitle = stringValue(fallback.trustSectionTitle, "trustSectionTitle", "title"),
             trustStat1Value = stringValue(fallback.trustStat1Value, "trustStat1Value", "stat1Value"),
             trustStat1Label = stringValue(fallback.trustStat1Label, "trustStat1Label", "stat1Label"),
@@ -196,10 +197,24 @@ object ReleaseRuntimeConfigDecoder {
             trustStat2Label = stringValue(fallback.trustStat2Label, "trustStat2Label", "stat2Label"),
             trustStat3Value = stringValue(fallback.trustStat3Value, "trustStat3Value", "stat3Value"),
             trustStat3Label = stringValue(fallback.trustStat3Label, "trustStat3Label", "stat3Label"),
-            premiumInstallTrialDays = intValue(fallback.premiumInstallTrialDays, "premiumInstallTrialDays", "premium_install_trial_days").coerceIn(0, 365),
+            premiumInstallTrialDays = intValue(
+                fallback.premiumInstallTrialDays,
+                "premiumInstallTrialDays",
+                "premium_install_trial_days",
+                "trial_duration_days",
+                "trialDurationDays",
+                "rewardAdFreeDays",
+                "reward_ad_free_days"
+            ).coerceIn(0, 365),
             premiumExpiryIslandEnabled = booleanValue(fallback.premiumExpiryIslandEnabled, "premiumExpiryIslandEnabled", "premium_expiry_island_enabled"),
             premiumRewardedAccessEnabled = booleanValue(fallback.premiumRewardedAccessEnabled, "premiumRewardedAccessEnabled", "premium_rewarded_access_enabled"),
-            premiumRewardDaysPerAd = intValue(fallback.premiumRewardDaysPerAd, "premiumRewardDaysPerAd", "premium_reward_days_per_ad").coerceIn(1, 30),
+            premiumRewardDaysPerAd = intValue(
+                fallback.premiumRewardDaysPerAd,
+                "premiumRewardDaysPerAd",
+                "premium_reward_days_per_ad",
+                "rewardAdFreeDays",
+                "reward_ad_free_days"
+            ).coerceIn(1, 30),
             rewardedAdCooldownSeconds = intValue(fallback.rewardedAdCooldownSeconds, "rewardedAdCooldownSeconds", "rewarded_ad_cooldown_seconds").coerceIn(0, 300),
             rewardedAccessMaxVisibleDays = intValue(fallback.rewardedAccessMaxVisibleDays, "rewardedAccessMaxVisibleDays", "rewarded_access_max_visible_days").coerceIn(1, 30),
             premiumPaywallEnabled = booleanValue(fallback.premiumPaywallEnabled, "premiumPaywallEnabled", "premium_paywall_enabled"),

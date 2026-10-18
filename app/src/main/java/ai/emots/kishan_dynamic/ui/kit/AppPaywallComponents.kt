@@ -60,10 +60,45 @@ import ai.emots.kishan_dynamic.ui.theme.auroraProCardGradient
 fun AuroraProHeroCard(
     isProActive: Boolean,
     proExpiresAt: Long?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isPaidPro: Boolean = false,
+    isTrial: Boolean = false,
+    trialDaysRemaining: Int = 0
 ) {
     var previewMode by remember { mutableIntStateOf(0) }
     val cardShape = RoundedCornerShape(AppTheme.radius.card)
+
+    val statusPillText = when {
+        isPaidPro -> "PRO ACTIVE"
+        isTrial -> "TRIAL ACTIVE"
+        isProActive -> "PASS ACTIVE"
+        else -> "FULL EXPERIENCE"
+    }
+    val statusPillColor = when {
+        isPaidPro -> AppTheme.colors.success
+        isTrial -> AppTheme.colors.auroraCyan
+        isProActive -> AppTheme.colors.auroraViolet
+        else -> AppTheme.colors.auroraCyan
+    }
+
+    val heroTitle = when {
+        isPaidPro -> "Aurora Pro is Active"
+        isTrial -> "7-Day Free Trial Active"
+        isProActive -> "Aurora Pro Pass Active"
+        else -> "Unlock Aurora Pro"
+    }
+
+    val heroSubtitle = when {
+        isPaidPro -> "Permanent access unlocked. All animations and styling enabled."
+        isTrial -> if (trialDaysRemaining > 0) {
+            "$trialDaysRemaining days remaining in trial · Unlock permanent access anytime."
+        } else {
+            "7-day trial active · Unlock permanent access anytime."
+        }
+        proExpiresAt != null -> "Pass active · ${remainingHours(proExpiresAt)}h remaining"
+        isProActive -> "All premium animations and customization unlocked."
+        else -> "Fluid iOS physics, live visualizers, and zero distractions on Android."
+    }
 
     Column(
         modifier = modifier
@@ -105,8 +140,8 @@ fun AuroraProHeroCard(
             }
 
             AppStatusPill(
-                text = if (isProActive) "ACTIVE" else "LIFETIME / PASS",
-                color = if (isProActive) AppTheme.colors.success else AppTheme.colors.auroraCyan,
+                text = statusPillText,
+                color = statusPillColor,
                 showDot = false
             )
         }
@@ -114,17 +149,13 @@ fun AuroraProHeroCard(
         // Title and Value Statement
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs)) {
             AppText(
-                text = if (isProActive) "Aurora Pro is Active" else "Unlock the Full Island",
+                text = heroTitle,
                 style = AppTheme.typography.h2,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             AppText(
-                text = when {
-                    proExpiresAt != null -> "Pass active · ${remainingHours(proExpiresAt)}h remaining"
-                    isProActive -> "All premium animations and customization unlocked."
-                    else -> "Fluid iOS physics, live visualizers, and zero distractions on Android."
-                },
+                text = heroSubtitle,
                 style = AppTheme.typography.bodySmall,
                 color = Color(0xCCFFFFFF)
             )
@@ -327,7 +358,7 @@ fun AuroraBenefitTiles(
     val benefits = listOf(
         Triple(AppleGlyph.Palette, "Fluid Island Engine", "All 12+ live animation themes & fluid visualizers"),
         Triple(AppleGlyph.Shortcut, "Action Island Pro", "Unlimited customizable app shortcuts & quick contacts"),
-        Triple(AppleGlyph.Controls, "Sub-Pixel Calibration", "Precise notch, punch-hole & offset alignment"),
+        Triple(AppleGlyph.Controls, "Custom RGB & Styling", "Dynamic color picker, ambient glow & custom shapes"),
         Triple(AppleGlyph.Shield, "100% Ad-Free", "Pure distraction-free utility with zero advertisements")
     )
 
@@ -557,9 +588,16 @@ fun AppPlanSelectorRow(
                 fontWeight = FontWeight.Bold,
                 color = priceColor
             )
-            if (plan.id == "yearly") {
+            val priceSubtext = when (plan.id) {
+                "weekly" -> "per week"
+                "monthly" -> "per month"
+                "yearly" -> "per year"
+                "lifetime" -> "one-time"
+                else -> ""
+            }
+            if (priceSubtext.isNotEmpty()) {
                 AppText(
-                    text = "best value",
+                    text = priceSubtext,
                     style = AppTheme.typography.caption.copy(fontSize = 10.sp),
                     color = bestValueColor
                 )
@@ -567,6 +605,14 @@ fun AppPlanSelectorRow(
         }
     }
 }
+
+private data class ComparisonFeatureRow(
+    val title: String,
+    val freeValue: String?,
+    val freeIncluded: Boolean,
+    val proValue: String?,
+    val proIncluded: Boolean
+)
 
 /**
  * Free vs Pro comparison matrix ensuring complete transparency before purchase.
@@ -576,14 +622,14 @@ fun AppFreeVsProComparisonCard(
     modifier: Modifier = Modifier
 ) {
     val rows = listOf(
-        Triple("Dynamic Island Core", "Included", "Included"),
-        Triple("Notification Alerts & Pager", "Included", "Included"),
-        Triple("Basic Music Controls", "Included", "Included"),
-        Triple("Custom Island Themes & Colors", "—", "Unlimited"),
-        Triple("Notch Alignment Calibration", "Basic", "Fine-grained"),
-        Triple("Action Island Shortcuts", "3 Pinned", "Unlimited"),
-        Triple("Custom Notification Duration", "Standard", "Customizable"),
-        Triple("Zero In-App Ads", "—", "100% Ad-Free")
+        ComparisonFeatureRow("Dynamic Island Core", null, true, null, true),
+        ComparisonFeatureRow("Notification Alerts & Pager", null, true, null, true),
+        ComparisonFeatureRow("Basic Music Controls", null, true, null, true),
+        ComparisonFeatureRow("Island Themes & Waves", "1 Style", true, "All 12+", true),
+        ComparisonFeatureRow("Notch Calibration", "Basic", true, "Sub-Pixel", true),
+        ComparisonFeatureRow("Action Island Shortcuts", "3 Pinned", true, "Unlimited", true),
+        ComparisonFeatureRow("Custom Alert Duration", "5s Standard", true, "3s – 15s", true),
+        ComparisonFeatureRow("Zero Advertisements", null, false, "100% Ad-Free", true)
     )
 
     AppCard(modifier = modifier) {
@@ -612,18 +658,24 @@ fun AppFreeVsProComparisonCard(
                     color = AppTheme.colors.textSecondary,
                     modifier = Modifier.weight(1f)
                 )
-                AppText(
-                    text = "Pro",
-                    style = AppTheme.typography.caption,
-                    fontWeight = FontWeight.Bold,
-                    color = AppTheme.colors.auroraCyan,
-                    modifier = Modifier.weight(1.2f)
-                )
+                Row(
+                    modifier = Modifier.weight(1.2f),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    AppleIcon(glyph = AppleGlyph.Crown, tint = AppTheme.colors.auroraCyan, size = 12.dp)
+                    AppText(
+                        text = "Aurora Pro",
+                        style = AppTheme.typography.caption,
+                        fontWeight = FontWeight.Bold,
+                        color = AppTheme.colors.auroraCyan
+                    )
+                }
             }
 
             AppRowDivider()
 
-            rows.forEachIndexed { index, (feature, free, pro) ->
+            rows.forEachIndexed { index, row ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -631,28 +683,87 @@ fun AppFreeVsProComparisonCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     AppText(
-                        text = feature,
+                        text = row.title,
                         style = AppTheme.typography.caption,
                         color = AppTheme.colors.textPrimary,
                         modifier = Modifier.weight(1.8f)
                     )
-                    AppText(
-                        text = free,
-                        style = AppTheme.typography.caption,
-                        color = if (free == "—") AppTheme.colors.textTertiary else AppTheme.colors.textSecondary,
+                    ComparisonStatusCell(
+                        text = row.freeValue,
+                        isIncluded = row.freeIncluded,
+                        isPro = false,
                         modifier = Modifier.weight(1f)
                     )
-                    AppText(
-                        text = pro,
-                        style = AppTheme.typography.caption,
-                        fontWeight = FontWeight.SemiBold,
-                        color = if (pro == "—") AppTheme.colors.textTertiary else AppTheme.colors.auroraCyan,
+                    ComparisonStatusCell(
+                        text = row.proValue,
+                        isIncluded = row.proIncluded,
+                        isPro = true,
                         modifier = Modifier.weight(1.2f)
                     )
                 }
                 if (index < rows.lastIndex) {
                     AppRowDivider()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ComparisonStatusCell(
+    text: String?,
+    isIncluded: Boolean,
+    isPro: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.CenterStart
+    ) {
+        when {
+            text != null -> {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(AppTheme.radius.xs))
+                        .background(
+                            if (isPro) AppTheme.colors.auroraCyan.copy(alpha = 0.12f)
+                            else AppTheme.colors.surfaceVariant.copy(alpha = 0.6f)
+                        )
+                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                ) {
+                    AppText(
+                        text = text,
+                        style = AppTheme.typography.caption.copy(fontSize = 10.5.sp),
+                        fontWeight = if (isPro) FontWeight.Bold else FontWeight.Medium,
+                        color = if (isPro) AppTheme.colors.auroraCyan else AppTheme.colors.textSecondary,
+                        maxLines = 1
+                    )
+                }
+            }
+            isIncluded -> {
+                Box(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isPro) AppTheme.colors.auroraCyan.copy(alpha = 0.16f)
+                            else AppTheme.colors.textSecondary.copy(alpha = 0.12f)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.Check,
+                        tint = if (isPro) AppTheme.colors.auroraCyan else AppTheme.colors.textSecondary,
+                        size = 11.dp
+                    )
+                }
+            }
+            else -> {
+                AppText(
+                    text = "—",
+                    style = AppTheme.typography.caption.copy(fontSize = 13.sp),
+                    color = AppTheme.colors.textTertiary
+                )
             }
         }
     }

@@ -1,5 +1,6 @@
 package ai.emots.kishan_dynamic.ui.kit
 
+import ai.emots.kishan_dynamic.data.analytics.TrackScreenView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -129,11 +130,13 @@ fun AppBackground(
 /**
  * The single scaffold every screen uses.
  *
+ * @param screenName optional canonical analytics screen identifier for automatic deduplicated tracking.
  * @param bottomInset extra bottom space, e.g. for the floating navigation dock.
  */
 @Composable
 fun AppScreen(
     modifier: Modifier = Modifier,
+    screenName: String? = null,
     bottomInset: Dp = 0.dp,
     horizontalGutter: Dp? = null,
     topBar: (@Composable () -> Unit)? = null,
@@ -141,6 +144,9 @@ fun AppScreen(
     scrollable: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    if (!screenName.isNullOrBlank()) {
+        TrackScreenView(screenName = screenName)
+    }
     val gutter = horizontalGutter ?: AppTheme.layout.screenGutter
     AppBackground(modifier = modifier) {
         Scaffold(
@@ -176,9 +182,16 @@ fun AppScreen(
                     Box(
                         Modifier
                             .fillMaxWidth()
+                            .shadow(elevation = 12.dp, ambientColor = AppTheme.colors.shadow, spotColor = AppTheme.colors.shadowStrong)
                             .background(AppTheme.colors.background)
-                            .border(width = 0.5.dp, color = AppTheme.colors.border)
                     ) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .height(0.5.dp)
+                                .background(AppTheme.colors.border)
+                                .align(Alignment.TopCenter)
+                        )
                         Column(
                             Modifier.align(Alignment.TopCenter)
                                 .widthIn(max = 720.dp).fillMaxWidth()
@@ -192,6 +205,11 @@ fun AppScreen(
                 }
             }
         ) { innerPadding ->
+            val effectiveBottomPadding = if (bottomAction != null) {
+                AppTheme.spacing.lg
+            } else {
+                bottomInset + AppTheme.spacing.lg
+            }
             Box(Modifier.fillMaxSize().padding(innerPadding).consumeWindowInsets(innerPadding)) {
                 if (scrollable) {
                     Column(
@@ -201,7 +219,7 @@ fun AppScreen(
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
                             .padding(horizontal = gutter)
-                            .padding(bottom = bottomInset + AppTheme.spacing.xxxl),
+                            .padding(bottom = effectiveBottomPadding),
                         content = content
                     )
                 } else {
@@ -211,7 +229,7 @@ fun AppScreen(
                             .widthIn(max = 720.dp)
                             .fillMaxSize()
                             .padding(horizontal = gutter)
-                            .padding(bottom = bottomInset + AppTheme.spacing.xxxl),
+                            .padding(bottom = effectiveBottomPadding),
                         content = content
                     )
                 }
@@ -231,7 +249,7 @@ fun AppLargeTitle(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = AppTheme.spacing.xxl, bottom = AppTheme.spacing.xl),
+            .padding(top = 44.dp, bottom = AppTheme.spacing.lg),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
@@ -269,7 +287,7 @@ fun AppTopBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = AppTheme.spacing.md, bottom = AppTheme.spacing.xl),
+            .padding(top = 28.dp, bottom = AppTheme.spacing.lg),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (showBack) {
@@ -852,7 +870,7 @@ fun IosStatusBar(
     time: String = "9:41"
 ) {
     val contentColor = if (isDarkBackground) {
-        AppTheme.colors.textPrimary.copy(alpha = 0.92f)
+        Color.White.copy(alpha = 0.92f)
     } else {
         AppTheme.colors.textPrimary
     }

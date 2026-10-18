@@ -53,8 +53,11 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.Image
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
+import androidx.compose.ui.layout.layout
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -185,6 +188,7 @@ enum class IslandControlAction {
     CallEnd,
     CallSummaryRedial,
     CallSummaryMessage,
+    CallSummaryWhatsApp,
     CallSummaryDismiss,
     SilentToggle,
     OpenSettings,
@@ -253,7 +257,7 @@ internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp {
     return when (this) {
         IslandDemoState.TimerExpanded -> 85.73.dp
 
-        IslandDemoState.ActionControlExpanded -> 180.dp
+        IslandDemoState.ActionControlExpanded -> 210.dp
         IslandDemoState.PremiumExpiryExpanded -> 112.dp
 
         IslandDemoState.NotificationExpanded,
@@ -328,6 +332,42 @@ internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp {
  *    - Right: "Timer" (orange) + "3:35" (large bold orange 32sp)
  *    - Height: 86dp capsule
  */
+/**
+ * Defers animated size reads to the layout phase, eliminating 60-120fps recomposition churn
+ * of DynamicIslandPill and all child content during dimension springs (AUR-P1-014).
+ */
+private fun Modifier.animatedIslandDimensions(
+    widthProvider: () -> androidx.compose.ui.unit.Dp,
+    heightProvider: () -> androidx.compose.ui.unit.Dp
+): Modifier = layout { measurable, _ ->
+    val wPx = widthProvider().roundToPx().coerceAtLeast(0)
+    val hPx = heightProvider().roundToPx().coerceAtLeast(0)
+    val placeable = measurable.measure(
+        androidx.compose.ui.unit.Constraints.fixed(wPx, hPx)
+    )
+    layout(wPx, hPx) {
+        placeable.place(0, 0)
+    }
+}
+
+/**
+ * Sizes Quick Controls to its rendered rows: one tile row is the base, and
+ * each additional populated row contributes only its content height and gap.
+ */
+fun actionControlExpandedHeight(
+    systemTilesCount: Int,
+    hasCustomActions: Boolean,
+    hasApps: Boolean,
+    hasContacts: Boolean
+): Dp {
+    var base = 158.dp
+    if (systemTilesCount > 4) base += 51.dp
+    if (hasCustomActions) base += 51.dp
+    if (hasApps) base += 53.dp
+    if (hasContacts) base += 53.dp
+    return base
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DynamicIslandPill(
@@ -387,6 +427,7 @@ fun DynamicIslandPill(
     liveActivityChronometerCountDown: Boolean = false,
     liveActivitySourceBacked: Boolean = false,
     liveActivityActionLabel: String = "",
+    liveActivityInfo: ai.emots.kishan_dynamic.data.model.LiveActivityInfo? = null,
     ringerMode: RingerModeType = RingerModeType.SILENT,
     ringerVolumeLevel: Float = 0.5f,
     brightnessLevel: Float = 0.5f,
@@ -400,7 +441,12 @@ fun DynamicIslandPill(
     onMediaVolumeChange: (Float) -> Unit = {},
     actionNotificationCount: Int = 0,
     onUtilityAction: (ActionUtilityAction) -> Unit = {},
-    onOpenNotifications: () -> Unit = {}
+    onOpenNotifications: () -> Unit = {},
+    flatTop: Boolean = false,
+    backgroundArgb: Int = 0xFF000000.toInt(),
+    foregroundArgb: Int = 0xFFFFFFFF.toInt(),
+    cameraCutoutMode: Boolean = false,
+    cutoutSizePx: Int = 80
 ) {
     val reduceMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -470,10 +516,16 @@ fun DynamicIslandPill(
         // Expanded sheets: the device width minus iOS side margins, capped.
         else -> maxExpanded
     }
+    val isCutoutDot = cameraCutoutMode && (state == IslandDemoState.Minimal || state == IslandDemoState.Idle)
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    val cutoutDotSizeDp = with(density) { (cutoutSizePx.toFloat() / density.density).dp }
+
     val splitExtras = if (isSplit) islandTokens.splitGap + islandTokens.sideSize else 0.dp
     val maxMainWidth = (maxExpanded - splitExtras).coerceAtLeast(islandTokens.compactHeight)
     val requestedWidth = if (isCompact) baseWidth * safeHorizontalScale else baseWidth
-    val targetWidth = if (isCompact) {
+    val targetWidth = if (isCutoutDot) {
+        cutoutDotSizeDp.coerceIn(24.dp, 56.dp)
+    } else if (isCompact) {
         ai.emots.kishan_dynamic.data.model.IslandGeometryConstraints.compactWidth(
             requestedWidth.value, screenWidth.value, islandTokens.compactStatusSideReserve.value,
             splitExtras.value, islandTokens.compactMaxWidth.value
@@ -507,12 +559,15 @@ fun DynamicIslandPill(
         }
     }
 
-    val targetHeight = if (state == IslandDemoState.ActionControlExpanded) {
-        var base = 180.dp
-        if (actionCustomActions.isNotEmpty()) base += 52.dp
-        if (actionApps.isNotEmpty()) base += 52.dp
-        if (actionContacts.isNotEmpty()) base += 52.dp
-        base
+    val targetHeight = if (isCutoutDot) {
+        cutoutDotSizeDp.coerceIn(24.dp, 56.dp)
+    } else if (state == IslandDemoState.ActionControlExpanded) {
+        actionControlExpandedHeight(
+            systemTilesCount = actionSystemTiles.size,
+            hasCustomActions = actionCustomActions.isNotEmpty(),
+            hasApps = actionApps.isNotEmpty(),
+            hasContacts = actionContacts.isNotEmpty()
+        )
     } else if (isReplyingNotification) {
         160.dp
     } else if (state == IslandDemoState.NotificationExpanded) {
@@ -529,7 +584,9 @@ fun DynamicIslandPill(
     // - Compact / Split states: half of compact height (36.67 / 2 = 18.33dp) for full pill capsule
     // - 86dp Alert states: 43dp (86 / 2) for standard iOS alert capsule
     // - Expanded Activity Sheets (140-240dp): 42dp Apple continuous squircle
-    val targetCornerRadiusDp: Dp = when (state) {
+    val targetCornerRadiusDp: Dp = if (isCutoutDot) {
+        cutoutDotSizeDp.coerceIn(24.dp, 56.dp) / 2
+    } else when (state) {
         IslandDemoState.Idle,
         IslandDemoState.Minimal,
         IslandDemoState.MusicCompact,
@@ -581,7 +638,16 @@ fun DynamicIslandPill(
         label = "island_corner_radius"
     )
 
-    val cornerRadius = RoundedCornerShape(animatedCornerRadiusDp)
+    val cornerRadius = if (flatTop && !isCutoutDot) {
+        RoundedCornerShape(
+            topStart = 0.dp,
+            topEnd = 0.dp,
+            bottomEnd = animatedCornerRadiusDp,
+            bottomStart = animatedCornerRadiusDp
+        )
+    } else {
+        RoundedCornerShape(animatedCornerRadiusDp)
+    }
 
     // Apple Liquid Morphing Springs for Dimensions
     val animatedWidth by animateDpAsState(
@@ -675,12 +741,11 @@ fun DynamicIslandPill(
         else -> IslandColors.Indigo
     }
 
-    Box(contentAlignment = Alignment.Center) {
+    Box(contentAlignment = Alignment.TopCenter) {
         // Soft Ambient Aura Bloom
         Box(
             modifier = Modifier
-                .width(animatedWidth + 8.dp)
-                .height(animatedHeight + 8.dp)
+                .animatedIslandDimensions({ animatedWidth + 8.dp }, { animatedHeight + 8.dp })
                 .graphicsLayer {
                     translationY = dragOffsetY.value
                     alpha = if (isCompact) 0f else auraAlphaState.value * 0.10f
@@ -753,13 +818,13 @@ fun DynamicIslandPill(
                         }
                     )
                 },
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             // Main Island Pill Body
+            val pillBgColor = Color(backgroundArgb)
             Box(
                 modifier = Modifier
-                    .width(animatedWidth)
-                    .height(animatedHeight)
+                    .animatedIslandDimensions({ animatedWidth }, { animatedHeight })
                     .graphicsLayer {
                         scaleX = pressScale
                         // Tactile squeeze during upward drag
@@ -804,7 +869,7 @@ fun DynamicIslandPill(
                             onLongPress()
                         }
                     )
-                    .background(Color.Black)
+                    .background(pillBgColor)
                     .border(
                         width = 0.75.dp,
                         brush = Brush.verticalGradient(
@@ -890,9 +955,13 @@ fun DynamicIslandPill(
                             else -> 0.dp
                         }
                     ),
-                contentAlignment = Alignment.Center
+                contentAlignment = when (state) {
+                    IslandDemoState.ActionControlExpanded -> Alignment.TopCenter
+                    else -> Alignment.Center
+                }
             ) {
-                AnimatedContent(
+                CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb)) {
+                    AnimatedContent(
                     targetState = state,
                     transitionSpec = {
                         if (reduceMotion) {
@@ -1075,13 +1144,22 @@ fun DynamicIslandPill(
                             title = liveActivityTitle,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.DeliveryCompact -> DeliveryCompactContent()
-                        IslandDemoState.DeliveryExpanded -> DeliveryExpandedContent()
-                        IslandDemoState.FlightCompact -> FlightCompactContent(liveActivityTitle, liveActivitySubtitle)
-                        IslandDemoState.FlightExpanded -> FlightExpandedContent(liveActivityTitle, liveActivitySubtitle, liveActivityProgress)
-                        IslandDemoState.SportsCompact -> SportsCompactContent(liveActivityTitle, liveActivitySubtitle)
-                        IslandDemoState.SportsExpanded -> SportsExpandedContent(liveActivityTitle, liveActivitySubtitle)
-                        IslandDemoState.NavigationCompact -> NavigationCompactContent()
+                        IslandDemoState.DeliveryCompact -> ai.emots.kishan_dynamic.ui.components.live.DeliveryIslandCompact(liveActivityInfo)
+                        IslandDemoState.DeliveryExpanded -> ai.emots.kishan_dynamic.ui.components.live.DeliveryIslandExpanded(
+                            info = liveActivityInfo,
+                            progressOverride = liveActivityProgress,
+                            onCallAction = { onControlAction(IslandControlAction.CallAccept) }
+                        )
+                        IslandDemoState.FlightCompact -> ai.emots.kishan_dynamic.ui.components.live.FlightIslandCompact(liveActivityInfo)
+                        IslandDemoState.FlightExpanded -> ai.emots.kishan_dynamic.ui.components.live.FlightIslandExpanded(
+                            info = liveActivityInfo,
+                            progressOverride = liveActivityProgress
+                        )
+                        IslandDemoState.SportsCompact -> ai.emots.kishan_dynamic.ui.components.live.SportsIslandCompact(liveActivityInfo)
+                        IslandDemoState.SportsExpanded -> ai.emots.kishan_dynamic.ui.components.live.SportsIslandExpanded(
+                            info = liveActivityInfo
+                        )
+                        IslandDemoState.NavigationCompact -> ai.emots.kishan_dynamic.ui.components.live.NavigationIslandCompact(liveActivityInfo)
                         IslandDemoState.TimerImage -> TimerWithImageCompactContent()
                         IslandDemoState.NotificationImage -> NotificationImageCompactContent()
                         IslandDemoState.CallAvatars -> CallExpandedContent(
@@ -1105,10 +1183,14 @@ fun DynamicIslandPill(
                             subtitle = liveActivitySubtitle,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.ColorOptions -> TurnByTurnNavigationContent(onControlAction)
+                        IslandDemoState.ColorOptions -> ai.emots.kishan_dynamic.ui.components.live.NavigationIslandExpanded(
+                            info = liveActivityInfo,
+                            onControlAction = onControlAction
+                        )
                     }
                 }
             }
+        }
 
             // Companion split bubble with authentic Apple liquid separation and merge springs
             if (animatedGap > 0.5.dp) {
@@ -1156,7 +1238,7 @@ fun DynamicIslandPill(
                                 onCompanionLongPress()
                             }
                         )
-                        .background(Color.Black)
+                        .background(pillBgColor)
                         .border(
                             width = 0.75.dp,
                             brush = Brush.verticalGradient(
@@ -1166,7 +1248,8 @@ fun DynamicIslandPill(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    AnimatedContent(
+                    CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb)) {
+                        AnimatedContent(
                         targetState = state,
                         transitionSpec = {
                             if (reduceMotion) {
@@ -1227,6 +1310,7 @@ fun DynamicIslandPill(
                 }
             }
         }
+    }
     }
 }
 
@@ -1402,7 +1486,7 @@ private fun sourceBackedIdentity(state: IslandDemoState): Pair<AppleGlyph, Color
 // =============================================================================
 
 @Composable
-private fun CompactIslandLayout(
+internal fun CompactIslandLayout(
     leading: @Composable () -> Unit,
     trailing: @Composable () -> Unit,
     modifier: Modifier = Modifier
@@ -1903,12 +1987,12 @@ private fun NotificationExpandedContent(
                     )
                 ),
                 NotificationInfo(
-                    id = "demo_launcher",
-                    packageName = "com.coloros.systemlauncher",
-                    appName = "System Launcher",
-                    title = "System Launcher",
-                    text = "",
-                    actions = listOf(NotificationActionInfo(id = "open", label = "Open"))
+                    id = "demo_calendar",
+                    packageName = "com.google.android.calendar",
+                    appName = "Calendar",
+                    title = "Product Strategy Sync",
+                    text = "Starting in 15 mins • Aurora Island Team",
+                    actions = listOf(NotificationActionInfo(id = "open", label = "Join"))
                 ),
                 NotificationInfo(
                     id = "demo_heytap",
@@ -2302,614 +2386,6 @@ private fun BluetoothConnectedContent(
             }
         }
     )
-}
-
-@Composable
-private fun ActionControlExpandedContent(
-    systemTiles: List<ActionSystemTile>,
-    systemStates: Map<ActionSystemTile, Boolean?>,
-    apps: List<ActionAppShortcut>,
-    contacts: List<ActionContactShortcut>,
-    customActions: List<ActionCustomShortcut>,
-    onAppClick: (String) -> Unit,
-    onContactClick: (String) -> Unit,
-    onCustomActionClick: (String) -> Unit,
-    onSystemTileClick: (ActionSystemTile) -> Unit,
-    brightnessLevel: Float,
-    mediaVolumeLevel: Float,
-    onBrightnessChange: (Float) -> Unit,
-    onMediaVolumeChange: (Float) -> Unit,
-    notificationCount: Int,
-    onUtilityAction: (ActionUtilityAction) -> Unit,
-    onOpenNotifications: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp, top = 30.dp, bottom = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Text(text = "Quick controls", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Your essentials, one tap away", color = IslandColors.TextSecondary, fontSize = 10.sp)
-            }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(7.dp)
-            ) {
-                if (notificationCount > 0) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(percent = 50))
-                            .background(IslandColors.CapsuleRed.copy(alpha = 0.22f))
-                            .clickable(onClick = onOpenNotifications)
-                            .padding(horizontal = 7.dp, vertical = 3.dp)
-                    ) {
-                        Text(
-                            text = "$notificationCount ${if (notificationCount == 1) "alert" else "alerts"}",
-                            color = IslandColors.CapsuleRed,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                ActionUtilityButton(
-                    glyph = AppleGlyph.Lock,
-                    onClick = { onUtilityAction(ActionUtilityAction.LOCK) }
-                )
-                ActionUtilityButton(
-                    glyph = AppleGlyph.Settings,
-                    onClick = { onUtilityAction(ActionUtilityAction.SETTINGS) }
-                )
-                ActionUtilityButton(
-                    glyph = AppleGlyph.Camera,
-                    onClick = { onUtilityAction(ActionUtilityAction.CAMERA) }
-                )
-                ActionUtilityButton(
-                    glyph = AppleGlyph.Expand,
-                    onClick = { onUtilityAction(ActionUtilityAction.EDIT) }
-                )
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            systemTiles.forEach { tile ->
-                QuickControlChip(
-                    glyph = tile.toGlyph(),
-                    label = tile.title,
-                    state = systemStates[tile],
-                    modifier = Modifier.width(58.dp),
-                    onClick = { onSystemTileClick(tile) }
-                )
-            }
-        }
-        if (customActions.isNotEmpty()) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                customActions.forEach { action ->
-                    ActionCustomChip(
-                        action = action,
-                        modifier = Modifier.width(58.dp),
-                        onClick = { onCustomActionClick(action.actionId) }
-                    )
-                }
-            }
-        }
-        if (apps.isNotEmpty()) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                apps.take(4).forEach { app ->
-                    ActionAppChip(
-                        app = app,
-                        modifier = Modifier.weight(1f),
-                        onClick = { onAppClick(app.packageName) }
-                    )
-                }
-                repeat((4 - apps.take(4).size).coerceAtLeast(0)) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            }
-        }
-        if (contacts.isNotEmpty()) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                contacts.take(4).forEach { contact ->
-                    ActionContactChip(
-                        contact = contact,
-                        modifier = Modifier.weight(1f),
-                        onClick = { onContactClick(contact.phoneNumber) }
-                    )
-                }
-                repeat((4 - contacts.take(4).size).coerceAtLeast(0)) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            }
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ActionUtilitySlider(
-                glyph = AppleGlyph.Sparkles,
-                value = brightnessLevel,
-                onValueChange = onBrightnessChange,
-                activeColor = Color.White,
-                modifier = Modifier.weight(1f)
-            )
-            ActionUtilitySlider(
-                glyph = AppleGlyph.Speaker,
-                value = mediaVolumeLevel,
-                onValueChange = onMediaVolumeChange,
-                activeColor = IslandColors.CapsuleCyan,
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun ActionUtilityButton(
-    glyph: AppleGlyph,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size(24.dp)
-            .clip(CircleShape)
-            .background(Color(0xFF25262B))
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        AppleIcon(glyph = glyph, tint = Color.White, size = 12.dp)
-    }
-}
-
-@Composable
-private fun ActionUtilitySlider(
-    glyph: AppleGlyph,
-    value: Float,
-    onValueChange: (Float) -> Unit,
-    activeColor: Color = Color.White,
-    modifier: Modifier = Modifier
-) {
-    val progress = value.coerceIn(0f, 1f)
-
-    Box(
-        modifier = modifier
-            .height(38.dp)
-            .clip(RoundedCornerShape(percent = 50))
-            .background(Color(0xFF222326))
-            .border(0.75.dp, Color(0x22FFFFFF), RoundedCornerShape(percent = 50))
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = { offset ->
-                        val newProgress = (offset.x / size.width.toFloat()).coerceIn(0f, 1f)
-                        onValueChange(newProgress)
-                    }
-                )
-            }
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures { change, _ ->
-                    change.consume()
-                    val newProgress = (change.position.x / size.width.toFloat()).coerceIn(0f, 1f)
-                    onValueChange(newProgress)
-                }
-            }
-    ) {
-        if (progress > 0f) {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth(progress)
-                    .background(activeColor)
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            val iconTint = if (progress > 0.16f) Color(0xFF141416) else Color.White
-            AppleIcon(glyph = glyph, tint = iconTint, size = 15.dp)
-
-            val textTint = if (progress > 0.82f) Color(0xFF141416) else Color(0xB3FFFFFF)
-            Text(
-                text = "${(progress * 100).toInt()}%",
-                color = textTint,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-    }
-}
-
-private fun ActionSystemTile.toGlyph(): AppleGlyph = when (this) {
-    ActionSystemTile.WIFI -> AppleGlyph.Wifi
-    ActionSystemTile.BLUETOOTH -> AppleGlyph.Bluetooth
-    ActionSystemTile.MOBILE_DATA -> AppleGlyph.Globe
-    ActionSystemTile.TORCH -> AppleGlyph.Torch
-    ActionSystemTile.LOCATION -> AppleGlyph.Location
-    ActionSystemTile.ROTATION_LOCK -> AppleGlyph.Rotate
-    ActionSystemTile.AIRPLANE_MODE -> AppleGlyph.Airplane
-    ActionSystemTile.DO_NOT_DISTURB -> AppleGlyph.Moon
-    ActionSystemTile.HOTSPOT -> AppleGlyph.PersonalHotspot
-    ActionSystemTile.SCREENSHOT -> AppleGlyph.Camera
-    ActionSystemTile.DARK_MODE -> AppleGlyph.Moon
-    ActionSystemTile.AUTO_BRIGHTNESS -> AppleGlyph.Sparkles
-    ActionSystemTile.POWER_SAVER -> AppleGlyph.Power
-    ActionSystemTile.SYNC -> AppleGlyph.Reset
-    ActionSystemTile.NFC -> AppleGlyph.Link
-}
-
-private fun ActionCustomShortcut.toGlyph(): AppleGlyph = when (iconKey) {
-    "camera" -> AppleGlyph.Camera
-    "bell" -> AppleGlyph.Bell
-    "calendar" -> AppleGlyph.History
-    else -> AppleGlyph.Settings
-}
-
-@Composable
-private fun ActionCustomChip(
-    action: ActionCustomShortcut,
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(Brush.linearGradient(listOf(IslandColors.TimerCyan.copy(alpha = 0.28f), IslandColors.Purple.copy(alpha = 0.24f))))
-            .clickable(onClick = onClick)
-            .padding(vertical = 7.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        AppleIcon(glyph = action.toGlyph(), tint = IslandColors.TimerCyan, size = 16.dp)
-        Text(text = action.label, color = Color.White, fontSize = 8.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-    }
-}
-
-@Composable
-private fun ActionAppChip(
-    app: ActionAppShortcut,
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(Brush.linearGradient(listOf(IslandColors.Purple.copy(alpha = 0.34f), IslandColors.Indigo.copy(alpha = 0.22f))))
-            .clickable(onClick = onClick)
-            .padding(vertical = 7.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(18.dp)
-                .clip(CircleShape)
-                .background(IslandColors.Purple),
-            contentAlignment = Alignment.Center
-        ) {
-            PackageIcon(
-                packageName = app.packageName,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape),
-                contentDescription = app.appName
-            )
-        }
-        Text(text = app.appName, color = Color.White, fontSize = 8.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-    }
-}
-
-@Composable
-private fun ActionContactChip(
-    contact: ActionContactShortcut,
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(Brush.linearGradient(listOf(IslandColors.CapsuleGreen.copy(alpha = 0.32f), IslandColors.CapsuleCyan.copy(alpha = 0.18f))))
-            .clickable(onClick = onClick)
-            .padding(vertical = 7.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        ContactAvatar(
-            name = contact.name,
-            avatarUri = contact.photoUri,
-            modifier = Modifier.size(18.dp),
-            contentDescription = contact.name
-        )
-        Text(text = contact.name, color = Color.White, fontSize = 8.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-    }
-}
-
-@Composable
-private fun QuickControlChip(
-    glyph: AppleGlyph,
-    label: String,
-    state: Boolean?,
-    modifier: Modifier,
-    onClick: () -> Unit
-) {
-    val active = state == true
-    val unreadable = state == null
-    val accent = when {
-        active -> IslandColors.CapsuleCyan
-        unreadable -> Color(0xFFFFB340)
-        else -> IslandColors.TextSecondary
-    }
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(
-                when {
-                    active -> IslandColors.CapsuleCyan.copy(alpha = 0.24f)
-                    unreadable -> Color(0xFFFFB340).copy(alpha = 0.14f)
-                    else -> IslandColors.Gray6
-                }
-            )
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp)
-    ) {
-        Box(modifier = Modifier.size(16.dp)) {
-            AppleIcon(glyph = glyph, tint = accent, size = 16.dp)
-            if (unreadable) {
-                Box(
-                    modifier = Modifier
-                        .size(5.dp)
-                        .align(Alignment.TopEnd)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFFB340))
-                )
-            }
-        }
-        Text(
-            text = label,
-            color = if (active) Color.White else accent,
-            fontSize = 8.5.sp,
-            maxLines = 1
-        )
-    }
-}
-
-@Composable
-private fun PremiumExpiryExpandedContent(
-    hoursRemaining: Int,
-    onControlAction: (IslandControlAction) -> Unit
-) {
-    val isExpired = hoursRemaining <= 0
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(38.dp)
-                .clip(CircleShape)
-                .background(
-                    Brush.linearGradient(
-                        if (isExpired) listOf(IslandColors.Purple, IslandColors.TimerCyan)
-                        else listOf(IslandColors.TimerCyan, IslandColors.Purple)
-                    )
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            AppleIcon(glyph = AppleGlyph.Crown, tint = Color.White, size = 20.dp)
-        }
-        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
-                text = if (isExpired) "Premium access ended" else "Premium ends soon",
-                color = Color.White,
-                fontSize = 12.5.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = if (isExpired) "Watch ads or upgrade for Pro" else "Keep your island unlocked",
-                color = IslandColors.TextSecondary,
-                fontSize = 9.5.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = "Watch Ads",
-                color = Color.White,
-                fontSize = 9.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(IslandColors.Gray6)
-                    .clickable { onControlAction(IslandControlAction.PremiumWatchAd) }
-                    .padding(horizontal = 8.dp, vertical = 6.dp)
-            )
-            Text(
-                text = "Buy Premium",
-                color = Color.White,
-                fontSize = 9.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(IslandColors.Purple, Color(0xFF6366F1))
-                        )
-                    )
-                    .clickable { onControlAction(IslandControlAction.PremiumBuy) }
-                    .padding(horizontal = 8.dp, vertical = 6.dp)
-            )
-        }
-    }
-}
-
-// -----------------------------------------------------------------------------
-// 4. TIMER - MATCHING Dynamic Island-1.svg EXACTLY!
-// -----------------------------------------------------------------------------
-@Composable
-fun TimerProgressRing(
-    progress: Float = 0.72f,
-    size: Dp = 21.dp,
-    strokeWidth: Dp = 3.dp,
-    modifier: Modifier = Modifier
-) {
-    Canvas(modifier = modifier.size(size)) {
-        val strokePx = strokeWidth.toPx()
-        // Dark track
-        drawCircle(
-            color = IslandColors.Gray6,
-            radius = (this.size.minDimension - strokePx) / 2f,
-            style = Stroke(width = strokePx)
-        )
-        // Sweep gradient cyan to blue
-        val brush = Brush.sweepGradient(
-            listOf(
-                IslandColors.TimerCyan,
-                IslandColors.TimerBlue,
-                IslandColors.TimerCyan
-            )
-        )
-        drawArc(
-            brush = brush,
-            startAngle = -90f,
-            sweepAngle = 360f * progress,
-            useCenter = false,
-            style = Stroke(width = strokePx, cap = StrokeCap.Round)
-        )
-    }
-}
-
-@Composable
-private fun TimerCompactContent(label: String, progress: Float) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        TimerProgressRing(progress = progress, size = 21.dp, strokeWidth = 3.dp)
-        Text(
-            text = label,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            color = IslandColors.CapsuleOrange,
-            fontFamily = FontFamily.Monospace
-        )
-    }
-}
-
-@Composable
-private fun TimerExpandedContent(
-    label: String,
-    timerRunning: Boolean,
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    val isPaused = !timerRunning
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        // Source -1 positions the two controls at x=42.89 and 108.47 in
-        // the 367pt body; the left inset is therefore 16.8pt, not 24pt.
-        val hPad = (17.dp * scale)
-        val vPad = (16.dp * scale)
-        val btnSize = (52.dp * scale)
-        val iconSize = (28.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = hPad, vertical = vPad),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // LEFT: Pause Button (52dp translucent orange) + Cancel Button (52dp charcoal neutral)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(13.5.dp * scale)
-            ) {
-                // Translucent Orange Pause/Resume button (52dp, from SVG circle opacity=0.45 fill=#FB8B28)
-                Box(
-                    modifier = Modifier
-                        .size(btnSize)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFB8B28).copy(alpha = if (isPaused) 0.85f else 0.45f))
-                        .clickable {
-                            onControlAction(IslandControlAction.TimerToggle)
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = if (isPaused) AppleGlyph.Play else AppleGlyph.Pause,
-                        tint = if (isPaused) Color.White else Color(0xFFFB8B28),
-                        size = iconSize
-                    )
-                }
-
-                // Charcoal neutral Cancel button (52dp, from SVG circle opacity=0.7 fill=#838388)
-                Box(
-                    modifier = Modifier
-                        .size(btnSize)
-                        .clip(CircleShape)
-                        .background(Color(0xFF838388).copy(alpha = 0.7f))
-                        .clickable { onControlAction(IslandControlAction.TimerCancel) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Close,
-                        tint = Color.White,
-                        size = iconSize
-                    )
-                }
-            }
-
-            // RIGHT: Label "Timer" (#FB8B28, 12sp) + Time "03:35" (#FB8B28 bold 30sp)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
-            ) {
-                Text(
-                    text = "Timer",
-                    color = IslandColors.CapsuleOrange,
-                    fontSize = (12f * scale).sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = if (isPaused) "Paused" else label,
-                    color = IslandColors.CapsuleOrange,
-                    fontSize = (30f * scale).sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-    }
 }
 
 // -----------------------------------------------------------------------------
@@ -4154,1483 +3630,11 @@ private fun FaceTimeAudioExpandedContent(
         label = when {
             variant == OngoingCallVariant.SharedMedia -> "For me 〉"
             isDialing -> "Calling…"
-            else -> "FaceTime Audio"
+            variant == OngoingCallVariant.FaceTime -> "FaceTime Audio"
+            else -> "Mobile Call"
         },
         duration = if (isDialing) "Calling…" else duration,
         variant = variant,
         onControlAction = onControlAction
     )
-}
-
-@Composable
-private fun CallSummaryExpandedContent(
-    record: CallRecord?,
-    onControlAction: (IslandControlAction) -> Unit
-) {
-    val name = record?.contactName ?: "Call ended"
-    val phoneNumber = record?.phoneNumber.orEmpty()
-    val callType = when (record?.direction) {
-        CallDirection.INCOMING -> "Incoming call"
-        CallDirection.OUTGOING -> "Outgoing call"
-        CallDirection.MISSED -> "Missed call"
-        null -> "Call summary"
-    }
-    val duration = when {
-        record == null -> ""
-        record.direction == CallDirection.MISSED -> "Missed"
-        else -> formatCallDuration(record.durationSeconds)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 18.dp, vertical = 13.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ContactAvatar(
-                name = name,
-                avatarUri = record?.avatarUri,
-                modifier = Modifier.size(40.dp),
-                contentDescription = name
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = name,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = if (phoneNumber.isBlank()) callType else "$callType · $phoneNumber",
-                    color = IslandColors.TextSecondary,
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-            if (duration.isNotBlank()) {
-                Text(
-                    text = duration,
-                    color = if (record?.direction == CallDirection.MISSED) IslandColors.Orange else IslandColors.CapsuleGreen,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            CallSummaryActionButton(
-                glyph = AppleGlyph.Phone,
-                label = "Redial",
-                onClick = { onControlAction(IslandControlAction.CallSummaryRedial) },
-                modifier = Modifier.weight(1f)
-            )
-            CallSummaryActionButton(
-                glyph = AppleGlyph.Chat,
-                label = "Message",
-                onClick = { onControlAction(IslandControlAction.CallSummaryMessage) },
-                modifier = Modifier.weight(1f)
-            )
-            CallSummaryActionButton(
-                glyph = AppleGlyph.Close,
-                label = "Done",
-                onClick = { onControlAction(IslandControlAction.CallSummaryDismiss) },
-                modifier = Modifier.weight(1f)
-            )
-        }
-    }
-}
-
-@Composable
-private fun CallSummaryActionButton(
-    glyph: AppleGlyph,
-    label: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(15.dp))
-            .background(IslandColors.Gray6)
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AppleIcon(glyph = glyph, tint = IslandColors.CapsuleCyan, size = 14.dp)
-        Spacer(modifier = Modifier.width(5.dp))
-        Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-    }
-}
-
-private fun formatCallDuration(durationSeconds: Long): String {
-    val minutes = (durationSeconds / 60).coerceAtLeast(0)
-    val seconds = (durationSeconds % 60).coerceAtLeast(0)
-    return "%02d:%02d".format(minutes, seconds)
-}
-
-@Composable
-private fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    // Dynamic Island-17.svg: 367x148, rx=42. Orange airplane icon + "Turn Off Airplane Mode or Use" / "Wi-Fi to Access Data" + 335x43dp Open Settings button (#2C2C2D, rx=21.5)
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp * scale, end = 16.dp * scale, top = 24.dp * scale, bottom = 18.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(10.7.dp * scale))
-                AppleIcon(glyph = AppleGlyph.Airplane, tint = Color(0xFFFB8B28), size = 36.dp * scale)
-                Spacer(modifier = Modifier.width(18.dp * scale))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Turn Off Airplane Mode or Use",
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = (20f * scale).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(4.dp * scale))
-                    Text(
-                        text = "Wi-Fi to Access Data",
-                        color = Color(0xFFA4A4A9),
-                        fontSize = (14f * scale).sp,
-                        fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(43.dp * scale)
-                    .clip(RoundedCornerShape(21.5.dp * scale))
-                    .background(Color(0xFF2C2C2D))
-                    .clickable { onControlAction(IslandControlAction.OpenSettings) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Open Settings",
-                    color = Color.White,
-                    fontSize = (16f * scale).sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ScreenMirroringContent(
-    title: String = "",
-    subtitle: String = "",
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    // Dynamic Island-18.svg: 367x144, rx=42. Blue Screen Mirroring icon + "Screen Mirroring" / "MacBook Pro" + Laptop glyph + 335x43dp Stop Mirroring button (#1A1C2D, rx=21.5)
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp * scale, end = 16.dp * scale, top = 24.dp * scale, bottom = 18.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(8.3.dp * scale))
-                AppleIcon(glyph = AppleGlyph.ScreenMirroring, tint = Color(0xFF37A3DE), size = 36.dp * scale)
-                Spacer(modifier = Modifier.width(18.dp * scale))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = title.ifBlank { "Screen Mirroring" },
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = (20f * scale).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(4.dp * scale))
-                    Text(
-                        text = subtitle.ifBlank { "MacBook Pro" },
-                        color = Color(0xFF818383),
-                        fontSize = (13.5f * scale).sp,
-                        fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                AppleIcon(
-                    glyph = AppleGlyph.Laptop,
-                    tint = Color(0xFF8F8F8F),
-                    size = 24.dp * scale,
-                    modifier = Modifier.padding(end = 15.dp * scale)
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(43.dp * scale)
-                    .clip(RoundedCornerShape(21.5.dp * scale))
-                    .background(Color(0xFF1A1C2D))
-                    .clickable { onControlAction(IslandControlAction.ScreenMirroringStop) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Stop Mirroring",
-                    color = Color(0xFF37A3DE),
-                    fontSize = (16f * scale).sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun MobileDataContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    // Dynamic Island-19.svg: 367x162, rx=42
-    // Row 1: Green antenna icon (#37C058) at x=34.8dp, center y=56dp
-    //        Gap to text: 19.3dp. Title: "Mobile Data is Turned Off", Subtitle: "Turn on mobile data or use Wi-Fi\nto access data."
-    // Row 2: OK (#2C2C2D) + Settings (#1A1C2D, text #37A3DE) buttons: 161.5x43dp each, rx=21.5dp, gap=12dp, bottom margin=18dp, side margins=16dp
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    start = 16.dp * scale,
-                    end = 16.dp * scale,
-                    top = 28.dp * scale,
-                    bottom = 18.dp * scale
-                ),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Inset from button left edge (16dp) to antenna left edge (34.8dp) = 18.8dp
-                Spacer(modifier = Modifier.width(18.8.dp * scale))
-
-                // Antenna icon: 31.4dp x 26.5dp in SVG -> size 38dp * scale renders ~30x25dp
-                AppleIcon(
-                    glyph = AppleGlyph.PersonalHotspot,
-                    tint = Color(0xFF37C058),
-                    size = 38.dp * scale
-                )
-
-                // Gap between antenna right edge and text left edge: 19.3dp
-                Spacer(modifier = Modifier.width(19.3.dp * scale))
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Mobile Data is Turned Off",
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = (20f * scale).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(6.dp * scale))
-                    Text(
-                        text = "Turn on mobile data or use Wi-Fi\nto access data.",
-                        color = Color(0xFF818383),
-                        fontSize = (13f * scale).sp,
-                        fontWeight = FontWeight.Normal,
-                        lineHeight = (16.5f * scale).sp,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            // Bottom Dual Buttons: 161.5dp x 43dp, rx=21.5dp, gap=12dp
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(43.dp * scale),
-                horizontalArrangement = Arrangement.spacedBy(12.dp * scale)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(21.5.dp * scale))
-                        .background(Color(0xFF2C2C2D))
-                        .clickable { onControlAction(IslandControlAction.MobileDataOk) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "OK",
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(21.5.dp * scale))
-                        .background(Color(0xFF1A1C2D))
-                        .clickable { onControlAction(IslandControlAction.MobileDataSettings) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Settings",
-                        color = Color(0xFF37A3DE),
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun TransitRouteContent(
-    title: String = "Prague Main Train Station",
-    subtitle: String = "",
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    // Dynamic Island-20.svg: 367x142, rx=42. White Train icon + "Prague Main Train Station" + 335x43dp End Route button (#1D1011, rx=21.5) with text in #FA3532
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 16.dp * scale, end = 16.dp * scale, top = 22.dp * scale, bottom = 18.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AppleIcon(glyph = AppleGlyph.TransitTrain, tint = Color.White, size = 36.dp * scale)
-                Spacer(modifier = Modifier.width(18.dp * scale))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = title.ifBlank { "Prague Main Train Station" },
-                        color = Color.White,
-                        fontSize = (16.5f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    if (subtitle.isNotBlank()) {
-                        Text(
-                            text = subtitle,
-                            color = IslandColors.TextSecondary,
-                            fontSize = (12f * scale).sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(43.dp * scale)
-                    .clip(RoundedCornerShape(21.5.dp * scale))
-                    .background(Color(0xFF1D1011))
-                    .clickable { onControlAction(IslandControlAction.TransitEndRoute) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "End Route",
-                    color = Color(0xFFFA3532),
-                    fontSize = (16f * scale).sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun TurnByTurnNavigationContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    // Dynamic Island-12.svg: 4 Equidistant Lane Arrows across top + "90 ft" + Interstate 280 shield badge (51x39dp) + "North" / "San Francisco"
-    var activeLane by remember { mutableStateOf(3) }
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp * scale, vertical = 18.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            // TOP: 4 Equidistant Lane Guidance Arrows across the full card width
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Lane 1: Turn Left (inactive #838388)
-                AppleIcon(
-                    glyph = AppleGlyph.NavigationLeft,
-                    tint = if (activeLane == 0) Color.White else Color(0xFF838388),
-                    size = 30.dp * scale,
-                    modifier = Modifier.clickable {
-                        activeLane = 0
-                        onControlAction(IslandControlAction.NavigationLeft)
-                    }
-                )
-                // Lane 2: Straight (inactive #838388)
-                AppleIcon(
-                    glyph = AppleGlyph.NavigationStraight,
-                    tint = if (activeLane == 1) Color.White else Color(0xFF838388),
-                    size = 30.dp * scale,
-                    modifier = Modifier.clickable {
-                        activeLane = 1
-                        onControlAction(IslandControlAction.NavigationStraight)
-                    }
-                )
-                // Lane 3: Straight (inactive #838388)
-                AppleIcon(
-                    glyph = AppleGlyph.NavigationStraight,
-                    tint = if (activeLane == 2) Color.White else Color(0xFF838388),
-                    size = 30.dp * scale,
-                    modifier = Modifier.clickable {
-                        activeLane = 2
-                        onControlAction(IslandControlAction.NavigationStraight)
-                    }
-                )
-                // Lane 4: Turn Right (active white #FFFFFF)
-                AppleIcon(
-                    glyph = AppleGlyph.NavigationRight,
-                    tint = if (activeLane == 3) Color.White else Color(0xFF838388),
-                    size = 30.dp * scale,
-                    modifier = Modifier.clickable {
-                        activeLane = 3
-                        onControlAction(IslandControlAction.NavigationRight)
-                    }
-                )
-            }
-
-            // MIDDLE: Instruction distance "90 ft" (Dynamic Island-12.svg: x=18.5, bold white)
-            Text(
-                text = "90 ft",
-                color = Color.White,
-                fontSize = (26f * scale).sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.5).sp
-            )
-
-            // BOTTOM: Interstate 280 Highway Shield (51x39dp) + "North" / "San Francisco"
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Interstate 280 Shield
-                Box(
-                    modifier = Modifier
-                        .size(width = 51.dp * scale, height = 39.dp * scale)
-                        .clip(RoundedCornerShape(6.dp * scale)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(ai.emots.kishan_dynamic.R.drawable.navigation_shield),
-                        contentDescription = "Interstate 280",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column {
-                    Text(
-                        text = "North",
-                        color = Color.White,
-                        fontSize = (16.5f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.2).sp
-                    )
-                    Text(
-                        text = "San Francisco",
-                        color = Color(0xFFA4A4A9),
-                        fontSize = (13.5f * scale).sp,
-                        fontWeight = FontWeight.Normal,
-                        letterSpacing = (-0.1).sp
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun OngoingCallBannerContent() {
-    OngoingCallIslandBanner(
-        name = "Tamia Castillo",
-        duration = "02:45"
-    )
-}
-
-@Composable
-private fun VoiceMemoExpandedContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    // Dynamic Island-3.svg: 13 active red bars + 1 fading bar + 11 dots + "00:06" (#FA3532) + 50.5dp Stop button
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonSize = (50.5.dp * scale)
-        val squareSize = (24.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 24.dp * scale, end = 20.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Left: Waveform bar sequence (13 active + 1 fading + 11 inactive dots)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp * scale)
-            ) {
-                val barHeights = listOf(25, 20, 16, 20, 25, 20, 14, 10, 16, 22, 27, 15, 19)
-                barHeights.forEach { h ->
-                    Box(
-                        modifier = Modifier
-                            .width(3.dp * scale)
-                            .height((h.toFloat() * scale).dp)
-                            .clip(RoundedCornerShape(1.5.dp * scale))
-                            .background(Color(0xFFFA3532))
-                    )
-                }
-                // Transition bar
-                Box(
-                    modifier = Modifier
-                        .width(3.dp * scale)
-                        .height(12.dp * scale)
-                        .clip(RoundedCornerShape(1.5.dp * scale))
-                        .background(Color(0xFFFA3532).copy(alpha = 0.4f))
-                )
-                // 11 Inactive dots
-                repeat(11) {
-                    Box(
-                        modifier = Modifier
-                            .size(3.dp * scale)
-                            .clip(RoundedCornerShape(1.5.dp * scale))
-                            .background(Color(0xFF5A5A5A).copy(alpha = 0.4f))
-                    )
-                }
-            }
-
-            // Middle: Duration 00:06 in red (#FA3532)
-            Text(
-                text = "00:06",
-                color = Color(0xFFFA3532),
-                fontSize = (16.5f * scale).sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace,
-                modifier = Modifier.offset(x = 31.dp * scale)
-            )
-
-            // Right: Stop button (50.5dp circle with 2.5dp stroke and red square)
-                Box(
-                    modifier = Modifier
-                        .size(buttonSize)
-                        .clip(CircleShape)
-                        .border(width = 2.5.dp * scale, color = Color.White, shape = CircleShape)
-                        .clickable { onControlAction(IslandControlAction.VoiceMemoStop) },
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(squareSize)
-                        .clip(RoundedCornerShape(4.dp * scale))
-                        .background(Color(0xFFFA3532))
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ScreenRecordingExpandedContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    // Dynamic Island-4.svg: 12dp red pulsing dot + "00:06" (#FA3532) on row 1, "Screen Recording" on row 2, 50.5dp Stop button
-    val pulseState = rememberBreathing(min = 0.85f, max = 1.0f, durationMillis = 1000)
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonSize = (50.5.dp * scale)
-        val squareSize = (24.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 24.dp * scale, end = 20.dp * scale, top = 16.dp * scale, bottom = 16.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Left: Top row dot + duration, Bottom row label
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.weight(1f)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(12.dp * scale)
-                            .graphicsLayer { alpha = pulseState.value }
-                            .clip(CircleShape)
-                            .background(Color(0xFFFA3532))
-                    )
-                    Text(
-                        text = "00:06",
-                        color = Color(0xFFFA3532),
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = FontFamily.Monospace
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(3.dp * scale))
-
-                Text(
-                    text = "Screen Recording",
-                    color = Color.White,
-                    fontSize = (15f * scale).sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.2).sp
-                )
-            }
-
-            Spacer(modifier = Modifier.width(12.dp * scale))
-
-            // Right: Stop button (50.5dp circle with 2.5dp stroke and red square)
-                Box(
-                    modifier = Modifier
-                        .size(buttonSize)
-                        .clip(CircleShape)
-                        .border(width = 2.5.dp * scale, color = Color.White, shape = CircleShape)
-                        .clickable { onControlAction(IslandControlAction.ScreenRecordingStop) },
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(squareSize)
-                        .clip(RoundedCornerShape(4.dp * scale))
-                        .background(Color(0xFFFA3532))
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ShortcutExpandedContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    // Dynamic Island-5.svg: Stacked diamond icon + "Shortcut" / "100%" + 47.8dp white checkmark badge (#F0F0F5)
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val iconSize = (38.dp * scale)
-        val checkBadgeSize = (47.8.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 20.dp * scale, vertical = 17.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                // Stacked Shortcuts Icon
-                Box(modifier = Modifier.size(iconSize), contentAlignment = Alignment.Center) {
-                    Box(
-                        modifier = Modifier
-                            .size(27.dp * scale)
-                            .offset(y = 5.dp * scale)
-                            .rotate(45f)
-                            .clip(RoundedCornerShape(5.dp * scale))
-                            .background(Color(0xFFA4A4A9))
-                    )
-                    Box(
-                        modifier = Modifier
-                            .size(27.dp * scale)
-                            .offset(y = (-5).dp * scale)
-                            .rotate(45f)
-                            .clip(RoundedCornerShape(5.dp * scale))
-                            .background(Color.White)
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column {
-                    Text(
-                        text = "Shortcut",
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.3).sp
-                    )
-                    Spacer(modifier = Modifier.height(2.dp * scale))
-                    Text(
-                        text = "100%",
-                        color = Color(0xFFA4A4A9),
-                        fontSize = (13f * scale).sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                }
-            }
-
-            // Right: 47.8dp White Circular Badge (#F0F0F5) with black checkmark (from Dynamic Island-5.svg)
-            Box(
-                modifier = Modifier
-                    .size(checkBadgeSize)
-                    .clip(CircleShape)
-                    .border(3.dp * scale, Color(0xFFF0F0F5), CircleShape)
-                    .clickable { onControlAction(IslandControlAction.ShortcutOpen) },
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(modifier = Modifier.size(25.dp * scale)) {
-                    val stroke = 3.3.dp.toPx()
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(size.width * 0.14f, size.height * 0.50f),
-                        end = Offset(size.width * 0.39f, size.height * 0.76f),
-                        strokeWidth = stroke,
-                        cap = StrokeCap.Round
-                    )
-                    drawLine(
-                        color = Color.White,
-                        start = Offset(size.width * 0.39f, size.height * 0.76f),
-                        end = Offset(size.width * 0.86f, size.height * 0.18f),
-                        strokeWidth = stroke,
-                        cap = StrokeCap.Round
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun FocusModeExpandedContent() {
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val avatarSize = (44.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 18.dp * scale, vertical = 15.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(avatarSize)
-                        .clip(CircleShape)
-                        .background(Color(0xFF5E5CE6).copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Moon,
-                        tint = Color(0xFF5E5CE6),
-                        size = 22.dp * scale
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column {
-                    Text(
-                        text = "Do Not Disturb",
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(2.dp * scale))
-                    Text(
-                        text = "On",
-                        color = Color(0xFF37A3DE),
-                        fontSize = (13f * scale).sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .width(70.dp * scale)
-                    .height(34.dp * scale)
-                    .clip(RoundedCornerShape(17.dp * scale))
-                    .background(Color(0xFF1E2854)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "On",
-                    color = Color(0xFF37A3DE),
-                    fontSize = (14f * scale).sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun VideoRemoteExpandedContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    // Dynamic Island-16.svg: 367x177, rx=42. 53x53 dark squircle at X=24, Y=32 + "Video" / "Samsung TV" + Equalizer waveform + Scrubber + Centered 15s transport controls + Pinned AirPlay
-    var isPlaying by remember { mutableStateOf(false) }
-    var progress by remember { mutableStateOf(0.35f) }
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val thumbSize = (53.dp * scale)
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 32.dp * scale, bottom = 12.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            // ROW 1: Thumbnail (53dp, rx=8dp at X=24dp) + Title/Channel + Live Equalizer (Dynamic Island-16.svg)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp * scale, end = 35.dp * scale),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(thumbSize)
-                            .clip(RoundedCornerShape(8.dp * scale))
-                            .background(Color(0xFF2C2C2D))
-                            .border(0.75.dp, Color(0x22FFFFFF), RoundedCornerShape(8.dp * scale))
-                    )
-
-                    // Gap from thumbnail (77dp) to title (98.4dp) = 21.4dp
-                    Spacer(modifier = Modifier.width(21.4.dp * scale))
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Text(
-                            text = "Video",
-                            color = Color.White,
-                            fontSize = (16f * scale).sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Spacer(modifier = Modifier.height(5.dp * scale))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            AppleIcon(glyph = AppleGlyph.Laptop, tint = Color(0xFF898989), size = 14.dp * scale)
-                            Spacer(modifier = Modifier.width(5.dp * scale))
-                            Text(
-                                text = "Samsung TV",
-                                color = Color(0xFF898989),
-                                fontSize = (13.5f * scale).sp,
-                                fontWeight = FontWeight.Normal,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                LiveEqualizerMini(
-                    width = 20.dp * scale,
-                    height = 22.dp * scale,
-                    color = Color.White,
-                    animated = isPlaying
-                )
-            }
-
-            // ROW 2: Scrubber (Dynamic Island-16: 240x6.5 bar, rx=3.25, 25dp side padding)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 25.dp * scale),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "0:50",
-                    color = Color(0xFF898989),
-                    fontSize = (11f * scale).sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Medium
-                )
-
-                // Exact 14.25dp gap from time to track
-                Spacer(modifier = Modifier.width(14.dp * scale))
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(6.5.dp * scale)
-                        .clip(RoundedCornerShape(3.25.dp * scale))
-                        .background(Color(0xFF3F3F3F))
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(progress)
-                            .fillMaxHeight()
-                            .clip(RoundedCornerShape(3.25.dp * scale))
-                            .background(Color.White)
-                    )
-                }
-
-                // Exact 14.24dp gap from track to time
-                Spacer(modifier = Modifier.width(14.dp * scale))
-
-                Text(
-                    text = "-3:11",
-                    color = Color(0xFF898989),
-                    fontSize = (11f * scale).sp,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-
-            // ROW 3: Authentic iOS Transport Trio (Play centered at X=192.3dp with +8.8dp optical offset) + AirPlay Pinned at X=315dp
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(44.dp * scale)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .offset(x = 8.8.dp * scale),
-                    horizontalArrangement = Arrangement.spacedBy(27.dp * scale),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Skip back 15s (size 36dp renders 28.3x16dp vector)
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp * scale)
-                            .clickable {
-                                progress = (progress - 0.05f).coerceAtLeast(0f)
-                                onControlAction(IslandControlAction.VideoSkipBackward)
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.SkipBack15,
-                            tint = Color.White,
-                            size = 36.dp * scale
-                        )
-                    }
-
-                    // Play (size 40dp renders 25x28dp vector)
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp * scale)
-                            .clickable {
-                                isPlaying = !isPlaying
-                                onControlAction(IslandControlAction.VideoPlayPause)
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = if (isPlaying) AppleGlyph.Pause else AppleGlyph.Play,
-                            tint = Color.White,
-                            size = 40.dp * scale
-                        )
-                    }
-
-                    // Skip forward 15s (size 36dp renders 28.3x16dp vector)
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp * scale)
-                            .clickable {
-                                progress = (progress + 0.05f).coerceAtMost(1f)
-                                onControlAction(IslandControlAction.VideoSkipForward)
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.SkipForward15,
-                            tint = Color.White,
-                            size = 36.dp * scale
-                        )
-                    }
-                }
-
-                // AirPlay pinned to center at X=315dp (end padding = 32dp * scale, size = 25.5dp)
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .padding(end = 32.dp * scale)
-                        .size(40.dp * scale)
-                        .clickable { onControlAction(IslandControlAction.MusicAirPlay) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.AirPlay,
-                        tint = Color.White,
-                        size = 25.5.dp * scale
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun AirDropActivityContent(onControlAction: (IslandControlAction) -> Unit = {}) {
-    var isPaused by remember { mutableStateOf(false) }
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val radarSize = (56.dp * scale)
-        val ringSize = (51.33.dp * scale)
-        val innerBoxSize = (22.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 18.dp * scale, end = 16.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // LEFT: AirDrop 3 Concentric Radar Arcs + Photo Thumbnail
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                // The exported AirDrop glyph includes the three arcs, center dot,
-                // and overlapping 20dp photo thumbnail. Keep it as a small
-                // sub-asset so the island remains Compose-built and interactive
-                // without replacing the whole island with the SVG.
-                Image(
-                    painter = painterResource(ai.emots.kishan_dynamic.R.drawable.airdrop_icon),
-                    contentDescription = "AirDrop",
-                    modifier = Modifier.size(radarSize),
-                    contentScale = ContentScale.FillBounds
-                )
-
-                Spacer(modifier = Modifier.width(10.dp * scale))
-
-                // CENTER: Inline "AirDrop" (White) + "from Chris" (#A4A4A9)
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp * scale)
-                ) {
-                    Text(
-                        text = "AirDrop",
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Normal,
-                        letterSpacing = (-0.3).sp
-                    )
-                    Text(
-                        text = "from Chris",
-                        color = Color(0xFFA4A4A9),
-                        fontSize = (15f * scale).sp,
-                        fontWeight = FontWeight.Normal,
-                        letterSpacing = (-0.2).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            // RIGHT: Circular Progress Ring (cx=339, cy=51, r=25.67, stroke=4.67) + 22x22dp rounded box (rx=6.22)
-            Box(
-                modifier = Modifier
-                    .size(ringSize)
-                    .clickable {
-                        isPaused = !isPaused
-                        onControlAction(IslandControlAction.AirDropPause)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val strokeW = 4.67f * scale
-                    val pad = strokeW / 2f
-                    val arcSize = androidx.compose.ui.geometry.Size(size.width - strokeW, size.height - strokeW)
-
-                    // Inactive background ring (opacity 0.5)
-                    drawArc(
-                        color = Color(0xFF37A3DE).copy(alpha = 0.5f),
-                        startAngle = 0f,
-                        sweepAngle = 360f,
-                        useCenter = false,
-                        topLeft = Offset(pad, pad),
-                        size = arcSize,
-                        style = Stroke(width = strokeW)
-                    )
-
-                    // Active progress sweep (from SVG path d="M341.282 25.435C346.8...")
-                    drawArc(
-                        color = Color(0xFF37A3DE),
-                        startAngle = -90f,
-                        sweepAngle = 190f,
-                        useCenter = false,
-                        topLeft = Offset(pad, pad),
-                        size = arcSize,
-                        style = Stroke(width = strokeW, cap = StrokeCap.Round)
-                    )
-                }
-
-                // Centered 22x22dp rounded square (rx=6.22dp)
-                Box(
-                    modifier = Modifier
-                        .size(innerBoxSize)
-                        .clip(RoundedCornerShape(6.22.dp * scale))
-                        .background(Color(0xFF37A3DE).copy(alpha = if (isPaused) 0.55f else 1f))
-                        .clickable {
-                            isPaused = !isPaused
-                            onControlAction(IslandControlAction.AirDropPause)
-                        }
-                )
-            }
-        }
-    }
-}
-
-// -----------------------------------------------------------------------------
-// DYNAMIC ISLAND-2.SVG: AIRPODS CONNECTED
-// -----------------------------------------------------------------------------
-@Composable
-private fun AirPodsConnectedContent(
-    title: String = "Ladislav's AirPods",
-    subtitle: String = "Connected · 75%",
-    batteryProgress: Float? = 0.75f,
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val avatarSize = (44.dp * scale)
-        val ringSize = (48.6.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 20.dp * scale, end = 20.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // LEFT: 44dp Avatar with AirPods glyph + "Connected" / "Ladislav's AirPods"
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(avatarSize),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(ai.emots.kishan_dynamic.R.drawable.airpods_art),
-                        contentDescription = "AirPods",
-                        modifier = Modifier.size(30.dp * scale),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column {
-                    Text(
-                        text = subtitle.substringBefore(" · ").ifBlank { "Connected" },
-                        color = Color(0xFFA4A4A9),
-                        fontSize = (12f * scale).sp,
-                        fontWeight = FontWeight.Medium,
-                        letterSpacing = (-0.1).sp
-                    )
-                    Spacer(modifier = Modifier.height(2.dp * scale))
-                    Text(
-                        text = title.ifBlank { "Ladislav's AirPods" },
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.3).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            // RIGHT: 48.6dp Circular Battery Ring with 75% text in #37C058
-            Box(
-                modifier = Modifier
-                    .size(ringSize)
-                    .clickable { onControlAction(IslandControlAction.AirPodsOpen) },
-                contentAlignment = Alignment.Center
-            ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val strokeW = 4.42f * scale
-                    val pad = strokeW / 2f
-                    val arcSize = androidx.compose.ui.geometry.Size(size.width - strokeW, size.height - strokeW)
-
-                    // Dark green ring background (#13351F)
-                    drawArc(
-                        color = Color(0xFF13351F),
-                        startAngle = 0f,
-                        sweepAngle = 360f,
-                        useCenter = false,
-                        topLeft = Offset(pad, pad),
-                        size = arcSize,
-                        style = Stroke(width = strokeW)
-                    )
-
-                    // Green progress arc from the platform battery snapshot.
-                    drawArc(
-                        color = Color(0xFF37C058),
-                        startAngle = -90f,
-                        sweepAngle = 360f * (batteryProgress ?: 0.75f).coerceIn(0f, 1f),
-                        useCenter = false,
-                        topLeft = Offset(pad, pad),
-                        size = arcSize,
-                        style = Stroke(width = strokeW, cap = StrokeCap.Round)
-                    )
-                }
-
-                Text(
-                    text = batteryProgress?.let { "${(it * 100).roundToInt()}%" } ?: "—",
-                    color = Color(0xFF37C058),
-                    fontSize = (13f * scale).sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-        }
-    }
-}
-
-// -----------------------------------------------------------------------------
-// DYNAMIC ISLAND-7.SVG: SATELLITE CONNECTION
-// -----------------------------------------------------------------------------
-@Composable
-private fun SatelliteConnectionContent(
-    title: String = "",
-    subtitle: String = "",
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val radarSize = (56.dp * scale)
-        val badgeSize = (41.4.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 18.dp * scale, end = 18.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // LEFT: Radar circle with satellite orb
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier.size(radarSize),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(ai.emots.kishan_dynamic.R.drawable.satellite_radar),
-                        contentDescription = "Satellite signal",
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column {
-                    Text(
-                        text = title.ifBlank { "CONNECTED" },
-                        color = Color(0xFF37C058),
-                        fontSize = (11f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 0.5.sp
-                    )
-                    Spacer(modifier = Modifier.height(2.dp * scale))
-                    Text(
-                        text = subtitle.ifBlank { "Keep pointing at Satellite" },
-                        color = Color.White,
-                        fontSize = (15.5f * scale).sp,
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = (-0.2).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            // RIGHT: 41.4dp Dark green circle (#0B2F16) with green chat icon (#37C058)
-            Box(
-                modifier = Modifier
-                    .size(badgeSize)
-                    .clip(CircleShape)
-                    .background(Color(0xFF0B2F16))
-                    .clickable { onControlAction(IslandControlAction.SatelliteMessage) },
-                contentAlignment = Alignment.Center
-            ) {
-                AppleIcon(
-                    glyph = AppleGlyph.Chat,
-                    tint = Color(0xFF37C058),
-                    size = 18.dp * scale
-                )
-            }
-        }
-    }
-}
-
-// -----------------------------------------------------------------------------
-// DYNAMIC ISLAND-8.SVG: FIND MY IPHONE ALERT
-// -----------------------------------------------------------------------------
-@Composable
-private fun FindMyAlertContent(
-    title: String = "",
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val radarSize = (56.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 24.dp * scale, end = 24.dp * scale)
-                .clickable { onControlAction(IslandControlAction.LiveActivityOpen) },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Glowing radar pulse target circle
-            Box(
-                modifier = Modifier.size(radarSize),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(ai.emots.kishan_dynamic.R.drawable.findmy_radar),
-                    contentDescription = "Find My signal",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.FillBounds
-                )
-            }
-
-            Spacer(modifier = Modifier.width(14.dp * scale))
-
-            Text(
-                text = title.ifBlank { "Find My iPhone Alert" },
-                color = Color.White,
-                fontSize = (17f * scale).sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = (-0.3).sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-// -----------------------------------------------------------------------------
-// DYNAMIC ISLAND-10.SVG: MOVED TO IPHONE
-// -----------------------------------------------------------------------------
-@Composable
-private fun MovedToIPhoneContent(
-    title: String = "",
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val avatarSize = (44.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 20.dp * scale, end = 20.dp * scale),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(avatarSize),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(ai.emots.kishan_dynamic.R.drawable.moved_airpods_art),
-                        contentDescription = "AirPods",
-                        modifier = Modifier.size(30.dp * scale),
-                        contentScale = ContentScale.FillBounds
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(14.dp * scale))
-
-                Text(
-                    text = title.ifBlank { "Moved to iPhone" },
-                    color = Color(0xFFA4A4A9),
-                    fontSize = (16f * scale).sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.2).sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            // Right: 70x34dp rounded button (#1E2854) with undo back curved arrow in #37A3DE
-            Box(
-                modifier = Modifier
-                    .width(70.dp * scale)
-                    .height(34.dp * scale)
-                    .clip(RoundedCornerShape(17.dp * scale))
-                    .background(Color(0xFF1E2854))
-                    .clickable { onControlAction(IslandControlAction.MovedUndo) },
-                contentAlignment = Alignment.Center
-            ) {
-                AppleIcon(
-                    glyph = AppleGlyph.Undo,
-                    tint = Color(0xFF37A3DE),
-                    size = 18.dp * scale
-                )
-            }
-        }
-    }
 }

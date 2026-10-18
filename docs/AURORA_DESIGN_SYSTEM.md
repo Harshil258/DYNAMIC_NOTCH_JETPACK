@@ -114,8 +114,52 @@ Corner radii follow Apple's squircle-like smooth curves:
 
 All components are centralized in `ui/kit/`:
 
-1. **`AppScreen`:** The foundation of all screens. Features pinned `topBar`, edge-to-edge window inset handling (`WindowInsets.safeDrawing`), responsive max-width constraint (720dp for tablets/foldables), and sticky `bottomAction` slot with guaranteed clearance (`bottomInset`).
-2. **`AppButton`:** Supports `AppButtonStyle.AuroraPro` (spectral gradient with glow), `Primary`, `Secondary`, and `Destructive`. All touch targets meet or exceed 48dp height.
-3. **`AppPlanSelectorRow`:** Accessible, responsive plan card with radio indicator, strike-through original prices, bold localized amounts, and high-contrast savings badges.
-4. **`AuroraProHeroCard`:** Executive obsidian hero featuring an interactive Dynamic Island stage with live audio waveform animations and live mode toggling.
-5. **`AppFreeVsProComparisonCard`:** Transparent, honest comparison matrix eliminating guesswork before purchase.
+1. **`AppScreen`:** The foundation of all screens.
+   - Pinned `topBar` slot ensuring title and navigation never scroll off-screen.
+   - Edge-to-edge window inset handling (`WindowInsets.safeDrawing`).
+   - Responsive max-width constraint (720dp for tablets/foldables).
+   - Glassmorphic floating dock `bottomBar` with top hairline divider (`AppTheme.colors.border`) and 12dp elevation shadow for authentic visual separation.
+   - Sticky `bottomAction` slot with guaranteed clearance via `bottomInset` (e.g. 140dp on paywall screens) preventing content occlusion.
+2. **`AppButton`:** Supports `AppButtonStyle.AuroraPro` (spectral gradient with glow), `Primary`, `Secondary`, and `Destructive`. All touch targets meet or exceed 48dp height with haptic feedback.
+3. **`AppPlanSelectorRow`:** Accessible, responsive plan selection card with:
+   - High-contrast selection indicator with cyan checkmark radio.
+   - Strike-through original prices and bold localized currency amounts from Google Play Billing `ProductDetails`.
+   - Authentic value badges (`"Most popular"`, `"Lifetime access"`, `"Best value"`) with zero fabricated percentage discounts.
+   - Luminous spectral border (`auroraBorderBrush`) and subtle gradient background fill on selection.
+4. **`AuroraProHeroCard`:** Executive obsidian hero featuring:
+   - Entitlement-aware state presentation: differentiated badges for Paid Pro (`"Aurora Pro is Active · Permanent access unlocked"`), 7-Day Free Trial (`"7-Day Free Trial Active · [X] days remaining"`), and Free (`"Unlock Aurora Pro"`).
+   - Interactive Dynamic Island preview sandbox with live audio waveform animations and mode switching (Music, Call, Quick Actions).
+   - Contrast-hardened iOS Status Bar ensuring white glyphs on dark preview stages regardless of app theme.
+5. **`AppFreeVsProComparisonCard`:** Transparent, honest comparison matrix:
+   - Eliminates guesswork by comparing Free tier boundaries against Pro unlocked capabilities.
+   - Apple-style visual checkmark glyphs (`AppleGlyph.Check`), luminous cyan chips for Pro features, and subtle slate chips for Free limits.
+   - Zero ambiguous or repetitive textual cells.
+
+---
+
+## 7. Elevation, Insets & Sticky Dock Guidelines
+
+### 7.1 Glassmorphic Dock Elevation
+The floating bottom dock (`AppScreen` `bottomBar`) utilizes a dual-layer separation technique:
+- A top hairline divider (`Modifier.fillMaxWidth().height(0.8.dp).background(AppTheme.colors.border)`) providing crisp edge definition.
+- A 12dp elevation shadow (`Modifier.shadow(elevation = 12.dp, shape = RectangleShape)`) providing organic separation between scrolling content and the pinned action surface.
+
+### 7.2 Scroll Inset Clearance
+Screens hosting fixed or floating bottom actions must supply explicit `bottomInset` padding to `AppScreen`:
+- Standard Bottom Bar / Dock: `bottomInset = AppTheme.spacing.bottomDockInset` (~80dp).
+- Paywall Screen with Multi-line CTA & Disclosures: `bottomInset = 140.dp`. This guarantees all legal terms, auto-renewal disclaimers, and subscription management instructions scroll completely clear of the sticky purchase button without clipping.
+
+---
+
+## 8. Dark & Light Theme Parity & Contrast Standards
+
+### 8.1 Status Bar Contrast in Dark Containers (`IosStatusBar`)
+When rendering dark preview stages (such as the Dynamic Island interactive sandbox) in a light theme environment:
+- `IosStatusBar` enforces `contentColor = Color.White.copy(alpha = 0.92f)` whenever `isDarkBackground = true`.
+- Never fall back to `AppTheme.colors.textPrimary` within dark containers, preventing illegible black-on-black rendering on light-mode devices.
+
+### 8.2 Accessible Contrast Ratios
+- Primary text (`textPrimary`) on surface: Minimum 11.5:1 contrast ratio.
+- Secondary text (`textSecondary`) on surface: Minimum 5.5:1 contrast ratio (exceeding WCAG AAA 4.5:1).
+- Badges and chips: High-contrast fill with matched text opacity ensuring full legibility across 200% system font scaling.
+

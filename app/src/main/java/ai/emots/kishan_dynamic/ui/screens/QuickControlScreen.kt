@@ -163,13 +163,13 @@ fun QuickControlScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(302.dp)
                     .clip(RoundedCornerShape(AppTheme.radius.lg))
                     .background(
                         Brush.verticalGradient(
                             listOf(Color(0xFF090B12), Color(0xFF111B3C))
                         )
-                    ),
+                    )
+                    .padding(horizontal = 4.dp, vertical = 14.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
                 DynamicIslandPill(
@@ -177,8 +177,7 @@ fun QuickControlScreen(
                     actionApps = config.apps.filter { it.isEnabled },
                     actionSystemTiles = config.systemTiles,
                     actionContacts = config.contacts.filter { it.isEnabled },
-                    actionCustomActions = config.customActions,
-                    modifier = Modifier.padding(top = 18.dp)
+                    actionCustomActions = config.customActions
                 )
             }
         }

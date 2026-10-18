@@ -234,11 +234,13 @@ fun MainContainerScreen(
                 lastShownMillis = frequencyRepository.lastShownMillis()
             )
             if (shouldShow && activity != null) {
-                frequencyRepository.recordAdShown()
-                isAdLoading = true
-                delay(650L)
-                isAdLoading = false
-                interstitialGateway.showIfReady(activity) { selectedTab = nextTab }
+                if (interstitialGateway.isAdAvailable()) {
+                    frequencyRepository.recordAdShown()
+                    interstitialGateway.showIfReady(activity) { selectedTab = nextTab }
+                } else {
+                    interstitialGateway.preload()
+                    selectedTab = nextTab
+                }
             } else {
                 selectedTab = nextTab
             }
@@ -424,7 +426,7 @@ fun MainContainerScreen(
             nativeAdConfiguration = remember(releaseConfig) {
                 NativeAdConfiguration.fromReleaseConfig(releaseConfig)
             },
-            isProActive = isProActive,
+            isAdFree = isAdFree,
             canRequestAds = canRequestAds,
             isExitNativeEnabled = releaseConfig.isExitNativeEnabled
         )

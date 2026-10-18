@@ -95,5 +95,29 @@ data class LiveActivityInfo(
     /** All real actions exposed by the source notification. */
     val sourceActions: List<NotificationActionInfo> = emptyList(),
     /** Whether the notification exposes a separate content destination. */
-    val sourceHasContentIntent: Boolean = false
+    val sourceHasContentIntent: Boolean = false,
+    /** Structured fields for high-fidelity live islands. */
+    val entityName: String? = null,
+    val secondaryText: String? = null,
+    val statusBadgeText: String? = null,
+    val primaryMetric: String? = null,
+    val secondaryMetric: String? = null,
+    val actionPhoneNumber: String? = null,
+    val maneuverType: String? = null,
+    val isLiveSource: Boolean = false
 )
+
+/**
+ * Honest capability classification for live experiences.
+ */
+enum class LiveCapabilityStatus {
+    /** Receives genuine platform/system events or broadcasts (e.g. Battery, Media, Calls). */
+    FULLY_LIVE,
+    /** Functional when supported app notifications are present (e.g. Maps navigation, Swiggy/Zomato delivery). */
+    CONDITIONALLY_LIVE,
+    /** High-fidelity interactive demonstration without a configured public API. */
+    PREVIEW_ONLY,
+    /** Not supported on this device/platform without private restricted APIs. */
+    UNSUPPORTED
+}
+

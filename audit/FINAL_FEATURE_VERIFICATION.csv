@@ -1,0 +1,49 @@
+Feature ID,Feature Name,Capability Domain,Free Tier Access,7-Day Trial Access,Rewarded Pass Access,Paid Pro Access,Implementation Status,Verification Method,Test Artifact / Trace
+FEAT-001,Floating Dynamic Island Overlay,Core Overlay,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,IslandOverlayService.kt / OverlayWindowManagerAndDisplayTest / sprint13_home.png
+FEAT-002,Hardware Notch Calibration Presets,Display Calibration,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,DisplaySettingsScreen.kt / IslandSystemGeometryTest / sprint12_display_settings.png
+FEAT-003,Sub-Pixel Island Position & Width Offsets,Display Calibration,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,PrecisePixelControl.kt / DynamicIslandGeometryTest / DisplaySettingsScreen.kt
+FEAT-004,Media Playback HUD & Waveform,Media,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,MusicPlayerIsland.kt / MediaPlaybackRegistry.kt / sprint13_home.png
+FEAT-005,Media Pause 3.5s Auto-Collapse,Media,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,MediaPlaybackRegistry.kt / NotificationAndMediaRealWorldScenarioTest
+FEAT-006,Media Progress & Seeking Controls,Media,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,MediaSeekPolicy.kt / FeatureEntitlementPolicyTest
+FEAT-007,Notification Intake & Deduplication,Notifications,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,IslandNotificationListener.kt / NotificationReducerTest
+FEAT-008,Notification Horizontal Pager,Notifications,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,DynamicIslandPill.kt / NotificationEventPolicyTest
+FEAT-009,Inline Notification Quick Reply,Notifications,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,NotificationReplyActivity.kt / Sprint12DailyUtilityAndArchitectureTest
+FEAT-010,UPI & Finance Notification Priority Boost,Notifications,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,NotificationPriorityPolicy.kt / NotificationInterruptionPolicyTest
+FEAT-011,Lock Screen Keyguard Sensitive Masking,Privacy,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,LockScreenPrivacyPolicy.kt / LockScreenPrivacyPolicyTest
+FEAT-012,Lock Screen UPI Balance Anonymization,Privacy,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,LockScreenPrivacyPolicy.kt / NotificationContentResolverTest
+FEAT-013,Incoming Call Ringing Overlay,Telephony,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,CallSessionCoordinator.kt / CallNotificationPolicyTest
+FEAT-014,Active Call Duration Monotonic Timer,Telephony,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,CallSessionCoordinator.kt / CallSessionLifecycleAndStressTest
+FEAT-015,Post-Call Summary Dialog,Telephony,Enabled (Opt-out),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,CallSummaryDialog.kt / CallSummaryIsland.kt / CallSettingsScreenTest
+FEAT-016,Call Summary 1-Tap WhatsApp Action Chip,Telephony,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,CallActionLauncher.kt / PhoneActionLauncherTest
+FEAT-017,Call Summary Custom Timeout & Actions,Telephony,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,PremiumFeaturePolicy.kt / FeatureEntitlementPolicyTest
+FEAT-018,Audio Volume Level HUD,System HUD,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,AudioVolumeObserver.kt / BatteryOptimizationAndMonitorTest
+FEAT-019,Ringer Mode Switch HUD,System HUD,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,AudioVolumeObserver.kt / SoundSettingsScreen.kt
+FEAT-020,Battery State & Low Warning HUD,System HUD,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,SystemLiveActivityMonitor.kt / BatterySurfacePolicyTest
+FEAT-021,Bluetooth Accessory Connection HUD,System HUD,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,BluetoothAccessoryMonitor.kt / BatteryOptimizationAndMonitorTest
+FEAT-022,Delivery Live Activity & Courier Action,Live Activities,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,DeliveryIsland.kt / LiveActivityFidelityAndMappingTest / LIVE_CAPABILITY_MATRIX.md
+FEAT-023,Flight Status Live Activity Tracker,Live Activities,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,FlightIsland.kt / LiveActivityFidelityAndMappingTest / LIVE_CAPABILITY_MATRIX.md
+FEAT-024,Sports Live Activity (Rule 31 Zero Cricket),Live Activities,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,SportsIsland.kt / NotificationLiveActivityMapperTest / Rule 31 Compliance
+FEAT-025,Navigation Live Activity & Maps Intent,Live Activities,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,NavigationIsland.kt / LiveActivitySourceActionPolicyTest
+FEAT-026,Custom RGB Neon Glow Color Picker,Customization,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,IslandColorPicker.kt / DisplaySettingsScreen.kt / AppIslandTokensTest
+FEAT-027,Monobrow / Flat-Top Notch Styling,Customization,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,DisplaySettingsScreen.kt / IslandOverlayService.kt / DynamicIslandGeometryTest
+FEAT-028,Idle Auto-Hide Timer Customization,Customization,Disabled (PRO),Enabled,Enabled,Enabled,VERIFIED,Automated & Device,DisplaySettingsScreen.kt / IslandOverlayService.kt
+FEAT-029,Dark & Light Theme Parity,Theming,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,AppTheme.kt / ThemeSettingsScreen.kt / sprint13_settings.png
+FEAT-030,21 App Language Localizations,Localization,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,AppLanguages.kt / AppLocalizationTest / SettingsVaultScreen.kt
+FEAT-031,7-Day Automatic Install Trial,Entitlement,Granted (7d),Active,Active,Overridden by Pro,VERIFIED,Automated & Device,TrialManager.kt / Sprint09TrialAndRewardTest / sprint13_home.png
+FEAT-032,Clock Rollback Tampering Mitigation,Entitlement,Active,Active,Active,Active,VERIFIED,Automated,TrialManager.kt / Sprint09TrialAndRewardTest
+FEAT-033,24-Hour Stackable Rewarded Passes,Entitlement,Supported (+24h),Supported,Active,Overridden by Pro,VERIFIED,Automated & Device,RewardedAccessManager.kt / RewardedPassPolicyTest / sprint13_settings.png
+FEAT-034,15-Second Rewarded Ad Cooldown Timer,Entitlement,Enforced,Enforced,Enforced,N/A,VERIFIED,Automated,RewardedPassPolicy.kt / Sprint09TrialAndRewardTest
+FEAT-035,Google Play Subscriptions & Lifetime,Billing,Supported,Supported,Supported,Active (Weekly/Monthly/Yearly/Lifetime),VERIFIED,Automated & Device,PlayBillingPremiumAccessGateway.kt / PremiumBillingCatalogTest / sprint13_settings.png
+FEAT-036,Zero-Overlay Ad Quarantine Contract,Monetization,Enforced (0 ads in overlay),Enforced,Enforced,Enforced,VERIFIED,Automated & Code Audit,AdPlacementRules.md / IslandOverlayService.kt
+FEAT-037,In-App Adaptive Banner Ad,Monetization,Displayed,Displayed,Displayed,Suppressed (Ad-Free),VERIFIED,Automated & Device,AdaptiveBannerAdSlot.kt / AdSurfacePolicyTest
+FEAT-038,In-App Native Ad Card,Monetization,Displayed,Displayed,Displayed,Suppressed (Ad-Free),VERIFIED,Automated & Device,NativeAdCard.kt / MobileAdsNativeAdGateway.kt
+FEAT-039,AdMob Interstitial Ad (6s Timeout Dialog),Monetization,Displayed,Displayed,Displayed,Suppressed (Ad-Free),VERIFIED,Automated & Device,MobileAdsInterstitialGateway.kt / InterstitialAdFrequencyPolicyTest
+FEAT-040,AdMob App Open Ad (Cold Start Skip),Monetization,Displayed,Displayed,Displayed,Suppressed (Ad-Free),VERIFIED,Automated & Device,MobileAdsAppOpenGateway.kt / AppOpenAdPolicyTest
+FEAT-041,AdMob Real-Time ILAR Revenue Tracking,Analytics,Enabled,Enabled,Enabled,N/A,VERIFIED,Automated,AdMobRevenueTracker.kt / AdMobRevenueTrackerTest
+FEAT-042,Zero-PII GA4 Event Tracking & Validation,Analytics,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Logcat,AnalyticsSchemaValidator.kt / Sprint11AnalyticsAndCrashlyticsTest
+FEAT-043,Screen View Recomposition Deduplication,Analytics,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Logcat,ScreenDeduplicator.kt / AppKit.kt / Sprint11AnalyticsAndCrashlyticsTest
+FEAT-044,Idempotent Purchase Conversion Attribution,Analytics,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,SubscriptionConversionTracker.kt / SubscriptionConversionTrackerTest
+FEAT-045,Rate-Limited Billing Crashlytics Diagnostics,Diagnostics,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated,BillingCrashlyticsReporter.kt / BillingCrashlyticsReporterTest
+FEAT-046,Developer Attribution (Surya Developer),Compliance,Verified,Verified,Verified,Verified,VERIFIED,Device & UI Audit,AboutScreen.kt / FeedbackScreen.kt / sprint13_about.png
+FEAT-047,Consumer Feedback Screen & Intent Fallback,Support,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,FeedbackScreen.kt / FeedbackPolicyTest / sprint12_feedback_screen.png
+FEAT-048,GDPR / UMP Privacy Options Recovery,Privacy,Enabled,Enabled,Enabled,Enabled,VERIFIED,Automated & Device,UmpAdConsentGateway.kt / AboutScreen.kt / sprint10_about_privacy_consent.png

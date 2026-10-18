@@ -10,10 +10,20 @@ import com.android.billingclient.api.Purchase
  * preventing duplicate conversion inflated counts in Google Ads and GA4.
  */
 class SubscriptionConversionTracker(
-    private val analyticsTracker: AnalyticsTracker
+    private val analyticsTracker: AnalyticsTracker,
+    initialRecordedTransactions: Set<String> = emptySet(),
+    private val onTransactionRecorded: ((String) -> Unit)? = null
 ) {
-    // Set of already-tracked transaction IDs / tokens in this session
-    private val recordedTransactions = mutableSetOf<String>()
+    // Set of already-tracked transaction IDs / tokens
+    private val recordedTransactions = java.util.Collections.synchronizedSet(initialRecordedTransactions.toMutableSet())
+
+    fun markTransactionRecorded(transactionId: String) {
+        recordedTransactions.add(transactionId)
+    }
+
+    fun isTransactionRecorded(transactionId: String): Boolean {
+        return recordedTransactions.contains(transactionId)
+    }
 
     fun trackPaywallViewed(source: String) {
         analyticsTracker.logEvent(
@@ -55,9 +65,10 @@ class SubscriptionConversionTracker(
         formattedPrice: String
     ): Boolean {
         if (recordedTransactions.contains(transactionId)) {
-            return false // Already recorded in this lifecycle
+            return false // Already recorded in this session or persistent store
         }
         recordedTransactions.add(transactionId)
+        onTransactionRecorded?.invoke(transactionId)
 
         val parsed = parsePriceAndCurrency(formattedPrice)
 
@@ -81,19 +92,37 @@ class SubscriptionConversionTracker(
         return true
     }
 
+    @Synchronized
+    fun trackVerifiedPurchase(
+        purchaseState: Int,
+        transactionId: String,
+        planId: String,
+        formattedPrice: String
+    ): Boolean {
+        // Strict assertion: Pending or unspecified purchases MUST NOT trigger purchase conversion
+        if (purchaseState != Purchase.PurchaseState.PURCHASED) {
+            return false
+        }
+        return trackVerifiedPurchase(transactionId, planId, formattedPrice)
+    }
+
     /**
      * Idempotently tracks a confirmed, settled purchase from Play Billing Purchase.
-     * Returns true if tracked, or false if already recorded.
+     * Strictly verifies that purchaseState == PURCHASED before conversion reporting.
+     * Returns true if tracked, or false if already recorded or not in PURCHASED state.
      */
     @Synchronized
     fun trackVerifiedPurchase(
         purchase: Purchase,
         plan: FormattedPlanDetails?
     ): Boolean {
-        val transactionId = purchase.orderId ?: purchase.purchaseToken.takeLast(12)
-        val planId = plan?.id ?: purchase.products.firstOrNull() ?: "unknown_plan"
+        val token = runCatching { purchase.purchaseToken }.getOrNull()
+        val orderId = runCatching { purchase.orderId }.getOrNull()
+        val transactionId = orderId?.takeIf { it.isNotBlank() } ?: token?.takeLast(16) ?: "unknown_tx"
+        val products = runCatching { purchase.products }.getOrNull()
+        val planId = plan?.id ?: products?.firstOrNull() ?: "unknown_plan"
         val price = plan?.price ?: "₹199"
-        return trackVerifiedPurchase(transactionId, planId, price)
+        return trackVerifiedPurchase(purchase.purchaseState, transactionId, planId, price)
     }
 
     fun trackPurchasePending(planId: String) {

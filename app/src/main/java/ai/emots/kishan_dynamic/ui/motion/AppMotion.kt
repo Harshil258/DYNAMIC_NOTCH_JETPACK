@@ -155,22 +155,22 @@ object AppMotion {
 
     val TopCenterTransform = TransformOrigin(0.5f, 0f)
 
-    /** Authentic iOS island content enter: subtle pop from 0.92x top-center + fade. */
+    /** Authentic iOS island content enter: subtle pop from 0.92x top-center + fade once container is expanded. */
     fun islandContentEnter(): EnterTransition =
-        fadeIn(tween(180, delayMillis = 25, easing = EaseIslandContent)) +
+        fadeIn(tween(160, delayMillis = 110, easing = EaseIslandContent)) +
             scaleIn(
                 initialScale = 0.92f,
                 transformOrigin = TopCenterTransform,
                 animationSpec = islandContentSpring()
             )
 
-    /** Authentic iOS island content exit: quick shrink to 0.95x + fade. */
+    /** Authentic iOS island content exit: quick shrink to 0.95x + rapid fade. */
     fun islandContentExit(): ExitTransition =
-        fadeOut(tween(110, easing = EaseInOut)) +
+        fadeOut(tween(80, easing = EaseInOut)) +
             scaleOut(
                 targetScale = 0.95f,
                 transformOrigin = TopCenterTransform,
-                animationSpec = tween(110, easing = EaseInOut)
+                animationSpec = tween(80, easing = EaseInOut)
             )
 
     /** Authentic iOS companion bubble enter: bubbly pop from 0.82x + fade. */

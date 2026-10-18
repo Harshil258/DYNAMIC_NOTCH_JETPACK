@@ -11,10 +11,9 @@ import androidx.core.content.ContextCompat
 import ai.emots.kishan_dynamic.data.model.LiveActivityInfo
 import ai.emots.kishan_dynamic.data.model.LiveActivityKind
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Observes connected Android audio profiles and promotes only known AirPods
@@ -26,7 +25,6 @@ class BluetoothAccessoryMonitor(
     private val scope: CoroutineScope
 ) {
     private val appContext = context.applicationContext
-    private var monitorJob: Job? = null
     private var lastSnapshot: AirPodsSnapshot? = null
     private val batteryByAddress = mutableMapOf<String, Int>()
 
@@ -41,22 +39,20 @@ class BluetoothAccessoryMonitor(
     }
 
     fun start() {
-        if (monitorJob?.isActive == true) return
-        monitorJob = scope.launch {
-            while (isActive) {
-                sync()
-                delay(POLL_INTERVAL_MILLIS)
-            }
-        }
+        // Initial state read on startup without continuous polling
+        scope.launch { sync() }
     }
 
     fun close() {
-        monitorJob?.cancel()
-        monitorJob = null
+        batteryByAddress.clear()
+        lastSnapshot = null
+        IslandStateManager.clearLiveActivity(AIRPODS_ACTIVITY_ID)
     }
 
-    private fun sync() {
-        val snapshot = readSnapshot()
+    private suspend fun sync() {
+        val snapshot = withContext(Dispatchers.IO) {
+            readSnapshot()
+        }
         if (snapshot == lastSnapshot) return
         lastSnapshot = snapshot
 
@@ -120,7 +116,6 @@ class BluetoothAccessoryMonitor(
     )
 
     private companion object {
-        const val POLL_INTERVAL_MILLIS = 1500L
         const val AIRPODS_ACTIVITY_ID = "bluetooth-airpods"
     }
 }

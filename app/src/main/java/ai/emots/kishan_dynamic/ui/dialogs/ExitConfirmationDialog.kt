@@ -21,7 +21,7 @@ fun ExitConfirmationDialog(
     onDismiss: () -> Unit,
     onExit: () -> Unit,
     nativeAdConfiguration: NativeAdConfiguration? = null,
-    isProActive: Boolean = false,
+    isAdFree: Boolean = false,
     canRequestAds: Boolean = false,
     isExitNativeEnabled: Boolean = false
 ) {
@@ -33,15 +33,15 @@ fun ExitConfirmationDialog(
         accent = AppTheme.colors.warning
     ) {
         AppText(
-            text = "Your island settings and active integrations will stay saved.",
+            text = "Your island settings, live notifications and background service will continue running normally.",
             style = AppTheme.typography.body,
             color = AppTheme.colors.textSecondary
         )
-        if (isExitNativeEnabled && !isProActive && nativeAdConfiguration != null) {
+        if (isExitNativeEnabled && !isAdFree && nativeAdConfiguration != null) {
             Spacer(modifier = Modifier.height(AppTheme.spacing.md))
             NativeAdCard(
                 configuration = nativeAdConfiguration,
-                isProActive = isProActive,
+                isAdFree = isAdFree,
                 canRequestAds = canRequestAds,
                 placement = "exit_dialog",
                 size = NativeAdSize.Medium
@@ -49,17 +49,17 @@ fun ExitConfirmationDialog(
         }
         Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
         AppButton(
-            text = "Stay in app",
-            glyph = AppleGlyph.Undo,
-            style = AppButtonStyle.Secondary,
-            onClick = onDismiss
+            text = "Close app",
+            glyph = AppleGlyph.Check,
+            style = AppButtonStyle.Primary,
+            onClick = onExit
         )
         Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
         AppButton(
-            text = "Exit",
-            glyph = AppleGlyph.Close,
-            style = AppButtonStyle.Destructive,
-            onClick = onExit
+            text = "Keep using app",
+            glyph = AppleGlyph.Undo,
+            style = AppButtonStyle.Secondary,
+            onClick = onDismiss
         )
     }
 }

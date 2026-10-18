@@ -32,15 +32,27 @@ class IslandInteractionPolicyTest {
     }
 
     @Test
-    fun compactLongPressExpandsItsSourceInsteadOfOpeningControls() {
+    fun singleTapExpandsSourceAndMinimalTapDoesNothing() {
         val music = IslandState.Music(MusicTrack("Song", "Artist"))
-        assertEquals(IslandInteractionAction.OPEN_MUSIC, IslandInteractionPolicy.mainLongPress(music))
+        assertEquals(IslandInteractionAction.OPEN_MUSIC, IslandInteractionPolicy.mainTap(music))
 
         val notification = IslandState.Notification(listOf(notification("one")))
-        assertEquals(
-            IslandInteractionAction.OPEN_NOTIFICATIONS,
-            IslandInteractionPolicy.mainLongPress(notification)
-        )
+        assertEquals(IslandInteractionAction.OPEN_NOTIFICATIONS, IslandInteractionPolicy.mainTap(notification))
+
+        val minimal = IslandState.Minimal
+        assertEquals(IslandInteractionAction.NONE, IslandInteractionPolicy.mainTap(minimal))
+    }
+
+    @Test
+    fun compactLongPressOpensQuickControls() {
+        val minimal = IslandState.Minimal
+        assertEquals(IslandInteractionAction.OPEN_QUICK_CONTROLS, IslandInteractionPolicy.mainLongPress(minimal))
+
+        val music = IslandState.Music(MusicTrack("Song", "Artist"))
+        assertEquals(IslandInteractionAction.OPEN_QUICK_CONTROLS, IslandInteractionPolicy.mainLongPress(music))
+
+        val notification = IslandState.Notification(listOf(notification("one")))
+        assertEquals(IslandInteractionAction.OPEN_QUICK_CONTROLS, IslandInteractionPolicy.mainLongPress(notification))
     }
 
     @Test

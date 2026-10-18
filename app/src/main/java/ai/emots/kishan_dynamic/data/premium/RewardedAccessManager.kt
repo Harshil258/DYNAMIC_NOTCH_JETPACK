@@ -24,6 +24,7 @@ data class RewardedAccessSnapshot(
     val cooldownRemainingSeconds: Int = 0,
     val canWatchAd: Boolean = true,
     val unlockedDaysCount: Int = 0,
+    val extraDaysStacked: Int = 0,
     val checkmarks: List<Pair<String, Boolean>> = emptyList()
 )
 
@@ -164,6 +165,8 @@ class RewardedAccessManager(
             cal.add(Calendar.DAY_OF_YEAR, 1)
         }
 
+        val extraDays = (remainingDays - MAX_VISIBLE_CHECKMARK_DAYS).coerceAtLeast(0)
+
         return RewardedAccessSnapshot(
             isActive = isActive,
             expiresAtMillis = expiry,
@@ -173,6 +176,7 @@ class RewardedAccessManager(
             cooldownRemainingSeconds = cooldownSec,
             canWatchAd = canWatch,
             unlockedDaysCount = unlockedCount,
+            extraDaysStacked = extraDays,
             checkmarks = checkmarks
         )
     }

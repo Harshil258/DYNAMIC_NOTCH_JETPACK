@@ -30,6 +30,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 data class PremiumBillingPlan(
@@ -58,9 +59,11 @@ class PremiumBillingCatalog(
     plans: List<PremiumBillingPlan> = defaultPremiumBillingPlans()
 ) {
     private val plansById = plans.associateBy { it.planId }
+    private val plansByProductId = plans.associateBy { it.productId }
     val allPlans: List<PremiumBillingPlan> = plans
 
     fun plan(planId: String): PremiumBillingPlan? = plansById[planId]
+    fun planByProductId(productId: String): PremiumBillingPlan? = plansByProductId[productId]
 
     companion object {
         fun default(): PremiumBillingCatalog = PremiumBillingCatalog()
@@ -70,8 +73,8 @@ class PremiumBillingCatalog(
 fun defaultPremiumBillingPlans(): List<PremiumBillingPlan> = listOf(
     PremiumBillingPlan("weekly", "dynamic_island_weekly", BillingClient.ProductType.SUBS, "Weekly", "₹39", "Billed every week"),
     PremiumBillingPlan("monthly", "dynamic_island_monthly", BillingClient.ProductType.SUBS, "Monthly", "₹59", "Billed every month"),
-    PremiumBillingPlan("yearly", "dynamic_island_yearly", BillingClient.ProductType.SUBS, "Yearly", "₹99", "Billed once a year", "Save 70%"),
-    PremiumBillingPlan("lifetime", "dynamic_island_lifetime", BillingClient.ProductType.INAPP, "Lifetime", "₹149", "One-time payment", "Best value")
+    PremiumBillingPlan("yearly", "dynamic_island_yearly", BillingClient.ProductType.SUBS, "Yearly", "₹99", "Billed once a year", "Most popular"),
+    PremiumBillingPlan("lifetime", "dynamic_island_lifetime", BillingClient.ProductType.INAPP, "Lifetime", "₹149", "One-time payment", "Lifetime access")
 )
 
 /**
@@ -99,6 +102,16 @@ class PlayBillingPremiumAccessGateway(
 
     private val _status = MutableStateFlow<String?>(null)
     val status: StateFlow<String?> = _status.asStateFlow()
+
+    init {
+        scope.launch {
+            runCatching {
+                preferences.recordedTransactionIds.first().forEach { id ->
+                    conversionTracker.markTransactionRecorded(id)
+                }
+            }
+        }
+    }
 
     private val _plans = MutableStateFlow<List<FormattedPlanDetails>>(
         catalog.allPlans.map { plan ->
@@ -248,10 +261,9 @@ class PlayBillingPremiumAccessGateway(
                 // Eagerly prefetch localized pricing for all catalog plans
                 queryAllProductDetails(client)
 
-                if (restorePending) {
-                    restorePending = false
-                    queryOwnedPurchases(client)
-                }
+                // Authoritatively reconcile owned purchases on connection setup
+                restorePending = false
+                queryOwnedPurchases(client)
 
                 pendingPlanId?.let { planId ->
                     catalog.plan(planId)?.let { plan ->
@@ -437,6 +449,7 @@ class PlayBillingPremiumAccessGateway(
         var foundAny = false
         val types = listOf(BillingClient.ProductType.SUBS, BillingClient.ProductType.INAPP)
         var completedQueries = 0
+        var allSuccess = true
 
         types.forEach { type ->
             client.queryPurchasesAsync(
@@ -449,12 +462,17 @@ class PlayBillingPremiumAccessGateway(
                         foundAny = true
                         activePurchases.forEach(::handlePurchase)
                     }
+                } else {
+                    allSuccess = false
                 }
 
                 if (completedQueries == types.size) {
-                    if (!foundAny) {
+                    if (!foundAny && allSuccess) {
+                        scope.launch {
+                            preferences.revokeProEntitlement()
+                        }
                         reportStatus("No active purchases found for this Google Play account.")
-                    } else {
+                    } else if (foundAny) {
                         reportStatus("Purchases restored successfully.")
                     }
                 }
@@ -465,7 +483,9 @@ class PlayBillingPremiumAccessGateway(
     private fun handlePurchase(purchase: Purchase) {
         when (purchase.purchaseState) {
             Purchase.PurchaseState.PENDING -> {
-                val planId = pendingPlanId ?: purchase.products.firstOrNull() ?: "unknown"
+                val productId = purchase.products.firstOrNull() ?: ""
+                val plan = catalog.planByProductId(productId) ?: catalog.plan(pendingPlanId ?: "")
+                val planId = plan?.planId ?: pendingPlanId ?: "unknown"
                 conversionTracker.trackPurchasePending(planId)
                 reportStatus("Payment is pending bank verification. Premium will activate once payment settles.")
                 return
@@ -494,11 +514,32 @@ class PlayBillingPremiumAccessGateway(
 
     private fun persistEntitlement(purchase: Purchase) {
         scope.launch {
-            preferences.setProEntitlement(source = "play_billing")
-            val plan = _plans.value.firstOrNull { it.id == pendingPlanId }
-                ?: _plans.value.firstOrNull { it.id == purchase.products.firstOrNull() }
-            conversionTracker.trackVerifiedPurchase(purchase, plan)
-            diagnosticReporter.onPurchaseRecovered(plan?.id ?: purchase.products.firstOrNull() ?: "unknown")
+            val productId = purchase.products.firstOrNull() ?: ""
+            val plan = catalog.planByProductId(productId) ?: catalog.plan(pendingPlanId ?: "")
+            val planId = plan?.planId ?: if (productId.contains("lifetime")) "lifetime" else "weekly"
+            val isLifetime = plan?.productType == BillingClient.ProductType.INAPP || planId == "lifetime" || productId.contains("lifetime")
+            val isAutoRenewing = purchase.isAutoRenewing
+            val purchaseToken = purchase.purchaseToken
+            val orderId = purchase.orderId
+
+            preferences.setVerifiedBillingEntitlement(
+                planId = planId,
+                productId = productId,
+                isLifetime = isLifetime,
+                purchaseToken = purchaseToken,
+                orderId = orderId,
+                isAutoRenewing = isAutoRenewing,
+                expiresAt = null,
+                lastVerifiedAt = System.currentTimeMillis()
+            )
+
+            val formattedPlan = _plans.value.firstOrNull { it.id == planId }
+            val wasRecorded = conversionTracker.trackVerifiedPurchase(purchase, formattedPlan)
+            if (wasRecorded) {
+                val txId = purchase.orderId?.takeIf { it.isNotBlank() } ?: purchase.purchaseToken.takeLast(16)
+                preferences.recordTransactionId(txId)
+            }
+            diagnosticReporter.onPurchaseRecovered(planId)
             reportStatus("Premium is active on this Google Play account.")
         }
     }

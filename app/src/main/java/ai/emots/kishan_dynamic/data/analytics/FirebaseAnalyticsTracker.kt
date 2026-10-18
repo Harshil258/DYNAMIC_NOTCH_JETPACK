@@ -26,8 +26,9 @@ class FirebaseAnalyticsTracker(
     }
 
     override fun logEvent(name: String, parameters: Map<String, Any>) {
-        debugLogger.logEvent(name, parameters)
-        val bundle = parameters.toBundle()
+        val sanitized = AnalyticsSchemaValidator.validateAndSanitize(name, parameters, throwOnError = false)
+        debugLogger.logEvent(name, sanitized)
+        val bundle = sanitized.toBundle()
         runCatching {
             firebaseAnalytics?.logEvent(name, bundle)
         }.onFailure { e ->

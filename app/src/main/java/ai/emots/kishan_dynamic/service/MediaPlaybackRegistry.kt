@@ -32,8 +32,69 @@ object MediaPlaybackRegistry {
     private var callback: MediaController.Callback? = null
     private val refreshScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var tickerJob: kotlinx.coroutines.Job? = null
+    private var pauseTimeoutJob: kotlinx.coroutines.Job? = null
+    private var lastSessionSwitchTimestamp: Long = 0L
     private val _snapshot = MutableStateFlow<MediaPlaybackSnapshot?>(null)
     val snapshot: StateFlow<MediaPlaybackSnapshot?> = _snapshot.asStateFlow()
+
+    const val PAUSE_AUTO_COLLAPSE_DELAY_MS = 3500L
+    private const val SESSION_SWITCH_DEBOUNCE_MS = 500L
+
+    val audioOnlyPackages = setOf(
+        "com.spotify.music",
+        "com.google.android.apps.youtube.music",
+        "com.apple.android.music",
+        "com.amazon.mp3",
+        "deezer.android.app",
+        "com.tidal.mobile",
+        "com.soundcloud.android",
+        "com.jio.media.jiobeats",
+        "com.bsbportal.music",
+        "com.gaana"
+    )
+
+    val videoStreamingPackages = setOf(
+        "com.google.android.youtube",
+        "com.netflix.mediaclient",
+        "com.amazon.avod.thirdpartyclient",
+        "in.startv.hotstar",
+        "com.mxtech.videoplayer.ad",
+        "com.mxtech.videoplayer.pro",
+        "org.videolan.vlc",
+        "tv.twitch.android.app"
+    )
+
+    fun isAudioFirstApp(packageName: String): Boolean =
+        audioOnlyPackages.any { packageName.contains(it, ignoreCase = true) }
+
+    fun isVideoStreamingApp(packageName: String): Boolean =
+        videoStreamingPackages.any { packageName.contains(it, ignoreCase = true) }
+
+    fun canTakeOwnership(candidatePackage: String, candidatePlaying: Boolean): Boolean {
+        val current = controller ?: return true
+        val currentPkg = current.packageName
+        if (currentPkg.equals(candidatePackage, ignoreCase = true)) return true
+
+        val currentPlaying = current.playbackState?.state == PlaybackState.STATE_PLAYING
+        val isCurrentAudio = isAudioFirstApp(currentPkg)
+        val isCandidateVideo = isVideoStreamingApp(candidatePackage)
+
+        // AUR-P2-018: Audio-first stream has primary ownership lock over video sessions
+        if (isCurrentAudio && currentPlaying && isCandidateVideo && !candidatePlaying) {
+            return false
+        }
+        if (isCurrentAudio && currentPlaying && isCandidateVideo) {
+            return false
+        }
+
+        // Debounce rapid switching between two media players (< 500ms)
+        val now = android.os.SystemClock.elapsedRealtime()
+        if (now - lastSessionSwitchTimestamp < SESSION_SWITCH_DEBOUNCE_MS && !candidatePlaying) {
+            return false
+        }
+
+        return true
+    }
 
     fun replace(token: MediaSession.Token) {
         val next = runCatching { MediaControllerHolder.create(token) }.getOrNull() ?: return
@@ -41,6 +102,14 @@ object MediaPlaybackRegistry {
             publishSnapshot()
             return
         }
+
+        val nextPkg = next.packageName
+        val nextPlaying = next.playbackState?.state == PlaybackState.STATE_PLAYING
+        if (!canTakeOwnership(nextPkg, nextPlaying)) {
+            return
+        }
+
+        lastSessionSwitchTimestamp = android.os.SystemClock.elapsedRealtime()
         clearController()
         controller = next
         callback = object : MediaController.Callback() {
@@ -57,13 +126,6 @@ object MediaPlaybackRegistry {
             }
         }.also { next.registerCallback(it) }
         publishSnapshot()
-        tickerJob?.cancel()
-        tickerJob = refreshScope.launch {
-            while (isActive && controller === next) {
-                publishSnapshot()
-                delay(if (_snapshot.value?.isPlaying == true) 1000L else 3000L)
-            }
-        }
     }
 
     fun playPause() {
@@ -104,16 +166,41 @@ object MediaPlaybackRegistry {
 
     private fun publishSnapshot() {
         val active = controller ?: run {
+            pauseTimeoutJob?.cancel()
+            pauseTimeoutJob = null
             _snapshot.value = null
+            updateTicker(false)
             return
         }
         val metadata = active.metadata
         val title = metadata?.getString(MediaMetadata.METADATA_KEY_TITLE).orEmpty()
         if (title.isBlank()) {
+            pauseTimeoutJob?.cancel()
+            pauseTimeoutJob = null
             _snapshot.value = null
+            updateTicker(false)
             return
         }
         val playbackState = active.playbackState
+        val isPlaying = playbackState?.state == PlaybackState.STATE_PLAYING
+
+        if (isPlaying) {
+            pauseTimeoutJob?.cancel()
+            pauseTimeoutJob = null
+        } else {
+            // AUR-P2-017: Auto-collapse paused media after 3.5s of paused state
+            if (pauseTimeoutJob == null && _snapshot.value != null) {
+                val currentController = controller
+                pauseTimeoutJob = refreshScope.launch {
+                    delay(PAUSE_AUTO_COLLAPSE_DELAY_MS)
+                    if (controller === currentController) {
+                        _snapshot.value = null
+                        updateTicker(false)
+                    }
+                }
+            }
+        }
+
         _snapshot.value = MediaPlaybackSnapshot(
             packageName = active.packageName,
             title = title,
@@ -122,17 +209,36 @@ object MediaPlaybackRegistry {
             positionMs = MediaPlaybackPositionPolicy.position(
                 playbackState?.position ?: 0L,
                 metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L,
-                playbackState?.state == PlaybackState.STATE_PLAYING,
+                isPlaying,
                 playbackState?.playbackSpeed ?: 0f,
                 playbackState?.lastPositionUpdateTime ?: 0L,
                 android.os.SystemClock.elapsedRealtime()
             ),
-            isPlaying = playbackState?.state == PlaybackState.STATE_PLAYING,
+            isPlaying = isPlaying,
             albumArtUri = metadata?.getString(MediaMetadata.METADATA_KEY_ART_URI)
         )
+        updateTicker(isPlaying)
+    }
+
+    private fun updateTicker(isPlaying: Boolean) {
+        if (!isPlaying) {
+            tickerJob?.cancel()
+            tickerJob = null
+            return
+        }
+        if (tickerJob?.isActive == true) return
+        val currentController = controller ?: return
+        tickerJob = refreshScope.launch {
+            while (isActive && controller === currentController) {
+                delay(1000L)
+                publishSnapshot()
+            }
+        }
     }
 
     private fun clearController() {
+        pauseTimeoutJob?.cancel()
+        pauseTimeoutJob = null
         val previous = controller
         val previousCallback = callback
         if (previous != null && previousCallback != null) {

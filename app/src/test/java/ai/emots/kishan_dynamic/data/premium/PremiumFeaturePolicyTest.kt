@@ -21,8 +21,23 @@ class PremiumFeaturePolicyTest {
 
     @Test
     fun freeUsersRetainSafeDefaultsForPersistedPremiumSettings() {
-        assertTrue(PremiumFeaturePolicy.soundSettingEnabled(false, false))
-        assertTrue(PremiumFeaturePolicy.callSummaryEnabled(false, false))
+        assertFalse(PremiumFeaturePolicy.soundSettingEnabled(isProActive = false, requested = false))
+        assertTrue(PremiumFeaturePolicy.soundSettingEnabled(isProActive = false, requested = true))
         assertFalse(PremiumFeaturePolicy.horizontalOffsetEnabled(false))
+    }
+
+    @Test
+    fun freeUsersCanFreelyOptOutOfCallSummaries() {
+        // AUR-P0-004 verification: Both free and Pro users can toggle call summaries off
+        assertFalse(PremiumFeaturePolicy.callSummaryEnabled(isProActive = false, requested = false))
+        assertTrue(PremiumFeaturePolicy.callSummaryEnabled(isProActive = false, requested = true))
+        assertFalse(PremiumFeaturePolicy.callSummaryEnabled(isProActive = true, requested = false))
+        assertTrue(PremiumFeaturePolicy.callSummaryEnabled(isProActive = true, requested = true))
+    }
+
+    @Test
+    fun callSummaryCustomizationRequiresActivePro() {
+        assertFalse(PremiumFeaturePolicy.callSummaryCustomizationEnabled(isProActive = false))
+        assertTrue(PremiumFeaturePolicy.callSummaryCustomizationEnabled(isProActive = true))
     }
 }

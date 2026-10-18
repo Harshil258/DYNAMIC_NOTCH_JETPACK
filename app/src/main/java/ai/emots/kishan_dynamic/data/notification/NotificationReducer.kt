@@ -24,6 +24,11 @@ sealed interface NotificationEvent {
     data class Removed(val notificationId: String) : NotificationEvent
     data class Expired(val notificationId: String) : NotificationEvent
     data class Selected(val notificationId: String) : NotificationEvent
+    data class ArtworkUpdated(
+        val notificationId: String,
+        val imagePath: String?,
+        val picturePath: String?
+    ) : NotificationEvent
     data object DismissActive : NotificationEvent
     data object Next : NotificationEvent
     data object Previous : NotificationEvent
@@ -114,7 +119,9 @@ class NotificationReducer {
             }
 
             is NotificationEvent.Expired -> {
-                removeNotification(state, event.notificationId)
+                // Monotonic retention: presentation expiry only collapses visual heads-up peeking.
+                // Notifications remain queued until source removal or explicit dismissal.
+                state
             }
 
             is NotificationEvent.DismissActive -> {
@@ -145,13 +152,30 @@ class NotificationReducer {
                 else state.copy(activeNotificationId = event.notificationId)
             }
 
+            is NotificationEvent.ArtworkUpdated -> {
+                val index = state.notifications.indexOfFirst { it.id == event.notificationId }
+                if (index == -1) {
+                    state
+                } else {
+                    val existing = state.notifications[index]
+                    val updated = existing.copy(
+                        imagePath = event.imagePath ?: existing.imagePath,
+                        picturePath = event.picturePath ?: existing.picturePath
+                    )
+                    val mutable = state.notifications.toMutableList()
+                    mutable[index] = updated
+                    state.copy(notifications = mutable)
+                }
+            }
+
             NotificationEvent.Cleared -> NotificationQueueState()
         }
     }
 
     private fun sortQueue(list: List<NotificationInfo>): List<NotificationInfo> {
         return list.sortedWith(
-            compareByDescending<NotificationInfo> { it.isPriority }
+            compareByDescending<NotificationInfo> { NotificationPriorityPolicy.isFinancialOrOtp(it) }
+                .thenByDescending { it.isPriority }
                 .thenByDescending { it.importance }
                 .thenByDescending { it.isOngoing }
                 .thenByDescending { it.timestamp }

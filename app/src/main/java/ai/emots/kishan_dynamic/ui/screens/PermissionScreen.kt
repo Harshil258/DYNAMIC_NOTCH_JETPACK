@@ -42,6 +42,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import ai.emots.kishan_dynamic.MainActivity
 import ai.emots.kishan_dynamic.service.AutoStartManager
 import ai.emots.kishan_dynamic.service.BackButtonManager
 import ai.emots.kishan_dynamic.service.CallScreeningRole
@@ -107,9 +108,11 @@ fun PermissionScreen(
     var batteryGranted by remember { mutableStateOf(false) }
     var screeningGranted by remember { mutableStateOf(false) }
 
-    val autoStartAvailable = remember { AutoStartManager.isAutoStartAvailable(context) }
+    var autoStartAvailable = remember { AutoStartManager.isAutoStartAvailable(context) }
     var autoStartDone by remember { mutableStateOf(AutoStartManager.isAutoStartDone(context)) }
 
+    var isMonitoringAccessibility by remember { mutableStateOf(false) }
+    var isMonitoringNotification by remember { mutableStateOf(false) }
 
     var explanationPermission by remember { mutableStateOf<PermissionItemData?>(null) }
     var isFinishing by remember { mutableStateOf(false) }
@@ -164,13 +167,28 @@ fun PermissionScreen(
     DisposableEffect(lifecycleOwner, context) {
         refreshPermissionState()
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) refreshPermissionState()
+            if (event == Lifecycle.Event.ON_RESUME) {
+                refreshPermissionState()
+                if (accessibilityGranted && notificationGranted) {
+                    scope.launch {
+                        preferences.setIslandEnabled(true)
+                        preferences.setSetupDone(true)
+                    }
+                    PermissionUtils.sendPermissionsChangedBroadcast(context)
+                }
+            }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
 
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(c: Context?, intent: Intent?) {
                 refreshPermissionState()
+                if (accessibilityGranted && notificationGranted) {
+                    scope.launch {
+                        preferences.setIslandEnabled(true)
+                        preferences.setSetupDone(true)
+                    }
+                }
             }
         }
         val filter = IntentFilter(PermissionUtils.ACTION_PERMISSIONS_CHANGED)
@@ -184,6 +202,82 @@ fun PermissionScreen(
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             runCatching { context.unregisterReceiver(receiver) }
+        }
+    }
+
+    // Reference-style continuous monitoring for Accessibility service activation in Settings
+    LaunchedEffect(isMonitoringAccessibility) {
+        if (isMonitoringAccessibility) {
+            while (isMonitoringAccessibility) {
+                delay(500)
+                val currentAccessibility = PermissionUtils.isAccessibilityServiceEnabled(context)
+                val currentWorking = PermissionUtils.isAccessibilityServiceWorking(context)
+                accessibilityGranted = currentAccessibility
+                isAccessibilityWorking = currentWorking
+
+                if (currentAccessibility) {
+                    isMonitoringAccessibility = false
+                    PermissionUtils.isAwaitingAccessibilityReturn = false
+                    BackButtonManager.disableBackButtonFor(2000L)
+
+                    val currentNotification = PermissionUtils.isNotificationListenerEnabled(context)
+                    notificationGranted = currentNotification
+                    isNotificationWorking = PermissionUtils.isNotificationListenerWorking(context)
+
+                    if (currentAccessibility && currentNotification) {
+                        scope.launch {
+                            preferences.setIslandEnabled(true)
+                            preferences.setSetupDone(true)
+                        }
+                        PermissionUtils.sendPermissionsChangedBroadcast(context)
+                    }
+
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        putExtra("permission_auto_resumed", true)
+                    }
+                    context.startActivity(intent)
+                    break
+                }
+            }
+        }
+    }
+
+    // Reference-style continuous monitoring for Notification access activation in Settings
+    LaunchedEffect(isMonitoringNotification) {
+        if (isMonitoringNotification) {
+            while (isMonitoringNotification) {
+                delay(500)
+                val currentNotification = PermissionUtils.isNotificationListenerEnabled(context)
+                val currentWorking = PermissionUtils.isNotificationListenerWorking(context)
+                notificationGranted = currentNotification
+                isNotificationWorking = currentWorking
+
+                if (currentNotification) {
+                    isMonitoringNotification = false
+                    PermissionUtils.isAwaitingNotificationReturn = false
+                    BackButtonManager.disableBackButtonFor(2000L)
+
+                    val currentAccessibility = PermissionUtils.isAccessibilityServiceEnabled(context)
+                    accessibilityGranted = currentAccessibility
+                    isAccessibilityWorking = PermissionUtils.isAccessibilityServiceWorking(context)
+
+                    if (currentAccessibility && currentNotification) {
+                        scope.launch {
+                            preferences.setIslandEnabled(true)
+                            preferences.setSetupDone(true)
+                        }
+                        PermissionUtils.sendPermissionsChangedBroadcast(context)
+                    }
+
+                    val intent = Intent(context, MainActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        putExtra("permission_auto_resumed", true)
+                    }
+                    context.startActivity(intent)
+                    break
+                }
+            }
         }
     }
 
@@ -302,10 +396,16 @@ fun PermissionScreen(
         )
         when (id) {
             "accessibility" -> {
-                PermissionUtils.openAccessibilitySettings(context)
+                isMonitoringAccessibility = true
+                PermissionUtils.openAccessibilitySettings(context) {
+                    isMonitoringAccessibility = true
+                }
             }
             "notification" -> {
-                PermissionUtils.openNotificationListenerSettings(context)
+                isMonitoringNotification = true
+                PermissionUtils.openNotificationListenerSettings(context) {
+                    isMonitoringNotification = true
+                }
             }
             "telecom" -> {
                 phonePermissionLauncher.launch(
@@ -328,8 +428,11 @@ fun PermissionScreen(
 
     fun finishSetup() {
         refreshPermissionState()
-        if (!SetupReadiness(accessibilityGranted, isAccessibilityWorking,
-                notificationGranted, isNotificationWorking).ready || isFinishing) return
+        val currentReadiness = SetupReadiness(
+            accessibilityGranted, isAccessibilityWorking,
+            notificationGranted, isNotificationWorking
+        )
+        if ((!currentReadiness.ready && !currentReadiness.areRequiredGranted) || isFinishing) return
         analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_ACTIVATION_STARTED)
         isFinishing = true
         setupError = null
@@ -351,22 +454,25 @@ fun PermissionScreen(
     val requiredPermissions = permissions.filter { it.isRequired }
     val optionalPermissions = permissions.filterNot { it.isRequired }
     val grantedCount = permissions.count { it.isGranted }
-    val readiness = SetupReadiness(accessibilityGranted, isAccessibilityWorking,
-        notificationGranted, isNotificationWorking)
-    val canProceed = readiness.ready
-    val nextAction = when (readiness.action) {
-        SetupAction.ENABLE_OVERLAY -> "Enable screen overlay"
-        SetupAction.ENABLE_NOTIFICATIONS -> "Enable notification access"
-        SetupAction.REACTIVATE_OVERLAY -> "Reactivate screen overlay"
-        SetupAction.REACTIVATE_NOTIFICATIONS -> "Reactivate notification access"
-        SetupAction.CONTINUE -> "Continue"
+    val readiness = SetupReadiness(
+        accessibilityGranted, isAccessibilityWorking,
+        notificationGranted, isNotificationWorking
+    )
+    val areCoreGranted = readiness.areRequiredGranted
+    val canProceed = readiness.ready || areCoreGranted
+
+    val nextAction = when {
+        canProceed -> "Continue"
+        !accessibilityGranted -> "Enable screen overlay"
+        !notificationGranted -> "Enable notification access"
+        else -> "Continue"
     }
-    val guidance = when (readiness.action) {
-        SetupAction.ENABLE_OVERLAY -> "Allow the island to appear above other apps."
-        SetupAction.ENABLE_NOTIFICATIONS -> "Allow notifications to appear in the island."
-        SetupAction.REACTIVATE_OVERLAY -> "Overlay access is enabled, but its service isn't connected. Open Settings and turn the service off, then on."
-        SetupAction.REACTIVATE_NOTIFICATIONS -> "Notification access is enabled, but its service isn't connected. Open Settings and turn access off, then on."
-        SetupAction.CONTINUE -> "Both required services are connected. Recommended access is optional."
+    val guidance = when {
+        readiness.ready -> "Both required services are connected. Recommended access is optional."
+        areCoreGranted -> "Required permissions granted in Settings. Services are connecting in the background."
+        !accessibilityGranted -> "Allow the island to appear above other apps."
+        !notificationGranted -> "Allow notifications to appear in the island."
+        else -> "Grant required permissions to display the island."
     }
 
     AppScreen(
@@ -388,12 +494,14 @@ fun PermissionScreen(
                     glyph = if (canProceed) AppleGlyph.Check else AppleGlyph.Shield,
                     enabled = !isFinishing,
                     onClick = {
-                        when (readiness.action) {
-                            SetupAction.CONTINUE -> finishSetup()
-                            SetupAction.ENABLE_OVERLAY, SetupAction.REACTIVATE_OVERLAY ->
-                                requestPermission("accessibility")
-                            SetupAction.ENABLE_NOTIFICATIONS, SetupAction.REACTIVATE_NOTIFICATIONS ->
-                                requestPermission("notification")
+                        if (canProceed) {
+                            finishSetup()
+                        } else if (!accessibilityGranted) {
+                            requestPermission("accessibility")
+                        } else if (!notificationGranted) {
+                            requestPermission("notification")
+                        } else {
+                            finishSetup()
                         }
                     }
                 )
@@ -416,7 +524,13 @@ fun PermissionScreen(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     AppText(
-                        text = "${readiness.workingRequiredCount} of 2 required services ready",
+                        text = if (readiness.ready) {
+                            "All required services ready"
+                        } else if (areCoreGranted) {
+                            "2 of 2 required permissions granted"
+                        } else {
+                            "${listOf(accessibilityGranted, notificationGranted).count { it }} of 2 required permissions granted"
+                        },
                         style = AppTheme.typography.h3,
                         color = AppTheme.colors.textPrimary
                     )
@@ -429,15 +543,15 @@ fun PermissionScreen(
                 }
                 Spacer(modifier = Modifier.width(AppTheme.spacing.md))
                 AppStatusPill(
-                    text = if (canProceed) "Ready" else if (accessibilityGranted && notificationGranted) "Reconnect" else "Setup needed",
-                    color = if (canProceed) AppTheme.colors.success else AppTheme.colors.warning
+                    text = if (readiness.ready) "Ready" else if (areCoreGranted) "Connecting…" else "Setup needed",
+                    color = if (readiness.ready) AppTheme.colors.success else if (areCoreGranted) AppTheme.colors.accent else AppTheme.colors.warning
                 )
             }
 
             Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
             AppProgressBar(
-                progress = readiness.workingRequiredCount / 2f,
-                color = if (canProceed) AppTheme.colors.success else AppTheme.colors.accent
+                progress = if (readiness.ready) 1f else if (areCoreGranted) 0.9f else listOf(accessibilityGranted, notificationGranted).count { it } / 2f,
+                color = if (readiness.ready) AppTheme.colors.success else AppTheme.colors.accent
             )
         }
 
@@ -471,7 +585,7 @@ fun PermissionScreen(
 
         AppSectionSpacer()
 
-        AppFootnote("Everything is processed on your device. No data ever leaves your phone.")
+        AppFootnote("Notification content, caller identities and media controls are processed entirely on your device. Anonymous crash reports and performance metrics help improve stability.")
     }
 
     explanationPermission?.let { permission ->
@@ -566,7 +680,7 @@ private fun PermissionCard(
             }
         } else {
             AppButton(
-                text = if (item.id == "autostart") "Review settings" else if (item.isGranted) "Access enabled · Reconnect" else "Enable access",
+                text = if (item.id == "autostart") "Review settings" else if (item.isGranted) "Access enabled · Connecting…" else "Enable access",
                 style = AppButtonStyle.Tonal,
                 onClick = onToggle
             )

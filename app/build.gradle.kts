@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "ai.emots.kishan_dynamic"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "ai.emots.kishan_dynamic"
+        applicationId = "com.island.dynamicnotch"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -20,9 +20,23 @@ android {
         multiDexKeepProguard = file("multidex-config.pro")
     }
 
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("dynamicnotch.jks")
+            storePassword = "Dynamic123"
+            keyAlias = "Dynamic123"
+            keyPassword = "Dynamic123"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -35,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -52,9 +67,9 @@ dependencies {
     implementation(libs.google.mobile.ads)
     implementation(libs.google.ump)
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
-    implementation("com.google.firebase:firebase-config-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation("com.google.firebase:firebase-config")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

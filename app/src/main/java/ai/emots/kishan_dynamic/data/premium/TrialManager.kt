@@ -29,7 +29,7 @@ data class TrialSnapshot(
  * Enforces monotonic clock validation to guard against clock rollback tampering.
  */
 class TrialManager(
-    context: Context,
+    private val context: Context,
     private val preferences: AuroraPreferences = AuroraPreferences(context.applicationContext)
 ) {
     companion object {
@@ -49,6 +49,7 @@ class TrialManager(
     /**
      * Initializes or verifies the trial on app launch.
      * Starts the trial if it has never been initialized.
+     * Checks package firstInstallTime to protect against reinstall/clear-data fraud.
      */
     suspend fun checkOrStartTrial(
         runtimeConfig: ReleaseRuntimeConfig = ReleaseRuntimeConfig()
@@ -73,18 +74,51 @@ class TrialManager(
             } else {
                 DEFAULT_TRIAL_DAYS
             }
-            val expiresAt = now + (configDays * DAY_MILLIS)
-            preferences.setTrial(startTime = now, durationDays = configDays, expiresAt = expiresAt)
-            return TrialSnapshot(
-                isActive = true,
-                isExpired = false,
-                startTimeMillis = now,
-                expiresAtMillis = expiresAt,
-                durationDays = configDays,
-                remainingHours = configDays * 24,
-                remainingDays = configDays,
-                isTampered = false
-            )
+            val totalTrialMillis = configDays * DAY_MILLIS
+
+            // Package install time check against clear-data / reinstall fraud
+            val packageInstallTime = runCatching {
+                context.packageManager.getPackageInfo(context.packageName, 0).firstInstallTime
+            }.getOrDefault(0L)
+
+            val effectiveStartTime = if (packageInstallTime in 1..now) {
+                packageInstallTime
+            } else {
+                now
+            }
+
+            val elapsedSinceInstall = (now - effectiveStartTime).coerceAtLeast(0L)
+            val expiresAt = effectiveStartTime + totalTrialMillis
+
+            if (elapsedSinceInstall >= totalTrialMillis) {
+                // Trial has expired based on original package installation
+                preferences.setTrial(startTime = effectiveStartTime, durationDays = configDays, expiresAt = expiresAt)
+                return TrialSnapshot(
+                    isActive = false,
+                    isExpired = true,
+                    startTimeMillis = effectiveStartTime,
+                    expiresAtMillis = expiresAt,
+                    durationDays = configDays,
+                    remainingHours = 0,
+                    remainingDays = 0,
+                    isTampered = false
+                )
+            } else {
+                val remainingMillis = (expiresAt - now).coerceAtLeast(0L)
+                val remainingHours = (remainingMillis / (1000L * 60 * 60)).toInt()
+                val remainingDays = (remainingMillis / DAY_MILLIS).toInt() + if (remainingMillis % DAY_MILLIS > 0) 1 else 0
+                preferences.setTrial(startTime = effectiveStartTime, durationDays = configDays, expiresAt = expiresAt)
+                return TrialSnapshot(
+                    isActive = true,
+                    isExpired = false,
+                    startTimeMillis = effectiveStartTime,
+                    expiresAtMillis = expiresAt,
+                    durationDays = configDays,
+                    remainingHours = remainingHours,
+                    remainingDays = remainingDays,
+                    isTampered = false
+                )
+            }
         }
 
         return calculateSnapshot(currentStart, currentExpires, currentDuration, maxObserved, isClockRolledBack)

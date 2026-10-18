@@ -13,6 +13,8 @@ import ai.emots.kishan_dynamic.data.liveactivity.mapScreenMirroringRoute
 class MediaRouteActivityMonitor(private val context: Context) {
 
     private val router = context.getSystemService(Context.MEDIA_ROUTER_SERVICE) as? MediaRouter
+    @Volatile
+    private var isRegistered = false
     private val callback = object : MediaRouter.Callback() {
         override fun onRouteSelected(
             router: MediaRouter,
@@ -64,16 +66,20 @@ class MediaRouteActivityMonitor(private val context: Context) {
 
     fun start() {
         val mediaRouter = router ?: return
+        if (isRegistered) return
         mediaRouter.addCallback(
             MediaRouter.ROUTE_TYPE_LIVE_VIDEO,
             callback,
-            MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN
+            0 // Passive route observation without continuous active Wi-Fi discovery scanning
         )
+        isRegistered = true
         publish(mediaRouter.getSelectedRoute(MediaRouter.ROUTE_TYPE_LIVE_VIDEO))
     }
 
     fun close() {
+        if (!isRegistered) return
         router?.removeCallback(callback)
+        isRegistered = false
         IslandStateManager.clearLiveActivity("media-route-screen-mirroring")
     }
 

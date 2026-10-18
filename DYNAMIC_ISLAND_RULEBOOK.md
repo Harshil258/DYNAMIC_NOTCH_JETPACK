@@ -312,3 +312,48 @@ To ensure that **NO island state ever clips, overflows, or gets truncated improp
      - Stiffness: `Spring.StiffnessMediumLow` (or `400f`)
      - Damping Ratio: `Spring.DampingRatioLowBouncy` (or `0.78f`)
    - Content fading during size morphing must use `Crossfade` or `AnimatedContent` with `fadeIn(tween(180)) + scaleIn(0.92f)` and `fadeOut(tween(120))`.
+
+---
+
+## 6. INTERACTION CONTRACT, NOTIFICATION RETENTION & GEOMETRY (SPRINT 15 MANDATE)
+
+### 6.1 Gesture Disambiguation Contract
+1. **Single Tap:**
+   - **Minimal (Idle) State:** Strictly returns `IslandAction.None`. Tapping the idle notch must never launch sheets or interrupt underlying apps.
+   - **Compact Active States (Notification, Music, Timer, Live Activity):** Expands the respective task into its full expanded presentation.
+   - **Expanded States:** Launches the source application via its `PendingIntent`.
+2. **Long Press (≥ 500ms):**
+   - Acts as the sole, deliberate system gateway to **Quick Controls (`ActionControl`)** across all island states.
+3. **Directional Swipes:**
+   - **Swipe Up:** Collapses an expanded island back to its compact/minimal footprint.
+   - **Swipe Down:** Expands an active compact island.
+   - **Swipe Left / Right:** Paginates through queued notifications or live activities.
+
+### 6.2 Monotonic Notification Retention
+1. **Decoupled Lifecycles:**
+   - The presentation timer (default 4.5s) controls only visual expansion (`isExpanded = false`).
+   - Presentation timer expiry must **NEVER** evict or purge an active notification from `notificationQueue`.
+2. **Eviction Conditions:**
+   - Notifications are removed from memory strictly upon user swipe-to-dismiss or when `IslandNotificationListener.onNotificationRemoved()` confirms cancellation from the Android system shade.
+3. **Re-Expansion Guarantee:**
+   - Single-tapping an island with active notifications in the queue must immediately re-expand the active notification card or horizontal notification pager.
+
+### 6.3 Content Animation Staggering & Zero-Clip Rule
+1. **Staggered Content Enter:**
+   - Entering child content in `AppMotion.islandContentEnter` must enforce an initial delay of at least **110ms** (`delayMillis = 110`).
+   - Content must remain invisible until the outer capsule container has expanded past 70% of its target height, completely eliminating intermediate black box clipping artifacts.
+2. **Rapid Content Exit:**
+   - Exiting child content in `AppMotion.islandContentExit` must fade out within **80ms**, vanishing before the container begins shrinking back to compact dimensions.
+
+### 6.4 In-App Header Clearance
+1. **App Large Title Clearance:**
+   - `AppLargeTitle` must enforce a minimum top padding of **44dp** to guarantee zero occlusion beneath the floating Dynamic Island overlay and camera cutout.
+2. **App Top Bar Clearance:**
+   - `AppTopBar` must enforce a minimum top padding of **28dp** on all detail and configuration screens.
+
+### 6.5 Quick Controls Dimensions
+1. **Card Height:**
+   - `ActionControlExpanded` base height must be maintained at **210dp** with 58dp per-row spacing to prevent volume/brightness slider and action chip clipping.
+2. **Chip Sizing:**
+   - `QuickControlChip` width must be at least **62dp** with horizontal padding and `TextOverflow.Ellipsis` to ensure system labels fit legibly.
+

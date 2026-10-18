@@ -80,6 +80,8 @@ fun PremiumScreen(onBack: () -> Unit) {
         MobileAdsRewardedPassGateway(context, rewardedConfiguration)
     }
 
+    val entitlementManager = remember { ai.emots.kishan_dynamic.data.premium.EntitlementManager.getInstance(context) }
+    val entitlementSnapshot by entitlementManager.entitlement.collectAsState()
     val isPaidPro by preferences.isPaidPro.collectAsState(initial = false)
     val isProActive by preferences.isProActive.collectAsState(initial = false)
     val proExpiresAt by preferences.proExpiresAt.collectAsState(initial = null)
@@ -114,7 +116,7 @@ fun PremiumScreen(onBack: () -> Unit) {
     }
 
         AppScreen(
-            bottomInset = 72.dp,
+            bottomInset = 0.dp,
             topBar = {
                 AppTopBar(
                     title = "Aurora Pro",
@@ -124,12 +126,12 @@ fun PremiumScreen(onBack: () -> Unit) {
             },
             bottomAction = if (!isPaidPro) ({
                 val selected = livePlans.getOrNull(selectedPlanIndex) ?: livePlans.firstOrNull()
-                if (selected != null) {
-                    val isDark = AppTheme.isDark
-                    val summaryTextColor = if (isDark) androidx.compose.ui.graphics.Color.White else AppTheme.colors.textPrimary
-                    val noteTextColor = if (isDark) androidx.compose.ui.graphics.Color(0xAAFFFFFF) else AppTheme.colors.textSecondary
-                    val secureTextColor = if (isDark) androidx.compose.ui.graphics.Color(0x88FFFFFF) else AppTheme.colors.textTertiary
+                val isDark = AppTheme.isDark
+                val summaryTextColor = if (isDark) androidx.compose.ui.graphics.Color.White else AppTheme.colors.textPrimary
+                val noteTextColor = if (isDark) androidx.compose.ui.graphics.Color(0xAAFFFFFF) else AppTheme.colors.textSecondary
+                val secureTextColor = if (isDark) androidx.compose.ui.graphics.Color(0x88FFFFFF) else AppTheme.colors.textTertiary
 
+                if (selected != null) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -166,6 +168,27 @@ fun PremiumScreen(onBack: () -> Unit) {
                         color = secureTextColor,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
+                } else {
+                    AppButton(
+                        text = "Retry Google Play Billing",
+                        glyph = AppleGlyph.Reset,
+                        style = AppButtonStyle.Secondary,
+                        onClick = {
+                            scope.launch {
+                                message = when (val result = billingGateway.restorePurchases()) {
+                                    is PremiumAccessResult.Unavailable -> result.message
+                                    is PremiumAccessResult.Started -> result.message
+                                }
+                            }
+                        }
+                    )
+                    Spacer(Modifier.height(AppTheme.spacing.xxs))
+                    AppText(
+                        text = "Billing service connecting · Tap to retry",
+                        style = AppTheme.typography.caption.copy(fontSize = 10.5.sp),
+                        color = secureTextColor,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
                 }
                 message?.let {
                     Spacer(Modifier.height(AppTheme.spacing.xs))
@@ -178,27 +201,57 @@ fun PremiumScreen(onBack: () -> Unit) {
         AuroraProHeroCard(
             isProActive = isProActive,
             proExpiresAt = proExpiresAt,
+            isPaidPro = isPaidPro,
+            isTrial = entitlementSnapshot.isTrial,
+            trialDaysRemaining = entitlementSnapshot.remainingDays,
             modifier = Modifier.appReveal(1)
         )
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.md))
-
-        // 2. Value-Driven Benefit Tiles (2x2 Grid)
-        AuroraBenefitTiles(
-            modifier = Modifier.appReveal(2)
-        )
-
-        // 3. Choose Your Plan Section — Placed prominently BEFORE comparison table
+        // 2. Choose Your Plan Section — Elevated immediately above the fold for quick comparison
         if (!isPaidPro) {
             AppSectionSpacer()
             AppSectionTitle("Choose your plan")
-            livePlans.forEachIndexed { index, plan ->
-                AppPlanSelectorRow(
-                    plan = plan,
-                    isSelected = selectedPlanIndex == index,
-                    onClick = { selectedPlanIndex = index },
-                    modifier = Modifier.appReveal(3 + index)
-                )
+            if (livePlans.isNotEmpty()) {
+                livePlans.forEachIndexed { index, plan ->
+                    AppPlanSelectorRow(
+                        plan = plan,
+                        isSelected = selectedPlanIndex == index,
+                        onClick = { selectedPlanIndex = index },
+                        modifier = Modifier.appReveal(2 + index)
+                    )
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
+                }
+            } else {
+                AppCard(modifier = Modifier.appReveal(2)) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(AppTheme.spacing.md),
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+                    ) {
+                        AppText(
+                            text = "Connecting to Google Play Store…",
+                            style = AppTheme.typography.bodySmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = AppTheme.colors.textPrimary
+                        )
+                        AppText(
+                            text = "Real-time pricing is loading from Google Play Billing. If this takes longer than expected, tap below to retry.",
+                            style = AppTheme.typography.caption,
+                            color = AppTheme.colors.textSecondary
+                        )
+                        AppButton(
+                            text = "Retry Google Play connection",
+                            glyph = AppleGlyph.Reset,
+                            style = AppButtonStyle.Secondary,
+                            onClick = {
+                                scope.launch {
+                                    billingGateway.restorePurchases()
+                                }
+                            }
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
             }
 
@@ -241,6 +294,13 @@ fun PremiumScreen(onBack: () -> Unit) {
                 AppText(status, style = AppTheme.typography.caption, color = AppTheme.colors.textSecondary)
             }
         }
+
+        // 3. Value-Driven Benefit Tiles (2x2 Grid)
+        AppSectionSpacer()
+        AppSectionTitle("Included with Pro")
+        AuroraBenefitTiles(
+            modifier = Modifier.appReveal(livePlans.size + 3)
+        )
 
         // 4. Free vs Pro Comparison Matrix
         AppSectionSpacer()

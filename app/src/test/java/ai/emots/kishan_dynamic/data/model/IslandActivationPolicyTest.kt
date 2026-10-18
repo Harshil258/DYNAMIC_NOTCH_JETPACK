@@ -77,6 +77,22 @@ class IslandActivationPolicyTest {
     }
 
     @Test
+    fun readyOff_whenIslandDisabledByUser_evenIfServiceNotYetConnected() {
+        val snapshot = IslandActivationPolicy.evaluate(
+            overlayGranted = true,
+            overlayConnected = false,
+            notificationsGranted = true,
+            notificationsConnected = true,
+            islandEnabled = false
+        )
+
+        assertEquals(IslandActivationStatus.READY_OFF, snapshot.status)
+        assertEquals("Island is off", snapshot.title)
+        assertTrue(snapshot.canToggleDirectly)
+        assertFalse(snapshot.isRunning)
+    }
+
+    @Test
     fun running_whenAllPermissionsConnected_andIslandEnabled() {
         val snapshot = IslandActivationPolicy.evaluate(
             overlayGranted = true,

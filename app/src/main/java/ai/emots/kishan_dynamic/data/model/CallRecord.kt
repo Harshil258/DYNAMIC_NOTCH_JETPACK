@@ -8,6 +8,12 @@ enum class CallDirection {
     MISSED
 }
 
+enum class DurationAccuracy {
+    RELIABLE_MONOTONIC,
+    INFERRED_WALL_CLOCK,
+    UNKNOWN
+}
+
 @Immutable
 data class CallRecord(
     val id: String,
@@ -16,5 +22,6 @@ data class CallRecord(
     val avatarUri: String? = null,
     val startedAtMillis: Long,
     val durationSeconds: Long,
-    val direction: CallDirection
+    val direction: CallDirection,
+    val durationAccuracy: DurationAccuracy = DurationAccuracy.RELIABLE_MONOTONIC
 )

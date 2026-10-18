@@ -10,10 +10,19 @@ enum class NotificationPresentationDecision {
     PRESENT,
     KEEP_QUICK_CONTROLS,
     UPDATE_EXPANDED_NOTIFICATION,
+    UPDATE_NOTIFICATION_QUEUE,
     DEFER
 }
 
 object NotificationInterruptionPolicy {
+
+    /** A source removal updates the visible queue without presenting it as a new alert. */
+    fun decideAfterRemoval(current: IslandState): NotificationPresentationDecision = when (current) {
+        is IslandState.Notification,
+        is IslandState.NotificationWithMusic -> NotificationPresentationDecision.UPDATE_NOTIFICATION_QUEUE
+        is IslandState.ActionControl -> NotificationPresentationDecision.KEEP_QUICK_CONTROLS
+        else -> NotificationPresentationDecision.DEFER
+    }
 
     fun decide(
         current: IslandState,
@@ -69,6 +78,7 @@ object NotificationInterruptionPolicy {
             category == "emergency" ||
             copy.contains("emergency alert") ||
             copy.contains("timer finished") ||
-            copy.contains("timer done")
+            copy.contains("timer done") ||
+            NotificationPriorityPolicy.isOtp(notification)
     }
 }

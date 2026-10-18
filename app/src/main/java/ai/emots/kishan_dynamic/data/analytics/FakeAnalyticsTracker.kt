@@ -13,14 +13,17 @@ data class LoggedScreen(
 /**
  * In-memory test implementation of AnalyticsTracker for deterministic unit testing.
  */
-class FakeAnalyticsTracker : AnalyticsTracker {
+class FakeAnalyticsTracker(
+    var throwOnValidationError: Boolean = false
+) : AnalyticsTracker {
     val events = mutableListOf<LoggedEvent>()
     val screens = mutableListOf<LoggedScreen>()
     val userProperties = mutableMapOf<String, String>()
     var currentUserId: String? = null
 
     override fun logEvent(name: String, parameters: Map<String, Any>) {
-        events.add(LoggedEvent(name, parameters))
+        val sanitized = AnalyticsSchemaValidator.validateAndSanitize(name, parameters, throwOnError = throwOnValidationError)
+        events.add(LoggedEvent(name, sanitized))
     }
 
     override fun logScreen(screenName: String, screenClass: String) {

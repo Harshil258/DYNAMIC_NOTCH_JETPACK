@@ -149,6 +149,83 @@ fun NotificationSettingsScreen(
 
         AppSectionSpacer()
 
+        AppSectionTitle("Per-app controls")
+        val blockedPackages by preferences.blockedNotificationPackages.collectAsState(initial = emptySet())
+        var searchQuery by remember { mutableStateOf("") }
+
+        AppCard(modifier = Modifier.appReveal(4)) {
+            AppText(
+                text = "Choose which apps can post heads-up alerts to the Dynamic Island.",
+                style = AppTheme.typography.bodySmall,
+                color = AppTheme.colors.textSecondary
+            )
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+            androidx.compose.material3.OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    AppText("Search apps…", color = AppTheme.colors.textTertiary)
+                },
+                singleLine = true,
+                colors = androidx.compose.material3.OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = AppTheme.colors.accent,
+                    unfocusedBorderColor = AppTheme.colors.border,
+                    focusedTextColor = AppTheme.colors.textPrimary,
+                    unfocusedTextColor = AppTheme.colors.textPrimary
+                ),
+                shape = RoundedCornerShape(AppTheme.radius.md)
+            )
+
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
+            val filteredApps = popularApps.filter {
+                it.name.contains(searchQuery, ignoreCase = true) ||
+                    it.packageName.contains(searchQuery, ignoreCase = true)
+            }
+
+            if (filteredApps.isEmpty()) {
+                AppText(
+                    text = "No apps match \"$searchQuery\"",
+                    style = AppTheme.typography.bodySmall,
+                    color = AppTheme.colors.textTertiary,
+                    modifier = Modifier.padding(vertical = AppTheme.spacing.sm)
+                )
+            } else {
+                filteredApps.forEachIndexed { index, app ->
+                    val isAllowed = app.packageName !in blockedPackages
+                    AppToggleRow(
+                        title = app.name,
+                        subtitle = if (isAllowed) "Allowed" else "Muted from island",
+                        glyph = app.glyph,
+                        checked = isAllowed,
+                        onCheckedChange = { allowed ->
+                            scope.launch {
+                                preferences.setNotificationPackageBlocked(app.packageName, !allowed)
+                            }
+                        }
+                    )
+                    if (index < filteredApps.lastIndex) AppRowDivider()
+                }
+            }
+
+            if (blockedPackages.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+                AppButton(
+                    text = "Allow all apps",
+                    glyph = AppleGlyph.Reset,
+                    onClick = {
+                        scope.launch {
+                            preferences.clearAllBlockedNotificationPackages()
+                        }
+                    }
+                )
+            }
+        }
+
+        AppSectionSpacer()
+
         AppButton(
             text = if (isSimulating) "Simulating alert…" else "Test a notification",
             glyph = AppleGlyph.Play,
@@ -164,6 +241,25 @@ fun NotificationSettingsScreen(
         AppFootnote("Only apps you allow in system notification access can appear in the island.")
     }
 }
+
+private data class AppNotificationItem(
+    val name: String,
+    val packageName: String,
+    val glyph: AppleGlyph
+)
+
+private val popularApps = listOf(
+    AppNotificationItem("WhatsApp", "com.whatsapp", AppleGlyph.Chat),
+    AppNotificationItem("Instagram", "com.instagram.android", AppleGlyph.Sparkles),
+    AppNotificationItem("Telegram", "org.telegram.messenger", AppleGlyph.Chat),
+    AppNotificationItem("Google Messages", "com.google.android.apps.messaging", AppleGlyph.Chat),
+    AppNotificationItem("Gmail", "com.google.android.gm", AppleGlyph.Bell),
+    AppNotificationItem("Google Pay", "com.google.android.apps.nbu.paisa.user", AppleGlyph.Shield),
+    AppNotificationItem("PhonePe", "com.phonepe.app", AppleGlyph.Shield),
+    AppNotificationItem("Paytm", "net.one97.paytm", AppleGlyph.Shield),
+    AppNotificationItem("Spotify", "com.spotify.music", AppleGlyph.Music),
+    AppNotificationItem("YouTube", "com.google.android.youtube", AppleGlyph.Play)
+)
 
 @Composable
 private fun DurationChoiceRow(

@@ -61,5 +61,11 @@ object CallNotificationPolicy {
         return dialingWords.any { copy.contains(it, ignoreCase = true) }
     }
 
+    fun isMissedCall(notification: NotificationInfo): Boolean =
+        notification.category.equals("missed_call", ignoreCase = true) ||
+            notification.category.equals("missed_call_status", ignoreCase = true) ||
+            notification.title.contains("missed call", ignoreCase = true) ||
+            notification.text.contains("missed call", ignoreCase = true)
+
     private val dialingWords = setOf("calling", "dialing", "ringing")
 }

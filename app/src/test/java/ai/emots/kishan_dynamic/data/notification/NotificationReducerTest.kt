@@ -256,4 +256,19 @@ class NotificationReducerTest {
 
         assertEquals(listOf("child"), state.notifications.map { it.id })
     }
+
+    @Test
+    fun presentationExpiryDoesNotEvictActiveNotificationFromQueue() {
+        var state = NotificationQueueState()
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("whatsapp_msg", false, 10)))
+        assertEquals(1, state.notifications.size)
+        assertEquals("whatsapp_msg", state.activeNotificationId)
+
+        // Heads-up display presentation expires after timeout
+        state = reducer.reduce(state, NotificationEvent.Expired("whatsapp_msg"))
+
+        // Monotonic retention: notification must remain in queue until dismissed by source or user
+        assertEquals(1, state.notifications.size)
+        assertEquals("whatsapp_msg", state.activeNotificationId)
+    }
 }

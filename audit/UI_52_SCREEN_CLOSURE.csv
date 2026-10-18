@@ -1,0 +1,53 @@
+Screen_ID,Screenshot_Filename,Composable_Route,Original_Defect_Class,Forensic_Root_Cause,Resolution_Details,Verification_Status
+01,01_first_launch_language_selection.png,LanguageSelectionScreen,P1-ONB-03,Trailing chip cut against screen edge without terminal padding,Added trailing Spacer(AppTheme.spacing.md) in LanguageScreen.kt chip row,VERIFIED_CLOSED
+02,02_language_selection_scrolled.png,LanguageSelectionScreen,CLEAN,Scrolled language list display integrity,Maintained lazy column tokenized dividers and 48dp radio targets,VERIFIED_CLOSED
+03,03_onboarding_slide_1_alerts.png,OnboardingScreen,P0-1,Drag gesture locked; indicators snapped; Back button failed,Migrated to Foundation HorizontalPager with bidirectional scroll and synchronized dots,VERIFIED_CLOSED
+04,04_onboarding_slide_2_media.png,OnboardingScreen,P0-1,Swipe locked on slide 2; dots out of sync with offset,Foundation HorizontalPager with smooth spring offset interpolation,VERIFIED_CLOSED
+05,05_onboarding_slide_3_controls.png,OnboardingScreen,P0-1,Slide 3 back press exited app rather than slide 2,Integrated BackHandler(enabled = currentPage > 0) animating to currentPage - 1,VERIFIED_CLOSED
+06,06_onboarding_permission_hub_top.png,PermissionScreen,CLEAN,Mandatory permission disclosure top section,Maintained clear rationale and platform intent triggers,VERIFIED_CLOSED
+07,07_onboarding_permission_hub_recommended.png,PermissionScreen,CLEAN,Recommended permission cards and toggle states,Maintained genuine system permission state derivation,VERIFIED_CLOSED
+08,08_onboarding_permission_hub_privacy.png,PermissionScreen,P1-PER-01,Absolute 'nothing leaves device' contradicted anonymous GA4 diagnostics,Updated legal privacy copy to accurate on-device processing and anonymous diagnostics,VERIFIED_CLOSED
+09,09_tab0_island_playground_top.png,PlaygroundScreen,P1-IA-01,Activation card hidden below fold; marketing card prioritized,Elevated IslandActivationCard above HomePremiumStatusCard at top of viewport,VERIFIED_CLOSED
+10,10_tab0_island_playground_middle.png,PlaygroundScreen,CLEAN,Demo mode selector and interactive trigger pills,Maintained tokenized chip group and spring state transitions,VERIFIED_CLOSED
+11,11_tab0_island_playground_music_expanded.png,PlaygroundScreen,P0-2,Scaffold bottom inset created 262dp dead scroll space,Normalized AppScreen effectiveBottomPadding to 16dp when bottomAction is present,VERIFIED_CLOSED
+12,12_tab0_island_playground_music_compact.png,PlaygroundScreen,CLEAN,Compact pill preview with companion waveform bubble,Preserved 36dp height and 60fps waveform canvas animation,VERIFIED_CLOSED
+13,13_tab1_features_studio_top.png,FeaturesStudioScreen,CLEAN,Categorized feature rows (Notifications, Media, Calls),Maintained pinned AppTopBar and semantic list cards,VERIFIED_CLOSED
+14,14_tab1_features_studio_bottom.png,FeaturesStudioScreen,CLEAN,System & Layout rows (Quick Controls, Notch Alignment),Maintained bottom dock inset clearance (BottomDockInset = 112dp),VERIFIED_CLOSED
+15,15_tab2_live_activities_top.png,LiveActivitiesScreen,CLEAN,Live activities hub hero and status toggles,Maintained real-time notification listener event derivation,VERIFIED_CLOSED
+16,16_tab2_live_activities_music_card.png,LiveActivitiesScreen,CLEAN,Media session live activity card with transport controls,Verified MediaSessionManager token stream integration,VERIFIED_CLOSED
+17,17_tab2_live_activities_delivery_card.png,LiveActivitiesScreen,CLEAN,Food & delivery simulated tracking activity,Rule 31 zero-cricket compliance verified; genuine tracking preview,VERIFIED_CLOSED
+18,18_tab3_settings_vault_top.png,SettingsVaultScreen,P0-3,Paywall plans hidden below fold; dead bottom margin,Elevated 3-plan subscription selector card above the fold,VERIFIED_CLOSED
+19,19_tab3_settings_vault_bottom.png,SettingsVaultScreen,P1-QAL-01,Component gallery visibility in production,Guarded Component Gallery entry with if (isDebugBuild) stripping it from release,VERIFIED_CLOSED
+20,20_subscreen_about_aurora_top.png,AboutScreen,CLEAN,App identity, developer attribution, build version,Surya Developer and suryadevelopers07@gmail.com verified,VERIFIED_CLOSED
+21,21_subscreen_about_aurora_bottom.png,AboutScreen,CLEAN,Open source licenses, acknowledgments, legal links,Maintained system browser intent triggers and local dialogs,VERIFIED_CLOSED
+22,22_subscreen_feedback_rating_category.png,FeedbackScreen,P1-FEED-01,Pre-selected 5 stars created coercive feedback bias,Defaulted selectedRating = 0 (optional) with clear descriptive rating copy,VERIFIED_CLOSED
+23,23_subscreen_feedback_message_submit.png,FeedbackScreen,P1-FEED-01,Submit button disabled without explaining message requirement,Added descriptive helper footnote explaining message text requirement,VERIFIED_CLOSED
+24,24_subscreen_component_gallery_top.png,ComponentGalleryScreen,CLEAN,Design system typography, colors, and badge tokens,Debug-only QA sandbox verified,VERIFIED_CLOSED
+25,25_subscreen_component_gallery_middle.png,ComponentGalleryScreen,CLEAN,Kit button variants (Primary, Secondary, Ghost, Destructive),Debug-only QA sandbox verified,VERIFIED_CLOSED
+26,26_subscreen_component_gallery_bottom.png,ComponentGalleryScreen,CLEAN,Segmented controls, sliders, switch components,Debug-only QA sandbox verified,VERIFIED_CLOSED
+27,27_subscreen_theme_settings.png,ThemeSettingsScreen,P2-THM-01,Theme picker lacked live Dynamic Island preview card,Authored live ThemePreview card demonstrating Obsidian Dark vs Porcelain Light,VERIFIED_CLOSED
+28,28_subscreen_language_settings.png,LanguageSelectionScreen,CLEAN,Settings-based locale reconfiguration,Persists in AuroraPreferences and updates Compose configuration,VERIFIED_CLOSED
+29,29_subscreen_permissions_hub.png,PermissionScreen,CLEAN,Post-setup permission verification and management,Live permission check via ContextCompat.checkSelfPermission,VERIFIED_CLOSED
+30,30_subscreen_premium_paywall_top.png,PremiumScreen,P0-3,Hero header separated from purchase actions by dead space,Restructured layout placing plan selector directly below hero,VERIFIED_CLOSED
+31,31_subscreen_premium_paywall_middle.png,PremiumScreen,P0-3,Subscription cards placed below fold under 140dp inset,Removed artificial bottom inset and elevated Weekly/Monthly/Yearly/Lifetime cards,VERIFIED_CLOSED
+32,32_subscreen_premium_paywall_bottom.png,PremiumScreen,P1-PAY-02,Benefit tile claimed Sub-Pixel Calibration was Pro-only,Renamed benefit to 'Custom RGB & Styling' preserving free basic calibration,VERIFIED_CLOSED
+33,33_subscreen_notification_settings_top.png,NotificationSettingsScreen,CLEAN,Expanded notification preview and auto-expand toggle,Maintained pinned AppTopBar and tokenized switches,VERIFIED_CLOSED
+34,34_subscreen_notification_settings_bottom.png,NotificationSettingsScreen,CLEAN,App whitelist / blacklist filter selection,Maintained LazyColumn with fast search filtering,VERIFIED_CLOSED
+35,35_subscreen_call_settings_top.png,CallSettingsScreen,P1-PRE-02,Call preview defaulted to iOS 'FaceTime Audio' string,Updated OngoingCallIsland and DynamicIslandPill to display 'Mobile Call',VERIFIED_CLOSED
+36,36_subscreen_call_settings_bottom.png,CallSettingsScreen,CLEAN,Call HUD toggles and Call-End summary configuration,Verified opt-in telephony receiver trigger without accessibility leaks,VERIFIED_CLOSED
+37,37_subscreen_music_settings_top.png,MusicSettingsScreen,CLEAN,Now Playing expanded capsule and waveform visualizer,Verified 60fps Canvas audio visualizer without recomposition churn,VERIFIED_CLOSED
+38,38_subscreen_music_settings_bottom.png,MusicSettingsScreen,CLEAN,Media player whitelist and album art display toggles,Maintained DataStore preference binding,VERIFIED_CLOSED
+39,39_subscreen_battery_settings_top.png,BatterySettingsScreen,CLEAN,Charging animation and low-battery warning preview,Maintained battery state broadcast receiver mapping,VERIFIED_CLOSED
+40,40_subscreen_battery_settings_bottom.png,BatterySettingsScreen,CLEAN,Low battery threshold percentage and sound alerts,Maintained tokenized slider and haptic feedback triggers,VERIFIED_CLOSED
+41,41_subscreen_sound_settings_top.png,SoundSettingsScreen,CLEAN,Ringer HUD preview (Silent, Vibrate, Normal),Verified AudioVolumeObserver and RingerModeReceiver binding,VERIFIED_CLOSED
+42,42_subscreen_sound_settings_bottom.png,SoundSettingsScreen,CLEAN,Volume HUD display duration and haptic strength,Maintained tokenized segmented control and slider,VERIFIED_CLOSED
+43,43_subscreen_quick_control_top.png,QuickControlScreen,P0-4,Action island preview clipped 5th tile at right screen edge,Implemented adaptive 4-column chunked grid with flexible weight(1f),VERIFIED_CLOSED
+44,44_subscreen_quick_control_bottom.png,QuickControlScreen,CLEAN,Quick control toggle reordering and shortcut triggers,Maintained drag-and-drop ordering and system intent actions,VERIFIED_CLOSED
+45,45_subscreen_display_notch_top.png,DisplaySettingsScreen,CLEAN,Hardware notch alignment live overlay calibration,Sub-pixel calibration (PrecisePixelControl) 100% free verified,VERIFIED_CLOSED
+46,46_subscreen_display_notch_middle.png,DisplaySettingsScreen,CLEAN,X/Y position offsets and capsule width/height sliders,Free hardware alignment preserved; zero paywall locks,VERIFIED_CLOSED
+47,47_subscreen_display_notch_bottom.png,DisplaySettingsScreen,CLEAN,Custom RGB ARGB color picker and monobrow styling,Monobrow and custom colors properly gated behind Pro entitlement,VERIFIED_CLOSED
+48,48_dialog_ad_reward_pass.png,AdRewardDialog,P0-4,Missing 7-day calendar checkmark progression and 24h pass copy,Verified authentic 7-day calendar checkmarks and 24h pass stacking,VERIFIED_CLOSED
+49,49_dialog_exit_confirmation.png,ExitConfirmationDialog,P1-EXIT-01,Red destructive Exit button implied background service killed,Updated copy to 'Close app' and 'Keep using app' clarifying background utility,VERIFIED_CLOSED
+50,50_dialog_in_app_rating.png,InAppRatingDialog,CLEAN,Google Play In-App Review API integration with fallback,Verified Play ReviewManager flow with rate-limiting,VERIFIED_CLOSED
+51,51_dialog_privacy_policy.png,LegalDialogs,CLEAN,Privacy policy modal dialog with developer contact,Surya Developer and suryadevelopers07@gmail.com verified,VERIFIED_CLOSED
+52,52_dialog_terms_of_service.png,LegalDialogs,CLEAN,Terms of service modal dialog with billing rules,Verified lawful subscription disclosure and Play Store terms,VERIFIED_CLOSED

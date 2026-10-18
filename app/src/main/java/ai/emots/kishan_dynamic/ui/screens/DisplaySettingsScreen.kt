@@ -2,7 +2,10 @@ package ai.emots.kishan_dynamic.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -139,7 +142,12 @@ fun DisplaySettingsScreen(
                 ) {
                     DynamicIslandPill(
                         state = IslandDemoState.Minimal,
-                        horizontalScale = widthScale / 100f
+                        horizontalScale = widthScale / 100f,
+                        flatTop = savedNotchFlatTop,
+                        backgroundArgb = savedNotchBgArgb,
+                        foregroundArgb = savedNotchFgArgb,
+                        cameraCutoutMode = savedCutoutMode,
+                        cutoutSizePx = savedCutoutSize
                     )
                 }
             }
@@ -155,10 +163,108 @@ fun DisplaySettingsScreen(
         AppSectionSpacer()
 
         // -------------------------------------------------------------------
+        // Quick Presets
+        // -------------------------------------------------------------------
+        AppSectionTitle("Quick calibration presets")
+        AppCard(modifier = Modifier.appReveal(1)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppText(
+                    text = "One-tap presets configured for popular Android cutouts and display shapes.",
+                    style = AppTheme.typography.caption,
+                    color = AppTheme.colors.textSecondary
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    AppButton(
+                        text = "Center Hole",
+                        glyph = AppleGlyph.Notch,
+                        style = AppButtonStyle.Secondary,
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            selectedCutoutIndex = 1
+                            verticalOffset = 12f
+                            horizontalOffset = 0f
+                            widthScale = 100f
+                            scope.launch {
+                                preferences.setVerticalOffset(12)
+                                preferences.setHorizontalOffset(0)
+                                preferences.setWidthScale(1.0f)
+                                preferences.setNotchFlatTop(false)
+                            }
+                        }
+                    )
+                    AppButton(
+                        text = "Left Hole",
+                        glyph = AppleGlyph.ChevronLeft,
+                        style = AppButtonStyle.Secondary,
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            selectedCutoutIndex = 0
+                            verticalOffset = 12f
+                            horizontalOffset = -80f
+                            widthScale = 105f
+                            scope.launch {
+                                preferences.setVerticalOffset(12)
+                                preferences.setHorizontalOffset(-80)
+                                preferences.setWidthScale(1.05f)
+                                preferences.setNotchFlatTop(false)
+                            }
+                        }
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    AppButton(
+                        text = "Monobrow",
+                        glyph = AppleGlyph.Notch,
+                        style = AppButtonStyle.Secondary,
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            selectedCutoutIndex = 1
+                            verticalOffset = 0f
+                            horizontalOffset = 0f
+                            widthScale = 115f
+                            scope.launch {
+                                preferences.setVerticalOffset(0)
+                                preferences.setHorizontalOffset(0)
+                                preferences.setWidthScale(1.15f)
+                                preferences.setNotchFlatTop(true)
+                            }
+                        }
+                    )
+                    AppButton(
+                        text = "Compact",
+                        glyph = AppleGlyph.Controls,
+                        style = AppButtonStyle.Secondary,
+                        modifier = Modifier.weight(1f),
+                        onClick = {
+                            selectedCutoutIndex = 1
+                            verticalOffset = 10f
+                            horizontalOffset = 0f
+                            widthScale = 90f
+                            scope.launch {
+                                preferences.setVerticalOffset(10)
+                                preferences.setHorizontalOffset(0)
+                                preferences.setWidthScale(0.9f)
+                                preferences.setNotchFlatTop(false)
+                            }
+                        }
+                    )
+                }
+            }
+        }
+
+        AppSectionSpacer()
+
+        // -------------------------------------------------------------------
         // 2. Camera Cutout Position
         // -------------------------------------------------------------------
         AppSectionTitle("Camera position")
-        AppCard(modifier = Modifier.appReveal(1)) {
+        AppCard(modifier = Modifier.appReveal(2)) {
             AppSegmented(
                 options = listOf("Left", "Centre", "Right"),
                 selectedIndex = selectedCutoutIndex,

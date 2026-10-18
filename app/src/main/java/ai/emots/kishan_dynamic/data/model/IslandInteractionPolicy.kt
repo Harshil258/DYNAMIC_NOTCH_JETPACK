@@ -13,7 +13,7 @@ enum class IslandInteractionAction {
 object IslandInteractionPolicy {
 
     fun mainTap(state: IslandState): IslandInteractionAction = when (state) {
-        is IslandState.Minimal -> IslandInteractionAction.OPEN_QUICK_CONTROLS
+        is IslandState.Minimal -> IslandInteractionAction.NONE
         is IslandState.Notification -> if (state.isExpanded) {
             IslandInteractionAction.NONE
         } else {
@@ -69,11 +69,30 @@ object IslandInteractionPolicy {
         is IslandState.Music,
         is IslandState.OngoingCall,
         is IslandState.LiveActivity -> mainTap(state)
-        is IslandState.Minimal -> IslandInteractionAction.OPEN_QUICK_CONTROLS
+        is IslandState.Minimal -> IslandInteractionAction.NONE
         else -> IslandInteractionAction.NONE
     }
 
-    fun mainLongPress(state: IslandState): IslandInteractionAction = mainTap(state)
+    /**
+     * Long Press: The deliberate, sole gesture for Quick Controls (if quickControlsEnabled).
+     * Never launched from single tap (Sprint 15 contract).
+     */
+    fun mainLongPress(state: IslandState): IslandInteractionAction = when (state) {
+        is IslandState.Minimal,
+        is IslandState.Notification,
+        is IslandState.NotificationWithMusic,
+        is IslandState.Music,
+        is IslandState.OngoingCall,
+        is IslandState.LiveActivity,
+        is IslandState.RingerMode,
+        is IslandState.Charging,
+        is IslandState.BluetoothDevice -> if (state.presentationMode == IslandPresentationMode.EXPANDED) {
+            IslandInteractionAction.NONE
+        } else {
+            IslandInteractionAction.OPEN_QUICK_CONTROLS
+        }
+        else -> IslandInteractionAction.NONE
+    }
 
-    fun companionLongPress(state: IslandState): IslandInteractionAction = companionTap(state)
+    fun companionLongPress(state: IslandState): IslandInteractionAction = mainLongPress(state)
 }

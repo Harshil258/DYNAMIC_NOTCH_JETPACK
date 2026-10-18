@@ -16,6 +16,7 @@ data class SetupReadiness(
         else -> SetupAction.CONTINUE
     }
     val ready: Boolean get() = action == SetupAction.CONTINUE
+    val areRequiredGranted: Boolean get() = overlayGranted && notificationsGranted
     val workingRequiredCount: Int get() = listOf(
         overlayGranted && overlayConnected, notificationsGranted && notificationsConnected
     ).count { it }

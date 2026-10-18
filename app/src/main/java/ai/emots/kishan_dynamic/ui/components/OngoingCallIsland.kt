@@ -205,7 +205,7 @@ fun OngoingCallIslandBanner(
 fun OngoingCallIslandExpanded(
     name: String = "Tamia Castillo",
     avatarUri: String? = null,
-    label: String = "FaceTime Audio",
+    label: String = "Mobile Call",
     duration: String = "02:45",
     variant: OngoingCallVariant = OngoingCallVariant.Standard,
     onEndCall: () -> Unit = {},

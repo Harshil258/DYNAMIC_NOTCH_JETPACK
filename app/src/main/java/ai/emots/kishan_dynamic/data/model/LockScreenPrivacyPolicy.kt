@@ -8,7 +8,26 @@ object LockScreenPrivacyPolicy {
         deviceLocked: Boolean,
         hideSensitiveContent: Boolean
     ): NotificationInfo {
-        if (!deviceLocked || !hideSensitiveContent || !source.isSensitive) return source
+        if (!deviceLocked) return source
+
+        // PII & Financial Safety Contract (AUR-P2-016):
+        // Financial balances, transaction amounts, and account numbers must NEVER
+        // be displayed on the ambient lock screen to bystanders.
+        if (ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy.isFinancialTransaction(source)) {
+            return source.copy(
+                title = source.appName.ifBlank { "Transaction Alert" },
+                text = "Payment received",
+                expandedText = "Unlock to view transaction details",
+                subText = null,
+                inboxLines = emptyList(),
+                imagePath = null,
+                picturePath = null,
+                actions = emptyList(),
+                hasContentIntent = false
+            )
+        }
+
+        if (!hideSensitiveContent || !source.isSensitive) return source
         return source.copy(
             title = source.appName,
             text = "New notification",

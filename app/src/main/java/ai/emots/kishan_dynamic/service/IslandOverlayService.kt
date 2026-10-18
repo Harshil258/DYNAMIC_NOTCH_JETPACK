@@ -2,6 +2,7 @@ package ai.emots.kishan_dynamic.service
 
 import android.Manifest
 import android.accessibilityservice.AccessibilityService
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
@@ -13,6 +14,7 @@ import android.app.KeyguardManager
 import android.media.AudioManager
 import android.app.NotificationManager
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.os.Build
 import android.provider.MediaStore
 import android.content.pm.PackageManager
@@ -103,15 +105,19 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
     private var windowLayoutParams: WindowManager.LayoutParams? = null
     private var replyingNotificationId by mutableStateOf<String?>(null)
     private val systemSurfaceSuppressed = kotlinx.coroutines.flow.MutableStateFlow(false)
+    private val isIdleAutoHideActive = kotlinx.coroutines.flow.MutableStateFlow(false)
     private var replyingAction by mutableStateOf<ai.emots.kishan_dynamic.data.model.NotificationActionInfo?>(null)
 
-    private fun enableOverlayFocusable() {
-        windowLayoutParams?.let { params ->
+    private fun enableOverlayFocusable(): Boolean {
+        return windowLayoutParams?.let { params ->
             params.flags = params.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
             composeView?.let { view ->
-                runCatching { windowManager.updateViewLayout(view, params) }
-            }
-        }
+                runCatching {
+                    windowManager.updateViewLayout(view, params)
+                    true
+                }.getOrDefault(false)
+            } ?: false
+        } ?: false
     }
 
     private fun restoreOverlayNonFocusable() {
@@ -246,7 +252,25 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                         bluetoothAccessoryMonitor.onBatteryLevel(device, batteryLevel ?: -1)
                     }
                 }
-                BluetoothDevice.ACTION_ACL_DISCONNECTED -> IslandStateManager.clearBluetoothDevice()
+                BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                    if (::bluetoothAccessoryMonitor.isInitialized) {
+                        bluetoothAccessoryMonitor.onBluetoothEvent()
+                    }
+                    if (::actionSystemController.isInitialized) {
+                        actionSystemController.refresh()
+                    }
+                }
+                WifiManager.WIFI_STATE_CHANGED_ACTION -> {
+                    if (::actionSystemController.isInitialized) {
+                        actionSystemController.refresh()
+                    }
+                }
+                BluetoothDevice.ACTION_ACL_DISCONNECTED -> {
+                    IslandStateManager.clearBluetoothDevice()
+                    if (::bluetoothAccessoryMonitor.isInitialized) {
+                        bluetoothAccessoryMonitor.onBluetoothEvent()
+                    }
+                }
             }
         }
     }
@@ -265,6 +289,26 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         isServiceActuallyConnected = true
         analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_ACTIVATED)
         PermissionUtils.sendPermissionsChangedBroadcast(this)
+
+        scope.launch {
+            if (PermissionUtils.isNotificationListenerEnabled(applicationContext)) {
+                preferences.setIslandEnabled(true)
+                preferences.setSetupDone(true)
+            }
+        }
+
+        if (PermissionUtils.isAwaitingAccessibilityReturn) {
+            PermissionUtils.isAwaitingAccessibilityReturn = false
+            try {
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    putExtra("permission_auto_resumed", true)
+                }
+                startActivity(intent)
+            } catch (e: Exception) {
+                android.util.Log.e(TAG, "Failed to launch MainActivity onServiceConnected", e)
+            }
+        }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -337,6 +381,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             addAction(PermissionUtils.ACTION_PERMISSIONS_CHANGED)
             addAction(AudioManager.RINGER_MODE_CHANGED_ACTION)
             addAction(NotificationManager.ACTION_INTERRUPTION_FILTER_CHANGED)
+            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(WifiManager.WIFI_STATE_CHANGED_ACTION)
             addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
             addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
             addAction(BLUETOOTH_PROFILE_CONNECTION_STATE_CHANGED_ACTION)
@@ -381,6 +427,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             setViewTreeSavedStateRegistryOwner(this@IslandOverlayService)
 
             setOnTouchListener { _, event ->
+                isIdleAutoHideActive.value = false
                 if (event.action == android.view.MotionEvent.ACTION_OUTSIDE) {
                     if (replyingNotificationId != null) {
                         replyingNotificationId = null
@@ -419,7 +466,19 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val actionSystemSnapshot by actionSystemController.snapshot.collectAsState()
                 val observedMediaVolume by IslandStateManager.observedMediaVolume.collectAsState()
 
+                val notchFlatTop by preferences.notchFlatTop.collectAsState(initial = false)
+                val notchBgArgb by preferences.notchBackgroundArgb.collectAsState(initial = 0xFF000000.toInt())
+                val notchFgArgb by preferences.notchForegroundArgb.collectAsState(initial = 0xFFFFFFFF.toInt())
+                val idleAutoHideEnabled by preferences.idleAutoHideEnabled.collectAsState(initial = false)
+                val idleAutoHideTimeoutSeconds by preferences.idleAutoHideTimeoutSeconds.collectAsState(initial = 10)
+                val cameraCutoutMode by preferences.cameraCutoutMode.collectAsState(initial = false)
+                val cutoutSizePx by preferences.cutoutSizePx.collectAsState(initial = 80)
+                val quickControlsEnabled by preferences.quickControlsEnabled.collectAsState(initial = true)
+                val isIdleAutoHide by isIdleAutoHideActive.collectAsState()
+
                 val systemSurfaceActive by systemSurfaceSuppressed.collectAsState()
+                val isIdleState = islandState is IslandState.Minimal || islandState is IslandState.Hidden || isIdleAutoHide
+                val isHiddenState = islandState is IslandState.Hidden || isIdleAutoHide
                 // System controls always win; source state continues independently.
                 androidx.compose.animation.AnimatedVisibility(
                     visible = OverlayDisplayPolicy(
@@ -428,7 +487,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                         showOnLockScreen = showOnLockScreen,
                         deviceLocked = isDeviceLocked,
                         systemSurfaceActive = systemSurfaceActive
-                    ).shouldRender(islandState is IslandState.Hidden),
+                    ).shouldRender(isHiddenState = isHiddenState, isIdleState = isIdleState),
                     enter = if (reduceMotion) {
                         androidx.compose.animation.fadeIn(
                             animationSpec = androidx.compose.animation.core.tween(80)
@@ -544,31 +603,40 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                             DynamicIslandPill(
                                 state = demoState,
                                 horizontalScale = widthScale,
+                                flatTop = notchFlatTop,
+                                backgroundArgb = notchBgArgb,
+                                foregroundArgb = notchFgArgb,
+                                cameraCutoutMode = cameraCutoutMode,
+                                cutoutSizePx = cutoutSizePx,
                                 onTap = {
+                                    isIdleAutoHideActive.value = false
                                     analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_EXPAND, mapOf("source" to "overlay_tap"))
                                     if (!(compactMusicControlsEnabled && islandState is IslandState.Music)) {
                                         performIslandInteraction(
                                             IslandInteractionPolicy.mainTap(islandState),
-                                            actionConfig.isEnabled
+                                            actionConfig.isEnabled && quickControlsEnabled
                                         )
                                     }
                                 },
                                 onCompanionTap = {
+                                    isIdleAutoHideActive.value = false
                                     performIslandInteraction(
                                         IslandInteractionPolicy.companionTap(islandState),
-                                        actionConfig.isEnabled
+                                        actionConfig.isEnabled && quickControlsEnabled
                                     )
                                 },
                                 onLongPress = {
+                                    isIdleAutoHideActive.value = false
                                     performIslandInteraction(
                                         IslandInteractionPolicy.mainLongPress(islandState),
-                                        actionConfig.isEnabled
+                                        actionConfig.isEnabled && quickControlsEnabled
                                     )
                                 },
                                 onCompanionLongPress = {
+                                    isIdleAutoHideActive.value = false
                                     performIslandInteraction(
                                         IslandInteractionPolicy.companionLongPress(islandState),
-                                        actionConfig.isEnabled
+                                        actionConfig.isEnabled && quickControlsEnabled
                                     )
                                 },
                                 mainContentDescription = islandMainContentDescription(renderedState),
@@ -583,11 +651,11 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 },
                                 onControlAction = ::handleIslandControlAction,
                                 onOpenNotifications = { IslandStateManager.openNotifications() },
-                                actionApps = actionConfig.apps.filter { it.isEnabled },
-                                actionSystemTiles = actionConfig.systemTiles,
+                                actionApps = if (quickControlsEnabled) actionConfig.apps.filter { it.isEnabled } else emptyList(),
+                                actionSystemTiles = if (quickControlsEnabled) actionConfig.systemTiles else emptyList(),
                                 actionSystemStates = actionSystemSnapshot.values,
-                                actionContacts = actionConfig.contacts.filter { it.isEnabled },
-                                actionCustomActions = actionConfig.customActions,
+                                actionContacts = if (quickControlsEnabled) actionConfig.contacts.filter { it.isEnabled } else emptyList(),
+                                actionCustomActions = if (quickControlsEnabled) actionConfig.customActions else emptyList(),
                                 onActionAppClick = { packageName ->
                                     actionIslandRepository.launchApp(packageName)
                                 },
@@ -632,9 +700,20 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 onNotificationAction = { notification, action ->
                                     IslandStateManager.claimNotificationInteraction()
                                     if (action.isReply && NotificationActionRegistry.hasReplyTarget(notification.id, action.id)) {
-                                        replyingNotificationId = notification.id
-                                        replyingAction = action
-                                        enableOverlayFocusable()
+                                        val focusGranted = enableOverlayFocusable()
+                                        if (focusGranted) {
+                                            replyingNotificationId = notification.id
+                                            replyingAction = action
+                                        } else {
+                                            ai.emots.kishan_dynamic.ui.NotificationReplyActivity.launch(
+                                                context = this@IslandOverlayService,
+                                                notificationId = notification.id,
+                                                actionId = action.id,
+                                                appName = notification.appName,
+                                                sender = notification.title,
+                                                message = notification.text
+                                            )
+                                        }
                                     } else {
                                         if (!NotificationActionRegistry.send(notification.id, action.id)) {
                                             android.widget.Toast.makeText(this@IslandOverlayService,
@@ -698,6 +777,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 liveActivityChronometerCountDown = liveActivity?.chronometerCountDown == true,
                                 liveActivitySourceBacked = liveActivity?.sourceNotificationId != null,
                                 liveActivityActionLabel = liveActivityActionLabel,
+                                liveActivityInfo = liveActivity,
                                 ringerMode = (renderedState as? IslandState.RingerMode)?.mode
                                     ?: ai.emots.kishan_dynamic.data.model.RingerModeType.SILENT,
                                 ringerVolumeLevel = ringerVolumeState?.volumeLevel ?: 0.5f,
@@ -874,16 +954,19 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             }
             IslandControlAction.CallSummaryRedial -> {
                 (IslandStateManager.currentState.value as? IslandState.CallSummary)?.record?.phoneNumber?.let { number ->
-                    PhoneActionLauncher.openCall(this, number)
+                    CallActionLauncher.openCall(this, number)
                 }
                 IslandStateManager.clearCallSummary()
             }
             IslandControlAction.CallSummaryMessage -> {
                 (IslandStateManager.currentState.value as? IslandState.CallSummary)?.record?.phoneNumber?.let { number ->
-                    startActivity(
-                        Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(number)}"))
-                            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    )
+                    CallActionLauncher.openSms(this, number)
+                }
+                IslandStateManager.clearCallSummary()
+            }
+            IslandControlAction.CallSummaryWhatsApp -> {
+                (IslandStateManager.currentState.value as? IslandState.CallSummary)?.record?.phoneNumber?.let { number ->
+                    CallActionLauncher.openWhatsApp(this, number)
                 }
                 IslandStateManager.clearCallSummary()
             }
@@ -1132,15 +1215,56 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 }
         }
 
+        // Idle auto-hide timer
+        scope.launch {
+            kotlinx.coroutines.flow.combine(
+                preferences.idleAutoHideEnabled,
+                preferences.idleAutoHideTimeoutSeconds,
+                IslandStateManager.currentState
+            ) { enabled, timeoutSeconds, state ->
+                Triple(enabled, timeoutSeconds, state)
+            }.collectLatest { (enabled, timeoutSeconds, state) ->
+                if (!enabled || state !is IslandState.Minimal) {
+                    isIdleAutoHideActive.value = false
+                } else {
+                    kotlinx.coroutines.delay(timeoutSeconds * 1000L)
+                    isIdleAutoHideActive.value = true
+                }
+            }
+        }
+
         // Dynamic window width and touch bounds for expanded vs compact vs hidden states
         scope.launch {
             kotlinx.coroutines.flow.combine(
-                IslandStateManager.currentState,
-                systemSurfaceSuppressed,
-                IslandStateManager.isPaywallActive
-            ) { state, suppressed, paywallActive ->
-                Triple(state, suppressed, paywallActive)
-            }.collectLatest { (state, suppressed, paywallActive) ->
+                kotlinx.coroutines.flow.combine(
+                    IslandStateManager.currentState,
+                    systemSurfaceSuppressed,
+                    IslandStateManager.isPaywallActive
+                ) { state, suppressed, paywall -> Triple(state, suppressed, paywall) },
+                kotlinx.coroutines.flow.combine(
+                    preferences.islandEnabled,
+                    preferences.alwaysOnTop,
+                    preferences.showOnLockScreen
+                ) { enabled, alwaysOnTop, showOnLock -> Triple(enabled, alwaysOnTop, showOnLock) },
+                kotlinx.coroutines.flow.combine(
+                    deviceLocked,
+                    isIdleAutoHideActive
+                ) { locked, idleHidden -> Pair(locked, idleHidden) }
+            ) { (state, suppressed, paywallActive), (enabled, alwaysOnTop, showOnLock), (locked, idleHidden) ->
+                val isIdle = state is IslandState.Minimal || state is IslandState.Hidden || idleHidden
+                val isHiddenState = state is IslandState.Hidden || idleHidden
+                val shouldRender = OverlayDisplayPolicy(
+                    islandEnabled = enabled,
+                    alwaysOnTop = alwaysOnTop,
+                    showOnLockScreen = showOnLock,
+                    deviceLocked = locked,
+                    systemSurfaceActive = suppressed
+                ).shouldRender(isHiddenState = isHiddenState, isIdleState = isIdle)
+
+                val isHidden = !shouldRender || paywallActive
+                val isExpanded = state.presentationMode == ai.emots.kishan_dynamic.data.model.IslandPresentationMode.EXPANDED
+                Pair(isHidden, isExpanded)
+            }.collectLatest { (isHidden, isExpanded) ->
                 windowLayoutParams?.let { params ->
                     val displayMetrics = resources.displayMetrics
                     val screenWidthPx = displayMetrics.widthPixels
@@ -1148,14 +1272,13 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     val expandedWidthPx = (ai.emots.kishan_dynamic.ui.theme.AppIslandTokens()
                         .expandedWidth((screenWidthPx / density).dp).value * density).toInt().coerceAtLeast(0)
 
-                    val isHidden = state is IslandState.Hidden || suppressed || paywallActive
+                    val isHiddenNow = isHidden
                     // Some OEM compositors retain the last buffer of a zero-sized window.
                     // Hide the actual view as well: protected surfaces must never wait for
                     // a Compose exit animation or retain a stale visible overlay buffer.
-                    composeView?.visibility = if (isHidden) android.view.View.INVISIBLE else android.view.View.VISIBLE
-                    val isExpanded = state.presentationMode == ai.emots.kishan_dynamic.data.model.IslandPresentationMode.EXPANDED
+                    composeView?.visibility = if (isHiddenNow) android.view.View.INVISIBLE else android.view.View.VISIBLE
 
-                    val newFlags = if (isHidden) {
+                    val newFlags = if (isHiddenNow) {
                         params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                     } else {
                         (params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()) or
@@ -1164,12 +1287,12 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     }
 
                     val targetWidthPx = when {
-                        isHidden -> 0
+                        isHiddenNow -> 0
                         isExpanded -> expandedWidthPx
                         else -> WindowManager.LayoutParams.WRAP_CONTENT
                     }
                     val targetHeightPx = when {
-                        isHidden -> 0
+                        isHiddenNow -> 0
                         else -> WindowManager.LayoutParams.WRAP_CONTENT
                     }
 
@@ -1205,18 +1328,17 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         val currentEvent = event ?: return
         if (currentEvent.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
             currentEvent.eventType != AccessibilityEvent.TYPE_WINDOWS_CHANGED) return
+        val currentPackage = currentEvent.packageName?.toString()
         val suppress = runCatching {
             windows.orEmpty().any { window ->
                 if (!window.isFocused && !window.isActive) return@any false
                 val ownOverlay = window.type == android.view.accessibility.AccessibilityWindowInfo.TYPE_ACCESSIBILITY_OVERLAY
-                val root = window.root
-                val owner = try { root?.packageName?.toString() } finally { root?.recycle() }
                 ai.emots.kishan_dynamic.data.model.OverlaySystemSurfacePolicy.shouldSuppress(
                     window.type == android.view.accessibility.AccessibilityWindowInfo.TYPE_SYSTEM,
-                    owner, ownOverlay
+                    currentPackage, ownOverlay
                 )
             }
-        }.getOrDefault(currentEvent.packageName?.toString() == "com.android.systemui")
+        }.getOrDefault(currentPackage == "com.android.systemui" || currentPackage?.endsWith(".permissioncontroller") == true)
         if (systemSurfaceSuppressed.value != suppress) {
             systemSurfaceSuppressed.value = suppress
             NotificationDiagnostics.surface(suppress)

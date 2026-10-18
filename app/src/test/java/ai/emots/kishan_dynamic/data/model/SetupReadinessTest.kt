@@ -22,4 +22,10 @@ class SetupReadinessTest {
         assertEquals(SetupAction.ENABLE_NOTIFICATIONS, SetupReadiness(true, true, false, true).action)
         assertEquals(0, SetupReadiness(false, true, false, true).workingRequiredCount)
     }
+    @Test fun areRequiredGranted_returnsTrueWhenBothPermissionsGranted() {
+        assertTrue(SetupReadiness(true, false, true, false).areRequiredGranted)
+        assertTrue(SetupReadiness(true, true, true, true).areRequiredGranted)
+        assertFalse(SetupReadiness(false, true, true, true).areRequiredGranted)
+        assertFalse(SetupReadiness(true, true, false, true).areRequiredGranted)
+    }
 }

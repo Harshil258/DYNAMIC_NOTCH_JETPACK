@@ -41,7 +41,7 @@ import ai.emots.kishan_dynamic.ui.theme.AppTheme
 @Composable
 fun NativeAdCard(
     configuration: NativeAdConfiguration,
-    isProActive: Boolean,
+    isAdFree: Boolean,
     canRequestAds: Boolean,
     placement: String,
     modifier: Modifier = Modifier,
@@ -52,13 +52,15 @@ fun NativeAdCard(
     val context = LocalContext.current
     if (LocalInspectionMode.current || !AdSurfacePolicy.shouldShowNative(
             adsEnabled = configuration.enabled,
-            isProActive = isProActive,
+            isAdFree = isAdFree,
             adUnitConfigured = configuration.adUnitId.isNotBlank(),
             canRequestAds = canRequestAds
         )
     ) return
 
-    val gateway = remember(configuration) { MobileAdsNativeAdGateway(context, configuration) }
+    val gateway = remember(configuration, placement) {
+        MobileAdsNativeAdGateway(context, configuration, placement = placement)
+    }
     val status by gateway.status.collectAsState()
 
     DisposableEffect(gateway) {

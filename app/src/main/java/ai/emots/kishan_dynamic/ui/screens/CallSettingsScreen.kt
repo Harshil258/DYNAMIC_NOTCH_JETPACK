@@ -1,11 +1,6 @@
 package ai.emots.kishan_dynamic.ui.screens
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.ContactsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -31,8 +26,10 @@ import ai.emots.kishan_dynamic.data.model.CallRecord
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicy
 import ai.emots.kishan_dynamic.data.repository.CallHistoryRepository
+import ai.emots.kishan_dynamic.service.AutoStartOem
+import ai.emots.kishan_dynamic.service.AutoStartSettings
+import ai.emots.kishan_dynamic.service.CallActionLauncher
 import ai.emots.kishan_dynamic.service.CallScreeningRole
-import ai.emots.kishan_dynamic.service.PhoneActionLauncher
 import ai.emots.kishan_dynamic.ui.dialogs.CallSummaryData
 import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
@@ -129,18 +126,26 @@ fun CallSettingsScreen(
             AppRowDivider()
             AppToggleRow(
                 title = "Summary when a call ends",
-                subtitle = "Duration with redial and message shortcuts",
+                subtitle = "Duration with redial, message, and WhatsApp shortcuts",
                 glyph = AppleGlyph.History,
                 checked = effectiveCallSummaryEnabled,
-                trailingLabel = if (!isProActive) "PRO" else null,
                 onCheckedChange = { checked ->
-                    if (isProActive) {
-                        scope.launch { preferences.setCallSummaryEnabled(checked) }
-                    } else {
-                        onNavigateToPremium()
-                    }
+                    scope.launch { preferences.setCallSummaryEnabled(checked) }
                 }
             )
+            if (effectiveCallSummaryEnabled) {
+                AppRowDivider()
+                AppNavRow(
+                    title = "Call summary timeout",
+                    subtitle = if (isProActive) "6s auto-dismiss (Pro active)" else "Customize auto-dismiss and quick actions",
+                    glyph = AppleGlyph.Timer,
+                    value = if (isProActive) "6s" else "PRO",
+                    accent = if (isProActive) AppTheme.colors.accent else AppTheme.colors.textTertiary,
+                    onClick = {
+                        if (!isProActive) onNavigateToPremium()
+                    }
+                )
+            }
         }
 
         AppSectionSpacer()
@@ -165,6 +170,23 @@ fun CallSettingsScreen(
                     CallScreeningRole.requestIntent(context)?.let(screeningLauncher::launch)
                 }
             )
+        }
+
+        val oem = remember { AutoStartSettings.oemForDevice() }
+        val isOemSupported = remember { AutoStartSettings.isSupported(context) }
+        if (isOemSupported && oem != AutoStartOem.OTHER) {
+            AppSectionSpacer()
+            AppSectionTitle("Background reliability")
+            AppListCard(modifier = Modifier.appReveal(4)) {
+                AppNavRow(
+                    title = "${oem.displayName} background protection",
+                    subtitle = "Prevent OS battery manager from terminating live call monitoring and summary popups",
+                    glyph = AppleGlyph.Battery,
+                    value = "Configure",
+                    accent = AppTheme.colors.accent,
+                    onClick = { AutoStartSettings.open(context) }
+                )
+            }
         }
 
         AppSectionSpacer()
@@ -203,14 +225,16 @@ fun CallSettingsScreen(
         AppFootnote("Call records stay on this device and are never uploaded.")
     }
 
-    if (showCallSummaryDialog) {
+    if (showCallSummaryDialog && callRecords.isNotEmpty()) {
+        val record = callRecords.first()
         CallSummaryDialog(
-            data = callRecords.first().toSummaryData(),
+            data = record.toSummaryData(),
             onDismiss = { showCallSummaryDialog = false },
-            onRedial = { PhoneActionLauncher.openCall(context, callRecords.first().phoneNumber) },
-            onMessage = { context.openMessages(callRecords.first().phoneNumber) },
-            onSave = { context.openContactSave(callRecords.first().contactName, callRecords.first().phoneNumber) },
-            onCopy = { context.copyToClipboard(callRecords.first().phoneNumber) }
+            onRedial = { CallActionLauncher.openCall(context, record.phoneNumber) },
+            onMessage = { CallActionLauncher.openSms(context, record.phoneNumber) },
+            onWhatsApp = { CallActionLauncher.openWhatsApp(context, record.phoneNumber) },
+            onSave = { CallActionLauncher.openSaveContact(context, record.contactName, record.phoneNumber) },
+            onCopy = { CallActionLauncher.copyToClipboard(context, record.phoneNumber) }
         )
     }
 
@@ -218,7 +242,7 @@ fun CallSettingsScreen(
         CallHistorySheet(
             records = callRecords,
             onDismiss = { showCallHistorySheet = false },
-            onCallClick = { PhoneActionLauncher.openCall(context, it) },
+            onCallClick = { CallActionLauncher.openCall(context, it) },
             onClearHistory = { scope.launch { repository.clear() } }
         )
     }
@@ -235,25 +259,6 @@ private fun CallRecord.toSummaryData(): CallSummaryData = CallSummaryData(
         CallDirection.OUTGOING -> "Outgoing call"
         CallDirection.MISSED -> "Missed call"
     },
-    timestamp = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault()).format(Date(startedAtMillis))
+    timestamp = SimpleDateFormat("MMM d, HH:mm", Locale.getDefault()).format(Date(startedAtMillis)),
+    avatarUri = avatarUri
 )
-
-private fun Context.openMessages(phoneNumber: String) {
-    startActivity(Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${Uri.encode(phoneNumber)}")))
-}
-
-private fun Context.openContactSave(name: String, phoneNumber: String) {
-    startActivity(
-        Intent(ContactsContract.Intents.Insert.ACTION).apply {
-            type = ContactsContract.RawContacts.CONTENT_TYPE
-            putExtra(ContactsContract.Intents.Insert.NAME, name)
-            putExtra(ContactsContract.Intents.Insert.PHONE, phoneNumber)
-        }
-    )
-}
-
-private fun Context.copyToClipboard(value: String) {
-    getSystemService(ClipboardManager::class.java)?.setPrimaryClip(
-        ClipData.newPlainText("Phone number", value)
-    )
-}

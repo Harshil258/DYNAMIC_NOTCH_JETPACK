@@ -167,6 +167,18 @@ fun AboutScreen(
                 accent = AppTheme.colors.accent,
                 onClick = onShare
             )
+            AppRowDivider()
+            AppNavRow(
+                title = "Privacy & Ad Consent",
+                subtitle = "Manage advertising privacy choices and GDPR consent",
+                glyph = AppleGlyph.Lock,
+                accent = AppTheme.colors.accent,
+                onClick = {
+                    (context as? android.app.Activity)?.let { act ->
+                        ai.emots.kishan_dynamic.data.premium.AppAdConsentRuntime.gateway(context).showPrivacyOptions(act)
+                    }
+                }
+            )
         }
 
         AppFootnote("Notifications, caller details, and device signals stay on this device unless you explicitly use a platform share or feedback action.")

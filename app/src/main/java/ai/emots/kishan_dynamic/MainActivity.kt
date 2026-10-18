@@ -41,11 +41,21 @@ import ai.emots.kishan_dynamic.data.model.initialStartupRoute
 import ai.emots.kishan_dynamic.data.model.startupRouteForIntent
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.data.analytics.AnalyticsConsentManager
+import ai.emots.kishan_dynamic.data.analytics.AnalyticsUserPropertyManager
 import ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker
+import ai.emots.kishan_dynamic.data.analytics.LocalAnalyticsTracker
+import ai.emots.kishan_dynamic.data.analytics.LocalScreenDeduplicator
 import ai.emots.kishan_dynamic.data.analytics.ScreenDeduplicator
 import ai.emots.kishan_dynamic.data.premium.AdConsentStatus
 import ai.emots.kishan_dynamic.ui.theme.AppThemeMode
 import ai.emots.kishan_dynamic.ui.localization.LocalAppLanguage
+import ai.emots.kishan_dynamic.service.CallActionLauncher
+import ai.emots.kishan_dynamic.service.CallSessionCoordinator
+import ai.emots.kishan_dynamic.service.CallSummaryNotifier
+import ai.emots.kishan_dynamic.ui.dialogs.CallSummaryDialog
+import ai.emots.kishan_dynamic.ui.dialogs.CallSummaryData
+import ai.emots.kishan_dynamic.data.model.CallDirection
+import ai.emots.kishan_dynamic.data.model.CallRecord
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -64,6 +74,59 @@ class MainActivity : ComponentActivity() {
         const val EXTRA_OPEN_PREMIUM = "open_premium"
         const val EXTRA_OPEN_REWARDED_PASS = "open_rewarded_pass"
         const val EXTRA_OPEN_LIVE_ACTIVITY = "open_live_activity"
+        const val EXTRA_OPEN_CALL_SUMMARY = "open_call_summary"
+        const val EXTRA_POST_PREMIUM_EXPIRY = "post_premium_expiry"
+
+        @Volatile
+        var isActivityInForeground = false
+            private set
+    }
+
+    private var pendingCallSummaryFromIntent by mutableStateOf<CallRecord?>(null)
+
+    override fun onResume() {
+        super.onResume()
+        isActivityInForeground = true
+    }
+
+    override fun onPause() {
+        isActivityInForeground = false
+        super.onPause()
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        extractCallSummaryFromIntent(intent)
+        extractExpiryFromIntent(intent)
+    }
+
+    private fun extractExpiryFromIntent(intent: android.content.Intent) {
+        if (intent.hasExtra(EXTRA_POST_PREMIUM_EXPIRY)) {
+            val hours = intent.getIntExtra(EXTRA_POST_PREMIUM_EXPIRY, 0)
+            ai.emots.kishan_dynamic.service.IslandStateManager.postPremiumExpiry(hours)
+        }
+    }
+
+    private fun extractCallSummaryFromIntent(intent: android.content.Intent) {
+        if (intent.getBooleanExtra(EXTRA_OPEN_CALL_SUMMARY, false)) {
+            val recordId = intent.getStringExtra("call_record_id")
+            val contactName = intent.getStringExtra("call_contact_name") ?: "Unknown Caller"
+            val phoneNumber = intent.getStringExtra("call_phone_number") ?: "Unknown Caller"
+            val durationSeconds = intent.getLongExtra("call_duration_seconds", 0L)
+            val directionName = intent.getStringExtra("call_direction") ?: "MISSED"
+            val direction = runCatching { CallDirection.valueOf(directionName) }
+                .getOrDefault(CallDirection.MISSED)
+
+            pendingCallSummaryFromIntent = CallRecord(
+                id = recordId ?: "${System.currentTimeMillis()}-$phoneNumber",
+                contactName = contactName,
+                phoneNumber = phoneNumber,
+                startedAtMillis = System.currentTimeMillis(),
+                durationSeconds = durationSeconds,
+                direction = direction
+            )
+        }
     }
 
     @Volatile
@@ -91,6 +154,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        extractCallSummaryFromIntent(intent)
+        extractExpiryFromIntent(intent)
         val openActionIslandEditor = intent.getBooleanExtra(EXTRA_OPEN_ACTION_ISLAND_EDITOR, false)
         val openPremium = intent.getBooleanExtra(EXTRA_OPEN_PREMIUM, false)
         val openRewardedPass = intent.getBooleanExtra(EXTRA_OPEN_REWARDED_PASS, false)
@@ -132,6 +197,7 @@ class MainActivity : ComponentActivity() {
                 AppOpenAdConfiguration.fromReleaseConfig(releaseConfig, canRequestAds)
             }
             val isProActive by preferences.isProActive.collectAsState(initial = false)
+            val isAdFree by preferences.isAdFree.collectAsState(initial = false)
             val savedThemeMode by preferences.themeMode.collectAsState(initial = AppThemeMode.System.storageValue)
             val savedLanguage by preferences.languageCode.collectAsState(initial = "en")
             val reduceMotion by preferences.reduceMotion.collectAsState(initial = false)
@@ -151,6 +217,12 @@ class MainActivity : ComponentActivity() {
             val analyticsTracker = remember { FirebaseAnalyticsTracker(context) }
             val screenDeduplicator = remember { ScreenDeduplicator(analyticsTracker) }
             val consentManager = remember { AnalyticsConsentManager(context) }
+            val userPropertyManager = remember { AnalyticsUserPropertyManager(context, analyticsTracker) }
+
+            LaunchedEffect(userPropertyManager) {
+                userPropertyManager.syncImmediate()
+                userPropertyManager.startObserving()
+            }
 
             LaunchedEffect(consentSnapshot) {
                 if (consentSnapshot.status == AdConsentStatus.READY) {
@@ -195,8 +267,8 @@ class MainActivity : ComponentActivity() {
                 appOpenGateway?.close()
                 appOpenGateway = nextGateway
             }
-            LaunchedEffect(isProActive) {
-                appOpenPremium = isProActive
+            LaunchedEffect(isAdFree) {
+                appOpenPremium = isAdFree
             }
             LaunchedEffect(currentRoute) {
                 appOpenBlocked = currentRoute != AppNavigationRoute.MainHub
@@ -238,7 +310,9 @@ class MainActivity : ComponentActivity() {
                 }
                 CompositionLocalProvider(
                     LocalAppLanguage provides savedLanguage,
-                    ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion provides reduceMotion
+                    ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion provides reduceMotion,
+                    LocalAnalyticsTracker provides analyticsTracker,
+                    LocalScreenDeduplicator provides screenDeduplicator
                 ) {
                     AnimatedContent(
                         targetState = currentRoute,
@@ -305,6 +379,38 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         }
+                    }
+
+                    val activeCallSummary by CallSessionCoordinator.activeCallSummary.collectAsState()
+                    val summaryToShow = pendingCallSummaryFromIntent ?: activeCallSummary
+                    if (summaryToShow != null) {
+                        CallSummaryDialog(
+                            data = CallSummaryData(
+                                contactName = summaryToShow.contactName,
+                                phoneNumber = summaryToShow.phoneNumber,
+                                durationFormatted = if (summaryToShow.direction == CallDirection.MISSED) "Missed" else {
+                                    "%02d:%02d".format(summaryToShow.durationSeconds / 60L, summaryToShow.durationSeconds % 60L)
+                                },
+                                callType = when (summaryToShow.direction) {
+                                    CallDirection.INCOMING -> "Incoming call"
+                                    CallDirection.OUTGOING -> "Outgoing call"
+                                    CallDirection.MISSED -> "Missed call"
+                                },
+                                timestamp = java.text.SimpleDateFormat("MMM d, HH:mm", java.util.Locale.getDefault())
+                                    .format(java.util.Date(summaryToShow.startedAtMillis)),
+                                avatarUri = summaryToShow.avatarUri
+                            ),
+                            onDismiss = {
+                                pendingCallSummaryFromIntent = null
+                                CallSessionCoordinator.clearActiveCallSummary()
+                                CallSummaryNotifier.dismiss(context)
+                            },
+                            onRedial = { CallActionLauncher.openCall(context, summaryToShow.phoneNumber) },
+                            onMessage = { CallActionLauncher.openSms(context, summaryToShow.phoneNumber) },
+                            onWhatsApp = { CallActionLauncher.openWhatsApp(context, summaryToShow.phoneNumber) },
+                            onSave = { CallActionLauncher.openSaveContact(context, summaryToShow.contactName, summaryToShow.phoneNumber) },
+                            onCopy = { CallActionLauncher.copyToClipboard(context, summaryToShow.phoneNumber) }
+                        )
                     }
                 }
             }

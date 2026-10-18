@@ -11,8 +11,24 @@ class AdSurfacePolicyTest {
     }
 
     @Test
-    fun premiumUserNeverSeesBanner() {
+    fun paidAdFreeUserNeverSeesBanner() {
         assertFalse(AdSurfacePolicy.shouldShowBanner(true, true, true))
+    }
+
+    @Test
+    fun trialAndRewardedPassUsersStillSeeInAppAds() {
+        // AUR-P1-025: Temporary Pro access (trial or rewarded pass) does NOT grant ad-free status
+        val isAdFree = false
+        assertTrue(AdSurfacePolicy.shouldShowBanner(adsEnabled = true, isAdFree = isAdFree, adUnitConfigured = true))
+        assertTrue(AdSurfacePolicy.shouldShowNative(adsEnabled = true, isAdFree = isAdFree, adUnitConfigured = true))
+    }
+
+    @Test
+    fun paidProSubscribersSuppressAllAds() {
+        // Paid subscribers (weekly, monthly, yearly, lifetime) have isAdFree = true
+        val isAdFree = true
+        assertFalse(AdSurfacePolicy.shouldShowBanner(adsEnabled = true, isAdFree = isAdFree, adUnitConfigured = true))
+        assertFalse(AdSurfacePolicy.shouldShowNative(adsEnabled = true, isAdFree = isAdFree, adUnitConfigured = true))
     }
 
     @Test

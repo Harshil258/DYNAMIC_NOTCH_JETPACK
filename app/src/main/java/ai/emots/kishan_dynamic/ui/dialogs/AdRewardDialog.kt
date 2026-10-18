@@ -1,6 +1,9 @@
 package ai.emots.kishan_dynamic.ui.dialogs
 
 import android.app.Activity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseInOutSine
 import androidx.compose.animation.core.LinearEasing
@@ -362,32 +365,69 @@ fun AdRewardDialog(
                     "None"
                 }
 
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))
-                        .background(if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.04f))
-                        .border(
-                            0.5.dp,
-                            if (isDark) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.06f),
-                            RoundedCornerShape(20.dp)
-                        )
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(20.dp))
+                            .background(if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.04f))
+                            .border(
+                                0.5.dp,
+                                if (isDark) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.06f),
+                                RoundedCornerShape(20.dp)
+                            )
+                            .padding(horizontal = 14.dp, vertical = 6.dp)
                     ) {
-                        AppText(
-                            text = "Total Free Premium:",
-                            style = AppTheme.typography.caption,
-                            color = textSecondary
-                        )
-                        AppText(
-                            text = remainingText,
-                            style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
-                            color = RewardColors.teal
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            AppText(
+                                text = "Total Free Premium:",
+                                style = AppTheme.typography.caption,
+                                color = textSecondary
+                            )
+                            AppText(
+                                text = remainingText,
+                                style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
+                                color = RewardColors.teal
+                            )
+                        }
                     }
+
+                    if (snapshot.extraDaysStacked > 0) {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(RewardColors.accent.copy(alpha = 0.15f))
+                                .border(
+                                    0.5.dp,
+                                    RewardColors.accent.copy(alpha = 0.4f),
+                                    RoundedCornerShape(20.dp)
+                                )
+                                .padding(horizontal = 10.dp, vertical = 6.dp)
+                        ) {
+                            AppText(
+                                text = "+${snapshot.extraDaysStacked} stacked",
+                                style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
+                                color = RewardColors.accentLight
+                            )
+                        }
+                    }
+                }
+
+                if (snapshot.isActive && snapshot.expiresAtMillis > 0L) {
+                    Spacer(modifier = Modifier.height(6.dp))
+                    val expiryDateStr: String = remember(snapshot.expiresAtMillis) {
+                        SimpleDateFormat("MMM d, yyyy · h:mm a", Locale.getDefault()).format(Date(snapshot.expiresAtMillis))
+                    }
+                    AppText(
+                        text = "Expires $expiryDateStr",
+                        style = AppTheme.typography.caption.copy(fontSize = 11.sp),
+                        color = textSecondary.copy(alpha = 0.8f)
+                    )
                 }
 
                 if (errorMessage != null) {

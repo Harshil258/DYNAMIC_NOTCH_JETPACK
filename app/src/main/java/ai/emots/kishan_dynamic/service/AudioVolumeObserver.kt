@@ -58,7 +58,7 @@ class AudioVolumeObserver(
                 val isProActive = preferences.isProActive.first()
                 if (PremiumFeaturePolicy.soundSettingEnabled(
                         isProActive,
-                        preferences.showVolumeIndicator.first()
+                        preferences.showRingerModeIndicator.first()
                     )
                 ) {
                     IslandStateManager.postVolumeLevel(
@@ -67,7 +67,9 @@ class AudioVolumeObserver(
                     )
                 }
             }
-        } else if (currentVolume != previousVolume && maxVolume > 0) {
+        }
+
+        if (currentVolume != previousVolume && maxVolume > 0) {
             previousVolume = currentVolume
             val levelRatio = currentVolume.toFloat() / maxVolume.toFloat()
             scope.launch {

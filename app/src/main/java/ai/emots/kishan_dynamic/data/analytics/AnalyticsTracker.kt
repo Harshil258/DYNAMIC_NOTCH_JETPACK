@@ -7,6 +7,7 @@ package ai.emots.kishan_dynamic.data.analytics
  */
 interface AnalyticsTracker {
     fun logEvent(name: String, parameters: Map<String, Any> = emptyMap())
+    fun logEvent(event: AnalyticsEvent) = logEvent(event.name, event.toParameterMap())
     fun logScreen(screenName: String, screenClass: String = "MainActivity")
     fun setUserProperty(name: String, value: String)
     fun setUserId(userId: String?)
@@ -45,6 +46,9 @@ object AnalyticsEventNames {
     const val ALIGNMENT_CHANGED = "alignment_changed"
     const val MEDIA_CONTROL_USED = "media_control_used"
     const val QUICK_CONTROL_TAPPED = "quick_control_tapped"
+    const val SETTING_CHANGED = "setting_changed"
+    const val NOTIFICATION_PAGE_SWIPED = "notification_page_swiped"
+    const val NOTIFICATION_ACTION_TAPPED = "notification_action_tapped"
 
     // Monetization & Subscription Funnel Events
     const val PAYWALL_VIEWED = "paywall_viewed"
@@ -55,6 +59,8 @@ object AnalyticsEventNames {
     const val PURCHASE_CANCELED = "purchase_canceled"
     const val SUBSCRIPTION_RESTORED = "subscription_restored"
     const val ENTITLEMENT_ACTIVATED = "entitlement_activated"
+    const val TRIAL_STATUS_TRANSITION = "trial_status_transition"
+    const val REWARDED_PASS_TRANSITION = "rewarded_pass_transition"
 
     // Diagnostic & Ad Revenue Events
     const val BILLING_CONNECTION_LOST = "billing_connection_lost"

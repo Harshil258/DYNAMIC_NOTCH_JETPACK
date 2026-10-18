@@ -26,9 +26,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
+import ai.emots.kishan_dynamic.ui.components.DynamicIslandPill
+import ai.emots.kishan_dynamic.ui.components.IslandDemoState
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicy
 import ai.emots.kishan_dynamic.ui.kit.AppCard
@@ -101,66 +104,101 @@ private fun ThemePreview(themeMode: AppThemeMode) {
         AppThemeMode.System -> AppTheme.isDark
     }
     val background = if (isDark) Color(0xFF070A12) else Color(0xFFF6F8FC)
-    val surface = if (isDark) Color(0xFF151A29) else Color.White
-    val primary = if (isDark) Color(0xFF9ABEFF) else Color(0xFF2D6CDF)
+    val cardSurface = if (isDark) Color(0xFF131A2D) else Color.White
+    val cardBorder = if (isDark) Color(0x28FFFFFF) else Color(0xFFE2E8F0)
+    val textMain = if (isDark) Color.White else Color(0xFF0F172A)
+    val textMuted = if (isDark) Color(0x99FFFFFF) else Color(0xFF64748B)
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(AppTheme.radius.lg))
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        background,
-                        if (isDark) Color(0xFF111C3C) else Color(0xFFDCEBFF)
-                    )
-                )
-            )
-            .padding(AppTheme.spacing.lg),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
+            .background(background)
+            .border(1.dp, cardBorder, RoundedCornerShape(AppTheme.radius.lg))
+            .padding(AppTheme.spacing.md),
+        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
     ) {
+        // Mini Status Bar + Theme Label
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(
-                modifier = Modifier
-                    .size(38.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black),
-                contentAlignment = Alignment.Center
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                AppleIcon(glyph = AppleGlyph.Notch, tint = Color.White, size = 20.dp)
-            }
-            AppText(
-                text = themeMode.label,
-                style = AppTheme.typography.caption,
-                color = if (isDark) Color.White.copy(alpha = 0.72f) else Color(0xFF1B2435)
-            )
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clip(RoundedCornerShape(AppTheme.radius.md))
-                .background(surface)
-                .border(0.5.dp, primary.copy(alpha = 0.45f), RoundedCornerShape(AppTheme.radius.md))
-                .padding(horizontal = AppTheme.spacing.md),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
                         .size(8.dp)
                         .clip(CircleShape)
-                        .background(primary)
+                        .background(if (isDark) AppTheme.colors.auroraCyan else AppTheme.colors.auroraElectricBlue)
                 )
-                Spacer(modifier = Modifier.size(AppTheme.spacing.sm))
                 AppText(
-                    text = "Every screen follows the same tokens",
+                    text = if (isDark) "Aurora Obsidian" else "Aurora Porcelain",
+                    style = AppTheme.typography.caption,
+                    fontWeight = FontWeight.SemiBold,
+                    color = textMain
+                )
+            }
+            AppText(
+                text = themeMode.label,
+                style = AppTheme.typography.caption.copy(fontSize = 11.sp),
+                color = textMuted
+            )
+        }
+
+        // Mini Dynamic Island Stage inside preview
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .clip(RoundedCornerShape(AppTheme.radius.md))
+                .background(if (isDark) Color.Black else Color(0xFF0B0F19)),
+            contentAlignment = Alignment.Center
+        ) {
+            DynamicIslandPill(
+                state = IslandDemoState.MusicCompact
+            )
+        }
+
+        // Mini UI Sample Card
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(AppTheme.radius.md))
+                .background(cardSurface)
+                .border(0.5.dp, cardBorder, RoundedCornerShape(AppTheme.radius.md))
+                .padding(horizontal = AppTheme.spacing.md, vertical = AppTheme.spacing.sm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                AppText(
+                    text = "Live Experience Card",
                     style = AppTheme.typography.bodySmall,
-                    color = if (isDark) Color.White else Color(0xFF192236),
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.SemiBold,
+                    color = textMain
+                )
+                AppText(
+                    text = if (isDark) "Ink Obsidian foundation" else "Porcelain neutral canvas",
+                    style = AppTheme.typography.caption.copy(fontSize = 10.5.sp),
+                    color = textMuted
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(
+                        if (isDark) AppTheme.colors.auroraCyan.copy(alpha = 0.2f)
+                        else AppTheme.colors.auroraElectricBlue.copy(alpha = 0.12f)
+                    )
+                    .padding(horizontal = 8.dp, vertical = 3.dp)
+            ) {
+                AppText(
+                    text = "ACTIVE",
+                    style = AppTheme.typography.caption.copy(fontSize = 9.sp, fontWeight = FontWeight.Bold),
+                    color = if (isDark) AppTheme.colors.auroraCyan else AppTheme.colors.auroraElectricBlue
                 )
             }
         }

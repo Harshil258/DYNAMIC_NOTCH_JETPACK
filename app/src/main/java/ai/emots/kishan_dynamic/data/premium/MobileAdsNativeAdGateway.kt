@@ -54,7 +54,8 @@ class MobileAdsNativeAdGateway(
     private val revenueTracker: ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker =
         ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker(
             ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker(context)
-        )
+        ),
+    private val placement: String = "settings_native"
 ) : AutoCloseable {
     private val appContext = context.applicationContext
     private val _status = MutableStateFlow<NativeAdStatus>(
@@ -96,7 +97,7 @@ class MobileAdsNativeAdGateway(
                             adValue = value,
                             adFormat = "native",
                             adUnitId = configuration.adUnitId,
-                            placement = "settings_native"
+                            placement = placement
                         )
                     }
                 }

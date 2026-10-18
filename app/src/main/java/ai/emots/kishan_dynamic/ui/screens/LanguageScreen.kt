@@ -137,6 +137,7 @@ fun LanguageScreen(
                             onClick = { select(language) }
                         )
                     }
+                    Spacer(modifier = Modifier.width(AppTheme.spacing.xs))
                 }
                 AppSectionSpacer()
             }

@@ -61,7 +61,8 @@ class MobileAdsBannerGateway(
     private val revenueTracker: ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker =
         ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTracker(
             ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker(context)
-        )
+        ),
+    private val placement: String = "settings_banner"
 ) : AutoCloseable {
     private val appContext = context.applicationContext
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -103,7 +104,7 @@ class MobileAdsBannerGateway(
                                 adValue = value,
                                 adFormat = "banner",
                                 adUnitId = configuration.adUnitId,
-                                placement = "settings_banner"
+                                placement = placement
                             )
                         }
                     }

@@ -1,5 +1,8 @@
 package ai.emots.kishan_dynamic.ui.screens
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -12,8 +15,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import ai.emots.kishan_dynamic.data.model.LiveCapabilityStatus
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,6 +82,75 @@ import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 
 /**
+ * Honest capability badge indicating whether a live activity is driven by
+ * system platform broadcasts, active notification extraction, or preview sandbox.
+ */
+@Composable
+fun LiveCapabilityBadge(
+    status: LiveCapabilityStatus,
+    modifier: Modifier = Modifier
+) {
+    val (label, tint, bgTint) = when (status) {
+        LiveCapabilityStatus.FULLY_LIVE -> Triple(
+            "Platform Event · Always Live",
+            AppTheme.colors.success,
+            AppTheme.colors.success.copy(alpha = 0.12f)
+        )
+        LiveCapabilityStatus.CONDITIONALLY_LIVE -> Triple(
+            "Active Notification · Live when app active",
+            AppTheme.colors.accent,
+            AppTheme.colors.accent.copy(alpha = 0.12f)
+        )
+        LiveCapabilityStatus.PREVIEW_ONLY -> Triple(
+            "Interactive Preview Sandbox",
+            AppTheme.colors.warning,
+            AppTheme.colors.warning.copy(alpha = 0.12f)
+        )
+        LiveCapabilityStatus.UNSUPPORTED -> Triple(
+            "Preview Only · Unsupported Platform API",
+            AppTheme.colors.textTertiary,
+            AppTheme.colors.textTertiary.copy(alpha = 0.12f)
+        )
+    }
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(AppTheme.radius.pill))
+            .background(bgTint)
+            .border(0.7.dp, tint.copy(alpha = 0.3f), RoundedCornerShape(AppTheme.radius.pill))
+            .padding(horizontal = AppTheme.spacing.sm, vertical = 3.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(6.dp)
+                    .clip(CircleShape)
+                    .background(tint)
+            )
+            AppText(
+                text = label,
+                style = AppTheme.typography.caption,
+                fontWeight = FontWeight.Medium,
+                color = tint
+            )
+        }
+    }
+}
+
+private fun capabilityStatusFor(activity: String): LiveCapabilityStatus = when (activity) {
+    "Music", "Timer" -> LiveCapabilityStatus.FULLY_LIVE
+    "Delivery", "Sports", "Flight", "Navigation",
+    "Voice Memo", "Screen Record", "Focus Mode",
+    "AirDrop", "AirPods", "Satellite", "Find My",
+    "Video Remote", "Airplane", "Mirroring",
+    "Mobile Data", "Transit" -> LiveCapabilityStatus.CONDITIONALLY_LIVE
+    "Shortcut", "Moved to iPhone" -> LiveCapabilityStatus.PREVIEW_ONLY
+    else -> LiveCapabilityStatus.PREVIEW_ONLY
+}
+
+/**
  * Live tab — one segmented selector drives both the island stage
  * and the detail card underneath, so the two always agree.
  */
@@ -88,7 +162,29 @@ fun LiveActivitiesScreen() {
         "AirPods", "Satellite", "Find My", "Moved to iPhone", "Video Remote",
         "Airplane", "Mirroring", "Mobile Data", "Transit"
     )
-    var selectedActivityIndex by remember { mutableIntStateOf(0) }
+    val categories = listOf("All", "Live", "Capture", "System", "Alerts")
+    var selectedCategoryIndex by remember { mutableIntStateOf(0) }
+    var selectedActivityName by remember { mutableStateOf("Music") }
+    var isExpandedPreviewMode by remember { mutableStateOf(true) }
+
+    val filteredActivities = remember(selectedCategoryIndex) {
+        when (selectedCategoryIndex) {
+            1 -> listOf("Music", "Delivery", "Sports", "Flight", "Timer", "Navigation")
+            2 -> listOf("Voice Memo", "Screen Record")
+            3 -> listOf("Focus Mode", "AirDrop", "AirPods", "Satellite", "Find My", "Moved to iPhone")
+            4 -> listOf("Shortcut", "Video Remote", "Airplane", "Mirroring", "Mobile Data", "Transit")
+            else -> activityTypes
+        }
+    }
+
+    LaunchedEffect(selectedCategoryIndex) {
+        if (selectedActivityName !in filteredActivities) {
+            selectedActivityName = filteredActivities.first()
+        }
+    }
+
+    val selectedActivityIndex = activityTypes.indexOf(selectedActivityName).coerceAtLeast(0)
+    val selectedFilteredIndex = filteredActivities.indexOf(selectedActivityName).coerceAtLeast(0)
 
     var isMusicPlaying by remember { mutableStateOf(true) }
     var musicProgress by remember { mutableFloatStateOf(42f) }
@@ -294,21 +390,109 @@ fun LiveActivitiesScreen() {
     }
 
     val activeIslandState = when (selectedActivityIndex) {
-        0 -> if (isMusicPlaying) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact
-        1 -> IslandDemoState.DeliveryExpanded
-        2 -> if (isSportsRunning) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
-        3 -> if (isFlightRunning) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
-        4 -> if (isTimerRunning) IslandDemoState.TimerExpanded else IslandDemoState.TimerCompact
-        5 -> if (isNavigationRunning) IslandDemoState.ColorOptions else IslandDemoState.NavigationCompact
-        else -> catalogDemoState(selectedActivityIndex - 6)
+        0 -> if (isExpandedPreviewMode) (if (isMusicPlaying) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact) else IslandDemoState.MusicCompact
+        1 -> if (isExpandedPreviewMode) IslandDemoState.DeliveryExpanded else IslandDemoState.DeliveryCompact
+        2 -> if (isExpandedPreviewMode) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
+        3 -> if (isExpandedPreviewMode) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
+        4 -> if (isExpandedPreviewMode) IslandDemoState.TimerExpanded else IslandDemoState.TimerCompact
+        5 -> if (isExpandedPreviewMode) IslandDemoState.ColorOptions else IslandDemoState.NavigationCompact
+        else -> if (isExpandedPreviewMode) catalogDemoState(selectedActivityIndex - 6) else IslandDemoState.Minimal
     }
 
-    val isCompactPresentation = when (activeIslandState) {
+    val currentPreviewInfo = remember(
+        selectedActivityIndex,
+        isExpandedPreviewMode,
+        deliveryProgress,
+        flightProgress,
+        sportsMinute,
+        navigationProgress,
+        musicProgress,
+        isMusicPlaying
+    ) {
+        when (selectedActivityIndex) {
+            0 -> LiveActivityInfo(
+                id = "preview-music",
+                kind = LiveActivityKind.TIMER,
+                title = "Starboy",
+                subtitle = "The Weeknd · Starboy",
+                progress = musicProgress / 100f,
+                isExpanded = isExpandedPreviewMode,
+                entityName = "Starboy",
+                secondaryText = "The Weeknd · Starboy",
+                statusBadgeText = if (isMusicPlaying) "PLAYING" else "PAUSED",
+                isLiveSource = false
+            )
+            1 -> LiveActivityInfo(
+                id = "preview-delivery",
+                kind = LiveActivityKind.DELIVERY,
+                title = "Chipotle Mexican Grill",
+                subtitle = deliverySubtitle(deliveryProgress),
+                progress = deliveryProgress,
+                isExpanded = isExpandedPreviewMode,
+                entityName = "Chipotle Mexican Grill",
+                secondaryText = "Order #8492 · 2 burrito bowls",
+                statusBadgeText = if (deliveryProgress >= 1f) "DELIVERED" else if (deliveryProgress >= 0.86f) "ARRIVING" else "ON THE WAY",
+                primaryMetric = if (deliveryProgress >= 1f) "Delivered just now" else "Arrives 9:24 PM",
+                secondaryMetric = "Marco · Vespa Sprint · 4.9 ★",
+                actionPhoneNumber = "18005550199",
+                isLiveSource = false
+            )
+            2 -> LiveActivityInfo(
+                id = "preview-sports",
+                kind = LiveActivityKind.SPORTS,
+                title = "UEFA Champions League",
+                subtitle = sportsSubtitle(sportsMinute),
+                progress = sportsMinute / 90f,
+                isExpanded = isExpandedPreviewMode,
+                entityName = "UEFA Champions League",
+                secondaryText = "RMA 2 - 1 MCI",
+                statusBadgeText = if (sportsMinute >= 90) "FULL TIME" else "$sportsMinute' LIVE",
+                primaryMetric = "RMA 2",
+                secondaryMetric = "1 MCI",
+                isLiveSource = false
+            )
+            3 -> LiveActivityInfo(
+                id = "preview-flight",
+                kind = LiveActivityKind.FLIGHT,
+                title = "Delta Air Lines · DL 492",
+                subtitle = flightSubtitle(flightProgress),
+                progress = flightProgress,
+                isExpanded = isExpandedPreviewMode,
+                entityName = "Delta Air Lines · DL 492",
+                secondaryText = "San Francisco to New York",
+                statusBadgeText = if (flightProgress >= 1f) "LANDED" else "IN FLIGHT",
+                primaryMetric = "Gate B14 · Terminal 2",
+                secondaryMetric = flightSubtitle(flightProgress),
+                isLiveSource = false
+            )
+            5 -> LiveActivityInfo(
+                id = "preview-navigation",
+                kind = LiveActivityKind.NAVIGATION,
+                title = "Google Maps",
+                subtitle = navigationSubtitle(navigationProgress),
+                progress = navigationProgress,
+                isExpanded = isExpandedPreviewMode,
+                entityName = "Market St & 4th",
+                secondaryText = "Downtown · San Francisco",
+                statusBadgeText = "IN 200 FT",
+                primaryMetric = if (navigationProgress >= 1f) "Arrived" else "200 ft",
+                secondaryMetric = "I-280 North",
+                maneuverType = "right",
+                isLiveSource = false
+            )
+            else -> {
+                if (selectedActivityIndex >= 6) catalogActivity(selectedActivityIndex - 6) else null
+            }
+        }
+    }
+
+    val isCompactPresentation = !isExpandedPreviewMode || when (activeIslandState) {
         IslandDemoState.MusicCompact,
         IslandDemoState.SportsCompact,
         IslandDemoState.FlightCompact,
         IslandDemoState.TimerCompact,
         IslandDemoState.NavigationCompact,
+        IslandDemoState.DeliveryCompact,
         IslandDemoState.Idle,
         IslandDemoState.Minimal -> true
         else -> false
@@ -320,10 +504,11 @@ fun LiveActivitiesScreen() {
         IslandDemoState.FlightExpanded,
         IslandDemoState.SportsExpanded -> 198.dp
         IslandDemoState.ColorOptions -> 248.dp
-        else -> 168.dp
+        IslandDemoState.TimerExpanded -> 156.dp
+        else -> 176.dp
     }
 
-    AppScreen(bottomInset = BottomDockInset) {
+    AppScreen(bottomInset = BottomDockInset + 28.dp) {
         AppLargeTitle(
             modifier = Modifier.appReveal(0),
             title = "Live Activity",
@@ -331,16 +516,45 @@ fun LiveActivitiesScreen() {
         )
 
         AppScrollableTabs(
-            options = activityTypes,
-            selectedIndex = selectedActivityIndex,
-            onOptionSelected = { selectedActivityIndex = it }
+            options = categories,
+            selectedIndex = selectedCategoryIndex,
+            onOptionSelected = { selectedCategoryIndex = it }
         )
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+        Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
+
+        AppScrollableTabs(
+            options = filteredActivities,
+            selectedIndex = selectedFilteredIndex,
+            onOptionSelected = { selectedActivityName = filteredActivities[it] }
+        )
+
+        Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = AppTheme.spacing.xs),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AppText(
+                text = "Preview Presentation",
+                style = AppTheme.typography.caption,
+                fontWeight = FontWeight.SemiBold,
+                color = AppTheme.colors.textSecondary
+            )
+            AppSegmented(
+                options = listOf("Compact", "Expanded"),
+                selectedIndex = if (isExpandedPreviewMode) 1 else 0,
+                onOptionSelected = { isExpandedPreviewMode = it == 1 },
+                modifier = Modifier.width(170.dp)
+            )
+        }
 
         AppStage(
             modifier = Modifier.appReveal(1),
-            caption = if (selectedActivityIndex == 0) "Tap the island to play or pause" else null,
+            caption = if (selectedActivityIndex == 0) "Tap the island to play or pause" else "Tap island to toggle presentation mode",
             targetHeight = stageTargetHeight,
             showStatusBar = isCompactPresentation
         ) {
@@ -349,8 +563,10 @@ fun LiveActivitiesScreen() {
                 timerLabel = formatTimer(timerRemainingSeconds),
                 timerProgress = (timerRemainingSeconds / (5f * 60f)).coerceIn(0f, 1f),
                 timerRunning = timerRunningByCoordinator,
+                liveActivityInfo = currentPreviewInfo,
                 onTap = {
                     if (selectedActivityIndex == 0) isMusicPlaying = !isMusicPlaying
+                    else isExpandedPreviewMode = !isExpandedPreviewMode
                 },
                 onControlAction = { action ->
                     when (action) {
@@ -475,6 +691,7 @@ fun LiveActivitiesScreen() {
                 else -> CatalogActivityCard(
                     title = activityTypes[index],
                     kind = catalogKind(index - 6),
+                    capability = capabilityStatusFor(activityTypes[index]),
                     isRunning = isCatalogRunning,
                     onToggle = { isCatalogRunning = !isCatalogRunning },
                     onReset = {
@@ -562,6 +779,14 @@ private fun MusicActivityCard(
     )
 
     AppCard {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.spacing.md),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LiveCapabilityBadge(LiveCapabilityStatus.FULLY_LIVE)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -664,6 +889,7 @@ private fun MusicActivityCard(
 private fun CatalogActivityCard(
     title: String,
     kind: LiveActivityKind,
+    capability: LiveCapabilityStatus = LiveCapabilityStatus.CONDITIONALLY_LIVE,
     isRunning: Boolean,
     onToggle: () -> Unit,
     onReset: () -> Unit
@@ -687,6 +913,14 @@ private fun CatalogActivityCard(
     }
 
     AppCard {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LiveCapabilityBadge(capability)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -751,6 +985,14 @@ private fun TimerActivityCard(
     onReset: () -> Unit
 ) {
     AppCard {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LiveCapabilityBadge(LiveCapabilityStatus.FULLY_LIVE)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -830,7 +1072,17 @@ private fun DeliveryActivityCard(
     onToggle: () -> Unit,
     onReset: () -> Unit
 ) {
+    val context = LocalContext.current
+
     AppCard {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LiveCapabilityBadge(LiveCapabilityStatus.CONDITIONALLY_LIVE)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -944,7 +1196,12 @@ private fun DeliveryActivityCard(
                 modifier = Modifier
                     .size(36.dp)
                     .clip(CircleShape)
-                    .background(AppTheme.colors.success.copy(alpha = 0.18f)),
+                    .background(AppTheme.colors.success.copy(alpha = 0.18f))
+                    .clickable {
+                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:18005550199"))
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        try { context.startActivity(intent) } catch (_: Exception) {}
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 AppleIcon(glyph = AppleGlyph.Phone, tint = AppTheme.colors.success, size = 16.dp)
@@ -964,7 +1221,17 @@ private fun NavigationActivityCard(
     onToggle: () -> Unit,
     onReset: () -> Unit
 ) {
+    val context = LocalContext.current
+
     AppCard {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LiveCapabilityBadge(LiveCapabilityStatus.CONDITIONALLY_LIVE)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -1033,11 +1300,23 @@ private fun NavigationActivityCard(
                 fillMaxWidth = false
             )
             AppButton(
+                text = "Open Maps",
+                glyph = AppleGlyph.Maps,
+                style = AppButtonStyle.Secondary,
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=37.7749,-122.4194(Destination)"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    try { context.startActivity(intent) } catch (_: Exception) {}
+                },
+                modifier = Modifier.weight(1f),
+                fillMaxWidth = false
+            )
+            AppButton(
                 text = "Reset",
                 glyph = AppleGlyph.Reset,
                 style = AppButtonStyle.Secondary,
                 onClick = onReset,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(0.8f),
                 fillMaxWidth = false
             )
         }
@@ -1067,6 +1346,14 @@ private fun SportsActivityCard(
     )
 
     AppCard {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LiveCapabilityBadge(LiveCapabilityStatus.CONDITIONALLY_LIVE)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -1204,6 +1491,14 @@ private fun FlightActivityCard(
     onReset: () -> Unit
 ) {
     AppCard {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = AppTheme.spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            LiveCapabilityBadge(LiveCapabilityStatus.CONDITIONALLY_LIVE)
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically

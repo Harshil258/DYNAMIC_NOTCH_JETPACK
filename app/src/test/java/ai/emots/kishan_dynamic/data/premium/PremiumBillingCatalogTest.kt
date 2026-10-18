@@ -20,4 +20,18 @@ class PremiumBillingCatalogTest {
     fun unknownPlansAreRejectedBeforeBillingFlow() {
         assertNull(PremiumBillingCatalog.default().plan("unknown"))
     }
+
+    @Test
+    fun defaultCatalogEnforcesAuthenticBadgesWithoutFabricatedDiscounts() {
+        val catalog = PremiumBillingCatalog.default()
+        assertEquals("Most popular", catalog.plan("yearly")?.badge)
+        assertEquals("Lifetime access", catalog.plan("lifetime")?.badge)
+
+        // Enforce zero fabricated savings or discount percentages
+        catalog.allPlans.forEach { plan ->
+            val badge = plan.badge ?: ""
+            assert(!badge.contains("%")) { "Plan ${plan.planId} contains fabricated percentage discount: $badge" }
+            assert(!badge.contains("Save", ignoreCase = true)) { "Plan ${plan.planId} contains fabricated savings claim: $badge" }
+        }
+    }
 }

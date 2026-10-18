@@ -1,5 +1,7 @@
 package ai.emots.kishan_dynamic.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -70,6 +72,34 @@ class NotificationReplyActivity : ComponentActivity() {
         const val EXTRA_APP_NAME = "app_name"
         const val EXTRA_SENDER = "sender"
         const val EXTRA_MESSAGE = "message"
+
+        fun createIntent(
+            context: Context,
+            notificationId: String,
+            actionId: String,
+            appName: String,
+            sender: String,
+            message: String
+        ): Intent = Intent(context, NotificationReplyActivity::class.java).apply {
+            putExtra(EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(EXTRA_ACTION_ID, actionId)
+            putExtra(EXTRA_APP_NAME, appName)
+            putExtra(EXTRA_SENDER, sender)
+            putExtra(EXTRA_MESSAGE, message)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+
+        fun launch(
+            context: Context,
+            notificationId: String,
+            actionId: String,
+            appName: String,
+            sender: String,
+            message: String
+        ): Boolean = runCatching {
+            context.startActivity(createIntent(context, notificationId, actionId, appName, sender, message))
+            true
+        }.getOrDefault(false)
     }
 }
 

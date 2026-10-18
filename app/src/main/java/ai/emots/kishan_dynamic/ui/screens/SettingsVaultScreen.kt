@@ -58,6 +58,7 @@ import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.RemoveAdsInlineCta
 import ai.emots.kishan_dynamic.ui.components.NativeAdCard
 import ai.emots.kishan_dynamic.ui.components.NativeAdSize
+import ai.emots.kishan_dynamic.ui.dialogs.AdRewardDialog
 import ai.emots.kishan_dynamic.ui.dialogs.FeedbackDialog
 import ai.emots.kishan_dynamic.ui.dialogs.LegalDocumentDialog
 import ai.emots.kishan_dynamic.ui.dialogs.NoInternetDialog
@@ -208,29 +209,23 @@ fun SettingsVaultScreen(
     var showRating by remember { mutableStateOf(false) }
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
+    var showRewardDialog by remember { mutableStateOf(false) }
     var selectedPlanIndex by remember { mutableIntStateOf(2) }
 
     LaunchedEffect(openPremiumOnLaunch) {
         if (openPremiumOnLaunch) showPaywall = true
     }
 
-    LaunchedEffect(openRewardedPassOnLaunch, rewardedGateway) {
-        if (!openRewardedPassOnLaunch) return@LaunchedEffect
-        premiumMessage = when (val activity = context as? Activity) {
-            null -> "Rewarded passes require an active app screen."
-            else -> when (val result = rewardedGateway.show(activity)) {
-                is RewardedPassResult.Unavailable -> result.message
-                is RewardedPassResult.Started -> result.message
-            }
-        }
+    LaunchedEffect(openRewardedPassOnLaunch) {
+        if (openRewardedPassOnLaunch) showRewardDialog = true
     }
 
     val plans = remember {
         listOf(
             PricingPlan("weekly", "Weekly", "₹39"),
             PricingPlan("monthly", "Monthly", "₹59"),
-            PricingPlan("yearly", "Yearly", "₹99", "Save 70%"),
-            PricingPlan("lifetime", "Lifetime", "₹149", "Best value")
+            PricingPlan("yearly", "Yearly", "₹99", "Most popular"),
+            PricingPlan("lifetime", "Lifetime", "₹149", "Lifetime access")
         )
     }
 
@@ -253,11 +248,11 @@ fun SettingsVaultScreen(
                 Column(modifier = Modifier.weight(1f)) {
                     AppText(
                         text = when {
-                            entitlementSnapshot.source == EntitlementSource.LIFETIME -> "Dynamic Island Lifetime"
-                            entitlementSnapshot.source in listOf(EntitlementSource.WEEKLY, EntitlementSource.MONTHLY, EntitlementSource.YEARLY) -> "Dynamic Island Pro"
+                            entitlementSnapshot.source == EntitlementSource.LIFETIME -> "Aurora Pro Lifetime"
+                            entitlementSnapshot.source in listOf(EntitlementSource.WEEKLY, EntitlementSource.MONTHLY, EntitlementSource.YEARLY) -> "Aurora Pro"
                             entitlementSnapshot.isTrial -> "7-Day Trial Active"
                             entitlementSnapshot.isRewarded -> "Reward Pass Active"
-                            else -> "Unlock Pro"
+                            else -> "Unlock Aurora Pro"
                         },
                         style = AppTheme.typography.h3,
                         color = AppTheme.colors.textPrimary
@@ -316,15 +311,8 @@ fun SettingsVaultScreen(
                 Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
                 AppButton(
                     text = "Watch an ad for a ${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)} pass",
-                    onClick = {
-                        premiumMessage = when (val activity = context as? Activity) {
-                            null -> "Rewarded passes require an active app screen."
-                            else -> when (val result = rewardedGateway.show(activity)) {
-                                is RewardedPassResult.Unavailable -> result.message
-                                is RewardedPassResult.Started -> result.message
-                            }
-                        }
-                    },
+                    glyph = AppleGlyph.Play,
+                    onClick = { showRewardDialog = true },
                     style = AppButtonStyle.Secondary
                 )
                 AppButton(
@@ -356,7 +344,7 @@ fun SettingsVaultScreen(
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
                 AdaptiveBannerAdSlot(
                     configuration = bannerConfiguration,
-                    isProActive = isAdFree,
+                    isAdFree = isAdFree,
                     canRequestAds = canRequestAds,
                     onAdLoaded = { bannerLoaded = true }
                 )
@@ -372,7 +360,7 @@ fun SettingsVaultScreen(
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
                 NativeAdCard(
                     configuration = nativeConfiguration,
-                    isProActive = isAdFree,
+                    isAdFree = isAdFree,
                     canRequestAds = canRequestAds,
                     placement = "settings_membership_native",
                     size = if (releaseConfig.bigNativePercentage > 0) NativeAdSize.Big else NativeAdSize.Medium,
@@ -505,14 +493,16 @@ fun SettingsVaultScreen(
                 accent = AppTheme.colors.info,
                 onClick = onNavigateFeedback
             )
-            AppRowDivider()
-            AppNavRow(
-                title = "Component gallery",
-                subtitle = "Preview the shared controls and tokens",
-                glyph = AppleGlyph.Sparkles,
-                accent = AppTheme.colors.accent,
-                onClick = onNavigateGallery
-            )
+            if (isDebugBuild) {
+                AppRowDivider()
+                AppNavRow(
+                    title = "Component gallery",
+                    subtitle = "Preview the shared controls and tokens",
+                    glyph = AppleGlyph.Sparkles,
+                    accent = AppTheme.colors.accent,
+                    onClick = onNavigateGallery
+                )
+            }
             AppRowDivider()
             AppNavRow(
                 title = "Share the app",
@@ -570,6 +560,15 @@ fun SettingsVaultScreen(
                     is PremiumAccessResult.Started -> result.message
                 }
                 showPaywall = false
+            }
+        )
+    }
+    if (showRewardDialog) {
+        AdRewardDialog(
+            onDismiss = { showRewardDialog = false },
+            onNavigateToPremium = {
+                showRewardDialog = false
+                onNavigatePremium()
             }
         )
     }

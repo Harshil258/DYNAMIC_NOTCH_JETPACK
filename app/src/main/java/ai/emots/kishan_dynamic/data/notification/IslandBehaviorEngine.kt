@@ -62,7 +62,8 @@ data class ChildNotice(
     val timestamp: Long,
     val expiresAtMonotonic: Long,
     val isMilestone: Boolean = false,
-    val isPaused: Boolean = false
+    val isPaused: Boolean = false,
+    val token: Long = 0L
 )
 
 /**
@@ -73,7 +74,7 @@ sealed interface IslandSideEffect {
     data class CancelAndroidNotification(val notificationId: String) : IslandSideEffect
     data class LaunchContentIntent(val notificationId: String) : IslandSideEffect
     data class StartPreviewTimer(val token: Long, val durationMs: Long) : IslandSideEffect
-    data class StartChildTimer(val childKey: String, val durationMs: Long) : IslandSideEffect
+    data class StartChildTimer(val childKey: String, val token: Long, val durationMs: Long) : IslandSideEffect
     data class CancelTimer(val token: Long) : IslandSideEffect
     data class LogTrace(val record: IslandTraceRecord) : IslandSideEffect
 }
@@ -98,7 +99,7 @@ sealed interface IslandEngineEvent {
     data object SwipeUp : IslandEngineEvent
     data object OutsideTap : IslandEngineEvent
     data class PreviewTimeout(val token: Long) : IslandEngineEvent
-    data class ChildTimeout(val childKey: String) : IslandEngineEvent
+    data class ChildTimeout(val childKey: String, val token: Long) : IslandEngineEvent
     data class SelectPage(val notificationId: String) : IslandEngineEvent
     data object NextPage : IslandEngineEvent
     data object PreviousPage : IslandEngineEvent
@@ -109,6 +110,11 @@ sealed interface IslandEngineEvent {
     data object DoubleTapCompact : IslandEngineEvent
     data class TouchChild(val childKey: String) : IslandEngineEvent
     data class ReleaseChild(val childKey: String) : IslandEngineEvent
+    data class ArtworkUpdated(
+        val notificationId: String,
+        val imagePath: String?,
+        val picturePath: String?
+    ) : IslandEngineEvent
 }
 
 /**
@@ -135,8 +141,16 @@ data class IslandBehaviorState(
     val childNotices: List<ChildNotice> = emptyList(),
     val tombstones: Map<String, IslandTombstone> = emptyMap(),
     val activeToken: Long = 0L,
+    val nextChildToken: Long = 1L,
+    val previousOwnership: IslandInteractionOwnership = IslandInteractionOwnership.SYSTEM_IDLE,
     val suspendedBeforeCall: IslandBehaviorState? = null
-)
+) {
+    val totalPendingCount: Int
+        get() = (queue.notifications.size - 1).coerceAtLeast(0)
+
+    fun overflowCount(visibleChildCount: Int): Int =
+        (queue.notifications.size - 1 - visibleChildCount).coerceAtLeast(0)
+}
 
 /**
  * Explicit decision bundle returned by the behavior engine.
@@ -178,7 +192,7 @@ class IslandBehaviorEngine(
             is IslandEngineEvent.SwipeUp -> handleSwipeUp(state)
             is IslandEngineEvent.OutsideTap -> handleOutsideTap(state)
             is IslandEngineEvent.PreviewTimeout -> handlePreviewTimeout(state, event.token)
-            is IslandEngineEvent.ChildTimeout -> handleChildTimeout(state, event.childKey)
+            is IslandEngineEvent.ChildTimeout -> handleChildTimeout(state, event.childKey, event.token)
             is IslandEngineEvent.SelectPage -> handleSelectPage(state, event.notificationId)
             is IslandEngineEvent.NextPage -> handleNextPage(state)
             is IslandEngineEvent.PreviousPage -> handlePreviousPage(state)
@@ -189,6 +203,7 @@ class IslandBehaviorEngine(
             is IslandEngineEvent.DoubleTapCompact -> handleDoubleTapCompact(state)
             is IslandEngineEvent.TouchChild -> handleTouchChild(state, event.childKey)
             is IslandEngineEvent.ReleaseChild -> handleReleaseChild(state, event.childKey, nowMonotonic, settings)
+            is IslandEngineEvent.ArtworkUpdated -> handleArtworkUpdated(state, event)
         }
 
         // Generate debug trace record
@@ -269,6 +284,7 @@ class IslandBehaviorEngine(
             )
 
             // Spawn child satellite mini-notice (UX-C11 / UX-C14)
+            val childToken = state.nextChildToken
             val newChild = ChildNotice(
                 key = incoming.id,
                 packageName = incoming.packageName,
@@ -277,7 +293,8 @@ class IslandBehaviorEngine(
                 text = incoming.text,
                 timestamp = incoming.timestamp,
                 expiresAtMonotonic = nowMonotonic + settings.childDurationMs,
-                isMilestone = isMilestoneResurfacing
+                isMilestone = isMilestoneResurfacing,
+                token = childToken
             )
             val updatedChildren = (listOf(newChild) + state.childNotices.filterNot { it.key == incoming.id })
                 .take(settings.maxChildNotices)
@@ -286,10 +303,11 @@ class IslandBehaviorEngine(
                 state = state.copy(
                     queue = updatedQueue,
                     childNotices = updatedChildren,
-                    tombstones = updatedTombstones
+                    tombstones = updatedTombstones,
+                    nextChildToken = childToken + 1
                 ),
                 action = IslandDomainAction.UpsertChildNotice,
-                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, settings.childDurationMs)),
+                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, childToken, settings.childDurationMs)),
                 reason = "user_expanded_active_pin_selection_spawn_child"
             )
         }
@@ -300,6 +318,7 @@ class IslandBehaviorEngine(
                 state.queue,
                 NotificationEvent.Posted(incoming, isSilentUpdate = true)
             )
+            val childToken = state.nextChildToken
             val newChild = ChildNotice(
                 key = incoming.id,
                 packageName = incoming.packageName,
@@ -308,7 +327,8 @@ class IslandBehaviorEngine(
                 text = incoming.text,
                 timestamp = incoming.timestamp,
                 expiresAtMonotonic = nowMonotonic + settings.childDurationMs,
-                isMilestone = isMilestoneResurfacing
+                isMilestone = isMilestoneResurfacing,
+                token = childToken
             )
             val updatedChildren = (listOf(newChild) + state.childNotices.filterNot { it.key == incoming.id })
                 .take(settings.maxChildNotices)
@@ -317,10 +337,11 @@ class IslandBehaviorEngine(
                 state = state.copy(
                     queue = updatedQueue,
                     childNotices = updatedChildren,
-                    tombstones = updatedTombstones
+                    tombstones = updatedTombstones,
+                    nextChildToken = childToken + 1
                 ),
                 action = IslandDomainAction.UpsertChildNotice,
-                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, settings.childDurationMs)),
+                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, childToken, settings.childDurationMs)),
                 reason = "transient_preview_active_spawn_child"
             )
         }
@@ -694,12 +715,17 @@ class IslandBehaviorEngine(
 
     private fun handleChildTimeout(
         state: IslandBehaviorState,
-        childKey: String
+        childKey: String,
+        token: Long
     ): IslandBehaviorDecision {
         // A35 / UX-C15: Child expires untouched: visually merges into main, queue unchanged
         val child = state.childNotices.firstOrNull { it.key == childKey }
-        if (child?.isPaused == true) {
+            ?: return IslandBehaviorDecision(state = state, action = IslandDomainAction.None, reason = "child_already_removed")
+        if (child.isPaused) {
             return IslandBehaviorDecision(state = state, action = IslandDomainAction.None, reason = "child_timeout_ignored_paused")
+        }
+        if (child.token != token) {
+            return IslandBehaviorDecision(state = state, action = IslandDomainAction.None, reason = "stale_child_token_ignored")
         }
         val updatedChildren = state.childNotices.filterNot { it.key == childKey }
 
@@ -714,13 +740,17 @@ class IslandBehaviorEngine(
         state: IslandBehaviorState,
         childKey: String
     ): IslandBehaviorDecision {
-        val updatedChildren = state.childNotices.map { child ->
-            if (child.key == childKey) child.copy(isPaused = true) else child
+        val child = state.childNotices.firstOrNull { it.key == childKey }
+            ?: return IslandBehaviorDecision(state = state, action = IslandDomainAction.None, reason = "child_not_found")
+        val prev = if (state.ownership != IslandInteractionOwnership.CHILD_INTERACTION) state.ownership else state.previousOwnership
+        val updatedChildren = state.childNotices.map {
+            if (it.key == childKey) it.copy(isPaused = true) else it
         }
         return IslandBehaviorDecision(
             state = state.copy(
                 childNotices = updatedChildren,
-                ownership = IslandInteractionOwnership.CHILD_INTERACTION
+                ownership = IslandInteractionOwnership.CHILD_INTERACTION,
+                previousOwnership = prev
             ),
             action = IslandDomainAction.None,
             reason = "child_touch_pause_timer"
@@ -733,13 +763,19 @@ class IslandBehaviorEngine(
         nowMonotonic: Long,
         settings: IslandBehaviorSettings
     ): IslandBehaviorDecision {
-        val updatedChildren = state.childNotices.map { child ->
-            if (child.key == childKey) child.copy(
+        val child = state.childNotices.firstOrNull { it.key == childKey }
+            ?: return IslandBehaviorDecision(state = state, action = IslandDomainAction.None, reason = "child_not_found")
+        val nextToken = state.nextChildToken
+        val updatedChildren = state.childNotices.map {
+            if (it.key == childKey) it.copy(
                 isPaused = false,
+                token = nextToken,
                 expiresAtMonotonic = nowMonotonic + settings.childDurationMs
-            ) else child
+            ) else it
         }
-        val targetOwnership = if (state.queue.notifications.size > 1) {
+        val targetOwnership = if (state.previousOwnership != IslandInteractionOwnership.CHILD_INTERACTION) {
+            state.previousOwnership
+        } else if (state.queue.notifications.size > 1) {
             IslandInteractionOwnership.PAGER_ACTIVE
         } else {
             IslandInteractionOwnership.SYSTEM_IDLE
@@ -747,10 +783,11 @@ class IslandBehaviorEngine(
         return IslandBehaviorDecision(
             state = state.copy(
                 childNotices = updatedChildren,
-                ownership = targetOwnership
+                ownership = targetOwnership,
+                nextChildToken = nextToken + 1
             ),
             action = IslandDomainAction.None,
-            effects = listOf(IslandSideEffect.StartChildTimer(childKey, settings.childDurationMs)),
+            effects = listOf(IslandSideEffect.StartChildTimer(childKey, nextToken, settings.childDurationMs)),
             reason = "child_release_reset_timer"
         )
     }
@@ -873,5 +910,20 @@ class IslandBehaviorEngine(
     private fun handleDoubleTapCompact(state: IslandBehaviorState): IslandBehaviorDecision {
         // U04: Double-tap on compact pill is safely mapped to a single expand intent
         return handleTapCompact(state)
+    }
+
+    private fun handleArtworkUpdated(
+        state: IslandBehaviorState,
+        event: IslandEngineEvent.ArtworkUpdated
+    ): IslandBehaviorDecision {
+        val updatedQueue = reducer.reduce(
+            state.queue,
+            NotificationEvent.ArtworkUpdated(event.notificationId, event.imagePath, event.picturePath)
+        )
+        return IslandBehaviorDecision(
+            state = state.copy(queue = updatedQueue),
+            action = IslandDomainAction.None,
+            reason = "artwork_updated_in_place"
+        )
     }
 }

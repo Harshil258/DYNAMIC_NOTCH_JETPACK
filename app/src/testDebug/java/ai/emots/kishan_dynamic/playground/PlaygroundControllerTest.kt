@@ -62,7 +62,8 @@ class PlaygroundControllerTest {
             elapsed += 100
         }
         val state = controller.snapshot.value.state as IslandState.Notification
-        assertEquals("mock-30", state.notifications.single().id)
+        assertEquals("mock-30", state.notifications.first().id)
+        assertEquals(30, state.notifications.size)
         assertEquals(30, controller.snapshot.value.eventCount)
         assertFalse(controller.snapshot.value.sequenceRunning)
     }

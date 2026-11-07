@@ -67,8 +67,67 @@ class PlaygroundController(
     ): ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision {
         val decision = behaviorEngine.reduce(engineState, event, nowMonotonic)
         engineState = decision.state
+        syncStateFromEngine(decision)
         return decision
     }
+
+    private fun syncStateFromEngine(decision: ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision? = null) {
+        val q = engineState.queue
+        val presentation = engineState.targetPresentation
+        val currentSnap = mutable.value
+        val newState = when {
+            presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.QUICK_CONTROLS -> {
+                IslandState.ActionControl(notificationCount = q.notifications.size)
+            }
+            presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.TRANSIENT_PREVIEW ||
+            presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.USER_EXPANDED ||
+            presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.PAGER -> {
+                if (q.notifications.isNotEmpty()) {
+                    IslandState.Notification(
+                        notifications = q.notifications,
+                        isExpanded = true,
+                        activeIndex = q.activeIndex,
+                        expandedByUser = (presentation != ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.TRANSIENT_PREVIEW)
+                    )
+                } else IslandState.Minimal
+            }
+            presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.COMPACT -> {
+                if (q.notifications.isNotEmpty()) {
+                    IslandState.Notification(
+                        notifications = q.notifications,
+                        isExpanded = false,
+                        activeIndex = q.activeIndex
+                    )
+                } else IslandState.Minimal
+            }
+            presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.IDLE ||
+            presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.HIDDEN -> {
+                if (presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.HIDDEN) {
+                    IslandState.Hidden
+                } else {
+                    IslandState.Minimal
+                }
+            }
+            else -> currentSnap.state
+        }
+        val newSelected = when (newState) {
+            is IslandState.ActionControl -> PlaygroundCase.Controls
+            is IslandState.Notification -> if (newState.isExpanded) PlaygroundCase.Expanded else PlaygroundCase.Compact
+            is IslandState.Minimal -> PlaygroundCase.Idle
+            is IslandState.Hidden -> PlaygroundCase.Hidden
+            else -> currentSnap.selected
+        }
+        val actionText = decision?.action?.name ?: "Synchronized"
+        mutable.update {
+            it.copy(
+                selected = newSelected,
+                state = newState,
+                feedback = "Engine: $actionText · ${engineState.ownership.name} · ${q.notifications.size} queued",
+                eventCount = it.eventCount + 1
+            )
+        }
+    }
+
     fun options(change: (PlaygroundOptions) -> PlaygroundOptions) {
         mutable.update { it.copy(options = change(it.options)) }
         // Refresh mock copy immediately, keeping the current expansion when possible.
@@ -76,12 +135,52 @@ class PlaygroundController(
         mutable.update { it.copy(state = mockState(current.selected, current.options,
             expanded = current.state.presentationMode == IslandPresentationMode.EXPANDED)) }
     }
-    fun select(case: PlaygroundCase) { cancelSequence(); emit(case) }
+
+    fun select(case: PlaygroundCase) {
+        cancelSequence()
+        when (case) {
+            PlaygroundCase.Idle -> {
+                engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
+            }
+            PlaygroundCase.Hidden -> {
+                engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(
+                    targetPresentation = ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.HIDDEN
+                )
+            }
+            PlaygroundCase.Compact, PlaygroundCase.Minimal -> {
+                val n = mockNotification(mutable.value.options)
+                engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(
+                    queue = ai.emots.kishan_dynamic.data.notification.NotificationQueueState(listOf(n)),
+                    selectedKey = n.id,
+                    targetPresentation = ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.COMPACT
+                )
+            }
+            PlaygroundCase.Expanded -> {
+                val n = mockNotification(mutable.value.options)
+                engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(
+                    queue = ai.emots.kishan_dynamic.data.notification.NotificationQueueState(listOf(n)),
+                    selectedKey = n.id,
+                    ownership = ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.USER_EXPANDED,
+                    targetPresentation = ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.USER_EXPANDED
+                )
+            }
+            PlaygroundCase.Controls -> {
+                engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(
+                    ownership = ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.USER_EXPANDED,
+                    targetPresentation = ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.QUICK_CONTROLS
+                )
+            }
+            else -> Unit
+        }
+        emit(case)
+    }
+
     private fun emit(case: PlaygroundCase) {
         mutable.update { it.copy(selected = case, state = mockState(case, it.options),
-            feedback = "${case.title} · simulated", eventCount = it.eventCount + 1) }
+            feedback = "${case.title} · simulated fixture", eventCount = it.eventCount + 1) }
         startClock()
     }
+
     fun startClock() {
         clock?.cancel()
         if (mutable.value.selected !in setOf(PlaygroundCase.Timer, PlaygroundCase.Music, PlaygroundCase.Multiple, PlaygroundCase.ActiveCall, PlaygroundCase.Recording)) return
@@ -103,12 +202,54 @@ class PlaygroundController(
             }
         }
     }
+
     fun stopClock() { clock?.cancel(); clock = null }
-    fun selectNotification(id: String) { mutable.update { current ->
-        val state = current.state as? IslandState.Notification ?: return@update current
-        val index = state.notifications.indexOfFirst { it.id == id }
-        if (index < 0) current else current.copy(state = state.copy(activeIndex = index))
-    } }
+
+    fun selectNotification(id: String) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.SelectPage(id))
+    }
+
+    fun dismissActiveNotification() {
+        val activeId = engineState.selectedKey ?: engineState.queue.activeNotificationId
+        if (activeId != null) {
+            dismissNotification(activeId)
+        } else {
+            select(PlaygroundCase.Idle)
+        }
+    }
+
+    fun dismissNotification(id: String) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCloseButton(id))
+    }
+
+    fun removeSourceNotification(id: String) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.RemoveNotification(id))
+    }
+
+    fun postSyntheticNotification(notification: NotificationInfo = mockNotification(mutable.value.options)) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(notification))
+    }
+
+    fun touchChild(childKey: String) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TouchChild(childKey))
+    }
+
+    fun releaseChild(childKey: String) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ReleaseChild(childKey))
+    }
+
+    fun childTimeout(childKey: String, token: Long) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildTimeout(childKey, token))
+    }
+
+    fun promoteChild(childKey: String) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapChild(childKey))
+    }
+
+    fun previewTimeout(token: Long = engineState.activeToken) {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PreviewTimeout(token))
+    }
+
     fun replay() {
         cancelSequence()
         val restore = mutable.value.state
@@ -118,7 +259,9 @@ class PlaygroundController(
             mutable.update { it.copy(state = restore, replay = it.replay + 1, sequenceRunning = false) }
         }
     }
+
     fun message(text: String) { mutable.update { it.copy(feedback = text) } }
+
     fun interaction(companion: Boolean = false, longPress: Boolean = false) {
         val state = mutable.value.state
         val action = when {
@@ -128,33 +271,44 @@ class PlaygroundController(
         }
         when (action) {
             IslandInteractionAction.NONE -> message("No action for this production interaction policy")
-            IslandInteractionAction.OPEN_QUICK_CONTROLS -> select(PlaygroundCase.Controls)
-            IslandInteractionAction.OPEN_MUSIC -> mutable.update { it.copy(state = IslandState.Music(mockMusic, true)) }
-            IslandInteractionAction.OPEN_NOTIFICATIONS -> mutable.update {
-                val notifications = when (val source = it.state) {
-                    is IslandState.Notification -> source.notifications
-                    is IslandState.NotificationWithMusic -> source.notifications
-                    else -> listOf(mockNotification(it.options))
-                }
-                it.copy(state = IslandState.Notification(notifications, true))
+            IslandInteractionAction.OPEN_QUICK_CONTROLS -> {
+                dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact)
             }
-            IslandInteractionAction.OPEN_NEXT_NOTIFICATION -> mutable.update {
-                val source = it.state as? IslandState.Notification
-                if (source == null) it else it.copy(state = source.copy(activeIndex = (source.activeIndex + 1) % source.notifications.size))
+            IslandInteractionAction.OPEN_MUSIC -> mutable.update { it.copy(state = IslandState.Music(mockMusic, true)) }
+            IslandInteractionAction.OPEN_NOTIFICATIONS -> {
+                dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact)
+            }
+            IslandInteractionAction.OPEN_NEXT_NOTIFICATION -> {
+                dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.NextPage)
             }
             IslandInteractionAction.TOGGLE_EXPANSION -> expand(true)
         }
     }
-    fun expand(expanded: Boolean) { mutable.update { current ->
-        current.copy(state = when (val state = current.state) {
-            is IslandState.Notification -> state.copy(isExpanded = expanded, expandedByUser = expanded)
-            is IslandState.Music -> state.copy(isExpanded = expanded)
-            is IslandState.OngoingCall -> state.copy(isExpanded = expanded)
-            is IslandState.LiveActivity -> state.copy(activity = state.activity.copy(isExpanded = expanded))
-            is IslandState.RingerMode -> state.copy(isExpanded = expanded)
-            else -> if (expanded) state else IslandState.Minimal
-        })
-    } }
+
+    fun expand(expanded: Boolean) {
+        if (!expanded) {
+            if (mutable.value.state is IslandState.Notification) {
+                dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.SwipeUp)
+                return
+            }
+        } else {
+            if (mutable.value.state is IslandState.Notification || mutable.value.state is IslandState.Minimal) {
+                dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact)
+                return
+            }
+        }
+        mutable.update { current ->
+            current.copy(state = when (val state = current.state) {
+                is IslandState.Notification -> state.copy(isExpanded = expanded, expandedByUser = expanded)
+                is IslandState.Music -> state.copy(isExpanded = expanded)
+                is IslandState.OngoingCall -> state.copy(isExpanded = expanded)
+                is IslandState.LiveActivity -> state.copy(activity = state.activity.copy(isExpanded = expanded))
+                is IslandState.RingerMode -> state.copy(isExpanded = expanded)
+                else -> if (expanded) state else IslandState.Minimal
+            })
+        }
+    }
+
     fun control(action: IslandControlAction) {
         when (action) {
             IslandControlAction.MusicPlayPause -> mutable.update { val state = it.state as? IslandState.Music
@@ -177,6 +331,7 @@ class PlaygroundController(
             else -> message("Simulated ${action.name} · no Android, ad or purchase action executed")
         }
     }
+
     fun runSequence(name: String) {
         cancelSequence()
         val cases = when (name) {
@@ -191,6 +346,7 @@ class PlaygroundController(
             finally { mutable.update { it.copy(sequenceRunning = false) } }
         }
     }
+
     fun burst() {
         cancelSequence()
         sequence = scope.launch {
@@ -198,14 +354,13 @@ class PlaygroundController(
             try {
                 for (i in 1..30) {
                     val notification = mockNotification(mutable.value.options).copy(id = "mock-$i", title = "Mock update $i")
-                    mutable.update { it.copy(selected = PlaygroundCase.Compact,
-                        state = IslandState.Notification(listOf(notification)), eventCount = it.eventCount + 1,
-                        feedback = "Burst: $i / 30 · latest snapshot") }
+                    dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(notification))
                     delay(60)
                 }
             } finally { mutable.update { it.copy(sequenceRunning = false) } }
         }
     }
+
     fun cancelSequence() { sequence?.cancel(); sequence = null; mutable.update { it.copy(sequenceRunning = false) } }
     fun runChecks() { checks.value = playgroundSelfChecks() }
 }

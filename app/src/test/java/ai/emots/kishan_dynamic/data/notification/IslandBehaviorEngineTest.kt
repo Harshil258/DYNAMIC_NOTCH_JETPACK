@@ -572,7 +572,8 @@ class IslandBehaviorEngineTest {
         assertEquals(2, state.queue.notifications.size)
 
         // Child timeout fires
-        val decision = engine.reduce(state, IslandEngineEvent.ChildTimeout("n2"), now + 6000L)
+        val token = state.childNotices.first { it.key == "n2" }.token
+        val decision = engine.reduce(state, IslandEngineEvent.ChildTimeout("n2", token), now + 6000L)
 
         assertTrue("Child notice must visually merge and be removed from satellites", decision.state.childNotices.isEmpty())
         assertEquals("Notification must remain in canonical queue after child visual expiry", 2, decision.state.queue.notifications.size)
@@ -787,7 +788,8 @@ class IslandBehaviorEngineTest {
         assertEquals("n1", ingest3.state.selectedKey) // main selection remains pinned
 
         // Child timeout while paused does NOT remove child
-        val timeoutDecision = engine.reduce(ingest3.state, IslandEngineEvent.ChildTimeout("n2"), now + 6000L)
+        val pausedChild = ingest3.state.childNotices.first { it.key == "n2" }
+        val timeoutDecision = engine.reduce(ingest3.state, IslandEngineEvent.ChildTimeout("n2", pausedChild.token), now + 6000L)
         assertEquals(1, timeoutDecision.state.childNotices.count { it.key == "n2" })
 
         // User releases child notice

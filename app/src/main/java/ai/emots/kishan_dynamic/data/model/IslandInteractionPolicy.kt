@@ -12,15 +12,8 @@ enum class IslandInteractionAction {
 
 object IslandInteractionPolicy {
 
-    fun mainTap(
-        state: IslandState,
-        quickControlsOnIdleEnabled: Boolean = false
-    ): IslandInteractionAction = when (state) {
-        is IslandState.Minimal -> if (quickControlsOnIdleEnabled) {
-            IslandInteractionAction.OPEN_QUICK_CONTROLS
-        } else {
-            IslandInteractionAction.NONE
-        }
+    fun mainTap(state: IslandState): IslandInteractionAction = when (state) {
+        is IslandState.Minimal -> IslandInteractionAction.OPEN_QUICK_CONTROLS // UX-C01 (Owner-Approved): Idle single tap opens Quick Controls
         is IslandState.Notification -> if (state.isExpanded) {
             IslandInteractionAction.NONE
         } else {

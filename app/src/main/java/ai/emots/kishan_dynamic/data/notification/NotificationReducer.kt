@@ -252,6 +252,6 @@ class NotificationReducer {
     }
 
     companion object {
-        private const val MAX_NOTIFICATIONS = 20
+        const val MAX_NOTIFICATIONS = 50
     }
 }

@@ -526,6 +526,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     initial = AuroraPreferences.DEFAULT_WIDTH_SCALE
                 )
                 val swipeUpDismiss by preferences.swipeUpDismiss.collectAsState(initial = true)
+                val islandDismissCancelsOs by preferences.islandDismissCancelsOs.collectAsState(initial = false)
                 val musicScrubberEnabled by preferences.musicScrubberEnabled.collectAsState(initial = true)
                 val pulseScale by preferences.pulseScale.collectAsState(initial = 1.15f)
                 val pulseDuration by preferences.pulseDuration.collectAsState(initial = 450)
@@ -661,10 +662,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_EXPAND, mapOf("source" to "overlay_tap"))
                                     if (!(compactMusicControlsEnabled && islandState is IslandState.Music)) {
                                         performIslandInteraction(
-                                            IslandInteractionPolicy.mainTap(
-                                                islandState,
-                                                quickControlsOnIdleEnabled = actionConfig.isEnabled && quickControlsEnabled
-                                            ),
+                                            IslandInteractionPolicy.mainTap(islandState),
                                             actionConfig.isEnabled && quickControlsEnabled
                                         )
                                     }
@@ -699,8 +697,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 onSwipeDismiss = {
                                     analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_SWIPE_DISMISS)
                                     if (swipeUpDismiss) {
-                                        // U01 / PD-009 / PD-010: Collapse only; OS shade and queue unchanged
-                                        IslandStateManager.collapseToMinimal()
+                                        // U01 / PD-009 / PD-010: Non-destructive collapse of expanded card to compact; OS shade untouched
+                                        IslandStateManager.collapseExpanded()
                                     }
                                 },
                                 onControlAction = ::handleIslandControlAction,
@@ -793,9 +791,15 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     }
                                     val notification = notificationItems.firstOrNull { it.id == notificationId }
                                     if (notification != null) {
-                                        // UX-C06 / PD-019: Default is remove from Island queue only, leave Android shade untouched
-                                        IslandStateManager.removeNotification(notificationId)
-                                        NotificationActionRegistry.remove(notificationId)
+                                        val shouldCancelOs = islandDismissCancelsOs && notification.isClearable
+                                        // UX-C06 / PD-019: Default is remove from Island queue only; optional OS cancellation
+                                        val osDismissRequested = IslandStateManager.onUserDismissNotification(
+                                            notificationId,
+                                            requestOsDismiss = shouldCancelOs
+                                        )
+                                        if (osDismissRequested) {
+                                            IslandNotificationListener.instance?.cancelNotification(notificationId)
+                                        }
                                     }
                                 },
                                 callContact = callContact,

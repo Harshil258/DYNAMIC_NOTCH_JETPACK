@@ -52,6 +52,7 @@ class AuroraPreferences(private val context: Context) {
         private val KEY_AUTO_EXPAND = booleanPreferencesKey("auto_expand")
         private val KEY_DISPLAY_DURATION = intPreferencesKey("display_duration")
         private val KEY_SWIPE_UP_DISMISS = booleanPreferencesKey("swipe_up_dismiss")
+        private val KEY_ISLAND_DISMISS_CANCELS_OS = booleanPreferencesKey("island_dismiss_cancels_os")
         private val KEY_VOLUME_HUD = booleanPreferencesKey("volume_hud")
         private val KEY_RINGER_MODE = booleanPreferencesKey("ringer_mode")
         private val KEY_PULSE_SCALE = floatPreferencesKey("pulse_scale")
@@ -130,6 +131,7 @@ class AuroraPreferences(private val context: Context) {
     val autoExpand: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_AUTO_EXPAND] ?: true }
     val displayDuration: Flow<Int> = context.auroraDataStore.data.map { it[KEY_DISPLAY_DURATION] ?: 5 }
     val swipeUpDismiss: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_SWIPE_UP_DISMISS] ?: true }
+    val islandDismissCancelsOs: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_ISLAND_DISMISS_CANCELS_OS] ?: false }
     val volumeHud: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_VOLUME_HUD] ?: true }
     val ringerMode: Flow<Boolean> = context.auroraDataStore.data.map { it[KEY_RINGER_MODE] ?: true }
     val pulseScale: Flow<Float> = context.auroraDataStore.data.map { it[KEY_PULSE_SCALE] ?: 1.15f }
@@ -309,6 +311,10 @@ class AuroraPreferences(private val context: Context) {
 
     suspend fun setSwipeUpDismiss(enabled: Boolean) {
         context.auroraDataStore.edit { it[KEY_SWIPE_UP_DISMISS] = enabled }
+    }
+
+    suspend fun setIslandDismissCancelsOs(enabled: Boolean) {
+        context.auroraDataStore.edit { it[KEY_ISLAND_DISMISS_CANCELS_OS] = enabled }
     }
 
     suspend fun setVolumeHud(enabled: Boolean) {

@@ -8,6 +8,7 @@ import ai.emots.kishan_dynamic.data.model.MusicTrack
 import ai.emots.kishan_dynamic.data.model.NotificationInfo
 import ai.emots.kishan_dynamic.data.model.RingerModeType
 import ai.emots.kishan_dynamic.data.notification.NotificationArtworkRepository
+import ai.emots.kishan_dynamic.data.notification.NotificationReducer
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -88,15 +89,23 @@ class NotificationConcurrencyAndLifecycleStressTest {
         )
 
         val queuedIds = IslandStateManager.notificationSourceIds()
-        assertTrue("Queue must not exceed bounded max limit (20), actual size: ${queuedIds.size}", queuedIds.size <= 20)
-        assertEquals("Queue should be capped at exactly 20 items", 20, queuedIds.size)
+        assertEquals("All 25 distinct notifications must be retained within capacity (50)", 25, queuedIds.size)
 
-        val notifications = when (currentState) {
-            is IslandState.Notification -> currentState.notifications
-            is IslandState.NotificationWithMusic -> currentState.notifications
+        // Post 35 more notifications to exceed capacity
+        for (i in 26..60) {
+            val notification = createNotification(id = "burst_$i", text = "Burst notification #$i", time = i.toLong())
+            IslandStateManager.postNotification(notification, autoExpand = false, displaySeconds = 5)
+        }
+        val cappedIds = IslandStateManager.notificationSourceIds()
+        assertEquals("Queue should be capped at exactly MAX_NOTIFICATIONS (50)", NotificationReducer.MAX_NOTIFICATIONS, cappedIds.size)
+
+        val updatedCurrentState = IslandStateManager.currentState.value
+        val notifications = when (updatedCurrentState) {
+            is IslandState.Notification -> updatedCurrentState.notifications
+            is IslandState.NotificationWithMusic -> updatedCurrentState.notifications
             else -> emptyList()
         }
-        assertTrue("Rendered notifications must be <= 20", notifications.size <= 20)
+        assertTrue("Rendered notifications must be <= MAX_NOTIFICATIONS", notifications.size <= NotificationReducer.MAX_NOTIFICATIONS)
     }
 
     // ---------------------------------------------------------------------------------------------

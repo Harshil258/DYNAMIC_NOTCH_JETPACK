@@ -31,8 +31,13 @@ class IslandInteractionPolicyTest {
         )
     }
 
+    /**
+     * Intentional update per Task 03B / UX-C01 (Owner-Approved):
+     * Single tap on Idle / Minimal state opens Quick Controls (IslandInteractionAction.OPEN_QUICK_CONTROLS).
+     * Replaces legacy Sprint 15 lockout (where Minimal tap returned NONE).
+     */
     @Test
-    fun singleTapExpandsSourceAndMinimalTapDoesNothing() {
+    fun singleTapExpandsSourceAndMinimalTapOpensQuickControls() {
         val music = IslandState.Music(MusicTrack("Song", "Artist"))
         assertEquals(IslandInteractionAction.OPEN_MUSIC, IslandInteractionPolicy.mainTap(music))
 
@@ -40,7 +45,7 @@ class IslandInteractionPolicyTest {
         assertEquals(IslandInteractionAction.OPEN_NOTIFICATIONS, IslandInteractionPolicy.mainTap(notification))
 
         val minimal = IslandState.Minimal
-        assertEquals(IslandInteractionAction.NONE, IslandInteractionPolicy.mainTap(minimal))
+        assertEquals(IslandInteractionAction.OPEN_QUICK_CONTROLS, IslandInteractionPolicy.mainTap(minimal))
     }
 
     @Test

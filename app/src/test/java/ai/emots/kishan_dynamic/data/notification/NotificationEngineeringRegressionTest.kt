@@ -47,7 +47,7 @@ class NotificationEngineeringRegressionTest {
         repeat(1000) { i ->
             state = reducer.reduce(state, NotificationEvent.Posted(
                 item("ongoing-$i", time = i.toLong()).copy(isOngoing = true), isSilentUpdate = true))
-            assertTrue(state.notifications.size <= 20)
+            assertTrue(state.notifications.size <= NotificationReducer.MAX_NOTIFICATIONS)
             assertEquals("selected", state.activeNotificationId)
             assertTrue(state.activeIndex in state.notifications.indices)
             assertEquals(state.notifications.size, state.notifications.map { it.id }.toSet().size)

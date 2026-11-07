@@ -116,24 +116,50 @@ class IslandBehaviorEngineTest {
 
     // =========================================================================
     // Scenario A04: Compact 50 mixed messages -> Pager handles all without duplicates
+    // Tests 0, 1, 12, 25, and 50 eligible notifications, plus updates, removals, and groups.
     // =========================================================================
     @Test
     fun test_A04_compactFiftyMixedMessages_pagerHandlesAllWithoutDuplicates() {
         var state = IslandBehaviorState()
-        for (i in 1..50) {
-            val n = sampleNotification("bulk_$i", timestamp = now + i * 50L)
-            state = engine.reduce(state, IslandEngineEvent.IngestNotification(n), now + i * 50L).state
+        // 0 notifications check
+        assertEquals(0, state.queue.notifications.size)
+
+        // 1 notification check
+        state = engine.reduce(state, IslandEngineEvent.IngestNotification(sampleNotification("n_1")), now).state
+        assertEquals(1, state.queue.notifications.size)
+
+        // Ingest up to 12 notifications
+        for (i in 2..12) {
+            state = engine.reduce(state, IslandEngineEvent.IngestNotification(sampleNotification("n_$i", timestamp = now + i * 10L)), now + i * 10L).state
         }
-        // Post duplicates/updates for 5 keys
+        assertEquals(12, state.queue.notifications.size)
+
+        // Ingest up to 25 notifications
+        for (i in 13..25) {
+            state = engine.reduce(state, IslandEngineEvent.IngestNotification(sampleNotification("n_$i", timestamp = now + i * 10L)), now + i * 10L).state
+        }
+        assertEquals(25, state.queue.notifications.size)
+
+        // Ingest up to 50 notifications
+        for (i in 26..50) {
+            state = engine.reduce(state, IslandEngineEvent.IngestNotification(sampleNotification("n_$i", timestamp = now + i * 10L)), now + i * 10L).state
+        }
+        assertEquals("Queue must retain all 50 eligible notifications without silent dropping", 50, state.queue.notifications.size)
+        assertEquals(50, state.queue.notifications.map { it.id }.distinct().size)
+
+        // Same-key updates for 5 notifications
         for (i in 1..5) {
-            val update = sampleNotification("bulk_$i", text = "Updated $i", timestamp = now + 5000L + i)
+            val update = sampleNotification("n_$i", text = "Updated body $i", timestamp = now + 5000L + i)
             state = engine.reduce(state, IslandEngineEvent.UpdateNotification(update), now + 5000L + i).state
         }
+        assertEquals(50, state.queue.notifications.size)
+        assertEquals(50, state.queue.notifications.map { it.id }.distinct().size)
 
-        // Queue is bounded by NotificationReducer.MAX_NOTIFICATIONS (20) to prevent memory bloat
-        assertEquals("Queue must be safely bounded to 20 notifications without duplication", 20, state.queue.notifications.size)
-        assertEquals(20, state.queue.notifications.map { it.id }.distinct().size)
+        // Removal of 1 notification drops count to 49
+        state = engine.reduce(state, IslandEngineEvent.RemoveNotification("n_10"), now + 5100L).state
+        assertEquals(49, state.queue.notifications.size)
 
+        // Tap compact to open pager
         val decision = engine.reduce(
             state.copy(targetPresentation = IslandPresentationTarget.COMPACT, ownership = IslandInteractionOwnership.SYSTEM_IDLE),
             IslandEngineEvent.TapCompact,
@@ -143,6 +169,7 @@ class IslandBehaviorEngineTest {
         assertEquals(IslandDomainAction.OpenPager, decision.action)
         assertEquals(IslandPresentationTarget.PAGER, decision.state.targetPresentation)
         assertNotNull(decision.state.selectedKey)
+        assertEquals(49, decision.state.queue.notifications.size)
     }
 
     // =========================================================================
@@ -585,12 +612,13 @@ class IslandBehaviorEngineTest {
             state = engine.reduce(state, IslandEngineEvent.IngestNotification(n), now + i * 10L).state
         }
 
-        // Queue is bounded to 20 notifications (MAX_NOTIFICATIONS) to avoid unbounded growth
-        assertEquals(20, state.queue.notifications.size)
+        // All 25 notifications are preserved within capacity (MAX_NOTIFICATIONS = 50)
+        assertEquals(25, state.queue.notifications.size)
+        assertEquals(25, state.queue.notifications.map { it.id }.distinct().size)
         assertNotNull(state.selectedKey)
-        // First became transient preview, remaining child notices queued
+        // First became transient preview, remaining child notices capped to maxChildNotices (4)
         assertEquals(IslandPresentationTarget.TRANSIENT_PREVIEW, state.targetPresentation)
-        assertEquals(24, state.childNotices.size)
+        assertEquals(4, state.childNotices.size)
     }
 
     // =========================================================================
@@ -725,5 +753,190 @@ class IslandBehaviorEngineTest {
         // Removing non-selected item must not change selectedKey
         val removeDecision = engine.reduce(state, IslandEngineEvent.RemoveNotification("n1"), now + 200L)
         assertEquals("n3", removeDecision.state.selectedKey)
+    }
+
+    // =========================================================================
+    // Task 03B Invariant: Child Touch Pauses Timer & Release Resets
+    // =========================================================================
+    @Test
+    fun test_childNoticeTouchPausesTimer_releaseResetsTimer_andBlocksAutoExpand() {
+        val n1 = sampleNotification("n1")
+        val n2 = sampleNotification("n2")
+        var state = engine.reduce(IslandBehaviorState(), IslandEngineEvent.IngestNotification(n1), now).state
+        // Expand pager
+        state = engine.reduce(state, IslandEngineEvent.TapCompact, now).state
+        assertEquals(IslandInteractionOwnership.USER_EXPANDED, state.ownership)
+
+        // Incoming n2 spawns child
+        val ingestDecision = engine.reduce(state, IslandEngineEvent.IngestNotification(n2), now + 500L)
+        state = ingestDecision.state
+        assertEquals(1, state.childNotices.size)
+        assertEquals("n2", state.childNotices.first().key)
+        assertFalse(state.childNotices.first().isPaused)
+
+        // User touches child notice
+        val touchDecision = engine.reduce(state, IslandEngineEvent.TouchChild("n2"), now + 1000L)
+        state = touchDecision.state
+        assertTrue(state.childNotices.first().isPaused)
+        assertEquals(IslandInteractionOwnership.CHILD_INTERACTION, state.ownership)
+
+        // Arriving notification while in CHILD_INTERACTION does NOT auto-expand
+        val n3 = sampleNotification("n3")
+        val ingest3 = engine.reduce(state, IslandEngineEvent.IngestNotification(n3), now + 1500L)
+        assertEquals(IslandDomainAction.UpsertChildNotice, ingest3.action)
+        assertEquals("n1", ingest3.state.selectedKey) // main selection remains pinned
+
+        // Child timeout while paused does NOT remove child
+        val timeoutDecision = engine.reduce(ingest3.state, IslandEngineEvent.ChildTimeout("n2"), now + 6000L)
+        assertEquals(1, timeoutDecision.state.childNotices.count { it.key == "n2" })
+
+        // User releases child notice
+        val releaseDecision = engine.reduce(timeoutDecision.state, IslandEngineEvent.ReleaseChild("n2"), now + 7000L)
+        assertFalse(releaseDecision.state.childNotices.first { it.key == "n2" }.isPaused)
+        assertTrue(releaseDecision.effects.any { it is IslandSideEffect.StartChildTimer && it.childKey == "n2" })
+    }
+
+    // =========================================================================
+    // Task 03B Invariant: Stale Preview Token Rejection
+    // =========================================================================
+    @Test
+    fun test_stalePreviewTokenRejection_doesNotCollapseNewerPreview() {
+        val n1 = sampleNotification("n1")
+        val d1 = engine.reduce(IslandBehaviorState(), IslandEngineEvent.IngestNotification(n1), now)
+        val token1 = d1.state.activeToken
+
+        // Preview 1 collapses to compact
+        val d1Collapsed = engine.reduce(d1.state, IslandEngineEvent.SwipeUp, now + 100L)
+
+        // Notification 2 arrives from compact, starting preview 2 with new token2
+        val n2 = sampleNotification("n2")
+        val d2 = engine.reduce(d1Collapsed.state, IslandEngineEvent.IngestNotification(n2), now + 1000L)
+        val token2 = d2.state.activeToken
+        assertTrue("Second preview must generate a strictly newer active token", token2 > token1)
+
+        // Stale timeout for token1 fires -> must be ignored!
+        val staleTimeoutDecision = engine.reduce(d2.state, IslandEngineEvent.PreviewTimeout(token1), now + 3500L)
+        assertEquals(IslandDomainAction.None, staleTimeoutDecision.action)
+        assertEquals("stale_preview_token_ignored", staleTimeoutDecision.reason)
+        // Presentation remains previewing the active token
+        assertEquals(IslandPresentationTarget.TRANSIENT_PREVIEW, staleTimeoutDecision.state.targetPresentation)
+
+        // Valid timeout for token2 fires -> collapses to compact
+        val validTimeoutDecision = engine.reduce(staleTimeoutDecision.state, IslandEngineEvent.PreviewTimeout(token2), now + 4500L)
+        assertEquals(IslandDomainAction.CollapseToCompact, validTimeoutDecision.action)
+        assertEquals(IslandPresentationTarget.COMPACT, validTimeoutDecision.state.targetPresentation)
+    }
+
+    // =========================================================================
+    // Task 03B Invariant: State Manager Non-Destructive Collapse Matrix
+    // =========================================================================
+    @Test
+    fun test_stateManagerNonDestructiveCollapse_forAllStates() {
+        // Reset state
+        ai.emots.kishan_dynamic.service.IslandStateManager.resetForTesting()
+
+        // 1. Expanded notification with 1 item
+        ai.emots.kishan_dynamic.service.IslandStateManager.postNotification(
+            sampleNotification("notif_single"),
+            autoExpand = false,
+            displaySeconds = 5
+        )
+        ai.emots.kishan_dynamic.service.IslandStateManager.openNotifications()
+        val expandedSingle = ai.emots.kishan_dynamic.service.IslandStateManager.currentState.value
+        assertTrue("Must be expanded", expandedSingle is IslandState.Notification && expandedSingle.isExpanded)
+
+        // Swipe up must collapse without cancelling OS or losing item
+        val swipeResult1 = ai.emots.kishan_dynamic.service.IslandStateManager.handleSwipeDismiss()
+        assertNull("Swipe dismiss on expanded returns null (no notification destroyed)", swipeResult1)
+        val collapsedSingle = ai.emots.kishan_dynamic.service.IslandStateManager.currentState.value
+        assertTrue("Must collapse to compact", collapsedSingle is IslandState.Notification && !collapsedSingle.isExpanded)
+        assertEquals(1, ai.emots.kishan_dynamic.service.IslandStateManager.notificationSourceIds().size)
+
+        // 2. Expanded notification pager with 12 items
+        ai.emots.kishan_dynamic.service.IslandStateManager.resetForTesting()
+        for (i in 1..12) {
+            ai.emots.kishan_dynamic.service.IslandStateManager.postNotification(
+                sampleNotification("pager_$i", timestamp = now + i * 10L),
+                autoExpand = false,
+                displaySeconds = 5
+            )
+        }
+        ai.emots.kishan_dynamic.service.IslandStateManager.openNotifications()
+        val expandedPager = ai.emots.kishan_dynamic.service.IslandStateManager.currentState.value
+        assertTrue("Must be expanded", expandedPager is IslandState.Notification && expandedPager.isExpanded)
+        assertEquals(12, (expandedPager as IslandState.Notification).notifications.size)
+
+        // Swipe up must collapse without losing 12 items
+        val swipeResult2 = ai.emots.kishan_dynamic.service.IslandStateManager.handleSwipeDismiss()
+        assertNull(swipeResult2)
+        val collapsedPager = ai.emots.kishan_dynamic.service.IslandStateManager.currentState.value
+        assertTrue("Must collapse to compact", collapsedPager is IslandState.Notification && !collapsedPager.isExpanded)
+        assertEquals(12, ai.emots.kishan_dynamic.service.IslandStateManager.notificationSourceIds().size)
+
+        // 3. Compact state swipe up must be a non-destructive no-op
+        val swipeCompactResult = ai.emots.kishan_dynamic.service.IslandStateManager.handleSwipeDismiss()
+        assertNull("Compact swipe up is a no-op", swipeCompactResult)
+        assertEquals(12, ai.emots.kishan_dynamic.service.IslandStateManager.notificationSourceIds().size)
+
+        // 4. Music + Notification collapse
+        val track = ai.emots.kishan_dynamic.data.model.MusicTrack("Track", "Artist")
+        ai.emots.kishan_dynamic.service.IslandStateManager.postMusicPlayback(track, isPlaying = true)
+        val musicNotifState = ai.emots.kishan_dynamic.service.IslandStateManager.currentState.value
+        assertTrue(musicNotifState is IslandState.NotificationWithMusic)
+
+        // Clean up
+        ai.emots.kishan_dynamic.service.IslandStateManager.resetForTesting()
+    }
+
+    // =========================================================================
+    // Task 03B Invariant: Milestone Resurfacing Comprehensive Suite
+    // =========================================================================
+    @Test
+    fun test_milestoneResurfacing_comprehensiveSuite() {
+        val nowMs = 1_000_000L
+        val pkg = "com.delivery.app"
+        val notifId = "delivery_101"
+
+        // 1. Initial notification posted and user dismisses from Island
+        val initial = sampleNotification(notifId, packageName = pkg, text = "Order placed, preparing")
+        IslandSuppressionTombstoneRegistry.recordDismissal(initial, nowMs)
+        assertTrue(IslandSuppressionTombstoneRegistry.isSuppressed(notifId))
+
+        // 2. Minor progress update 60% -> 70%: SUPPRESSED
+        val progressUpdate = sampleNotification(notifId, packageName = pkg, text = "Preparing your food (70%)")
+            .copy(progress = 70)
+        assertFalse("Progress update must be suppressed", IslandSuppressionTombstoneRegistry.shouldResurface(progressUpdate))
+
+        // 3. First meaningful nearby alert (2 stops away): RESURFACES ONCE
+        val twoStopsAway = sampleNotification(notifId, packageName = pkg, text = "Driver is 2 stops away")
+        assertTrue("First nearby alert must resurface", IslandSuppressionTombstoneRegistry.shouldResurface(twoStopsAway))
+
+        // Update tombstone after resurfacing
+        val tombstone = IslandSuppressionTombstoneRegistry.createTombstone(initial, nowMs)
+        val updatedTombstone = IslandSuppressionTombstoneRegistry.updateTombstoneAfterResurface(tombstone, twoStopsAway, nowMs + 10_000L)
+
+        // 4. Nearby stop count 2 -> 1: NO REPEATED ALERT (Suppressed)
+        val oneStopAway = sampleNotification(notifId, packageName = pkg, text = "Driver is 1 stop away")
+        val evalOneStop = IslandSuppressionTombstoneRegistry.evaluateUpdate(oneStopAway, updatedTombstone)
+        assertTrue("Subsequent nearby decrement must be suppressed", evalOneStop is MilestoneEvaluation.SuppressedMinorUpdate)
+
+        // 5. Arriving Now: RESURFACES
+        val arrivingNow = sampleNotification(notifId, packageName = pkg, text = "Driver is arriving now!")
+        val evalArriving = IslandSuppressionTombstoneRegistry.evaluateUpdate(arrivingNow, updatedTombstone)
+        assertTrue("Arriving now must resurface", evalArriving is MilestoneEvaluation.ResurfaceMilestone)
+
+        // 6. Delivered: RESURFACES
+        val delivered = sampleNotification(notifId, packageName = pkg, text = "Your package has been delivered")
+        val evalDelivered = IslandSuppressionTombstoneRegistry.evaluateUpdate(delivered, updatedTombstone)
+        assertTrue("Delivered must resurface", evalDelivered is MilestoneEvaluation.ResurfaceMilestone)
+
+        // 7. Minor ETA jitter: SUPPRESSED
+        val etaJitter = sampleNotification(notifId, packageName = pkg, text = "Driver is 2 stops away (ETA 12:04)")
+        val evalEtaJitter = IslandSuppressionTombstoneRegistry.evaluateUpdate(etaJitter, updatedTombstone)
+        assertTrue("ETA jitter must be suppressed", evalEtaJitter is MilestoneEvaluation.SuppressedMinorUpdate)
+
+        // 8. Source removal: CLEARS TOMBSTONE (UX-C08, A28)
+        IslandSuppressionTombstoneRegistry.clear(notifId)
+        assertFalse(IslandSuppressionTombstoneRegistry.isSuppressed(notifId))
     }
 }

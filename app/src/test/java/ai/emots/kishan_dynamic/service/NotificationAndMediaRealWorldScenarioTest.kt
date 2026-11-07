@@ -224,12 +224,18 @@ class NotificationAndMediaRealWorldScenarioTest {
         }
         assertEquals("Queue has 5 items", 5, state.notifications.size)
 
-        // Scale to 25 Notifications (must be capped at MAX_NOTIFICATIONS = 20)
+        // Scale to 25 Notifications (all 25 retained, capacity is 50 per A04)
         for (i in 6..25) {
             state = reducer.reduce(state, NotificationEvent.Posted(createNotification("notif_$i")))
         }
-        assertEquals("Queue is capped at 20 items", 20, state.notifications.size)
+        assertEquals("Queue has 25 items", 25, state.notifications.size)
         assertNotNull("Active notification is valid", state.activeNotification)
+
+        // Scale to 55 Notifications (must be capped at MAX_NOTIFICATIONS = 50 per A04)
+        for (i in 26..55) {
+            state = reducer.reduce(state, NotificationEvent.Posted(createNotification("notif_$i")))
+        }
+        assertEquals("Queue is capped at 50 items", NotificationReducer.MAX_NOTIFICATIONS, state.notifications.size)
     }
 
     @Test

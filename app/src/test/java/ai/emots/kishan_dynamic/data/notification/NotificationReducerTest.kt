@@ -207,7 +207,7 @@ class NotificationReducerTest {
     @Test
     fun queueCapPreservesSelectedPageAndOngoingWork() {
         var state = NotificationQueueState()
-        repeat(20) { index ->
+        repeat(NotificationReducer.MAX_NOTIFICATIONS) { index ->
             state = reducer.reduce(
                 state,
                 NotificationEvent.Posted(notification("item-$index", false, index.toLong()))
@@ -221,7 +221,7 @@ class NotificationReducerTest {
             NotificationEvent.Posted(ongoing, isSilentUpdate = true)
         )
 
-        assertEquals(20, state.notifications.size)
+        assertEquals(NotificationReducer.MAX_NOTIFICATIONS, state.notifications.size)
         assertEquals("item-0", state.activeNotificationId)
         assertTrue(state.notifications.any { it.id == "navigation" })
         assertTrue(state.notifications.any { it.id == "item-0" })

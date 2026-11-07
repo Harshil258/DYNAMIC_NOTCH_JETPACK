@@ -55,7 +55,12 @@ class PlaygroundControllerTest {
     @Test fun rapidEventsRemainBoundedAndFinishAtTheLastSource() = runBlocking {
         val controller = PlaygroundController(this)
         controller.burst()
-        delay(2000)
+        delay(100)
+        var elapsed = 0
+        while (controller.snapshot.value.sequenceRunning && elapsed < 4000) {
+            delay(100)
+            elapsed += 100
+        }
         val state = controller.snapshot.value.state as IslandState.Notification
         assertEquals("mock-30", state.notifications.single().id)
         assertEquals(30, controller.snapshot.value.eventCount)

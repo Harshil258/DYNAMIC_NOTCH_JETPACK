@@ -49,12 +49,26 @@ data class PlaygroundSnapshot(
 )
 data class PlaygroundCheck(val name: String, val passed: Boolean, val detail: String)
 
-class PlaygroundController(private val scope: CoroutineScope) {
+class PlaygroundController(
+    private val scope: CoroutineScope,
+    private val behaviorEngine: ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngine = ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngine()
+) {
     private val mutable = MutableStateFlow(PlaygroundSnapshot())
     val snapshot = mutable.asStateFlow()
     private var sequence: Job? = null
     private var clock: Job? = null
     val checks = MutableStateFlow<List<PlaygroundCheck>>(emptyList())
+    var engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
+        private set
+
+    fun dispatchEngineEvent(
+        event: ai.emots.kishan_dynamic.data.notification.IslandEngineEvent,
+        nowMonotonic: Long = System.nanoTime() / 1_000_000L
+    ): ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision {
+        val decision = behaviorEngine.reduce(engineState, event, nowMonotonic)
+        engineState = decision.state
+        return decision
+    }
     fun options(change: (PlaygroundOptions) -> PlaygroundOptions) {
         mutable.update { it.copy(options = change(it.options)) }
         // Refresh mock copy immediately, keeping the current expansion when possible.
@@ -110,7 +124,7 @@ class PlaygroundController(private val scope: CoroutineScope) {
         val action = when {
             longPress -> IslandInteractionPolicy.mainLongPress(state)
             companion -> IslandInteractionPolicy.companionTap(state)
-            else -> IslandInteractionPolicy.mainTap(state, quickControlsOnIdleEnabled = true)
+            else -> IslandInteractionPolicy.mainTap(state)
         }
         when (action) {
             IslandInteractionAction.NONE -> message("No action for this production interaction policy")
@@ -258,6 +272,11 @@ fun playgroundSelfChecks(): List<PlaygroundCheck> = buildList {
     }
     val compact = mockState(PlaygroundCase.Compact, PlaygroundOptions())
     add(PlaygroundCheck("Notification tap policy", IslandInteractionPolicy.mainTap(compact) == IslandInteractionAction.OPEN_NOTIFICATIONS, "Uses production IslandInteractionPolicy"))
+    add(PlaygroundCheck("Idle tap policy", IslandInteractionPolicy.mainTap(IslandState.Minimal) == IslandInteractionAction.OPEN_QUICK_CONTROLS, "Idle tap opens Quick Controls per UX-C01"))
+    val engine = ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngine()
+    val idleDecision = engine.reduce(ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(), ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact, 0L)
+    add(PlaygroundCheck("Shared Behavior Engine", idleDecision.action == ai.emots.kishan_dynamic.data.notification.IslandDomainAction.OpenQuickControls, "Playground shares canonical IslandBehaviorEngine policy"))
+    add(PlaygroundCheck("Queue Capacity", ai.emots.kishan_dynamic.data.notification.NotificationReducer.MAX_NOTIFICATIONS == 50, "Capacity is 50 per Acceptance Matrix A04"))
     val hole = IslandCutout(170, 0, 190, 32)
     val placement = IslandPlacementPolicy.resolve(360, 800, 80, 48, 0, 11, false, 28, 11, 4, listOf(hole))
     add(PlaygroundCheck("Camera clearance", placement.top >= 36, "Compact content avoids physical camera pixels"))

@@ -197,6 +197,7 @@ fun InlineReplyBox(
  * Layout: App icon / Avatar (44dp circle) + App name & Sender & Message on left,
  * Charcoal pill button [Reply] on right.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NotificationIslandExpanded(
     appName: String = "WhatsApp",
@@ -280,7 +281,7 @@ fun NotificationIslandExpanded(
                     if (onDismiss != null) {
                         Box(
                             modifier = Modifier
-                                .size(26.dp * scale)
+                                .size(AppTheme.island.minimumActionTarget)
                                 .clip(CircleShape)
                                 .background(Color(0xFF2C2C2E))
                                 .clickable(onClick = onDismiss),
@@ -369,7 +370,7 @@ fun NotificationIslandExpanded(
                         if (onToggleExpand != null) {
                             Box(
                                 modifier = Modifier
-                                    .size(26.dp * scale)
+                                    .size(AppTheme.island.minimumActionTarget)
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
                                     .clickable(onClick = onToggleExpand),
@@ -386,7 +387,7 @@ fun NotificationIslandExpanded(
                         if (onDismiss != null) {
                             Box(
                                 modifier = Modifier
-                                    .size(26.dp * scale)
+                                    .size(AppTheme.island.minimumActionTarget)
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
                                     .clickable(onClick = onDismiss),
@@ -498,137 +499,52 @@ fun NotificationIslandExpanded(
                 }
             }
         } else {
-            // STATE 1: COLLAPSED COMPACT BANNER (Sleek 78dp capsule)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .onSizeChanged { size ->
-                        with(density) {
-                            onHeightChange?.invoke(size.height.toDp())
-                        }
-                    }
-                    .padding(horizontal = hPad, vertical = vPad),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    .onSizeChanged { size -> with(density) { onHeightChange?.invoke(size.height.toDp()) } }
+                    .padding(AppTheme.island.expandedContentInset),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.island.expandedContentGap)
             ) {
-                // LEFT: 40dp Avatar + App Name + Sender + 1-line snippet
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp * scale),
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable(enabled = onToggleExpand != null, onClick = { onToggleExpand?.invoke() })
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.island.expandedContentGap)
                 ) {
                     NotificationArtwork(
-                        imagePath = imagePath,
-                        packageName = appPackageName,
-                        modifier = Modifier
-                            .size(40.dp * scale)
-                            .clip(CircleShape),
+                        imagePath = imagePath, packageName = appPackageName,
+                        modifier = Modifier.size(AppTheme.island.expandedIconSize).clip(CircleShape),
                         contentDescription = "$appName icon"
                     )
-
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.weight(1f)
-                    ) {
+                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
                         AppText(
                             text = if (pagerLabel == null) appName else "$appName · $pagerLabel",
-                            style = AppTheme.typography.caption,
-                            fontSize = (11f * scale).sp,
-                            color = Color(0xFFA4A4A9),
-                            fontWeight = FontWeight.Medium
+                            style = AppTheme.typography.caption, color = IslandColors.TextSecondary
                         )
-                        Spacer(modifier = Modifier.height(1.dp * scale))
-                        AppText(
-                            text = sender,
-                            style = AppTheme.typography.islandTitle,
-                            fontSize = (15.5f * scale).sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
+                        AppText(text = sender, style = AppTheme.typography.islandTitle,
+                            color = Color.White, maxLines = 2,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                        if (message.isNotBlank()) AppText(
+                            text = message, style = AppTheme.typography.bodySmall,
+                            color = IslandColors.TextSecondary, maxLines = 2,
                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                         )
-                        if (message.isNotEmpty() || showChronometer) {
-                            Spacer(modifier = Modifier.height(1.dp * scale))
-                            if (showChronometer && chronometerBaseElapsedRealtime > 0L) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(3.dp * scale)
-                                ) {
-                                    if (message.isNotBlank()) {
-                                        AppText(
-                                            text = "$message ·",
-                                            style = AppTheme.typography.caption,
-                                            fontSize = (11.5f * scale).sp,
-                                            color = Color(0xFF9A9A9A),
-                                            maxLines = 1,
-                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                    }
-                                    NotificationChronometerText(
-                                        baseElapsedRealtime = chronometerBaseElapsedRealtime,
-                                        countDown = chronometerCountDown,
-                                        fontSize = (11.5f * scale).sp,
-                                        color = Color(0xFFFF9F0A)
-                                    )
-                                }
-                            } else {
-                                AppText(
-                                    text = if (showChronometer) {
-                                        if (message.isBlank()) "Live activity" else "$message · Live"
-                                    } else message,
-                                    style = AppTheme.typography.caption,
-                                    fontSize = (11.5f * scale).sp,
-                                    color = Color(0xFF9A9A9A),
-                                    maxLines = 1,
-                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                                )
-                            }
+                        if (showChronometer && chronometerBaseElapsedRealtime > 0L) {
+                            NotificationChronometerText(chronometerBaseElapsedRealtime, chronometerCountDown)
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.width(8.dp * scale))
-
-                // RIGHT: Primary Action button + Expand Chevron
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp * scale)
-                ) {
-                    val primaryAction = actions.firstOrNull()
-                    if (primaryAction != null) {
-                        NotificationActionButton(
-                            label = primaryAction.label,
-                            scale = scale,
-                            onClick = { onActionSelected(primaryAction) }
-                        )
-                    } else if (actionLabel.isNotBlank()) {
-                        NotificationActionButton(
-                            label = actionLabel,
-                            scale = scale,
-                            onClick = onAction
-                        )
-                    }
-
-                    if (onToggleExpand != null) {
-                        Box(
-                            modifier = Modifier
-                                .size(28.dp * scale)
-                                .clip(CircleShape)
-                                .background(IslandColors.ButtonNeutral)
-                                .clickable(onClick = onToggleExpand),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppleIcon(
-                                glyph = AppleGlyph.ChevronRight,
-                                tint = Color.White,
-                                size = 12.dp * scale,
-                                modifier = Modifier.graphicsLayer { rotationZ = 90f }
-                            )
+                if (actions.isNotEmpty() || actionLabel.isNotBlank() || onToggleExpand != null) {
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+                    ) {
+                        val primary = actions.firstOrNull()
+                        if (primary != null) {
+                            NotificationActionButton(primary.label, scale) { onActionSelected(primary) }
+                        } else if (actionLabel.isNotBlank()) {
+                            NotificationActionButton(actionLabel, scale, onAction)
                         }
+                        if (onToggleExpand != null) NotificationActionButton("Expand", scale, onToggleExpand)
                     }
                 }
             }
@@ -676,22 +592,11 @@ private fun NotificationActionButton(
     scale: Float,
     onClick: () -> Unit
 ) {
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(percent = 50))
-            .background(IslandColors.ButtonNeutral)
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp * scale, vertical = 9.dp * scale),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = label,
-            color = Color.White,
-            fontSize = (12.5f * scale).sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1
-        )
-    }
+    ai.emots.kishan_dynamic.ui.kit.AppButton(
+        text = label, onClick = onClick,
+        style = ai.emots.kishan_dynamic.ui.kit.AppButtonStyle.Secondary,
+        fillMaxWidth = false
+    )
 }
 
 @Composable
@@ -702,7 +607,7 @@ private fun NotificationPagerButton(
 ) {
     Box(
         modifier = Modifier
-            .size(28.dp * scale)
+            .size(AppTheme.island.minimumActionTarget)
             .clip(CircleShape)
             .background(IslandColors.ButtonNeutral)
             .clickable(onClick = onClick),
@@ -1266,7 +1171,7 @@ fun NotificationPictureCard(
                         if (onToggleExpand != null) {
                             Box(
                                 modifier = Modifier
-                                    .size(26.dp * scale)
+                                    .size(AppTheme.island.minimumActionTarget)
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
                                     .clickable(onClick = onToggleExpand),
@@ -1283,7 +1188,7 @@ fun NotificationPictureCard(
                         if (onDismiss != null && notification.isClearable) {
                             Box(
                                 modifier = Modifier
-                                    .size(26.dp * scale)
+                                    .size(AppTheme.island.minimumActionTarget)
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
                                     .clickable(onClick = onDismiss),
@@ -1449,7 +1354,7 @@ fun NotificationPictureCard(
                     if (onToggleExpand != null) {
                         Box(
                             modifier = Modifier
-                                .size(28.dp * scale)
+                                .size(AppTheme.island.minimumActionTarget)
                                 .clip(CircleShape)
                                 .background(IslandColors.ButtonNeutral)
                                 .clickable(onClick = onToggleExpand),

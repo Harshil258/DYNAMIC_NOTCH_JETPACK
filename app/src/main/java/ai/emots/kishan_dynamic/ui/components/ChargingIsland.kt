@@ -49,10 +49,9 @@ fun ChargingIslandMain(
 
     Row(
         modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 12.dp),
+            .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(6.dp)
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.island.compactContentGap, Alignment.CenterHorizontally)
     ) {
         AppleIcon(
             glyph = if (isLowBattery) AppleGlyph.Battery else AppleGlyph.Power,

@@ -1,0 +1,2051 @@
+{
+  "generated_at": "2026-11-07T19:38:10.032054+00:00",
+  "gradle_status": 0,
+  "device_status": "passed",
+  "release_manifest_clean": true,
+  "cases_current": true,
+  "visual_status": "passed",
+  "cases": [
+    {
+      "class": "ai.emots.kishan_dynamic.ExampleUnitTest",
+      "name": "addition_isCorrect",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.Sprint12DailyUtilityAndArchitectureTest",
+      "name": "testFormatCallDuration",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.Sprint12DailyUtilityAndArchitectureTest",
+      "name": "testFeedbackCategoriesAndSupportAttribution",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.Sprint12DailyUtilityAndArchitectureTest",
+      "name": "testNotificationReplyActivityConstants",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.Sprint12DailyUtilityAndArchitectureTest",
+      "name": "testClockNotificationClassifierStopwatchAndAlarmCategories",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.Sprint12DailyUtilityAndArchitectureTest",
+      "name": "testPlaygroundCatalogIntegrity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTrackerTest",
+      "name": "testTrackAdRevenueConvertsMicrosAndParametersAccurately",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AdMobRevenueTrackerTest",
+      "name": "testTrackAdRevenueSmallFractionalMicros",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AnalyticsTrackerTest",
+      "name": "testScreenDeduplicatorAllowsSubsequentDifferentScreens",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AnalyticsTrackerTest",
+      "name": "testScreenDeduplicatorResetAllowsSameScreenAgain",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AnalyticsTrackerTest",
+      "name": "testScreenDeduplicatorPreventsDuplicateEvents",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AnalyticsTrackerTest",
+      "name": "testScreenDeduplicatorIgnoresBlankScreenNames",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AnalyticsTrackerTest",
+      "name": "testFakeAnalyticsTrackerUserPropertiesAndId",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.AnalyticsTrackerTest",
+      "name": "testFakeAnalyticsTrackerLogsEventsAndParameters",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest",
+      "name": "testOnConnectionLostLogsBillingConnectionLostEvent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest",
+      "name": "testOnPurchaseRecoveredLogsBillingPurchaseRecoveredEvent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest",
+      "name": "testOnConnectionRestoredLogsBillingConnectionRestoredEvent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest",
+      "name": "testOnPurchaseFailedLogsBillingPurchaseFailedEvent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest",
+      "name": "testOnProductQueryFailedLogsBillingProductQueryFailedEvent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest",
+      "name": "testOnConnectionFailedLogsBillingConnectionFailedEvent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testAdMobRevenueTrackerProducesStandardIlarEvent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testScreenDeduplicatorTabSwitchingTransitions",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testZeroPiiWhitelistedExceptionsPermitted",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testNonPurchasedStateDoesNotTriggerPurchaseConversion",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testTypedAnalyticsEventHierarchyLogging",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testBillingConnectionRestoredResetsEpisode",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testUserPropertiesForPaidSubscriber",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testScreenDeduplicatorRecompositionGuard",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testZeroPiiSanitizerThrowsInStrictTestMode",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testPrepopulatedPersistentTransactionIdsPreventConversionDuplicateAcrossRestarts",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testUserPropertiesForInstallTrialUser",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testZeroPiiSanitizerDropsDisallowedSensitiveKeys",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testBillingConnectionLostLogsAnalyticsDiagnostic",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testUserPropertiesForFreeUser",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testPurchasedStateTriggersConversionAndIsIdempotent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest",
+      "name": "testValidEventParametersPassValidation",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.SubscriptionConversionTrackerTest",
+      "name": "testTrackPaywallViewed",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.SubscriptionConversionTrackerTest",
+      "name": "testPurchasePendingCanceledFailedAndRestored",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.SubscriptionConversionTrackerTest",
+      "name": "testTrackVerifiedPurchaseIsIdempotent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.SubscriptionConversionTrackerTest",
+      "name": "testParsePriceAndCurrency",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.SubscriptionConversionTrackerTest",
+      "name": "testTrackPlanSelected",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.analytics.SubscriptionConversionTrackerTest",
+      "name": "testTrackCheckoutStarted",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.battery.BatterySurfacePolicyTest",
+      "name": "batteryOwnsOnlyChargingSurface",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "mapsSwiggyDeliveryDeliveredStatus",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "mapsNavigationWithStructuredFidelityFields",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "flightNotificationMapsToFlightLiveActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "mapsNavigationTurnLeftManeuverCorrectly",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "capabilityStatusReflectsHonestPlatformCapabilities",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "liveActivityInfoDefaultAndCopyIntegrity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "liveActivityPrioritizationPreservesSafetyAndEmergency",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "mapsDeliveryNotificationWithStructuredFidelityFields",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityFidelityAndMappingTest",
+      "name": "sportsActivityPreservesFootballAndRejectsCricket",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest",
+      "name": "presentationModesAreExplicitlyReflected",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest",
+      "name": "ongoingActivityStateReporting",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest",
+      "name": "ongoingActivitiesVersusTransientAlertsClassification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest",
+      "name": "transientAlertsAreNotStickyUnderOwnershipPolicy",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest",
+      "name": "defaultTransientDurationsAreCalibrated",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityPrioritizerTest",
+      "name": "navigationWinsOverRecordingAndNotificationsCannotDisplaceIt",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityPrioritizerTest",
+      "name": "activeTimerWinsOverLowPriorityUtilityPrompt",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityPrioritizerTest",
+      "name": "newerSourceWinsWhenPriorityIsEqual",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivityPrioritizerTest",
+      "name": "expiredActivityIsIgnoredByPrioritizer",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest",
+      "name": "doesNotInventSourceAction",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest",
+      "name": "usesContentIntentWhenNoSemanticActionExists",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest",
+      "name": "prefersUndoOrContinuationActionOverNotificationOpen",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest",
+      "name": "exposesRealStopActionForRecordingActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySurfacePolicyTest",
+      "name": "ordinaryNotificationsKeepTheNotificationSurface",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySurfacePolicyTest",
+      "name": "specializedSourceOwnsItsNotificationSurface",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsOngoingNavigationNotificationToNavigationActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsOngoingScreenRecordingNotification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "doesNotPromoteNavigationRecordingOrDeliveryCopyFromUnknownPackages",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsKnownTransitNotificationToTransitActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsKnownVoiceRecorderNotificationOnlyForRecorderPackages",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsKnownSportsNotificationToSportsActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsDeliveryNotificationToDeliveryActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsStrictOptionalSystemSurfacesFromKnownNotificationSources",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsAuthoritativeClockTimerAndPreservesChronometer",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "ignoresOrdinaryOrCompletedNotifications",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsKnownFlightNotificationToFlightActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "doesNotPromoteOptionalSurfaceCopyFromUnknownPackage",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest",
+      "name": "mapsExplicitQuickShareNotificationToAirDropActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.SatelliteSurfacePolicyTest",
+      "name": "disabledSatelliteClearsTheActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.SatelliteSurfacePolicyTest",
+      "name": "enabledSatelliteProducesAnAppOwnedActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.ScreenMirroringRouteMapperTest",
+      "name": "ignoresDefaultOrUnnamedRoutes",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.liveactivity.ScreenMirroringRouteMapperTest",
+      "name": "mapsSelectedExternalVideoRoute",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.media.MediaPlaybackPositionPolicyTest",
+      "name": "advancesAtSessionSpeed",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.media.MediaPlaybackPositionPolicyTest",
+      "name": "pausedAndUnstampedSessionsDoNotAdvance",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.media.MediaPlaybackPositionPolicyTest",
+      "name": "clampsDurationAndHandlesInvalidValues",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.media.MediaSeekPolicyTest",
+      "name": "unknownDurationStillAllowsForwardAndBackwardSeeking",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.media.MediaSeekPolicyTest",
+      "name": "seekIsClampedToTrackBounds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionCustomPresetTest",
+      "name": "persistedShortcutModelsDefaultToEnabled",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionCustomPresetTest",
+      "name": "presetsHaveUniqueStableIdentifiers",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionCustomPresetTest",
+      "name": "freeAndProCustomActionLimitsStayExplicit",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionIslandReconciliationTest",
+      "name": "removesUnavailablePackagesAndNormalizesOrder",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionIslandReconciliationTest",
+      "name": "emptyPackageSnapshotDoesNotDeleteShortcuts",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionSystemTileTest",
+      "name": "snapshotDistinguishesOffFromActionOnlyTiles",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionSystemTileTest",
+      "name": "referenceSystemTileCatalogHasUniqueStableKeys",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionSystemTileTest",
+      "name": "defaultsRemainUsefulAndStable",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionSystemTileTest",
+      "name": "restrictedWifiVersionsUseSettingsInsteadOfClaimingDirectControl",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.ActionSystemTileTest",
+      "name": "writableSettingsControlsOnlyUseDirectPathWhenPermissionIsGranted",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest",
+      "name": "servicePaused_whenPermissionGrantedInSettingsButServiceNotConnectedInRuntime",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest",
+      "name": "setupRequired_whenNoPermissionsGranted",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest",
+      "name": "running_whenAllPermissionsConnected_andIslandEnabled",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest",
+      "name": "permissionNeeded_whenOnlyOnePermissionGranted",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest",
+      "name": "readyOff_whenAllPermissionsConnected_butIslandDisabledByUser",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest",
+      "name": "starting_whenActivationInProgress",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest",
+      "name": "readyOff_whenIslandDisabledByUser_evenIfServiceNotYetConnected",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandInteractionPolicyTest",
+      "name": "compactLongPressOpensQuickControls",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandInteractionPolicyTest",
+      "name": "viewedActiveNotificationsRemainReachableAndLongPressStaysIndependent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandInteractionPolicyTest",
+      "name": "stackedCompanionOpensNextNotificationInPager",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandInteractionPolicyTest",
+      "name": "singleTapExpandsSourceAndMinimalTapDoesNothing",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandInteractionPolicyTest",
+      "name": "mainAndCompanionOwnDifferentSourcesInMusicNotificationSplit",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandInteractionPolicyTest",
+      "name": "expandedBackgroundTapDoesNothing",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPlacementPolicyTest",
+      "name": "noCutoutCreatesNoInventedCameraClearance",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPlacementPolicyTest",
+      "name": "leftCameraDoesNotCreateBlankSpaceInCenteredContent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPlacementPolicyTest",
+      "name": "userCalibrationNeverPlacesWindowBeyondDisplayEdges",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPlacementPolicyTest",
+      "name": "centeredAndPillCamerasCannotCoverNotificationContent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPlacementPolicyTest",
+      "name": "everyExpandedWidthSitsBelowStatusIconsAndCamera",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPlacementPolicyTest",
+      "name": "rotationUsesNewWindowAndCutoutCoordinates",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPresentationOwnershipPolicyTest",
+      "name": "controlsAndExpandedContentAreUserOwned",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPresentationOwnershipPolicyTest",
+      "name": "transientAlertsAreNeverUserOwnedEvenWhenExpanded",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPresentationOwnershipPolicyTest",
+      "name": "compactContentIsSourceOwned",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPresentationOwnershipPolicyTest",
+      "name": "automaticPeekIsNotUserOwned",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPresentationOwnershipPolicyTest",
+      "name": "liveWorkBlocksTransientConfirmationsEvenWhenCompact",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandPresentationOwnershipPolicyTest",
+      "name": "transientAlertsDoNotBlockTransientConfirmations",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandSystemGeometryTest",
+      "name": "everyShellFamilyFitsSmallNormalLargeAndLandscapeBudgets",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandSystemGeometryTest",
+      "name": "conceptualPhasesAreDerivedAndDoNotConfuseUnreadWithOngoing",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.IslandSystemGeometryTest",
+      "name": "systemWindowsWinAndOwnOverlayDoesNotSuppressItself",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest",
+      "name": "sensitiveNotificationIsRedactedOnlyWhileLocked",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest",
+      "name": "explicitlyPublicNotificationCanRemainVisible",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest",
+      "name": "callIdentityIsMaskedWhileLocked",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.NotificationWithMusicStateTest",
+      "name": "splitStateRetainsTheWholePendingNotificationQueue",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.OverlayDisplayPolicyTest",
+      "name": "lockedDeviceCanRenderOnlyWhenLockScreenVisibilityIsEnabled",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.OverlayDisplayPolicyTest",
+      "name": "systemSurfaceActiveSuppressesRendering",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.OverlayDisplayPolicyTest",
+      "name": "alwaysOnTopDisabledSuppressesIdleStateWhileAllowingActiveEvents",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.OverlayDisplayPolicyTest",
+      "name": "disabledOverlayAndHiddenStateNeverRender",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest",
+      "name": "optionalPermissionsDoNotChangeTheMilestone",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest",
+      "name": "requiredPermissionsMustAllBeGranted",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest",
+      "name": "emptyRequiredSetIsNotASetupCompletionSignal",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.SetupReadinessTest",
+      "name": "onlyGrantedAndConnectedRequiredServicesAreReady",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.SetupReadinessTest",
+      "name": "missingAccessHasAnActionEvenWithStaleConnectionFlags",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.SetupReadinessTest",
+      "name": "areRequiredGranted_returnsTrueWhenBothPermissionsGranted",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.SetupReadinessTest",
+      "name": "grantsCannotHideDisconnectedServices",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest",
+      "name": "selectedLanguageMovesToOnboarding",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest",
+      "name": "completedOnboardingDoesNotReplayFirstRunLanguage",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest",
+      "name": "freshInstallStartsWithLanguageBeforeOnboarding",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest",
+      "name": "editorDeepLinkTargetsEditorOnlyFromMainHub",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "wiFiActiveWithCellularDisabledDoesNotShowMobileDataAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "coldStartWithNoPreviousStateDoesNotShowSpuriousAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "exitingAirplaneModeDismissesAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "onlineToCompletelyOfflineTransitionShowsOfflineAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "setupOrPermissionsPhaseSuppressesAllNetworkAlerts",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "networkRecoveryDismissesAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "grantsOfPhonePermissionDuringWifiConnectedDoesNotTriggerAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest",
+      "name": "transitioningToAirplaneModeShowsAirplaneAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest",
+      "name": "connectedCallCopyIsNotDialing",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest",
+      "name": "ordinaryNotificationIsIgnored",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest",
+      "name": "recognizesDialingCallCopy",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest",
+      "name": "callStyleNotificationExposesVoipHangUpAction",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest",
+      "name": "callStyleNotificationExposesAnswerAndDeclineActionIds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.ClockNotificationClassifierTest",
+      "name": "ignoresUnrelatedChannels",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.ClockNotificationClassifierTest",
+      "name": "recognizesClockFamiliesOnlyWhenCustomContentExists",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationChronometerPolicyTest",
+      "name": "convertsWallClockBaseToMonotonicTime",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationChronometerPolicyTest",
+      "name": "formatsLongAndShortDurations",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationChronometerPolicyTest",
+      "name": "calculatesElapsedAndCountdownValuesWithoutGoingNegative",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationContentResolverTest",
+      "name": "conversationAndSummaryProvideSafeFallbacks",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationContentResolverTest",
+      "name": "bigTextIsReservedForExpandedCopy",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationContentResolverTest",
+      "name": "inboxLinesBecomeTheExpandedConversationCopy",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationDisplayDurationPolicyTest",
+      "name": "preservesSupportedValuesAndRepairsLegacyValues",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationDisplayDurationPolicyTest",
+      "name": "exposesTheReferenceDurationChoicesInOrder",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "publicOtpAndPaymentCopyStillReceivePrivacyProtection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "quieterArrivalDoesNotStealHighImportanceSelection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "multilingualEmptyAndDuplicateFixturesRemainIndependent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "replyEditorClosesOnRemovalRevocationOrActionReplacement",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "updateToAnotherConversationKeepsSelection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "groupNamesCannotMergeDifferentApplications",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "sourceCanRemovePrivateCopyAndArtworkOnUpdate",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "classificationUsesCapabilitiesNotBrandOrMessageProse",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "actionDispatchDoesNotClaimDeliveryAndFailsSafely",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "largeOngoingBurstRemainsBoundedAndRetainsSelection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest",
+      "name": "settledPagerIdentitySurvivesInsertionAndRejectsRemovedPage",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "genuineNavigationTimersTransfersAndMediaCanRemainCompact",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "restartDoesNotReplayOldOrdinaryNotifications",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "launcherZeroProgressMetadataDoesNotQualifyAsActivity",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "blockedSourcesCannotBecomeActivitiesAndNewAlarmsRemainRelevant",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "expiredUnchangedPreviewCannotReplayButNewContentAndRepostsCan",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "freshMessagesPaymentsMailAndUnknownSourcesAreTransient",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "suspendedWorkCannotResurrectRemovedReplacedOrDisconnectedSources",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "silentSystemNoiseIsIgnoredWithoutCancelingSource",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest",
+      "name": "repeatedCallbacksNeverExtendPresentationDeadline",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "liveWorkAndCallsCannotBeReplaced",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "ordinaryNotificationCannotReplaceVisibleCriticalAlert",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "transientConfirmationFinishesBeforeNotificationAppears",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "expandedNotificationUpdatesWithoutChangingUserSurface",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "expandedMusicDefersNotification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "quickControlsRemainVisible",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "compactMusicCanBecomeNotificationMusicSplit",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest",
+      "name": "authoritativeAlarmCanInterruptControlsButNotACall",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicyTest",
+      "name": "keepsRegularDismissibleNotificationOutOfSplitPresentation",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicyTest",
+      "name": "classifiesReferenceLiveActivityCategories",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "silentPostAddsNotificationWithoutChangingExpandedSelection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "removalRestoresTheNextNotification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "lateGroupSummaryIsIgnoredWhenChildrenAlreadyExist",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "queuePagingNextAndPreviousCycles",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "ongoingSilentUpdateUpdatesInPlaceWithoutOverridingActiveNotification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "sameSenderWithDifferentAndroidKeysRemainsTwoSources",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "removingAnotherNotificationPreservesExpandedSelection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "repostReplacesTheSameNotification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "removingSelectedNotificationChoosesNearestSurvivor",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "priorityNotificationsBecomeActiveWithoutDroppingExistingItems",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "dismissActiveRemovesActiveAndAdvancesToNext",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "presentationExpiryDoesNotEvictActiveNotificationFromQueue",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "childNotificationReplacesGroupSummaryWithoutDuplication",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "exactUpdateRemovesActionsNoLongerExposedBySource",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationReducerTest",
+      "name": "queueCapPreservesSelectedPageAndOngoingWork",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationVisibilityStateTest",
+      "name": "updatesKeepReadStateAndNewSourcesBecomeUnseen",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationVisibilityStateTest",
+      "name": "sourceReconciliationDropsStaleReadAndUnreadState",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationVisibilityStateTest",
+      "name": "activeNotificationsStartUnseenAndMarkingSeenDoesNotRemoveThem",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.notification.NotificationVisibilityStateTest",
+      "name": "removedSourcesAreForgottenAndARepostStartsUnseen",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest",
+      "name": "paidProSubscribersSuppressAllAds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest",
+      "name": "trialAndRewardedPassUsersStillSeeInAppAds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest",
+      "name": "paidAdFreeUserNeverSeesBanner",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest",
+      "name": "consentPolicyFailsClosedForUnknownOrFailedState",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest",
+      "name": "consentMustBeReadyBeforeBannerIsRequested",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest",
+      "name": "freeConfiguredUserCanSeeBanner",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest",
+      "name": "missingConfigurationKeepsBannerHidden",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AppOpenAdPolicyTest",
+      "name": "eligibleResumeRequiresFreshLoadedAd",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AppOpenAdPolicyTest",
+      "name": "coldLaunchBlockedAndPremiumSessionsNeverShow",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.AppOpenAdPolicyTest",
+      "name": "freshnessUsesConfiguredFourHourWindow",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "yearlyPurchaseNeverBecomesLifetime",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "restorationCorrectlyIdentifiesPurchasedProducts",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "pendingPurchaseDoesNotUnlockPaidAccessPrematurely",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "weeklyPurchaseNeverBecomesLifetime",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "monthlyPurchaseNeverBecomesLifetime",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "legacyIncorrectlyClassifiedEntitlementIsReconciledCorrectly",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "expiredSubscriptionLosesSubscriptionDerivedAccess",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "installationTrialDoesNotOverridePaidAccess",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "missingExpiryDoesNotProveLifetime",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "offlineStartupHandlesPreviouslyVerifiedOwnershipSafelyWithin7DayCache",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "rewardedAccessDoesNotReplaceVerifiedPaidAccess",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "verifiedLifetimePurchaseRemainsPermanent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "duplicatePurchaseCallbacksDoNotDuplicateTransactionsOrConversions",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "refundOrRevocationRemovesEntitlementAppropriately",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest",
+      "name": "canceledSubscriptionRetainsEntitlementUntilActualExpiry",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.FeatureEntitlementPolicyTest",
+      "name": "proFeaturesLockWhenPassExpires",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.FeatureEntitlementPolicyTest",
+      "name": "proFeaturesUnlockWhenProIsActive",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.FeatureEntitlementPolicyTest",
+      "name": "essentialFeaturesAreNeverGatedForFreeUsers",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.FeatureEntitlementPolicyTest",
+      "name": "proFeaturesAreLockedForFreeUsers",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.FeatureEntitlementPolicyTest",
+      "name": "pendingPaymentDoesNotGrantEntitlement",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.FeatureEntitlementPolicyTest",
+      "name": "respectfulInterstitialCooldownBlocksBackToBackAds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.InterstitialAdFrequencyPolicyTest",
+      "name": "showsOnConfiguredNavigationBoundary",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.InterstitialAdFrequencyPolicyTest",
+      "name": "disabledIntervalsNeverTrigger",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.InterstitialAdFrequencyPolicyTest",
+      "name": "doesNotShowBeforeConfiguredStartScreen",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.InterstitialAdFrequencyPolicyTest",
+      "name": "showsOnConfiguredScreenBoundary",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumAccessGatewayTest",
+      "name": "defaultProviderNeverPretendsToGrantEntitlement",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumBillingCatalogTest",
+      "name": "defaultCatalogSeparatesSubscriptionsAndLifetimePurchase",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumBillingCatalogTest",
+      "name": "defaultCatalogEnforcesAuthenticBadgesWithoutFabricatedDiscounts",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumBillingCatalogTest",
+      "name": "unknownPlansAreRejectedBeforeBillingFlow",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicyTest",
+      "name": "onlyPassesWithinTheTwentyFourHourWarningWindow",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicyTest",
+      "name": "expiredEntitlementsDoNotReappearAsAWarning",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest",
+      "name": "freeUsersCanFreelyOptOutOfCallSummaries",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest",
+      "name": "compactMusicControlsRequireActivePro",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest",
+      "name": "referenceFeatureIdsAreLockedOnlyForFreeUsers",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest",
+      "name": "freeUsersRetainSafeDefaultsForPersistedPremiumSettings",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest",
+      "name": "callSummaryCustomizationRequiresActivePro",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAccessManagerTest",
+      "name": "rewardCooldownExpiryAllowsNextWatch",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAccessManagerTest",
+      "name": "rewardCooldownBlocksImmediateWatching",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAccessManagerTest",
+      "name": "initialRewardedAccessReturnsInactiveSnapshot",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAccessManagerTest",
+      "name": "activeRewardPassHasPositiveRemainingDaysAndHours",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest",
+      "name": "releaseConfigurationIsOptIn",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest",
+      "name": "debugConfigurationUsesGoogleTestPlacements",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest",
+      "name": "runtimeConfigCanEnableAConfiguredProductionPlacement",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest",
+      "name": "runtimeConfigStaysDisabledUntilConsentAllowsRequests",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedPassPolicyTest",
+      "name": "createsAnExpiryFromTheConfiguredDuration",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedPassPolicyTest",
+      "name": "rejectsNonPositiveDurations",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.RewardedPassPolicyTest",
+      "name": "describesReferenceDefaultAsSevenDays",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "expiredTrialMarksActiveFalseAndExpiredTrue",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "adSurfacePolicySuppressesAdsOnlyForPaidAdFreeUsers",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "essentialCoreFeaturesAreNeverGated",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "singleRewardAdGrantsTwentyFourHoursCredit",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "remoteConfigDecoderParsesAlternativeSchemaKeys",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "trialSnapshotAccuratelyReflectsActiveDays",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "trialAndRewardedPassUsersAreProButNOTAdFree",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "lifetimePurchaseIsNonConsumableWithNoExpiry",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "rewardedAccessStacksSeamlesslyBeyondSevenDays",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "monotonicClockRollbackMarksTamperedAndDeactivatesTrial",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "fifteenSecondCooldownTimerEnforcesWaitingPeriod",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "allUsersCanFreelyDisableSoundAndCallFeaturesWithoutSilentRestart",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "expiredEntitlementPermitsShowingExpiryIsland",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "trialSnapshotDefaultsToSevenDaysWhenUninitialized",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest",
+      "name": "paidSubscriptionsTakePrecedenceOverTemporaryPasses",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "interstitialFrequencyRequiresMinimumNinetySecondsCooldown",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "consentPolicyAllowsAdsOnlyWhenStatusReadyAndCanRequestAdsTrue",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "appOpenPolicyBlocksColdLaunchAndFullscreenCollisions",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "consentPolicyAccuratelyReflectsPrivacyOptionsRequirement",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "interstitialFrequencyRequiresMinimumFourScreensAndRespectsStartFromScreen",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "adsSuppressedWhenConsentMissingOrAdUnitEmpty",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "freeUsersReceiveInAppBannerAndNativeAds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "revenueTrackerAttachesGranularPlacementDimensions",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "paidProSubscribersSuppressAllInAppAdsOneHundredPercent",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "appOpenPolicyEnforcesFourHourFreshnessLimit",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "decoderFallsBackGracefullyOnMalformedPayload",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "decoderParsesCompleteReferenceCurrentRemoteConfigPayload",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "trialAndRewardedUsersReceiveInAppBannerAndNativeAds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest",
+      "name": "fullscreenAdCoordinatorPreventsConcurrentFullscreenAds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.TrialManagerTest",
+      "name": "activeTrialCalculatesRemainingDaysAndHoursCorrectly",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.TrialManagerTest",
+      "name": "expiredTrialSetsActiveFalseAndExpiredTrue",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.TrialManagerTest",
+      "name": "uninitializedTrialReturnsInactiveSnapshot",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.premium.TrialManagerTest",
+      "name": "clockRollbackSetsTamperedTrueAndActiveFalse",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "decoderPreservesAppOpenControls",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "analyticsSinkPreservesStructuredProviderEvents",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "decoderAcceptsRemoteCamelCaseAndSnakeCaseFields",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "decoderPreservesBannerAdUnitId",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "offlinePromptRequiresConfiguredEndpointAndRefreshError",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "analyticsJsonEscapesEventValues",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "testDecodingReferenceProjectAdsDetailsNewPayload",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "localConfigDefaultsToSafeOfflineValues",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "remoteProviderKeepsLastGoodSnapshotWhenRefreshFails",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "decoderPreservesInterstitialFrequencyControls",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "blankEndpointDoesNotInvokeTransport",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest",
+      "name": "decoderPreservesNativeAdUnitId",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.UpdatePolicyTest",
+      "name": "ignoresDisabledOrCurrentVersions",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.release.UpdatePolicyTest",
+      "name": "separatesOptionalAndMandatoryUpdates",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.review.RatingPromptPolicyTest",
+      "name": "waitsForTheThirdAppOpen",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.review.RatingPromptPolicyTest",
+      "name": "respectsRatedDisabledAndDismissalLimits",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.review.RatingPromptPolicyTest",
+      "name": "waitsThreeDaysAfterDismissal",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.support.FeedbackPolicyTest",
+      "name": "trimsLongFeedbackToReferenceLimit",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.data.support.FeedbackPolicyTest",
+      "name": "requiresRatingAndWrittenFeedback",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.playground.PlaygroundControllerTest",
+      "name": "edgeCaseOptionsRefreshOnlySyntheticContentAndPreserveExpansion",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.playground.PlaygroundControllerTest",
+      "name": "realInteractionPolicyExpandsAndMockControlsNeverCallExternalHandlers",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.playground.PlaygroundControllerTest",
+      "name": "motionSpeedsChangeTheActualFiniteAnimationSpecAndReachStableEndpoints",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.playground.PlaygroundControllerTest",
+      "name": "rapidEventsRemainBoundedAndFinishAtTheLastSource",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.playground.PlaygroundControllerTest",
+      "name": "everyFixtureUsesARealStateAndPresentationMapping",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.playground.PlaygroundControllerTest",
+      "name": "replayTraversesRealStatesRatherThanRecreatingACopyOfTheAnimation",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.AutoStartSettingsTest",
+      "name": "classifiesCommonOemFamilies",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.BatteryOptimizationAndMonitorTest",
+      "name": "mediaRouteMonitorDoesNotUseActiveDiscoveryScanFlag",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.BatteryOptimizationAndMonitorTest",
+      "name": "actionSystemControllerHasNoPollingScopeOrJobFields",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.BatteryOptimizationAndMonitorTest",
+      "name": "mediaPlaybackPositionPolicyPausesCalculationWhenNotPlaying",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.BatteryOptimizationAndMonitorTest",
+      "name": "ringerModeIndicatorIsDecoupledFromVolumeIndicator",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.BatteryOptimizationAndMonitorTest",
+      "name": "mediaPlaybackPositionClampsAtDuration",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.BatteryOptimizationAndMonitorTest",
+      "name": "bluetoothAccessoryMonitorHasNoPollingIntervalField",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "shortCallUnderTwoSecondsTrackedAccurately",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "callActionLauncherOpenCallRejectsInvalidInput",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "freeUsersCanOptOutOfCallSummary",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "whatsAppNumberFormattingNormalizesVariousInputs",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "duplicateOffhookBroadcastsDeduplicated",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "unknownCallerFallbackWhenNumberIsNull",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "outgoingCallStartedAndEndedTracksDuration",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "monotonicTimeImmunityToWallClockJump",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "subSecondCallFloorsToZeroSeconds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "callDurationAccuracyReliableForStandardCall",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "incomingCallAnsweredAndEndedTracksDurationAndDirection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "notificationPriorityPolicyElevatesMissedCalls",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "duplicateIdleBroadcastsIgnored",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "callActionLauncherOpenSmsRejectsInvalidInput",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "deviceRebootDuringCallFallsBackToWallClock",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "incomingCallRejectedRecordsMissedWithZeroDuration",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "incomingCallMissedRingsAndStopsWithoutAnswer",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "longCallOverOneHourTrackedAccurately",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "concurrencyStressTest",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "receiverRecreationSimulatesAndroidBehavior",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "rapidConsecutiveCallsHandledCleanly",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "processDeathRecoveryRestoresActiveSessionOnIdle",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest",
+      "name": "duplicateRingingBroadcastsDeduplicated",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "notificationReducerQueueScaling1_5_20_AndCapping",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "notificationReducerPrioritizesFinancialAndOtpAtTopOfQueue",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "mediaAudioFirstAndVideoStreamingClassification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "notificationReducerRapidDismissalSafety",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "mediaPauseAutoCollapseDelayConstant",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "financialAndOtpDisplayDurationEnforcesEightSecondMinimum",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "lockScreenPrivacyMasksFinancialNotificationsToPaymentReceived",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "perAppNotificationMutingPolicy",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "otpVerificationCodesClassifiedCorrectly",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest",
+      "name": "upiAndBankingTransactionsClassifiedAsFinancial",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "viewedNotificationsStayActiveAndOnlyExplicitPagerViewingClearsUnseenCount",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioC_lateImageResultDiscardedAfterNotificationRemoval",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioA_burstProcessingTwentyFiveNotificationsRemainsBoundedAndSafe",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioH_mediaRestorationUponNotificationExpiryOrDismissal",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioG_sourceReconciliationPrunesDismissedPlatformNotifications",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioB_concurrentMultiThreadedStateMutationsDoNotThrowOrCorruptState",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioI_resourcePressureAndBoundedArtworkCache",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioD_notificationUpdateReplacesInPlaceWithoutReorderingOrLosingSelection",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioJ_rapidUserInteractionsDoNotDeadlockOrThrow",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioE_callInterruptionAndRestorationOfBaseState",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest",
+      "name": "scenarioF_processLifecycleAndStateResetForTesting",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.service.PhoneActionLauncherTest",
+      "name": "directCallRequiresExplicitCallPermission",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.CompactNotificationLayoutTest",
+      "name": "collapsedStateUsesOnlyBoundedCountRatherThanPrivateCopy",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.CompactNotificationLayoutTest",
+      "name": "genuineProgressReplacesCountWithoutDuplicatingBadges",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest",
+      "name": "allCollapsedStatesUseTheSharedCompactClassification",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest",
+      "name": "timerUsesTheReferenceExportHeight",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest",
+      "name": "multipleNotificationsUseTheStackedPresentationUntilExpanded",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest",
+      "name": "minimalServiceStateUsesTheSplitPresentation",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest",
+      "name": "everyCollapsedStateResolvesToExactlyOneHeightToken",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest",
+      "name": "onePriorityNotificationUsesTheReferenceSplitPresentation",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest",
+      "name": "windowFlagsWhenVisibleExcludeNotTouchable",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest",
+      "name": "windowFlagsWhenHiddenIncludeNotTouchable",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest",
+      "name": "cutoutDotSizingCoercionWithinSafeHardwareBounds",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest",
+      "name": "alwaysOnTopDisabledSuppressesIdlePillFromInterceptingTouches",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest",
+      "name": "quickControlsGatingEnforcesPreference",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest",
+      "name": "idleAutoHideSuppressesPillRendering",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.kit.DesignSystemPolicyTest",
+      "name": "spacingTokensMaintainRationalScale",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.kit.DesignSystemPolicyTest",
+      "name": "optionsGreaterThanFourMustNotUseFixedSegmentedLayout",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.kit.DesignSystemPolicyTest",
+      "name": "simulatedExperiencesAreExplicitlyDistinguishedFromHardwareSupported",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest",
+      "name": "translatesCoreHindiCopy",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest",
+      "name": "unknownCopyAndUntranslatedLocalesFallBackToSource",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest",
+      "name": "coversTheReferenceLocaleSet",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.theme.AppIslandTokensTest",
+      "name": "expandedWidth_matchesReferencePhoneMargins",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.theme.AppIslandTokensTest",
+      "name": "expandedWidth_isCappedOnTabletsAndFoldables",
+      "status": "passed"
+    },
+    {
+      "class": "ai.emots.kishan_dynamic.ui.theme.AppIslandTokensTest",
+      "name": "expandedWidth_shrinksOnNarrowWindowsWithoutOverflow",
+      "status": "passed"
+    }
+  ],
+  "summary": "Build: PASS. JVM: 408/408 passed. Device: passed. Visual: passed. Release isolation: PASS."
+}

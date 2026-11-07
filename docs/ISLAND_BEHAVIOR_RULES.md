@@ -1,5 +1,7 @@
 # Island behavior contract
 
+**Mandatory island layout contract:** Read [ISLAND_LAYOUT_RULES.md](ISLAND_LAYOUT_RULES.md) before changing island geometry or content. It supersedes reference-only fixed heights, universal compact minimum widths, single-line-only expanded copy, and 44dp touch-target guidance.
+
 Read together with UI_UX_RULES.md and DYNAMIC_ISLAND_RULEBOOK.md. This is the
 behavioral authority; visual reference dimensions remain subject to actual
 Android window constraints. Changes require regression tests, not package-name

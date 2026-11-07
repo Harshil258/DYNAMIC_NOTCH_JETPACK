@@ -3,27 +3,24 @@ package ai.emots.kishan_dynamic.ui.screens
 import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.data.premium.AdConsentPolicy
 import ai.emots.kishan_dynamic.data.premium.AppAdConsentRuntime
@@ -32,7 +29,6 @@ import ai.emots.kishan_dynamic.data.premium.PlayBillingPremiumAccessGateway
 import ai.emots.kishan_dynamic.data.premium.PremiumAccessResult
 import ai.emots.kishan_dynamic.data.premium.RewardedAdConfiguration
 import ai.emots.kishan_dynamic.data.premium.RewardedPassPolicy
-import ai.emots.kishan_dynamic.data.premium.RewardedPassResult
 import ai.emots.kishan_dynamic.data.release.AppReleaseRuntimeConfig
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
@@ -50,6 +46,7 @@ import ai.emots.kishan_dynamic.ui.kit.AuroraBenefitTiles
 import ai.emots.kishan_dynamic.ui.kit.AuroraProHeroCard
 import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.dialogs.AdRewardDialog
 import kotlinx.coroutines.launch
 
 @Composable
@@ -82,16 +79,25 @@ fun PremiumScreen(onBack: () -> Unit) {
 
     val entitlementManager = remember { ai.emots.kishan_dynamic.data.premium.EntitlementManager.getInstance(context) }
     val entitlementSnapshot by entitlementManager.entitlement.collectAsState()
-    val isPaidPro by preferences.isPaidPro.collectAsState(initial = false)
-    val isProActive by preferences.isProActive.collectAsState(initial = false)
-    val proExpiresAt by preferences.proExpiresAt.collectAsState(initial = null)
+    val isPaidPro = entitlementSnapshot.isActive && entitlementSnapshot.source in setOf(
+        ai.emots.kishan_dynamic.data.premium.EntitlementSource.WEEKLY,
+        ai.emots.kishan_dynamic.data.premium.EntitlementSource.MONTHLY,
+        ai.emots.kishan_dynamic.data.premium.EntitlementSource.YEARLY,
+        ai.emots.kishan_dynamic.data.premium.EntitlementSource.LIFETIME
+    )
+    val isProActive = entitlementSnapshot.isActive
+    val proExpiresAt = entitlementSnapshot.expiresAtMillis
     val billingStatus by billingGateway.status.collectAsState(initial = null)
     val rewardedStatus by rewardedGateway.status.collectAsState(initial = null)
     val livePlans by billingGateway.plans.collectAsState()
 
     val scope = rememberCoroutineScope()
-    var selectedPlanIndex by remember { mutableIntStateOf(2) }
+    var selectedPlanId by remember { mutableStateOf<String?>(null) }
     var message by remember { mutableStateOf<String?>(null) }
+    var showRewardDialog by remember { mutableStateOf(false) }
+    val selectedPlan = livePlans.firstOrNull { it.id == selectedPlanId }
+        ?: livePlans.firstOrNull { it.id == "yearly" }
+        ?: livePlans.firstOrNull()
 
     DisposableEffect(billingGateway, rewardedGateway) {
         ai.emots.kishan_dynamic.service.IslandStateManager.setPaywallActive(true)
@@ -109,10 +115,8 @@ fun PremiumScreen(onBack: () -> Unit) {
         billingGateway.trackPaywallViewed("premium_screen")
     }
 
-    LaunchedEffect(selectedPlanIndex, livePlans) {
-        livePlans.getOrNull(selectedPlanIndex)?.let {
-            billingGateway.trackPlanSelected(it)
-        }
+    LaunchedEffect(selectedPlan?.id) {
+        selectedPlan?.let(billingGateway::trackPlanSelected)
     }
 
         AppScreen(
@@ -125,27 +129,25 @@ fun PremiumScreen(onBack: () -> Unit) {
                 )
             },
             bottomAction = if (!isPaidPro) ({
-                val selected = livePlans.getOrNull(selectedPlanIndex) ?: livePlans.firstOrNull()
-                val isDark = AppTheme.isDark
-                val summaryTextColor = if (isDark) androidx.compose.ui.graphics.Color.White else AppTheme.colors.textPrimary
-                val noteTextColor = if (isDark) androidx.compose.ui.graphics.Color(0xAAFFFFFF) else AppTheme.colors.textSecondary
-                val secureTextColor = if (isDark) androidx.compose.ui.graphics.Color(0x88FFFFFF) else AppTheme.colors.textTertiary
+                val selected = selectedPlan
+                val summaryTextColor = AppTheme.colors.textPrimary
+                val noteTextColor = AppTheme.colors.textSecondary
+                val secureTextColor = AppTheme.colors.textSecondary
 
                 if (selected != null) {
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs)
                     ) {
                         AppText(
                             text = "${selected.title} Plan · ${selected.price}",
-                            style = AppTheme.typography.caption.copy(fontSize = 12.sp),
+                            style = AppTheme.typography.bodySmall,
                             fontWeight = FontWeight.SemiBold,
                             color = summaryTextColor
                         )
                         AppText(
                             text = selected.note,
-                            style = AppTheme.typography.caption.copy(fontSize = 11.sp),
+                            style = AppTheme.typography.caption,
                             color = noteTextColor
                         )
                     }
@@ -163,8 +165,8 @@ fun PremiumScreen(onBack: () -> Unit) {
                     )
                     Spacer(Modifier.height(AppTheme.spacing.xxs))
                     AppText(
-                        text = "Secured by Google Play · Cancel anytime in Play Store",
-                        style = AppTheme.typography.caption.copy(fontSize = 10.5.sp),
+                        text = if (selected.id == "lifetime") "One-time purchase · Google Play" else "Renews automatically · Cancel in Google Play",
+                        style = AppTheme.typography.caption,
                         color = secureTextColor,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
@@ -185,7 +187,7 @@ fun PremiumScreen(onBack: () -> Unit) {
                     Spacer(Modifier.height(AppTheme.spacing.xxs))
                     AppText(
                         text = "Billing service connecting · Tap to retry",
-                        style = AppTheme.typography.caption.copy(fontSize = 10.5.sp),
+                        style = AppTheme.typography.caption,
                         color = secureTextColor,
                         modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
@@ -215,8 +217,8 @@ fun PremiumScreen(onBack: () -> Unit) {
                 livePlans.forEachIndexed { index, plan ->
                     AppPlanSelectorRow(
                         plan = plan,
-                        isSelected = selectedPlanIndex == index,
-                        onClick = { selectedPlanIndex = index },
+                        isSelected = selectedPlan?.id == plan.id,
+                        onClick = { selectedPlanId = plan.id },
                         modifier = Modifier.appReveal(2 + index)
                     )
                     Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
@@ -259,17 +261,11 @@ fun PremiumScreen(onBack: () -> Unit) {
 
             if (rewardedConfiguration.enabled) {
                 AppButton(
-                    text = "Watch an ad for a ${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)} pass",
+                    text = "Try Pro for ${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)} with an ad",
                     glyph = AppleGlyph.Play,
                     style = AppButtonStyle.Secondary,
                     onClick = {
-                        message = when (val currentActivity = activity) {
-                            null -> "Rewarded passes require an active app screen."
-                            else -> when (val result = rewardedGateway.show(currentActivity)) {
-                                is RewardedPassResult.Unavailable -> result.message
-                                is RewardedPassResult.Started -> result.message
-                            }
-                        }
+                        showRewardDialog = true
                     }
                 )
                 Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
@@ -323,23 +319,21 @@ fun PremiumScreen(onBack: () -> Unit) {
                         style = AppTheme.typography.bodySmall,
                         color = AppTheme.colors.textSecondary
                     )
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
                     ) {
                         AppButton(
                             text = "Manage in Google Play",
                             glyph = AppleGlyph.Settings,
                             style = AppButtonStyle.AuroraPro,
-                            onClick = { billingGateway.openManageSubscription(context) },
-                            modifier = Modifier.weight(1f)
+                            onClick = { billingGateway.openManageSubscription(context) }
                         )
                         AppButton(
                             text = "Restore",
                             glyph = AppleGlyph.Reset,
                             style = AppButtonStyle.Secondary,
-                            onClick = { billingGateway.restorePurchases() },
-                            modifier = Modifier.weight(1f)
+                            onClick = { billingGateway.restorePurchases() }
                         )
                     }
                 }
@@ -349,5 +343,12 @@ fun PremiumScreen(onBack: () -> Unit) {
         // 6. Transparent Play Billing Disclosures & Legal Terms
         AppSectionSpacer()
         AppSubscriptionDisclosures()
+    }
+
+    if (showRewardDialog) {
+        AdRewardDialog(
+            onDismiss = { showRewardDialog = false },
+            onNavigateToPremium = { showRewardDialog = false }
+        )
     }
 }

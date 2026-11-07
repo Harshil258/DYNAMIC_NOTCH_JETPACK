@@ -7,8 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,13 +18,14 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,7 +33,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,14 +46,13 @@ import ai.emots.kishan_dynamic.ui.components.WaveformAnimation
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.auroraActionGradient
 import ai.emots.kishan_dynamic.ui.theme.auroraBadgeGradient
-import ai.emots.kishan_dynamic.ui.theme.auroraBorderBrush
 import ai.emots.kishan_dynamic.ui.theme.auroraHeroGradient
-import ai.emots.kishan_dynamic.ui.theme.auroraProCardGradient
 
 /**
  * World-class Aurora Pro Hero with an interactive Dynamic Island preview.
  * Allows prospective subscribers to tap and experience Pro states (Music, Calls, Action Island).
  */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun AuroraProHeroCard(
     isProActive: Boolean,
@@ -63,7 +60,8 @@ fun AuroraProHeroCard(
     modifier: Modifier = Modifier,
     isPaidPro: Boolean = false,
     isTrial: Boolean = false,
-    trialDaysRemaining: Int = 0
+    trialDaysRemaining: Int = 0,
+    compactPreview: Boolean = false
 ) {
     var previewMode by remember { mutableIntStateOf(0) }
     val cardShape = RoundedCornerShape(AppTheme.radius.card)
@@ -89,7 +87,7 @@ fun AuroraProHeroCard(
     }
 
     val heroSubtitle = when {
-        isPaidPro -> "Permanent access unlocked. All animations and styling enabled."
+        isPaidPro -> "Your purchased plan is active. Enjoy your premium island features."
         isTrial -> if (trialDaysRemaining > 0) {
             "$trialDaysRemaining days remaining in trial · Unlock permanent access anytime."
         } else {
@@ -97,7 +95,7 @@ fun AuroraProHeroCard(
         }
         proExpiresAt != null -> "Pass active · ${remainingHours(proExpiresAt)}h remaining"
         isProActive -> "All premium animations and customization unlocked."
-        else -> "Fluid iOS physics, live visualizers, and zero distractions on Android."
+        else -> "Your island, with more ways to make it yours."
     }
 
     Column(
@@ -115,12 +113,13 @@ fun AuroraProHeroCard(
             .padding(AppTheme.spacing.lg),
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
     ) {
-        // Brand Badge and Status
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        if (!compactPreview) {
+            // Brand Badge and Status
+            androidx.compose.foundation.layout.FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+            ) {
             // Aurora Pro Glowing Pill
             Row(
                 modifier = Modifier
@@ -144,21 +143,22 @@ fun AuroraProHeroCard(
                 color = statusPillColor,
                 showDot = false
             )
-        }
+            }
 
-        // Title and Value Statement
-        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs)) {
-            AppText(
-                text = heroTitle,
-                style = AppTheme.typography.h2,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            AppText(
-                text = heroSubtitle,
-                style = AppTheme.typography.bodySmall,
-                color = Color(0xCCFFFFFF)
-            )
+            // Title and Value Statement
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs)) {
+                AppText(
+                    text = heroTitle,
+                    style = AppTheme.typography.h2,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                AppText(
+                    text = heroSubtitle,
+                    style = AppTheme.typography.bodySmall,
+                    color = Color(0xCCFFFFFF)
+                )
+            }
         }
 
         // Live Interactive Dynamic Island Viewport
@@ -312,6 +312,7 @@ fun AuroraProHeroCard(
 
                 // Interactive Demo Mode Switcher
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -320,6 +321,8 @@ fun AuroraProHeroCard(
                         val isSelected = previewMode == index
                         Box(
                             modifier = Modifier
+                                .weight(1f)
+                                .heightIn(min = 48.dp)
                                 .clip(CircleShape)
                                 .background(
                                     if (isSelected) AppTheme.colors.auroraActionGradient()
@@ -330,15 +333,20 @@ fun AuroraProHeroCard(
                                     color = if (isSelected) Color.Transparent else Color(0x22FFFFFF),
                                     shape = CircleShape
                                 )
-                                .clickable { previewMode = index }
-                                .padding(horizontal = AppTheme.spacing.md, vertical = 4.dp),
+                                .selectable(
+                                    selected = isSelected,
+                                    role = Role.Tab,
+                                    onClick = { previewMode = index }
+                                )
+                                .padding(horizontal = AppTheme.spacing.sm, vertical = AppTheme.spacing.xs),
                             contentAlignment = Alignment.Center
                         ) {
                             AppText(
                                 text = label,
-                                style = AppTheme.typography.caption.copy(fontSize = 11.sp),
+                                style = AppTheme.typography.caption,
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (isSelected) Color.White else AppTheme.colors.textSecondary
+                                color = Color.White,
+                                maxLines = 1
                             )
                         }
                     }
@@ -362,47 +370,23 @@ fun AuroraBenefitTiles(
         Triple(AppleGlyph.Shield, "100% Ad-Free", "Pure distraction-free utility with zero advertisements")
     )
 
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-        ) {
-            BenefitTile(
-                glyph = benefits[0].first,
-                title = benefits[0].second,
-                subtitle = benefits[0].third,
-                accent = AppTheme.colors.auroraCyan,
-                modifier = Modifier.weight(1f)
-            )
-            BenefitTile(
-                glyph = benefits[1].first,
-                title = benefits[1].second,
-                subtitle = benefits[1].third,
-                accent = AppTheme.colors.auroraElectricBlue,
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-        ) {
-            BenefitTile(
-                glyph = benefits[2].first,
-                title = benefits[2].second,
-                subtitle = benefits[2].third,
-                accent = AppTheme.colors.auroraViolet,
-                modifier = Modifier.weight(1f)
-            )
-            BenefitTile(
-                glyph = benefits[3].first,
-                title = benefits[3].second,
-                subtitle = benefits[3].third,
-                accent = AppTheme.colors.success,
-                modifier = Modifier.weight(1f)
-            )
+    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val stacked = maxWidth < 340.dp || androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
+        val accents = listOf(AppTheme.colors.accent, AppTheme.colors.accent, AppTheme.colors.accent, AppTheme.colors.success)
+        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+            if (stacked) {
+                benefits.forEachIndexed { index, benefit ->
+                    BenefitTile(benefit.first, benefit.second, benefit.third, accents[index], Modifier.fillMaxWidth())
+                }
+            } else {
+                benefits.chunked(2).forEachIndexed { rowIndex, pair ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                        pair.forEachIndexed { index, benefit ->
+                            BenefitTile(benefit.first, benefit.second, benefit.third, accents[rowIndex * 2 + index], Modifier.weight(1f))
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -417,10 +401,10 @@ private fun BenefitTile(
 ) {
     val isDark = AppTheme.isDark
     val shape = RoundedCornerShape(AppTheme.radius.lg)
-    val tileBg = if (isDark) Color(0xFF101524) else AppTheme.colors.surfaceElevated
-    val tileBorder = if (isDark) Color(0x22FFFFFF) else AppTheme.colors.border
-    val titleColor = if (isDark) Color.White else AppTheme.colors.textPrimary
-    val subtitleColor = if (isDark) Color(0xAAFFFFFF) else AppTheme.colors.textSecondary
+    val tileBg = AppTheme.colors.surfaceElevated
+    val tileBorder = AppTheme.colors.border
+    val titleColor = AppTheme.colors.textPrimary
+    val subtitleColor = AppTheme.colors.textSecondary
 
     Column(
         modifier = modifier
@@ -447,7 +431,7 @@ private fun BenefitTile(
         )
         AppText(
             text = subtitle,
-            style = AppTheme.typography.caption.copy(fontSize = 11.sp, lineHeight = 14.sp),
+            style = AppTheme.typography.caption,
             color = subtitleColor
         )
     }
@@ -456,6 +440,7 @@ private fun BenefitTile(
 /**
  * High-converting obsidian subscription plan card with luminous Aurora borders.
  */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun AppPlanSelectorRow(
     plan: FormattedPlanDetails,
@@ -463,144 +448,47 @@ fun AppPlanSelectorRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isDark = AppTheme.isDark
-    val shape = RoundedCornerShape(AppTheme.radius.xl)
-    val contentDesc = "${plan.title} plan, ${plan.price}, ${plan.note}${if (isSelected) ", selected" else ""}"
-    val cardBrush = AppTheme.colors.auroraProCardGradient(isSelected)
-    val borderBrush = AppTheme.colors.auroraBorderBrush(isSelected)
-    val titleColor = if (isDark) Color.White else AppTheme.colors.textPrimary
-    val noteColor = if (isDark) Color(0xBBFFFFFF) else AppTheme.colors.textSecondary
-    val priceColor = if (isSelected) {
-        if (isDark) AppTheme.colors.auroraCyan else AppTheme.colors.auroraElectricBlue
-    } else {
-        if (isDark) Color.White else AppTheme.colors.textPrimary
-    }
-    val bestValueColor = if (isDark) Color(0x88FFFFFF) else AppTheme.colors.textTertiary
-
+    val shape = RoundedCornerShape(AppTheme.radius.lg)
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
-            .background(cardBrush, shape)
+            .background(if (isSelected) AppTheme.colors.accent.copy(alpha = 0.08f) else AppTheme.colors.surfaceElevated)
             .border(
                 width = if (isSelected) 1.5.dp else 0.5.dp,
-                brush = borderBrush,
+                color = if (isSelected) AppTheme.colors.accent else AppTheme.colors.border,
                 shape = shape
             )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                role = Role.RadioButton,
-                onClick = onClick
-            )
-            .heightIn(min = 68.dp)
-            .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md)
-            .semantics { contentDescription = contentDesc },
-        verticalAlignment = Alignment.CenterVertically
+            .selectable(selected = isSelected, role = Role.RadioButton, onClick = onClick)
+            .heightIn(min = 48.dp)
+            .padding(AppTheme.spacing.lg),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
     ) {
-        // Selection radio indicator with Aurora gradient fill
         Box(
-            modifier = Modifier
-                .size(24.dp)
-                .clip(CircleShape)
-                .background(
-                    if (isSelected) AppTheme.colors.auroraActionGradient()
-                    else Brush.linearGradient(
-                        if (isDark) listOf(Color(0x18FFFFFF), Color(0x18FFFFFF))
-                        else listOf(Color(0x0C000000), Color(0x0C000000))
-                    )
-                )
-                .border(
-                    width = if (isSelected) 0.dp else 1.dp,
-                    color = if (isSelected) Color.Transparent else (if (isDark) Color(0x38FFFFFF) else Color(0x22000000)),
-                    shape = CircleShape
-                ),
+            modifier = Modifier.size(24.dp).clip(CircleShape)
+                .background(AppTheme.colors.surfaceVariant)
+                .border(1.dp, if (isSelected) AppTheme.colors.accent else AppTheme.colors.textSecondary, CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            if (isSelected) {
-                AppleIcon(glyph = AppleGlyph.Check, tint = Color.White, size = 13.dp)
-            }
+            if (isSelected) AppleIcon(glyph = AppleGlyph.Check, tint = AppTheme.colors.accent, size = 14.dp)
         }
-
-        Spacer(modifier = Modifier.width(AppTheme.spacing.md))
-
-        // Title, savings badge, and billing frequency
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                AppText(
-                    text = plan.title,
-                    style = AppTheme.typography.body,
-                    fontWeight = FontWeight.Bold,
-                    color = titleColor
-                )
-                if (plan.badge != null) {
-                    Spacer(modifier = Modifier.width(AppTheme.spacing.xs))
-                    Box(
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(
-                                if (isSelected) AppTheme.colors.auroraBadgeGradient()
-                                else Brush.linearGradient(
-                                    listOf(
-                                        AppTheme.colors.gold.copy(alpha = 0.16f),
-                                        AppTheme.colors.gold.copy(alpha = 0.16f)
-                                    )
-                                )
-                            )
-                            .border(
-                                width = 0.5.dp,
-                                color = if (isSelected) AppTheme.colors.auroraCyan.copy(alpha = 0.6f) else AppTheme.colors.gold.copy(alpha = 0.3f),
-                                shape = CircleShape
-                            )
-                            .padding(horizontal = AppTheme.spacing.sm, vertical = 2.dp)
-                    ) {
-                        AppText(
-                            text = plan.badge.uppercase(),
-                            style = AppTheme.typography.badge,
-                            color = if (isSelected) Color.White else AppTheme.colors.gold,
-                            maxLines = 1
-                        )
-                    }
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+            androidx.compose.foundation.layout.FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)
+            ) {
+                AppText(plan.title, style = AppTheme.typography.body, fontWeight = FontWeight.SemiBold,
+                    color = AppTheme.colors.textPrimary)
+                plan.badge?.let {
+                    AppStatusPill(text = it, color = AppTheme.colors.accent, showDot = false)
                 }
             }
-            AppText(
-                text = plan.note,
-                style = AppTheme.typography.caption,
-                color = noteColor
-            )
-            if (plan.freeTrialPeriod != null) {
-                AppText(
-                    text = plan.freeTrialPeriod,
-                    style = AppTheme.typography.caption,
-                    fontWeight = FontWeight.Medium,
-                    color = AppTheme.colors.success
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(AppTheme.spacing.sm))
-
-        // Formatted localized price with distinct hierarchy
-        Column(horizontalAlignment = Alignment.End) {
-            AppText(
-                text = plan.price,
-                style = AppTheme.typography.h3,
-                fontWeight = FontWeight.Bold,
-                color = priceColor
-            )
-            val priceSubtext = when (plan.id) {
-                "weekly" -> "per week"
-                "monthly" -> "per month"
-                "yearly" -> "per year"
-                "lifetime" -> "one-time"
-                else -> ""
-            }
-            if (priceSubtext.isNotEmpty()) {
-                AppText(
-                    text = priceSubtext,
-                    style = AppTheme.typography.caption.copy(fontSize = 10.sp),
-                    color = bestValueColor
-                )
+            AppText(plan.price, style = AppTheme.typography.h2, fontWeight = FontWeight.Bold,
+                color = AppTheme.colors.textPrimary)
+            AppText(plan.note, style = AppTheme.typography.caption, color = AppTheme.colors.textSecondary)
+            plan.freeTrialPeriod?.let {
+                AppText(it, style = AppTheme.typography.caption, color = AppTheme.colors.textPrimary)
             }
         }
     }

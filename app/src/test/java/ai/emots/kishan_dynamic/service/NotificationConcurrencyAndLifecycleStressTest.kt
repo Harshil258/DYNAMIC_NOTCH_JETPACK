@@ -301,6 +301,34 @@ class NotificationConcurrencyAndLifecycleStressTest {
         assertFalse("Paywall must be inactive", IslandStateManager.isPaywallActive.value)
     }
 
+    @Test
+    fun viewedNotificationsStayActiveAndOnlyExplicitPagerViewingClearsUnseenCount() {
+        val ids = listOf("seen_one", "seen_two", "seen_three")
+        ids.forEachIndexed { index, id ->
+            IslandStateManager.postNotification(
+                createNotification(id, time = 10_000L + index),
+                autoExpand = false,
+                displaySeconds = 60
+            )
+        }
+
+        assertEquals(3, IslandStateManager.unseenNotificationCount.value)
+        // Queue selection alone is not an explicit view while the island is compact.
+        IslandStateManager.selectNotification("seen_two")
+        assertEquals(3, IslandStateManager.unseenNotificationCount.value)
+
+        IslandStateManager.openNotifications()
+        assertEquals(2, IslandStateManager.unseenNotificationCount.value)
+        ids.forEach(IslandStateManager::selectNotification)
+
+        assertEquals(0, IslandStateManager.unseenNotificationCount.value)
+        assertEquals(ids.toSet(), IslandStateManager.notificationSourceIds())
+
+        IslandStateManager.collapseExpandedState()
+        assertEquals(0, IslandStateManager.unseenNotificationCount.value)
+        assertEquals(ids.toSet(), IslandStateManager.notificationSourceIds())
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Scenario G: Source reconciliation (`reconcileNotificationSources`)
     // ---------------------------------------------------------------------------------------------

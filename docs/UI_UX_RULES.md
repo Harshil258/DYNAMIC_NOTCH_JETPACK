@@ -1,5 +1,9 @@
 # Dynamic Island UI/UX Design System & Usability Rulebook
 
+**Playground-first workflow:** Before further production island geometry or animation tuning, use the debug-only [Dynamic Island Playground](DYNAMIC_ISLAND_PLAYGROUND.md), run its checks, and inspect captures. Playground overrides must not write production preferences.
+
+**Mandatory island layout contract:** Read [ISLAND_LAYOUT_RULES.md](ISLAND_LAYOUT_RULES.md) before changing island geometry or content. It supersedes reference-only fixed heights, universal compact minimum widths, single-line-only expanded copy, and 44dp touch-target guidance.
+
 **Version:** 2.0.0  
 **Effective Date:** 12 October 2026  
 **Audience:** All Android Engineers, Compose UI Contributors, and Autonomous AI Coding Agents  

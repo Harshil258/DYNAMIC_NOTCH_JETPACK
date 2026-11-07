@@ -74,6 +74,9 @@ data class AppColorTokens(
     val stageBottom: Color,
     val stageStroke: Color,
     // Aurora Pro Brand Tokens
+    // White purchase labels retain > 6:1 contrast across both gradient endpoints.
+    val purchaseBlue: Color = Color(0xFF1D4ED8),
+    val purchaseViolet: Color = Color(0xFF6D28D9),
     val auroraCyan: Color = Color(0xFF00E5FF),
     val auroraElectricBlue: Color = Color(0xFF2979FF),
     val auroraViolet: Color = Color(0xFF7C4DFF),
@@ -143,6 +146,10 @@ fun AppColorTokens.auroraProCardGradient(selected: Boolean): Brush = if (selecte
         )
     }
 }
+
+fun AppColorTokens.auroraPurchaseGradient(): Brush = Brush.horizontalGradient(
+    listOf(purchaseBlue, purchaseViolet)
+)
 
 fun AppColorTokens.auroraActionGradient(): Brush = Brush.horizontalGradient(
     listOf(
@@ -290,6 +297,16 @@ data class AppIslandTokens(
      * but they all consume this one token in the app.
      */
     val compactHeight: Dp = 36.67.dp,
+    /** Content insets: never used as a substitute for physical camera clearance. */
+    val compactHorizontalInset: Dp = 12.dp,
+    val compactContentGap: Dp = 8.dp,
+    val expandedContentInset: Dp = 16.dp,
+    val expandedContentGap: Dp = 12.dp,
+    val expandedMinHeight: Dp = 48.dp,
+    val cameraClearance: Dp = 4.dp,
+    val expandedCardCorner: Dp = 24.dp,
+    val expandedIconSize: Dp = 32.dp,
+    val minimumActionTarget: Dp = 48.dp,
     /** True iOS idle capsule width — never stretch this to the screen. */
     val compactWidth: Dp = 126.dp,
     val compactMaxWidth: Dp = 250.dp,

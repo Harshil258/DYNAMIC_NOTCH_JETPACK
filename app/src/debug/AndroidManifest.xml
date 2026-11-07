@@ -1,0 +1,18 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <application>
+        <activity android:name="ai.emots.kishan_dynamic.playground.DynamicIslandPlaygroundActivity"
+            android:exported="true" android:label="Island Lab (Debug)">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name="ai.emots.kishan_dynamic.playground.PlaygroundOverlayService"
+            android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Development-only interactive Dynamic Island rendering tests" />
+        </service>
+    </application>
+</manifest>

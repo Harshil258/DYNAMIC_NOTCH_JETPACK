@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.horizontalScroll
@@ -37,14 +38,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -52,12 +52,13 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.ui.components.islandInspectableRegion
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.accentGradient
-import ai.emots.kishan_dynamic.ui.theme.auroraActionGradient
+import ai.emots.kishan_dynamic.ui.theme.auroraPurchaseGradient
 
 // =============================================================================
 // APP KIT CONTROLS — fully token driven, correct touch targets, light+dark safe.
@@ -131,6 +132,7 @@ fun AppButton(
     fillMaxWidth: Boolean = true,
     customBrush: androidx.compose.ui.graphics.Brush? = null
 ) {
+    val reducedMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val scaleState = animateFloatAsState(
@@ -156,16 +158,16 @@ fun AppButton(
     val containerBrush = when {
         customBrush != null -> customBrush
         !enabled -> androidx.compose.ui.graphics.Brush.linearGradient(listOf(container, container))
-        style == AppButtonStyle.AuroraPro -> AppTheme.colors.auroraActionGradient()
+        style == AppButtonStyle.AuroraPro -> AppTheme.colors.auroraPurchaseGradient()
         style == AppButtonStyle.Primary -> AppTheme.colors.accentGradient()
         else -> androidx.compose.ui.graphics.Brush.linearGradient(listOf(container, container))
     }
 
     Row(
-        modifier = modifier
+        modifier = modifier.islandInspectableRegion("Action")
             .then(if (fillMaxWidth) Modifier.fillMaxWidth() else Modifier)
             .graphicsLayer {
-                val s = scaleState.value
+                val s = if (reducedMotion) 1f else scaleState.value
                 scaleX = s
                 scaleY = s
             }
@@ -182,10 +184,10 @@ fun AppButton(
                 enabled = enabled,
                 role = Role.Button,
                 interactionSource = interaction,
-                indication = null,
+                indication = androidx.compose.material3.ripple(),
                 onClick = onClick
             )
-            .heightIn(min = 50.dp)
+            .heightIn(min = maxOf(50.dp, AppTheme.island.minimumActionTarget))
             .padding(horizontal = AppTheme.spacing.xl, vertical = AppTheme.spacing.md),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
@@ -198,7 +200,8 @@ fun AppButton(
             text = text,
             style = AppTheme.typography.button,
             color = content,
-            maxLines = 1
+            modifier = Modifier.weight(1f, fill = false),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )
     }
 }
@@ -206,7 +209,7 @@ fun AppButton(
 /**
  * Horizontally scrollable selection tabs for multi-category and dynamic collections.
  * Preserves full label readability, supports auto-scrolling to selected index,
- * and maintains 44dp minimum touch targets.
+ * and maintains 48dp minimum touch targets.
  */
 @Composable
 fun AppScrollableTabs(
@@ -238,6 +241,7 @@ fun AppScrollableTabs(
             Box(
                 modifier = Modifier
                     .clip(shape)
+                    .heightIn(min = 48.dp)
                     .background(
                         if (isSelected) AppTheme.colors.surfaceElevated else AppTheme.colors.surfaceVariant.copy(alpha = 0.5f)
                     )
@@ -246,10 +250,13 @@ fun AppScrollableTabs(
                         color = if (isSelected) AppTheme.colors.accent else AppTheme.colors.border,
                         shape = shape
                     )
-                    .clickable(
+                    .selectable(
+                        selected = isSelected,
+                        role = Role.Tab,
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-                    ) { onOptionSelected(index) }
+                        indication = null,
+                        onClick = { onOptionSelected(index) }
+                    )
                     .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.sm + 2.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -287,7 +294,7 @@ fun AppSegmented(
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
-            .height(44.dp)
+            .heightIn(min = 48.dp)
             .clip(shape)
             .background(AppTheme.colors.surfaceVariant)
             .border(0.5.dp, AppTheme.colors.border, shape)
@@ -317,10 +324,13 @@ fun AppSegmented(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clickable(
+                        .selectable(
+                            selected = isSelected,
+                            role = Role.Tab,
                             interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { onOptionSelected(index) },
+                            indication = null,
+                            onClick = { onOptionSelected(index) }
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     AppText(
@@ -399,7 +409,7 @@ fun AppSlider(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(36.dp)
+                .heightIn(min = 48.dp)
                 .pointerInput(valueRange) {
                     detectTapGestures { offset -> emitFromX(offset.x) }
                 }

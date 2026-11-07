@@ -5,25 +5,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.EaseInOutSine
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.scaleIn
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,11 +21,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,16 +40,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -70,9 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import ai.emots.kishan_dynamic.data.analytics.AnalyticsTracker
-import ai.emots.kishan_dynamic.data.analytics.FirebaseAnalyticsTracker
-import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
+import ai.emots.kishan_dynamic.data.premium.AdConsentPolicy
+import ai.emots.kishan_dynamic.data.premium.AppAdConsentRuntime
+import ai.emots.kishan_dynamic.data.premium.AdConsentStatus
+import ai.emots.kishan_dynamic.data.premium.RewardedPassPolicy
 import ai.emots.kishan_dynamic.data.premium.EntitlementManager
 import ai.emots.kishan_dynamic.data.premium.MobileAdsRewardedPassGateway
 import ai.emots.kishan_dynamic.data.premium.RewardedAdConfiguration
@@ -82,18 +69,6 @@ import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
-private object RewardColors {
-    val accent = Color(0xFF6366F1)
-    val accentLight = Color(0xFF818CF8)
-    val teal = Color(0xFF14B8A6)
-    val amber = Color(0xFFF59E0B)
-    val rose = Color(0xFFF43F5E)
-    val darkBg = Color(0xFF0F172A)
-    val darkCard = Color(0xFF1E293B)
-    val lightCard = Color(0xFFFFFFFF)
-}
 
 @Composable
 fun AdRewardDialog(
@@ -102,8 +77,6 @@ fun AdRewardDialog(
 ) {
     val context = LocalContext.current
     val activity = context as? Activity
-    val scope = rememberCoroutineScope()
-    val preferences = remember { AuroraPreferences(context) }
     val entitlementManager = remember { EntitlementManager.getInstance(context) }
     val rewardedManager = entitlementManager.rewardedAccessManager
 
@@ -113,9 +86,24 @@ fun AdRewardDialog(
     }
     val releaseConfig by releaseProvider.config.collectAsState()
 
-    val rewardedGateway = remember(releaseConfig) {
-        val config = RewardedAdConfiguration.fromReleaseConfig(releaseConfig, canRequestAds = true)
-        MobileAdsRewardedPassGateway(context, config)
+    val consentGateway = remember(isDebugBuild) {
+        AppAdConsentRuntime.gateway(
+            context = context,
+            debugGeography = if (isDebugBuild) {
+                com.google.android.ump.ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA
+            } else null
+        )
+    }
+    val consentSnapshot by consentGateway.state.collectAsState()
+    val canRequestAds = AdConsentPolicy.canRequestAds(consentSnapshot)
+    val rewardedConfiguration = remember(releaseConfig, canRequestAds) {
+        RewardedAdConfiguration.fromReleaseConfig(releaseConfig, canRequestAds)
+    }
+    val rewardedGateway = remember(rewardedConfiguration) {
+        MobileAdsRewardedPassGateway(context, rewardedConfiguration)
+    }
+    LaunchedEffect(releaseConfig.adsEnabled) {
+        if (releaseConfig.adsEnabled) activity?.let(consentGateway::request)
     }
 
     val snapshot by rewardedManager.rewardedSnapshotFlow.collectAsState(
@@ -145,18 +133,20 @@ fun AdRewardDialog(
     }
 
     val isDark = AppTheme.isDark
-    val cardBg = if (isDark) RewardColors.darkCard else RewardColors.lightCard
+    val cardBg = AppTheme.colors.surface
     val textPrimary = if (isDark) Color.White else AppTheme.colors.textPrimary
-    val textSecondary = if (isDark) Color(0xFF94A3B8) else AppTheme.colors.textSecondary
+    val textSecondary = AppTheme.colors.textSecondary
 
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Box(
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.65f))
+                .safeDrawingPadding()
+                .imePadding()
+                .background(AppTheme.colors.scrim)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -169,6 +159,7 @@ fun AdRewardDialog(
                 modifier = Modifier
                     .widthIn(max = 380.dp)
                     .fillMaxWidth(0.92f)
+                    .heightIn(max = maxHeight * 0.94f)
                     .clip(RoundedCornerShape(28.dp))
                     .background(cardBg)
                     .border(
@@ -186,6 +177,7 @@ fun AdRewardDialog(
                         indication = null,
                         onClick = {} // Consume clicks inside card
                     )
+                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 24.dp, vertical = 22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -201,22 +193,22 @@ fun AdRewardDialog(
                     ) {
                         AppleIcon(
                             glyph = AppleGlyph.Crown,
-                            tint = RewardColors.amber,
+                            tint = AppTheme.colors.gold,
                             size = 18.dp
                         )
                         AppText(
                             text = "Reward Pass",
                             style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
-                            color = RewardColors.amber
+                            color = AppTheme.colors.gold
                         )
                     }
 
                     Box(
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(48.dp)
                             .clip(CircleShape)
                             .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f))
-                            .clickable(onClick = onDismiss),
+                            .clickable(role = Role.Button, onClick = onDismiss),
                         contentAlignment = Alignment.Center
                     ) {
                         AppleIcon(
@@ -238,7 +230,7 @@ fun AdRewardDialog(
                         modifier = Modifier
                             .size(64.dp)
                             .blur(18.dp)
-                            .background(RewardColors.accent.copy(alpha = 0.35f), CircleShape)
+                            .background(AppTheme.colors.auroraViolet.copy(alpha = 0.35f), CircleShape)
                     )
                     Box(
                         modifier = Modifier
@@ -246,7 +238,7 @@ fun AdRewardDialog(
                             .clip(CircleShape)
                             .background(
                                 Brush.linearGradient(
-                                    listOf(RewardColors.accent, RewardColors.teal)
+                                    listOf(AppTheme.colors.auroraViolet, AppTheme.colors.auroraCyan)
                                 )
                             ),
                         contentAlignment = Alignment.Center
@@ -271,7 +263,7 @@ fun AdRewardDialog(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 AppText(
-                    text = "Watch 1 ad to unlock 24 hours of full Aurora Pro access. Stack days anytime!",
+                    text = "Watch an ad to unlock ${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)} of full Aurora Pro access. Stack days anytime!",
                     style = AppTheme.typography.bodySmall,
                     color = textSecondary,
                     textAlign = TextAlign.Center
@@ -301,7 +293,7 @@ fun AdRewardDialog(
                                             when {
                                                 unlocked -> Modifier.background(
                                                     Brush.linearGradient(
-                                                        listOf(RewardColors.accent, RewardColors.teal)
+                                                        listOf(AppTheme.colors.auroraViolet, AppTheme.colors.auroraCyan)
                                                     )
                                                 )
                                                 isNext -> Modifier
@@ -312,7 +304,7 @@ fun AdRewardDialog(
                                                     .border(
                                                         1.5.dp,
                                                         Brush.linearGradient(
-                                                            listOf(RewardColors.accent, RewardColors.teal)
+                                                            listOf(AppTheme.colors.auroraViolet, AppTheme.colors.auroraCyan)
                                                         ),
                                                         CircleShape
                                                     )
@@ -334,7 +326,7 @@ fun AdRewardDialog(
                                         BasicText(
                                             text = "${index + 1}",
                                             style = TextStyle(
-                                                color = if (isNext) RewardColors.teal else textSecondary.copy(alpha = 0.6f),
+                                                color = if (isNext) AppTheme.colors.auroraCyan else textSecondary.copy(alpha = 0.6f),
                                                 fontSize = 12.sp,
                                                 fontWeight = FontWeight.Bold
                                             )
@@ -345,7 +337,7 @@ fun AdRewardDialog(
                                 BasicText(
                                     text = label,
                                     style = TextStyle(
-                                        color = if (unlocked) RewardColors.accent else textSecondary.copy(alpha = 0.6f),
+                                        color = if (unlocked) AppTheme.colors.auroraViolet else textSecondary.copy(alpha = 0.6f),
                                         fontSize = 10.sp,
                                         fontWeight = if (unlocked) FontWeight.SemiBold else FontWeight.Normal
                                     )
@@ -392,7 +384,7 @@ fun AdRewardDialog(
                             AppText(
                                 text = remainingText,
                                 style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
-                                color = RewardColors.teal
+                                color = AppTheme.colors.auroraCyan
                             )
                         }
                     }
@@ -401,10 +393,10 @@ fun AdRewardDialog(
                         Box(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(RewardColors.accent.copy(alpha = 0.15f))
+                                .background(AppTheme.colors.auroraViolet.copy(alpha = 0.15f))
                                 .border(
                                     0.5.dp,
-                                    RewardColors.accent.copy(alpha = 0.4f),
+                                    AppTheme.colors.auroraViolet.copy(alpha = 0.4f),
                                     RoundedCornerShape(20.dp)
                                 )
                                 .padding(horizontal = 10.dp, vertical = 6.dp)
@@ -412,7 +404,7 @@ fun AdRewardDialog(
                             AppText(
                                 text = "+${snapshot.extraDaysStacked} stacked",
                                 style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
-                                color = RewardColors.accentLight
+                                color = AppTheme.colors.auroraViolet
                             )
                         }
                     }
@@ -435,7 +427,7 @@ fun AdRewardDialog(
                     AppText(
                         text = errorMessage ?: "",
                         style = AppTheme.typography.caption,
-                        color = RewardColors.rose,
+                        color = AppTheme.colors.error,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -443,18 +435,19 @@ fun AdRewardDialog(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 // Watch Ad CTA Button
-                val canWatch = cooldownSeconds <= 0 && !isAdLoading
+                val canWatch = cooldownSeconds <= 0 && !isAdLoading &&
+                    rewardedConfiguration.enabled && canRequestAds && activity != null
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(50.dp)
+                        .heightIn(min = 48.dp)
                         .clip(RoundedCornerShape(25.dp))
                         .then(
                             if (canWatch) {
                                 Modifier.background(
                                     Brush.horizontalGradient(
-                                        listOf(RewardColors.accent, RewardColors.accentLight, RewardColors.teal)
+                                        listOf(AppTheme.colors.auroraViolet, AppTheme.colors.auroraCyan)
                                     )
                                 )
                             } else {
@@ -464,7 +457,7 @@ fun AdRewardDialog(
                                 )
                             }
                         )
-                        .clickable(enabled = canWatch) {
+                        .clickable(enabled = canWatch, role = Role.Button) {
                             if (activity == null || !canWatch) return@clickable
                             errorMessage = null
                             isAdLoading = true
@@ -508,6 +501,22 @@ fun AdRewardDialog(
                                 color = textSecondary
                             )
                         }
+                        !rewardedConfiguration.enabled -> AppText(
+                            text = "Rewarded passes are currently unavailable",
+                            style = AppTheme.typography.button,
+                            color = textSecondary,
+                            textAlign = TextAlign.Center
+                        )
+                        !canRequestAds -> AppText(
+                            text = if (consentSnapshot.status == AdConsentStatus.LOADING) {
+                                "Preparing ad consent…"
+                            } else {
+                                "Ad consent is required before a rewarded pass"
+                            },
+                            style = AppTheme.typography.caption,
+                            color = textSecondary,
+                            textAlign = TextAlign.Center
+                        )
                         else -> Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -532,7 +541,8 @@ fun AdRewardDialog(
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(12.dp))
-                        .clickable {
+                        .heightIn(min = 48.dp)
+                        .clickable(role = Role.Button) {
                             onDismiss()
                             onNavigateToPremium()
                         }
@@ -543,7 +553,7 @@ fun AdRewardDialog(
                     AppText(
                         text = "Or unlock lifetime Pro without ads →",
                         style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Medium),
-                        color = RewardColors.accentLight
+                        color = AppTheme.colors.auroraViolet
                     )
                 }
             }
@@ -560,8 +570,8 @@ fun AdRewardDialog(
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .clip(RoundedCornerShape(20.dp))
-                        .background(RewardColors.darkCard)
-                        .border(1.5.dp, RewardColors.amber.copy(alpha = 0.6f), RoundedCornerShape(20.dp))
+                        .background(AppTheme.colors.surface)
+                        .border(1.5.dp, AppTheme.colors.gold.copy(alpha = 0.6f), RoundedCornerShape(20.dp))
                         .padding(18.dp)
                 ) {
                     Column(
@@ -569,13 +579,13 @@ fun AdRewardDialog(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         AppText(
-                            text = "🎉 24-Hour Pro Unlocked!",
+                            text = "🎉 ${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)} Pro Unlocked!",
                             style = AppTheme.typography.h3,
-                            color = RewardColors.amber
+                            color = AppTheme.colors.gold
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         AppText(
-                            text = "All features are active for the next 24 hours.",
+                            text = "All features are active for ${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)}.",
                             style = AppTheme.typography.bodySmall,
                             color = Color.White,
                             textAlign = TextAlign.Center
@@ -586,10 +596,11 @@ fun AdRewardDialog(
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(
                                     Brush.horizontalGradient(
-                                        listOf(RewardColors.accent, RewardColors.teal)
+                                        listOf(AppTheme.colors.auroraViolet, AppTheme.colors.auroraCyan)
                                     )
                                 )
-                                .clickable {
+                                .heightIn(min = 48.dp)
+                                .clickable(role = Role.Button) {
                                     onDismiss()
                                     onNavigateToPremium()
                                 }

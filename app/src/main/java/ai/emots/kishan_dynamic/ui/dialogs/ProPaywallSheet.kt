@@ -16,7 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,7 +30,9 @@ import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.kit.AppButton
 import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
+import ai.emots.kishan_dynamic.ui.kit.AppSubscriptionDisclosures
 import ai.emots.kishan_dynamic.ui.kit.AppPlanSelectorRow
+import ai.emots.kishan_dynamic.ui.kit.AuroraProHeroCard
 import ai.emots.kishan_dynamic.ui.kit.AppSheet
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
@@ -43,7 +45,11 @@ fun ProPaywallSheet(
     val context = LocalContext.current
     val billingGateway = remember { PlayBillingPremiumAccessGateway(context) }
     val plans by billingGateway.plans.collectAsState()
-    var selectedPlanIndex by remember { mutableIntStateOf(2) }
+    val billingStatus by billingGateway.status.collectAsState()
+    var selectedPlanId by remember { mutableStateOf<String?>(null) }
+    val selectedPlan = plans.firstOrNull { it.id == selectedPlanId }
+        ?: plans.firstOrNull { it.id == "yearly" }
+        ?: plans.firstOrNull()
 
     androidx.compose.runtime.DisposableEffect(Unit) {
         ai.emots.kishan_dynamic.service.IslandStateManager.setPaywallActive(true)
@@ -75,6 +81,14 @@ fun ProPaywallSheet(
                 .padding(AppTheme.spacing.lg),
             verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
+            AuroraProHeroCard(
+                isProActive = false,
+                proExpiresAt = null,
+                compactPreview = true
+            )
+
+            Spacer(modifier = Modifier.height(AppTheme.spacing.md))
+
             benefits.forEach { benefit ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
@@ -96,21 +110,20 @@ fun ProPaywallSheet(
             }
         }
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+        Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
 
         Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-            plans.forEachIndexed { index, plan ->
+            plans.forEach { plan ->
                 AppPlanSelectorRow(
                     plan = plan,
-                    isSelected = selectedPlanIndex == index,
-                    onClick = { selectedPlanIndex = index }
+                    isSelected = selectedPlan?.id == plan.id,
+                    onClick = { selectedPlanId = plan.id }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(AppTheme.spacing.xl))
+        Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
 
-        val selectedPlan = plans.getOrNull(selectedPlanIndex) ?: plans.firstOrNull()
         if (selectedPlan != null) {
             AppButton(
                 text = "Continue with ${selectedPlan.title}",
@@ -118,6 +131,17 @@ fun ProPaywallSheet(
                 style = AppButtonStyle.AuroraPro,
                 onClick = { onSelectPlan(selectedPlan.id) }
             )
+        }
+        AppButton(
+            text = "Restore purchases",
+            glyph = AppleGlyph.Reset,
+            style = AppButtonStyle.Secondary,
+            onClick = {
+                billingGateway.restorePurchases()
+            }
+        )
+        billingStatus?.let { status ->
+            AppText(status, style = AppTheme.typography.caption, color = AppTheme.colors.textSecondary)
         }
         Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
         AppButton(
@@ -127,10 +151,6 @@ fun ProPaywallSheet(
         )
 
         Spacer(modifier = Modifier.height(AppTheme.spacing.md))
-        AppText(
-            text = "Purchases are securely processed by Google Play. Cancel anytime in Google Play Subscriptions.",
-            style = AppTheme.typography.caption,
-            color = AppTheme.colors.textTertiary
-        )
+        AppSubscriptionDisclosures()
     }
 }

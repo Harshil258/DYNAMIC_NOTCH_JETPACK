@@ -66,7 +66,7 @@ fun IncomingCallIsland(
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
         val avatarSize = (56.dp * scale)
-        val buttonSize = (52.dp * scale)
+        val buttonSize = (52.dp * scale).coerceAtLeast(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
         val startPad = (24.dp * scale)
         val endPad = (25.dp * scale)
         val vPad = (15.dp * scale)

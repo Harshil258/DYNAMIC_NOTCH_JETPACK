@@ -9,6 +9,11 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.progressBarRangeInfo
+import androidx.compose.ui.semantics.setProgress
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -201,7 +206,7 @@ fun MusicPlayerIsland(
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .height(18.dp * scale)
+                        .height(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
                 )
 
                 // Exact 14.24dp gap from track to time
@@ -216,82 +221,29 @@ fun MusicPlayerIsland(
                 )
             }
 
-            // BOTTOM ROW: Authentic iOS Transport Trio (Play centered at X=192.3dp with +8.8dp optical offset) + AirPlay Pinned at X=315dp
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(44.dp * scale)
+            // Four equal control regions; no reference-coordinate offsets or pinned overlaps.
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.expandedContentInset),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Centered 3-button playback controls
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .offset(x = 8.8.dp * scale),
-                    horizontalArrangement = Arrangement.spacedBy(27.dp * scale),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Previous (size 36dp renders 28.3x16dp vector matching Dynamic Island-11.svg)
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp * scale)
-                            .clickable {
-                                progress = 0f
-                                onPrevious()
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(glyph = AppleGlyph.Backward, tint = Color.White, size = 36.dp * scale)
-                    }
-
-                    // Play/Pause icon (size 40dp renders 25x28dp vector matching Dynamic Island-11.svg)
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp * scale)
-                            .clickable {
-                                playing = !playing
-                                onPlayPause()
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
-                            tint = Color.White,
-                            size = 40.dp * scale
-                        )
-                    }
-
-                    // Next (size 36dp renders 28.3x16dp vector matching Dynamic Island-11.svg)
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp * scale)
-                            .clickable {
-                                progress = (progress + 0.05f).coerceAtMost(1f)
-                                onNext()
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(glyph = AppleGlyph.Forward, tint = Color.White, size = 36.dp * scale)
-                    }
-                }
-
-                // AirPlay / Route Picker Icon pinned to center at X=315dp (end padding = 32dp * scale, size = 25.5dp)
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                    .padding(end = 32.dp * scale)
-                    .size(40.dp * scale)
-                        .clickable {
-                            isAirPlayConnected = !isAirPlayConnected
-                            onAirPlay()
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.AirPlay,
-                        tint = if (isAirPlayConnected) Color(0xFF37A3DE) else Color.White,
-                        size = 25.5.dp * scale
-                    )
-                }
+                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
+                    glyph = AppleGlyph.Backward, contentDescription = "Previous track", iconSize = 24.dp,
+                    onClick = { progress = 0f; onPrevious() }
+                )
+                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
+                    glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
+                    contentDescription = if (playing) "Pause playback" else "Play playback", iconSize = 24.dp,
+                    onClick = { playing = !playing; onPlayPause() }
+                )
+                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
+                    glyph = AppleGlyph.Forward, contentDescription = "Next track", iconSize = 24.dp,
+                    onClick = { progress = (progress + 0.05f).coerceAtMost(1f); onNext() }
+                )
+                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
+                    glyph = AppleGlyph.AirPlay, contentDescription = "Audio output", iconSize = 24.dp,
+                    onClick = { isAirPlayConnected = !isAirPlayConnected; onAirPlay() }
+                )
             }
         }
     }
@@ -324,11 +276,15 @@ fun AppleAudioScrubber(
                     onDragCancel = { onProgressChangeFinished() }
                 )
             }
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = {}
-            )
+            .semantics {
+                contentDescription = "Playback position"
+                progressBarRangeInfo = ProgressBarRangeInfo(progress.coerceIn(0f, 1f), 0f..1f)
+                setProgress { value ->
+                    onProgressChange(value.coerceIn(0f, 1f))
+                    onProgressChangeFinished()
+                    true
+                }
+            }
     ) {
         val w = size.width
         val h = size.height

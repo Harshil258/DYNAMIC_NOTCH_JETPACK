@@ -91,6 +91,46 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
 
     private val analyticsTracker: AnalyticsTracker by lazy { FirebaseAnalyticsTracker(applicationContext) }
     private val scope = CoroutineScope(Dispatchers.Main + Job())
+    private var calibrationYdp = AuroraPreferences.DEFAULT_VERTICAL_OFFSET_DP
+    private var calibrationXdp = AuroraPreferences.DEFAULT_HORIZONTAL_OFFSET_DP
+    private var hardwareCutouts = emptyList<ai.emots.kishan_dynamic.data.model.IslandCutout>()
+    private var statusBarBottomPx = 0
+
+    private fun applyMeasuredWindowPlacement() {
+        val view = composeView ?: return
+        val params = windowLayoutParams ?: return
+        if (view.width <= 0 || view.height <= 0 || params.width == 0) return
+        val metrics = resources.displayMetrics
+        val density = metrics.density
+        val bounds = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) windowManager.currentWindowMetrics.bounds else null
+        val placement = ai.emots.kishan_dynamic.data.model.IslandPlacementPolicy.resolve(
+            screenWidth = bounds?.width() ?: metrics.widthPixels,
+            screenHeight = bounds?.height() ?: metrics.heightPixels,
+            bodyWidth = view.width, bodyHeight = view.height,
+            requestedX = (calibrationXdp * density).toInt(),
+            requestedY = (calibrationYdp * density).toInt(),
+            expanded = IslandStateManager.currentState.value.presentationMode == IslandPresentationMode.EXPANDED,
+            statusBarBottom = statusBarBottomPx,
+            edge = (islandLayoutTokens.expandedSideMargin.value * density).toInt(),
+            clearance = (islandLayoutTokens.cameraClearance.value * density).toInt(),
+            cutouts = hardwareCutouts
+        )
+        if (params.x != placement.centerOffsetX || params.y != placement.top) {
+            params.x = placement.centerOffsetX
+            params.y = placement.top
+            if (view.isAttachedToWindow) runCatching { windowManager.updateViewLayout(view, params) }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        hardwareCutouts = emptyList()
+        statusBarBottomPx = 0
+        composeView?.requestApplyInsets()
+        composeView?.post { applyMeasuredWindowPlacement() }
+    }
+
+    private val islandLayoutTokens = ai.emots.kishan_dynamic.ui.theme.AppIslandTokens()
     private lateinit var windowManager: WindowManager
     private lateinit var preferences: AuroraPreferences
     private lateinit var actionIslandRepository: ActionIslandRepository
@@ -412,8 +452,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
             format = PixelFormat.TRANSLUCENT
             gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-            x = initialHorizontalOffset
-            y = initialVerticalOffset
+            x = (initialHorizontalOffset * resources.displayMetrics.density).toInt()
+            y = (initialVerticalOffset * resources.displayMetrics.density).toInt()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 layoutInDisplayCutoutMode =
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
@@ -422,6 +462,35 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         windowLayoutParams = layoutParams
 
         composeView = ComposeView(this).apply {
+            setOnApplyWindowInsetsListener { view, insets ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    // Overlay insets are window-relative and shrink when we move below
+                    // the status bar. Use display metrics so placement cannot feed back
+                    // into its own inset calculation and oscillate vertically.
+                    val displayInsets = windowManager.maximumWindowMetrics.windowInsets
+                    statusBarBottomPx = displayInsets.getInsetsIgnoringVisibility(android.view.WindowInsets.Type.statusBars()).top
+                    hardwareCutouts = displayInsets.displayCutout?.boundingRects.orEmpty().map {
+                        ai.emots.kishan_dynamic.data.model.IslandCutout(it.left, it.top, it.right, it.bottom)
+                    }
+                } else {
+                    val location = IntArray(2)
+                    view.getLocationOnScreen(location)
+                    @Suppress("DEPRECATION")
+                    val topInset = insets.systemWindowInsetTop
+                    if (topInset > 0) statusBarBottomPx = location[1] + topInset
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                        val rects = insets.displayCutout?.boundingRects.orEmpty()
+                        if (rects.isNotEmpty()) hardwareCutouts = rects.map {
+                            ai.emots.kishan_dynamic.data.model.IslandCutout(
+                                it.left + location[0], it.top + location[1],
+                                it.right + location[0], it.bottom + location[1])
+                        }
+                    }
+                }
+                post { applyMeasuredWindowPlacement() }
+                insets
+            }
+            addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ -> applyMeasuredWindowPlacement() }
             setViewTreeLifecycleOwner(this@IslandOverlayService)
             setViewTreeViewModelStoreOwner(this@IslandOverlayService)
             setViewTreeSavedStateRegistryOwner(this@IslandOverlayService)
@@ -443,6 +512,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
 
             setContent {
                 val islandState by IslandStateManager.currentState.collectAsState()
+                val unseenNotificationCount by IslandStateManager.unseenNotificationCount.collectAsState()
                 val isEnabled by preferences.islandEnabled.collectAsState(initial = true)
                 val alwaysOnTop by preferences.alwaysOnTop.collectAsState(initial = true)
                 val showOnLockScreen by preferences.showOnLockScreen.collectAsState(initial = true)
@@ -488,30 +558,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                         deviceLocked = isDeviceLocked,
                         systemSurfaceActive = systemSurfaceActive
                     ).shouldRender(isHiddenState = isHiddenState, isIdleState = isIdleState),
-                    enter = if (reduceMotion) {
-                        androidx.compose.animation.fadeIn(
-                            animationSpec = androidx.compose.animation.core.tween(80)
-                        )
-                    } else {
-                        androidx.compose.animation.expandVertically(
-                            animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
-                            expandFrom = Alignment.Top
-                        ) + androidx.compose.animation.fadeIn(
-                            animationSpec = androidx.compose.animation.core.tween(180)
-                        )
-                    },
-                    exit = if (reduceMotion) {
-                        androidx.compose.animation.fadeOut(
-                            animationSpec = androidx.compose.animation.core.tween(80)
-                        )
-                    } else {
-                        androidx.compose.animation.shrinkVertically(
-                            animationSpec = ai.emots.kishan_dynamic.ui.motion.AppMotion.islandSpring(),
-                            shrinkTowards = Alignment.Top
-                        ) + androidx.compose.animation.fadeOut(
-                            animationSpec = androidx.compose.animation.core.tween(140)
-                        )
-                    }
+                    enter = ai.emots.kishan_dynamic.ui.components.islandVisibilityEnter(reduceMotion),
+                    exit = ai.emots.kishan_dynamic.ui.components.islandVisibilityExit(reduceMotion)
                 ) {
                     androidx.compose.runtime.CompositionLocalProvider(
                         ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion provides reduceMotion
@@ -538,7 +586,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                             val demoState = if (compactMusicControlsEnabled && renderedState is IslandState.Music) {
                                 IslandDemoState.MusicCompact
                             } else {
-                                mapToDemoState(renderedState)
+                                mapToDemoState(renderedState, unseenNotificationCount)
                             }
                             val sourceCallContact = when (renderedState) {
                                 is IslandState.IncomingCall -> renderedState.contact
@@ -613,7 +661,10 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_EXPAND, mapOf("source" to "overlay_tap"))
                                     if (!(compactMusicControlsEnabled && islandState is IslandState.Music)) {
                                         performIslandInteraction(
-                                            IslandInteractionPolicy.mainTap(islandState),
+                                            IslandInteractionPolicy.mainTap(
+                                                islandState,
+                                                quickControlsOnIdleEnabled = actionConfig.isEnabled && quickControlsEnabled
+                                            ),
                                             actionConfig.isEnabled && quickControlsEnabled
                                         )
                                     }
@@ -639,14 +690,17 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                         actionConfig.isEnabled && quickControlsEnabled
                                     )
                                 },
-                                mainContentDescription = islandMainContentDescription(renderedState),
-                                companionContentDescription = islandCompanionContentDescription(renderedState),
+                                mainContentDescription = islandMainContentDescription(
+                                    renderedState, unseenNotificationCount
+                                ),
+                                companionContentDescription = islandCompanionContentDescription(
+                                    renderedState, unseenNotificationCount
+                                ),
                                 onSwipeDismiss = {
                                     analyticsTracker.logEvent(AnalyticsEventNames.ISLAND_SWIPE_DISMISS)
                                     if (swipeUpDismiss) {
-                                        IslandStateManager.handleSwipeDismiss()?.let { notificationId ->
-                                            IslandNotificationListener.instance?.cancelNotification(notificationId)
-                                        }
+                                        // U01 / PD-009 / PD-010: Collapse only; OS shade and queue unchanged
+                                        IslandStateManager.collapseToMinimal()
                                     }
                                 },
                                 onControlAction = ::handleIslandControlAction,
@@ -675,6 +729,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 },
                                 notifications = notificationItems,
                                 notificationActiveIndex = notificationActiveIndex,
+                                unseenNotificationCount = unseenNotificationCount,
                                 replyingNotificationId = replyingNotificationId,
                                 replyAction = replyingAction,
                                 onSendReply = { replyText ->
@@ -737,10 +792,10 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                         restoreOverlayNonFocusable()
                                     }
                                     val notification = notificationItems.firstOrNull { it.id == notificationId }
-                                    if (notification?.isClearable == true) {
+                                    if (notification != null) {
+                                        // UX-C06 / PD-019: Default is remove from Island queue only, leave Android shade untouched
                                         IslandStateManager.removeNotification(notificationId)
                                         NotificationActionRegistry.remove(notificationId)
-                                        IslandNotificationListener.instance?.cancelNotification(notificationId)
                                     }
                                 },
                                 callContact = callContact,
@@ -827,6 +882,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
 
         try {
             windowManager.addView(composeView, layoutParams)
+            composeView?.requestApplyInsets()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -846,63 +902,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         }
     }
 
-    private fun mapToDemoState(state: IslandState): IslandDemoState {
-        return when (state) {
-            is IslandState.Hidden, is IslandState.Minimal -> IslandDemoState.Idle
-            is IslandState.Music -> if (state.isExpanded) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact
-            is IslandState.OngoingCall -> if (state.isExpanded) IslandDemoState.CallExpanded else IslandDemoState.CallCompact
-            is IslandState.CallSummary -> IslandDemoState.CallSummaryExpanded
-            is IslandState.IncomingCall -> IslandDemoState.CallAvatars
-            is IslandState.Notification -> when {
-                state.isExpanded -> IslandDemoState.NotificationExpanded
-                state.notifications.size > 1 -> IslandDemoState.NotificationStacked
-                else -> IslandDemoState.NotificationCompact
-            }
-            is IslandState.NotificationWithMusic -> IslandDemoState.NotificationWithMusicCompact
-            is IslandState.Charging -> if (state.batteryPercent < 20) IslandDemoState.LowBatteryCompact else IslandDemoState.ChargingCompact
-            is IslandState.RingerMode -> if (state.isExpanded) {
-                IslandDemoState.RingerModeExpanded
-            } else when (state.mode) {
-                ai.emots.kishan_dynamic.data.model.RingerModeType.SILENT -> IslandDemoState.SilentModeCompact
-                ai.emots.kishan_dynamic.data.model.RingerModeType.VIBRATE -> IslandDemoState.VibrateModeCompact
-                ai.emots.kishan_dynamic.data.model.RingerModeType.NORMAL -> IslandDemoState.NormalModeCompact
-            }
-            is IslandState.RingerVolume -> IslandDemoState.RingerVolumeCompact
-            is IslandState.MediaVolume -> IslandDemoState.MediaVolumeCompact
-            is IslandState.BluetoothDevice -> if (state.isConnecting) {
-                IslandDemoState.BluetoothConnecting
-            } else {
-                IslandDemoState.BluetoothConnected
-            }
-            is IslandState.ActionControl -> IslandDemoState.ActionControlExpanded
-            is IslandState.PremiumExpiry -> IslandDemoState.PremiumExpiryExpanded
-            is IslandState.LiveActivity -> state.activity.toDemoState()
-        }
-    }
-
-    private fun ai.emots.kishan_dynamic.data.model.LiveActivityInfo.toDemoState(): IslandDemoState {
-        return when (kind) {
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TIMER -> if (isExpanded) IslandDemoState.TimerExpanded else IslandDemoState.TimerCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.DELIVERY -> if (isExpanded) IslandDemoState.DeliveryExpanded else IslandDemoState.DeliveryCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FLIGHT -> if (isExpanded) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SPORTS -> if (isExpanded) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION -> if (isExpanded) IslandDemoState.ColorOptions else IslandDemoState.NavigationCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VOICE_MEMO -> if (isExpanded) IslandDemoState.VoiceMemoExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_RECORDING -> if (isExpanded) IslandDemoState.ScreenRecordingExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SHORTCUT -> if (isExpanded) IslandDemoState.ShortcutExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FOCUS_MODE -> if (isExpanded) IslandDemoState.FocusModeExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIR_DROP -> if (isExpanded) IslandDemoState.AirDropActivity else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPODS -> if (isExpanded) IslandDemoState.AirPodsConnected else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SATELLITE -> if (isExpanded) IslandDemoState.SatelliteConnected else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FIND_MY -> if (isExpanded) IslandDemoState.FindMyAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOVED_TO_IPHONE -> if (isExpanded) IslandDemoState.MovedToIPhone else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VIDEO_REMOTE -> if (isExpanded) IslandDemoState.VideoRemoteExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPLANE_ALERT -> if (isExpanded) IslandDemoState.AirplaneAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_MIRRORING_ALERT -> if (isExpanded) IslandDemoState.ScreenMirroringAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOBILE_DATA_ALERT -> if (isExpanded) IslandDemoState.MobileDataAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TRANSIT_ROUTE_ALERT -> if (isExpanded) IslandDemoState.TransitRouteAlert else IslandDemoState.Minimal
-        }
-    }
+    private fun mapToDemoState(state: IslandState, unseenCount: Int): IslandDemoState =
+        ai.emots.kishan_dynamic.ui.components.resolveOverlayDemoState(state, unseenCount)
 
     private fun handleIslandControlAction(action: IslandControlAction) {
         analyticsTracker.logEvent(AnalyticsEventNames.MEDIA_CONTROL_USED, mapOf("action" to action.name.lowercase()))
@@ -1099,7 +1100,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         }
     }
 
-    private fun islandMainContentDescription(state: IslandState): String = when (state) {
+    private fun islandMainContentDescription(state: IslandState, unseenCount: Int): String = when (state) {
         is IslandState.Minimal -> "Open Quick Controls"
         is IslandState.Notification -> {
             val notification = state.notifications.getOrNull(state.activeIndex)
@@ -1107,7 +1108,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             val position = if (state.notifications.size > 1) {
                 ", ${state.activeIndex.coerceIn(0, state.notifications.lastIndex) + 1} of ${state.notifications.size}"
             } else ""
-            "Open notification from ${notification?.appName ?: "an app"}$position"
+            val unseen = if (unseenCount > 0) ", $unseenCount unseen" else ""
+            "Open notification from ${notification?.appName ?: "an app"}$position$unseen"
         }
         is IslandState.NotificationWithMusic -> if (state.isPlaying) {
             "Open media controls for ${state.track.title}"
@@ -1125,7 +1127,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         else -> "Dynamic Island"
     }
 
-    private fun islandCompanionContentDescription(state: IslandState): String = when (state) {
+    private fun islandCompanionContentDescription(state: IslandState, unseenCount: Int): String = when (state) {
         is IslandState.Notification -> {
             val nextIndex = if (state.notifications.isEmpty()) 0
                 else (state.activeIndex.coerceIn(0, state.notifications.lastIndex) + 1) % state.notifications.size
@@ -1133,7 +1135,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             "Open next notification${next?.appName?.let { " from $it" }.orEmpty()}"
         }
         is IslandState.NotificationWithMusic -> if (state.isPlaying) {
-            "Open ${state.notifications.size} notifications"
+            if (unseenCount > 0) "Open $unseenCount unseen notifications" else "Open active notifications"
         } else {
             "Open media controls for ${state.track.title}"
         }
@@ -1186,12 +1188,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
         // Live vertical offset
         scope.launch {
             preferences.verticalOffset.collectLatest { offset ->
-                windowLayoutParams?.let { params ->
-                    params.y = offset
-                    composeView?.let { view ->
-                        runCatching { windowManager.updateViewLayout(view, params) }
-                    }
-                }
+                calibrationYdp = offset
+                applyMeasuredWindowPlacement()
             }
         }
 
@@ -1206,12 +1204,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                     }
                 }
                 .collectLatest { offset ->
-                    windowLayoutParams?.let { params ->
-                        params.x = offset
-                        composeView?.let { view ->
-                            runCatching { windowManager.updateViewLayout(view, params) }
-                        }
-                    }
+                    calibrationXdp = offset
+                    applyMeasuredWindowPlacement()
                 }
         }
 
@@ -1264,14 +1258,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val isHidden = !shouldRender || paywallActive
                 val isExpanded = state.presentationMode == ai.emots.kishan_dynamic.data.model.IslandPresentationMode.EXPANDED
                 Pair(isHidden, isExpanded)
-            }.collectLatest { (isHidden, isExpanded) ->
+            }.collectLatest { (isHidden, _) ->
                 windowLayoutParams?.let { params ->
-                    val displayMetrics = resources.displayMetrics
-                    val screenWidthPx = displayMetrics.widthPixels
-                    val density = displayMetrics.density
-                    val expandedWidthPx = (ai.emots.kishan_dynamic.ui.theme.AppIslandTokens()
-                        .expandedWidth((screenWidthPx / density).dp).value * density).toInt().coerceAtLeast(0)
-
                     val isHiddenNow = isHidden
                     // Some OEM compositors retain the last buffer of a zero-sized window.
                     // Hide the actual view as well: protected surfaces must never wait for
@@ -1288,7 +1276,6 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
 
                     val targetWidthPx = when {
                         isHiddenNow -> 0
-                        isExpanded -> expandedWidthPx
                         else -> WindowManager.LayoutParams.WRAP_CONTENT
                     }
                     val targetHeightPx = when {
@@ -1302,6 +1289,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                         params.height = targetHeightPx
                         composeView?.let { view ->
                             runCatching { windowManager.updateViewLayout(view, params) }
+                            view.post { applyMeasuredWindowPlacement() }
                         }
                     }
                 }

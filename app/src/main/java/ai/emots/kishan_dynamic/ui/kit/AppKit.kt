@@ -330,13 +330,15 @@ fun AppIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    tint: Color? = null
+    tint: Color? = null,
+    iconSize: Dp = 17.dp
 ) {
+    val reducedMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val scaleState = animateFloatAsState(
-        targetValue = if (pressed) 0.90f else 1f,
-        animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
+        targetValue = if (pressed && !reducedMotion) 0.90f else 1f,
+        animationSpec = if (reducedMotion) androidx.compose.animation.core.snap() else spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
         label = "icon_button_scale"
     )
     Box(
@@ -351,13 +353,13 @@ fun AppIconButton(
             .clip(CircleShape)
             .background(AppTheme.colors.surface)
             .border(0.5.dp, AppTheme.colors.border, CircleShape)
-            .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick),
+            .clickable(interactionSource = interaction, indication = androidx.compose.material3.ripple(), role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         AppleIcon(
             glyph = glyph,
             tint = tint ?: AppTheme.colors.textPrimary,
-            size = 17.dp
+            size = iconSize
         )
     }
 }

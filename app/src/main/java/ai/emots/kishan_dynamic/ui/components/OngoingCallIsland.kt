@@ -219,7 +219,7 @@ fun OngoingCallIslandExpanded(
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonSize = (50.64.dp * scale)
+        val buttonSize = (50.64.dp * scale).coerceAtLeast(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
         val hPad = ((if (variant == OngoingCallVariant.SharedMedia) 24.dp else 29.dp) * scale)
         val topPad = ((if (variant == OngoingCallVariant.SharedMedia) 32.dp else 34.dp) * scale)
         val bottomPad = (24.dp * scale)

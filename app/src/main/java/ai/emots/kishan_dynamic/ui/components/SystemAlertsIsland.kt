@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -89,7 +90,7 @@ internal fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(43.dp * scale)
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
                     .clip(RoundedCornerShape(21.5.dp * scale))
                     .background(Color(0xFF2C2C2D))
                     .clickable { onControlAction(IslandControlAction.OpenSettings) },
@@ -158,7 +159,7 @@ internal fun ScreenMirroringContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(43.dp * scale)
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
                     .clip(RoundedCornerShape(21.5.dp * scale))
                     .background(Color(0xFF1A1C2D))
                     .clickable { onControlAction(IslandControlAction.ScreenMirroringStop) },
@@ -228,7 +229,7 @@ internal fun MobileDataContent(onControlAction: (IslandControlAction) -> Unit = 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(43.dp * scale),
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget),
                 horizontalArrangement = Arrangement.spacedBy(12.dp * scale)
             ) {
                 Box(
@@ -312,7 +313,7 @@ internal fun TransitRouteContent(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(43.dp * scale)
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
                     .clip(RoundedCornerShape(21.5.dp * scale))
                     .background(Color(0xFF1D1011))
                     .clickable { onControlAction(IslandControlAction.TransitEndRoute) },
@@ -724,7 +725,7 @@ internal fun FocusModeExpandedContent() {
             Box(
                 modifier = Modifier
                     .width(70.dp * scale)
-                    .height(34.dp * scale)
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
                     .clip(RoundedCornerShape(17.dp * scale))
                     .background(Color(0xFF1E2854)),
                 contentAlignment = Alignment.Center
@@ -859,7 +860,7 @@ internal fun VideoRemoteExpandedContent(onControlAction: (IslandControlAction) -
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(44.dp * scale)
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
             ) {
                 Row(
                     modifier = Modifier
@@ -1306,7 +1307,7 @@ internal fun MovedToIPhoneContent(
             Box(
                 modifier = Modifier
                     .width(70.dp * scale)
-                    .height(34.dp * scale)
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
                     .clip(RoundedCornerShape(17.dp * scale))
                     .background(Color(0xFF1E2854))
                     .clickable { onControlAction(IslandControlAction.MovedUndo) },

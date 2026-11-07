@@ -1,5 +1,9 @@
 # Autonomous Coding Agent Instructions — Android Dynamic Island
 
+**Playground-first workflow:** Before further production island geometry or animation tuning, use the debug-only [Dynamic Island Playground](docs/DYNAMIC_ISLAND_PLAYGROUND.md), run its checks, and inspect captures. Playground overrides must not write production preferences.
+
+**Mandatory island layout contract:** Read [docs/ISLAND_LAYOUT_RULES.md](docs/ISLAND_LAYOUT_RULES.md) before changing island geometry or content. It supersedes reference-only fixed heights, universal compact minimum widths, single-line-only expanded copy, and 44dp touch-target guidance.
+
 All coding agents working on this codebase must adhere to the permanent design, architecture, and reliability standards established for this project.
 
 Before making any changes to UI components, screens, services, or overlay lifecycle code, you **MUST** read and follow:

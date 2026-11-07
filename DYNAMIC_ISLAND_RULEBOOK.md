@@ -1,5 +1,7 @@
 # Dynamic Island Design System — Comprehensive Figma Audit & Rule Book
 
+**Mandatory island layout contract:** Read [docs/ISLAND_LAYOUT_RULES.md](docs/ISLAND_LAYOUT_RULES.md) before changing island geometry or content. It supersedes reference-only fixed heights, universal compact minimum widths, single-line-only expanded copy, and 44dp touch-target guidance.
+
 ## Reference: iOS 17 Dynamic Island Components (Figma Community)
 **Source:** https://www.figma.com/design/z7GyjPFoVfAlEgL3AhaYEr/iOS17-Dynamic-Island-Components--Community-  
 **Primary export directory:** `design/reference/ios17-dynamic-island/`

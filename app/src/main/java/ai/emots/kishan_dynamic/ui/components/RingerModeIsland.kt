@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -198,7 +199,7 @@ fun RingerModeIslandExpanded(
             Box(
                 modifier = Modifier
                     .width(79.dp * scale)
-                    .height(34.dp * scale)
+                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
                     .clip(RoundedCornerShape(17.dp * scale))
                     .background(Color(0xFF2C2C2D))
                     .clickable(onClick = onToggle),

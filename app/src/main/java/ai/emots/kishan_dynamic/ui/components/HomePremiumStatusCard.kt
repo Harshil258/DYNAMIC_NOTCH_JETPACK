@@ -1,24 +1,18 @@
 package ai.emots.kishan_dynamic.ui.components
 
-import androidx.compose.animation.core.EaseInOutSine
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -35,14 +29,9 @@ import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.premium.EntitlementSnapshot
 import ai.emots.kishan_dynamic.data.premium.EntitlementSource
 import ai.emots.kishan_dynamic.ui.kit.AppCard
+import ai.emots.kishan_dynamic.ui.kit.AppButton
+import ai.emots.kishan_dynamic.ui.kit.AppButtonStyle
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
-
-private object StatusCardColors {
-    val gold = Color(0xFFF59E0B)
-    val cyan = Color(0xFF06B6D4)
-    val purple = Color(0xFF8B5CF6)
-    val green = Color(0xFF10B981)
-}
 
 @Composable
 fun HomePremiumStatusCard(
@@ -53,18 +42,7 @@ fun HomePremiumStatusCard(
 ) {
     val isDark = AppTheme.isDark
     val textPrimary = if (isDark) Color.White else AppTheme.colors.textPrimary
-    val textSecondary = if (isDark) Color(0xFF94A3B8) else AppTheme.colors.textSecondary
-
-    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
-    val pulseGlow by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.7f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2400, easing = EaseInOutSine),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseGlow"
-    )
+    val textSecondary = AppTheme.colors.textSecondary
 
     AppCard(
         modifier = modifier
@@ -72,8 +50,8 @@ fun HomePremiumStatusCard(
             .border(
                 width = 1.dp,
                 brush = Brush.horizontalGradient(
-                    if (snapshot.isPro) listOf(StatusCardColors.gold.copy(alpha = 0.5f), StatusCardColors.purple.copy(alpha = 0.4f))
-                    else listOf(StatusCardColors.purple.copy(alpha = 0.25f), StatusCardColors.cyan.copy(alpha = 0.25f))
+                    if (snapshot.isPro) listOf(AppTheme.colors.gold.copy(alpha = 0.5f), AppTheme.colors.auroraViolet.copy(alpha = 0.4f))
+                    else listOf(AppTheme.colors.auroraViolet.copy(alpha = 0.25f), AppTheme.colors.auroraCyan.copy(alpha = 0.25f))
                 ),
                 shape = RoundedCornerShape(AppTheme.radius.xl)
             ),
@@ -81,7 +59,7 @@ fun HomePremiumStatusCard(
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
             // Top Row: Icon + Title + Plan Badge
             Row(
@@ -98,7 +76,7 @@ fun HomePremiumStatusCard(
                             modifier = Modifier
                                 .size(38.dp)
                                 .blur(12.dp)
-                                .background(StatusCardColors.gold.copy(alpha = pulseGlow), CircleShape)
+                                .background(AppTheme.colors.gold.copy(alpha = 0.35f), CircleShape)
                         )
                     }
                     Box(
@@ -107,8 +85,8 @@ fun HomePremiumStatusCard(
                             .clip(CircleShape)
                             .background(
                                 Brush.linearGradient(
-                                    if (snapshot.isPro) listOf(StatusCardColors.gold, StatusCardColors.purple)
-                                    else listOf(StatusCardColors.purple, StatusCardColors.cyan)
+                                    if (snapshot.isPro) listOf(AppTheme.colors.gold, AppTheme.colors.auroraViolet)
+                                    else listOf(AppTheme.colors.auroraViolet, AppTheme.colors.auroraCyan)
                                 )
                             ),
                         contentAlignment = Alignment.Center
@@ -121,13 +99,13 @@ fun HomePremiumStatusCard(
                     }
                 }
 
-                Spacer(modifier = Modifier.width(14.dp))
+                Spacer(modifier = Modifier.width(AppTheme.spacing.md))
 
                 // Center Title & Subtitle
                 Column(modifier = Modifier.weight(1f)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
                     ) {
                         AppText(
                             text = when (snapshot.source) {
@@ -140,7 +118,9 @@ fun HomePremiumStatusCard(
                                 EntitlementSource.FREE -> "Aurora Pro"
                             },
                             style = AppTheme.typography.body.copy(fontWeight = FontWeight.Bold),
-                            color = textPrimary
+                            color = textPrimary,
+                            modifier = Modifier.weight(1f),
+                            maxLines = 2
                         )
 
                         // Status Badge
@@ -152,9 +132,9 @@ fun HomePremiumStatusCard(
                                         EntitlementSource.LIFETIME,
                                         EntitlementSource.YEARLY,
                                         EntitlementSource.MONTHLY,
-                                        EntitlementSource.WEEKLY -> StatusCardColors.gold
-                                        EntitlementSource.INSTALL_TRIAL -> StatusCardColors.cyan
-                                        EntitlementSource.REWARDED_ACCESS -> StatusCardColors.green
+                                        EntitlementSource.WEEKLY -> AppTheme.colors.gold
+                                        EntitlementSource.INSTALL_TRIAL -> AppTheme.colors.auroraCyan
+                                        EntitlementSource.REWARDED_ACCESS -> AppTheme.colors.success
                                         EntitlementSource.FREE -> if (isDark) Color.White.copy(alpha = 0.15f) else Color.Black.copy(alpha = 0.08f)
                                     }
                                 )
@@ -174,12 +154,12 @@ fun HomePremiumStatusCard(
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Black
                                 ),
-                                color = if (snapshot.source == EntitlementSource.FREE) textSecondary else Color.Black
+                                color = if (snapshot.source == EntitlementSource.FREE) textSecondary else AppTheme.colors.auroraObsidian
                             )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(2.dp))
+                    Spacer(modifier = Modifier.height(AppTheme.spacing.xxs))
 
                     AppText(
                         text = when (snapshot.source) {
@@ -203,69 +183,37 @@ fun HomePremiumStatusCard(
                 snapshot.source != EntitlementSource.MONTHLY &&
                 snapshot.source != EntitlementSource.WEEKLY
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    // Watch Ad Pass Button
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(40.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f))
-                            .border(
-                                1.dp,
-                                if (isDark) Color.White.copy(alpha = 0.12f) else Color.Black.copy(alpha = 0.08f),
-                                RoundedCornerShape(20.dp)
-                            )
-                            .clickable(onClick = onOpenRewardDialog),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            AppleIcon(
+                BoxWithConstraints(Modifier.fillMaxWidth()) {
+                    if (maxWidth < 360.dp) {
+                        Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                            AppButton(
+                                text = "Watch ad",
                                 glyph = AppleGlyph.Play,
-                                tint = StatusCardColors.cyan,
-                                size = 14.dp
+                                style = AppButtonStyle.Tonal,
+                                onClick = onOpenRewardDialog
                             )
-                            AppText(
-                                text = "Watch Ad (+1 Day)",
-                                style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
-                                color = textPrimary
+                            AppButton(
+                                text = if (snapshot.isPro) "Keep Pro" else "Get Pro",
+                                glyph = AppleGlyph.Crown,
+                                style = AppButtonStyle.AuroraPro,
+                                onClick = onNavigateToPremium
                             )
                         }
-                    }
-
-                    // Upgrade to Pro Button
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(40.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(
-                                Brush.horizontalGradient(
-                                    listOf(StatusCardColors.gold, StatusCardColors.purple)
-                                )
+                    } else {
+                        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                            AppButton(
+                                text = "Watch ad",
+                                glyph = AppleGlyph.Play,
+                                style = AppButtonStyle.Tonal,
+                                onClick = onOpenRewardDialog,
+                                modifier = Modifier.weight(1f)
                             )
-                            .clickable(onClick = onNavigateToPremium),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            AppleIcon(
+                            AppButton(
+                                text = if (snapshot.isPro) "Keep Pro" else "Get Pro",
                                 glyph = AppleGlyph.Crown,
-                                tint = Color.White,
-                                size = 14.dp
-                            )
-                            AppText(
-                                text = if (snapshot.isPro) "Keep Pro" else "Get Aurora Pro",
-                                style = AppTheme.typography.caption.copy(fontWeight = FontWeight.Bold),
-                                color = Color.White
+                                style = AppButtonStyle.AuroraPro,
+                                onClick = onNavigateToPremium,
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }

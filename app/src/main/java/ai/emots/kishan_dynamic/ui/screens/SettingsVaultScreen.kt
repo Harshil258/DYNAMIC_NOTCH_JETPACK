@@ -2,39 +2,24 @@ package ai.emots.kishan_dynamic.ui.screens
 
 import android.app.Activity
 import android.content.Intent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.data.model.AppLanguages
 import ai.emots.kishan_dynamic.data.preferences.AuroraPreferences
 import ai.emots.kishan_dynamic.data.premium.RewardedAdConfiguration
@@ -43,7 +28,6 @@ import ai.emots.kishan_dynamic.data.premium.MobileAdsRewardedPassGateway
 import ai.emots.kishan_dynamic.data.premium.PlayBillingPremiumAccessGateway
 import ai.emots.kishan_dynamic.data.premium.EntitlementManager
 import ai.emots.kishan_dynamic.data.premium.EntitlementSource
-import ai.emots.kishan_dynamic.data.premium.RewardedPassResult
 import ai.emots.kishan_dynamic.data.premium.RewardedPassPolicy
 import ai.emots.kishan_dynamic.data.premium.BannerAdConfiguration
 import ai.emots.kishan_dynamic.data.premium.NativeAdConfiguration
@@ -82,17 +66,7 @@ import ai.emots.kishan_dynamic.ui.motion.appReveal
 import ai.emots.kishan_dynamic.ui.platform.openPlayStore
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.AppThemeMode
-import ai.emots.kishan_dynamic.ui.theme.accentGradient
-import ai.emots.kishan_dynamic.ui.theme.auroraActionGradient
-import ai.emots.kishan_dynamic.ui.theme.surfaceGradient
 import kotlinx.coroutines.launch
-
-private data class PricingPlan(
-    val id: String,
-    val title: String,
-    val price: String,
-    val badge: String? = null
-)
 
 /**
  * Settings tab — membership, language, support and about,
@@ -189,9 +163,10 @@ fun SettingsVaultScreen(
 
     val entitlementManager = remember { EntitlementManager.getInstance(context) }
     val entitlementSnapshot by entitlementManager.entitlement.collectAsState()
-    val isPaidPro by preferences.isPaidPro.collectAsState(initial = false)
-    val isAdFree by preferences.isAdFree.collectAsState(initial = false)
-    val isProActive by preferences.isProActive.collectAsState(initial = false)
+    val isPaidPro = entitlementSnapshot.isActive && entitlementSnapshot.source in setOf(
+        EntitlementSource.WEEKLY, EntitlementSource.MONTHLY, EntitlementSource.YEARLY, EntitlementSource.LIFETIME
+    )
+    val isAdFree = entitlementSnapshot.isAdFreePaidUser
     var bannerLoaded by remember(bannerConfiguration, isAdFree, canRequestAds) { mutableStateOf(false) }
     var nativeLoaded by remember(nativeConfiguration, isAdFree, canRequestAds) { mutableStateOf(false) }
     val proExpiresAt by preferences.proExpiresAt.collectAsState(initial = null)
@@ -210,7 +185,6 @@ fun SettingsVaultScreen(
     var showPrivacy by remember { mutableStateOf(false) }
     var showTerms by remember { mutableStateOf(false) }
     var showRewardDialog by remember { mutableStateOf(false) }
-    var selectedPlanIndex by remember { mutableIntStateOf(2) }
 
     LaunchedEffect(openPremiumOnLaunch) {
         if (openPremiumOnLaunch) showPaywall = true
@@ -220,19 +194,10 @@ fun SettingsVaultScreen(
         if (openRewardedPassOnLaunch) showRewardDialog = true
     }
 
-    val plans = remember {
-        listOf(
-            PricingPlan("weekly", "Weekly", "₹39"),
-            PricingPlan("monthly", "Monthly", "₹59"),
-            PricingPlan("yearly", "Yearly", "₹99", "Most popular"),
-            PricingPlan("lifetime", "Lifetime", "₹149", "Lifetime access")
-        )
-    }
-
     AppScreen(bottomInset = BottomDockInset) {
         AppLargeTitle(
             title = "Settings",
-            subtitle = "Membership, language and support.",
+            subtitle = "Make Aurora feel like yours.",
             modifier = Modifier.appReveal(0)
         )
 
@@ -241,11 +206,11 @@ fun SettingsVaultScreen(
         // ---------------------------------------------------------------
         AppSectionTitle("Membership")
         AppCard(modifier = Modifier.appReveal(1)) {
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
+                Column(modifier = Modifier.fillMaxWidth()) {
                     AppText(
                         text = when {
                             entitlementSnapshot.source == EntitlementSource.LIFETIME -> "Aurora Pro Lifetime"
@@ -269,7 +234,6 @@ fun SettingsVaultScreen(
                         color = AppTheme.colors.textSecondary
                     )
                 }
-                Spacer(modifier = Modifier.width(AppTheme.spacing.md))
                 AppStatusPill(
                     text = when {
                         entitlementSnapshot.source == EntitlementSource.LIFETIME -> "Lifetime"
@@ -285,45 +249,36 @@ fun SettingsVaultScreen(
             if (!isPaidPro) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-                ) {
-                    plans.forEachIndexed { index, plan ->
-                        PlanCard(
-                            plan = plan,
-                            selected = selectedPlanIndex == index,
-                            onClick = { selectedPlanIndex = index }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
-
                 AppButton(
-                    text = "Continue with ${plans[selectedPlanIndex].title}",
+                    text = "Explore Aurora Pro",
                     onClick = onNavigatePremium,
                     glyph = AppleGlyph.Crown,
                     style = AppButtonStyle.AuroraPro
                 )
                 Spacer(modifier = Modifier.height(AppTheme.spacing.sm))
-                AppButton(
-                    text = "Watch an ad for a ${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)} pass",
-                    glyph = AppleGlyph.Play,
-                    onClick = { showRewardDialog = true },
-                    style = AppButtonStyle.Secondary
+                AppText(
+                    text = "Compare plans and see local pricing from Google Play.",
+                    style = AppTheme.typography.caption,
+                    color = AppTheme.colors.textSecondary
                 )
-                AppButton(
-                    text = "Restore purchases",
+                if (rewardedConfiguration.enabled) {
+                    AppNavRow(
+                        title = "Try Pro with an ad",
+                        subtitle = "${RewardedPassPolicy.durationLabel(rewardedConfiguration.passHours)} of premium features",
+                        glyph = AppleGlyph.Play,
+                        onClick = { showRewardDialog = true }
+                    )
+                }
+                AppNavRow(
+                    title = "Restore purchases",
+                    subtitle = "Recover access from Google Play",
+                    glyph = AppleGlyph.Reset,
                     onClick = {
                         premiumMessage = when (val result = premiumGateway.restorePurchases()) {
                             is PremiumAccessResult.Unavailable -> result.message
                             is PremiumAccessResult.Started -> result.message
                         }
-                    },
-                    style = AppButtonStyle.Secondary
+                    }
                 )
                 (premiumMessage ?: billingStatus ?: rewardedStatus)?.let { message ->
                     AppText(
@@ -339,6 +294,15 @@ fun SettingsVaultScreen(
                         color = AppTheme.colors.textTertiary
                     )
                 }
+            }
+            if (isPaidPro) {
+                Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
+                AppButton(
+                    text = "Manage membership",
+                    glyph = AppleGlyph.Crown,
+                    style = AppButtonStyle.Secondary,
+                    onClick = onNavigatePremium
+                )
             }
             if (!isAdFree && bannerConfiguration.enabled) {
                 Spacer(modifier = Modifier.height(AppTheme.spacing.lg))
@@ -640,58 +604,3 @@ private fun android.content.Context.shareApp() {
 
 private fun remainingHours(expiresAtMillis: Long): Long =
     ((expiresAtMillis - System.currentTimeMillis()).coerceAtLeast(0L) / (60L * 60L * 1000L)).coerceAtLeast(1L)
-
-@Composable
-private fun PlanCard(
-    plan: PricingPlan,
-    selected: Boolean,
-    onClick: () -> Unit
-) {
-    val shape = RoundedCornerShape(AppTheme.radius.lg)
-    Column(
-        modifier = Modifier
-            .width(104.dp)
-            .clip(shape)
-            .background(
-                if (selected) AppTheme.colors.auroraActionGradient()
-                else AppTheme.colors.surfaceGradient()
-            )
-            .border(
-                if (selected) 1.dp else 0.5.dp,
-                if (selected) AppTheme.colors.auroraCyan else AppTheme.colors.border,
-                shape
-            )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick
-            )
-            .padding(vertical = AppTheme.spacing.md, horizontal = AppTheme.spacing.sm),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs)
-    ) {
-        AppText(
-            text = plan.title,
-            style = AppTheme.typography.caption,
-            color = if (selected) AppTheme.colors.onAccent.copy(alpha = 0.85f) else AppTheme.colors.textSecondary,
-            maxLines = 1
-        )
-        AppText(
-            text = plan.price,
-            style = AppTheme.typography.h3,
-            color = if (selected) AppTheme.colors.onAccent else AppTheme.colors.textPrimary,
-            maxLines = 1
-        )
-        Box(modifier = Modifier.heightIn(min = 18.dp), contentAlignment = Alignment.Center) {
-            if (plan.badge != null) {
-                AppText(
-                    text = plan.badge,
-                    style = AppTheme.typography.caption,
-                    fontWeight = FontWeight.SemiBold,
-                    color = if (selected) AppTheme.colors.onAccent else AppTheme.colors.accent,
-                    maxLines = 1
-                )
-            }
-        }
-    }
-}

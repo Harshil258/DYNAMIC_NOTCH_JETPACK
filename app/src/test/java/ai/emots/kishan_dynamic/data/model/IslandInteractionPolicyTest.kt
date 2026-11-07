@@ -56,6 +56,29 @@ class IslandInteractionPolicyTest {
     }
 
     @Test
+    fun viewedActiveNotificationsRemainReachableAndLongPressStaysIndependent() {
+        val visibility = ai.emots.kishan_dynamic.data.notification.NotificationVisibilityState()
+        visibility.synchronize(listOf("one", "two", "three"))
+        listOf("one", "two", "three").forEach { visibility.markSeen(it) }
+        val compactNotificationStack = IslandState.Notification(
+            notifications = listOf(notification("one"), notification("two"), notification("three")),
+            isExpanded = false,
+            expandedByUser = true
+        )
+
+        assertEquals(0, visibility.unseenCount())
+        assertEquals(
+            IslandInteractionAction.OPEN_NOTIFICATIONS,
+            IslandInteractionPolicy.mainTap(compactNotificationStack)
+        )
+        assertEquals(
+            IslandInteractionAction.OPEN_QUICK_CONTROLS,
+            IslandInteractionPolicy.mainLongPress(compactNotificationStack)
+        )
+        assertEquals(3, compactNotificationStack.notifications.size)
+    }
+
+    @Test
     fun expandedBackgroundTapDoesNothing() {
         val expanded = IslandState.Notification(listOf(notification("one")), isExpanded = true)
         assertEquals(IslandInteractionAction.NONE, IslandInteractionPolicy.mainTap(expanded))

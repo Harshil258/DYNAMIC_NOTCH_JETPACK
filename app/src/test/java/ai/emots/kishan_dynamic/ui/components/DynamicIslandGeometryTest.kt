@@ -29,7 +29,7 @@ class DynamicIslandGeometryTest {
         assertTrue(IslandDemoState.VibrateModeCompact.usesCompanionBubble())
         assertTrue(IslandDemoState.NormalModeCompact.usesCompanionBubble())
         assertTrue(IslandDemoState.NotificationWithMusicCompact.usesCompanionBubble())
-        assertTrue(IslandDemoState.NotificationStacked.usesCompanionBubble())
+        assertTrue(!IslandDemoState.NotificationStacked.usesCompanionBubble())
         assertTrue(IslandDemoState.BluetoothConnected.isCompactPresentation())
         assertTrue(IslandDemoState.BluetoothConnecting.isCompactPresentation())
     }

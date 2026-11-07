@@ -65,6 +65,9 @@ object IslandStateManager {
 
     private val _currentState = MutableStateFlow<IslandState>(IslandState.Minimal)
     val currentState: StateFlow<IslandState> = _currentState.asStateFlow()
+    private val notificationVisibility = ai.emots.kishan_dynamic.data.notification.NotificationVisibilityState()
+    private val _unseenNotificationCount = MutableStateFlow(0)
+    val unseenNotificationCount: StateFlow<Int> = _unseenNotificationCount.asStateFlow()
 
     // Cached sub-states to resume when transient overlays expire
     private var activeMusicTrack: MusicTrack? = null
@@ -120,6 +123,8 @@ object IslandStateManager {
             _isPaywallActive.value = false
 
             notificationQueue = NotificationQueueState()
+            notificationVisibility.clear()
+            _unseenNotificationCount.value = 0
             notificationAutoExpand = false
             notificationDisplaySeconds = 5
             notificationDeadlines.clear()
@@ -409,8 +414,14 @@ object IslandStateManager {
                 NotificationDiagnostics.lifecycle("duplicate", notification.id, "no_meaningful_change")
                 return
             }
-            notificationAutoExpand = autoExpand && existing == null &&
-                decision.kind == ai.emots.kishan_dynamic.data.notification.NotificationEventKind.TRANSIENT
+            if (existing == null && ai.emots.kishan_dynamic.data.notification.IslandSuppressionTombstoneRegistry.isSuppressed(notification.id)) {
+                if (!ai.emots.kishan_dynamic.data.notification.IslandSuppressionTombstoneRegistry.shouldResurface(notification)) {
+                    NotificationDiagnostics.lifecycle("tombstone_suppressed", notification.id, "minor_update_on_dismissed_item")
+                    return
+                } else {
+                    ai.emots.kishan_dynamic.data.notification.IslandSuppressionTombstoneRegistry.clear(notification.id)
+                }
+            }
             val boostedDisplaySeconds = ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy
                 .recommendedDisplaySeconds(notification, displaySeconds)
             notificationDisplaySeconds = boostedDisplaySeconds.coerceIn(1, 60)
@@ -435,6 +446,11 @@ object IslandStateManager {
                 current = currentPresentation,
                 incoming = notification
             )
+            // Only a newly presented transient may start a timed peek. Updates to a
+            // user-owned surface and notifications deferred by calls stay compact later.
+            notificationAutoExpand = autoExpand && existing == null &&
+                decision.kind == ai.emots.kishan_dynamic.data.notification.NotificationEventKind.TRANSIENT &&
+                presentationDecision == NotificationPresentationDecision.PRESENT
             if (presentationDecision == NotificationPresentationDecision.PRESENT &&
                 NotificationInterruptionPolicy.isCriticalInterruption(notification) &&
                 IslandPresentationOwnershipPolicy.isUserOwned(currentPresentation) &&
@@ -452,6 +468,7 @@ object IslandStateManager {
                             currentPresentation.visibleNotificationIsCritical())
                 )
             )
+            synchronizeNotificationVisibility()
             activeLiveActivities[notification.id]?.let { activity ->
                 activeLiveActivities[notification.id] = activity.copy(
                     sourceNotificationId = notification.id,
@@ -482,6 +499,10 @@ object IslandStateManager {
 
     fun removeNotification(notificationId: String) {
         synchronized(stateLock) {
+            val dismissed = notificationQueue.notifications.firstOrNull { it.id == notificationId }
+            if (dismissed != null) {
+                ai.emots.kishan_dynamic.data.notification.IslandSuppressionTombstoneRegistry.recordDismissal(dismissed)
+            }
             notificationReplayGuard.forget(notificationId)
             notificationDeadlines.remove(notificationId)
             val removedWasVisibleCritical = notificationQueue.activeNotification?.let { active ->
@@ -492,6 +513,7 @@ object IslandStateManager {
                 notificationQueue,
                 NotificationEvent.Removed(notificationId)
             )
+            synchronizeNotificationVisibility()
             if (removedWasVisibleCritical && !hasQueuedCriticalNotification() &&
                 restoreCriticalInterruptedPresentation()
             ) return
@@ -514,7 +536,9 @@ object IslandStateManager {
                         NotificationEvent.Removed(notificationId)
                     )
                     specializedNotificationIds.remove(notificationId)
+                    ai.emots.kishan_dynamic.data.notification.IslandSuppressionTombstoneRegistry.clear(notificationId)
                 }
+            synchronizeNotificationVisibility()
             if (visibleCriticalId != null && visibleCriticalId !in activeNotificationIds &&
                 !hasQueuedCriticalNotification() && restoreCriticalInterruptedPresentation()
             ) return
@@ -533,6 +557,7 @@ object IslandStateManager {
                 notificationQueue,
                 NotificationEvent.Cleared
             )
+            synchronizeNotificationVisibility()
             specializedNotificationIds.clear()
             if (hadVisibleCritical && restoreCriticalInterruptedPresentation()) return
             interruptedByCriticalNotification = null
@@ -542,21 +567,21 @@ object IslandStateManager {
 
     fun selectNotification(notificationId: String) {
         synchronized(stateLock) {
-            val expanded = _currentState.value as? IslandState.Notification
+            val expanded = _currentState.value as? IslandState.Notification ?: return
+            if (notificationQueue.notifications.none { it.id == notificationId }) return
             notificationQueue = notificationReducer.reduce(
                 notificationQueue,
                 NotificationEvent.Selected(notificationId)
             )
-            if (expanded?.isExpanded == true) {
-                _currentState.value = expanded.copy(
-                    notifications = notificationQueue.notifications,
-                    activeIndex = notificationQueue.activeIndex,
-                    expandedByUser = true
-                )
-                cancelDismissTimer()
-            } else {
-                renderNotificationSurface()
+            if (expanded.isExpanded) {
+                notificationQueue.activeNotification?.id?.let(::markNotificationSeen)
             }
+            _currentState.value = expanded.copy(
+                notifications = notificationQueue.notifications,
+                activeIndex = notificationQueue.activeIndex,
+                expandedByUser = true
+            )
+            cancelDismissTimer()
         }
     }
 
@@ -1105,6 +1130,8 @@ object IslandStateManager {
                         NotificationEvent.Next
                     )
                 }
+                notificationAutoExpand = false
+                notificationQueue.activeNotification?.id?.let(::markNotificationSeen)
                 _currentState.value = notificationState().let { state ->
                     when (state) {
                         is IslandState.Notification -> state.copy(isExpanded = true, expandedByUser = true)
@@ -1198,6 +1225,7 @@ object IslandStateManager {
         synchronized(stateLock) {
             val current = _currentState.value as? IslandState.Notification ?: return
             if (!current.isExpanded) return
+            notificationQueue.activeNotification?.id?.let(::markNotificationSeen)
             _currentState.value = current.copy(expandedByUser = true)
             cancelDismissTimer()
         }
@@ -1213,6 +1241,7 @@ object IslandStateManager {
                 }
                 is IslandState.Notification -> {
                     if (current.isExpanded) {
+                        notificationAutoExpand = false
                         if (activeMusicTrack != null) {
                             _currentState.value = IslandState.NotificationWithMusic(
                                 notifications = current.notifications,
@@ -1425,6 +1454,7 @@ object IslandStateManager {
                 specializedNotificationIds
             )
         ) {
+            notificationAutoExpand = false
             renderLiveActivitySurface()
             return
         }
@@ -1484,6 +1514,8 @@ object IslandStateManager {
     }
 
     private fun notificationState(): IslandState {
+        val autoExpand = notificationAutoExpand
+        notificationAutoExpand = false
         val active = notificationQueue.activeNotification ?: return IslandState.Minimal
         return if (activeMusicTrack != null) {
             IslandState.NotificationWithMusic(
@@ -1495,11 +1527,22 @@ object IslandStateManager {
         } else {
             IslandState.Notification(
                 notifications = notificationQueue.notifications,
-                isExpanded = notificationAutoExpand,
+                isExpanded = autoExpand,
                 expandedByUser = false,
                 activeIndex = notificationQueue.notifications.indexOfFirst { it.id == active.id }
                     .coerceAtLeast(0)
             )
+        }
+    }
+
+    private fun synchronizeNotificationVisibility() {
+        notificationVisibility.synchronize(notificationQueue.notifications.map { it.id })
+        _unseenNotificationCount.value = notificationVisibility.unseenCount()
+    }
+
+    private fun markNotificationSeen(notificationId: String) {
+        if (notificationVisibility.markSeen(notificationId)) {
+            _unseenNotificationCount.value = notificationVisibility.unseenCount()
         }
     }
 
@@ -1536,6 +1579,7 @@ object IslandStateManager {
                 val peek = _currentState.value as? IslandState.Notification
                 if (peek?.isExpanded == true && !peek.expandedByUser &&
                     peek.notifications.getOrNull(peek.activeIndex)?.id == activeId) {
+                    notificationAutoExpand = false
                     _currentState.value = peek.copy(isExpanded = false)
                     notificationDeadlines.remove(activeId)
                     NotificationDiagnostics.lifecycle("expired", activeId, "presentation_deadline")

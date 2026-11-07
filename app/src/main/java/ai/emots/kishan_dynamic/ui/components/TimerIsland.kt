@@ -95,7 +95,7 @@ internal fun TimerExpandedContent(
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
         val hPad = (17.dp * scale)
         val vPad = (16.dp * scale)
-        val btnSize = (52.dp * scale)
+        val btnSize = (52.dp * scale).coerceAtLeast(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
         val iconSize = (28.dp * scale)
 
         Row(

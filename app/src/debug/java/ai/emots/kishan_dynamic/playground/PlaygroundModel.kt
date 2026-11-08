@@ -243,8 +243,8 @@ class PlaygroundController(
 
     fun openNotifications(selectNext: Boolean = false) {
         if (engineState.queue.notifications.isEmpty()) {
-            val n = mockNotification(mutable.value.options)
-            dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(n, autoExpand = false))
+            message("No notifications in queue · empty state retained")
+            return
         }
         if (selectNext && engineState.queue.notifications.size > 1) {
             dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.NextPage)

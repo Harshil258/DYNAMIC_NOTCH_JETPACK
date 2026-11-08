@@ -225,4 +225,60 @@ class PlaygroundControllerTest {
         assertEquals(4, controller.engineState.canonicalQueueCount) // Main + 3 arrivals retained in queue!
         assertTrue(controller.engineState.childNotices.isEmpty()) // Satellite children cleared on collapse
     }
+
+    @Test fun openNotificationsTruthfullyPreservesQueueAcross0_1_12_and_50_Items() = runBlocking {
+        val controller = PlaygroundController(this)
+
+        // 1. Zero notifications in queue (Empty queue)
+        controller.select(PlaygroundCase.Controls)
+        assertEquals(0, controller.engineState.canonicalQueueCount)
+        assertEquals(PlaygroundCase.Controls, controller.snapshot.value.selected)
+
+        // Call openNotifications() on empty queue
+        controller.openNotifications()
+
+        // Truthful assertion: Zero notifications synthesized implicitly!
+        assertEquals(0, controller.engineState.canonicalQueueCount)
+        assertTrue(controller.engineState.queue.notifications.isEmpty())
+        assertTrue(controller.snapshot.value.feedback.contains("No notifications in queue"))
+
+        // 2. Exactly 1 notification in queue
+        controller.loadNotificationScenario(1)
+        assertEquals(1, controller.engineState.canonicalQueueCount)
+        val singleId = controller.engineState.queue.notifications.first().id
+
+        // Open notifications with 1 item
+        controller.openNotifications()
+        assertEquals(1, controller.engineState.canonicalQueueCount)
+        assertEquals(singleId, controller.engineState.queue.notifications.first().id)
+        val s1 = controller.snapshot.value.state as IslandState.Notification
+        assertEquals(1, s1.notifications.size)
+        assertTrue(s1.isExpanded)
+
+        // 3. Exactly 12 notifications in queue
+        controller.loadNotificationScenario(12)
+        assertEquals(12, controller.engineState.canonicalQueueCount)
+        val ids12 = controller.engineState.queue.notifications.map { it.id }
+
+        // Open notifications with 12 items
+        controller.openNotifications()
+        assertEquals(12, controller.engineState.canonicalQueueCount)
+        assertEquals(ids12, controller.engineState.queue.notifications.map { it.id })
+        val s12 = controller.snapshot.value.state as IslandState.Notification
+        assertEquals(12, s12.notifications.size)
+        assertTrue(s12.isExpanded)
+
+        // 4. Maximum canonical 50 notifications in queue
+        controller.loadNotificationScenario(50)
+        assertEquals(50, controller.engineState.canonicalQueueCount)
+        val ids50 = controller.engineState.queue.notifications.map { it.id }
+
+        // Open notifications with 50 items
+        controller.openNotifications()
+        assertEquals(50, controller.engineState.canonicalQueueCount)
+        assertEquals(ids50, controller.engineState.queue.notifications.map { it.id })
+        val s50 = controller.snapshot.value.state as IslandState.Notification
+        assertEquals(50, s50.notifications.size)
+        assertTrue(s50.isExpanded)
+    }
 }

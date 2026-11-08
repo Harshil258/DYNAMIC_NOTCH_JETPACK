@@ -428,8 +428,8 @@ class PlaygroundController(
             ai.emots.kishan_dynamic.data.notification.ChildPrivacyPolicy(mutable.value.layeredRedaction, true)))
     }
 
-    fun loadNotificationScenario(count: Int) {
-        cancelSequence()
+    fun loadNotificationScenario(count: Int, preserveSequence: Boolean = false) {
+        if (!preserveSequence) cancelSequence()
         childTimers.values.forEach { it.cancel() }; childTimers.clear()
         engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
         if (count == 0) {
@@ -510,6 +510,73 @@ class PlaygroundController(
     }
 
     fun cancelSequence() { sequence?.cancel(); sequence = null; mutable.update { it.copy(sequenceRunning = false) } }
+
+    fun runLayeredAnimationBenchmark(
+        cycles: Int = 12,
+        onProgress: ((currentCycle: Int, totalCycles: Int) -> Unit)? = null,
+        onComplete: (() -> Unit)? = null
+    ): Job {
+        cancelSequence()
+        val job = scope.launch {
+            mutable.update { it.copy(sequenceRunning = true, feedback = "Running Layered Animation Benchmark ($cycles cycles)...") }
+            try {
+                options { it.copy(reducedMotion = false, motionOverride = false, guides = false) }
+                delay(200)
+
+                for (c in 1..cycles) {
+                    onProgress?.invoke(c, cycles)
+                    mutable.update { it.copy(feedback = "Benchmark cycle $c / $cycles in progress...") }
+
+                    // Phase 1: Initialize multi-notification scenario (6 items, expanded island)
+                    loadNotificationScenario(6, preserveSequence = true)
+                    delay(320)
+
+                    // Phase 2: Sequential child arrivals (1, 2, 3 children emerge and settle)
+                    for (a in 1..3) {
+                        addLayeredArrival()
+                        delay(260)
+                    }
+
+                    // Phase 3: Pager swiping across pages (3 forward, 1 back)
+                    for (p in 1..3) {
+                        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.NextPage)
+                        delay(220)
+                    }
+                    dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PreviousPage)
+                    delay(220)
+
+                    // Phase 4: Child promotion (promotes first child into main island)
+                    val childKey = engineState.childNotices.firstOrNull()?.key
+                    if (childKey != null) {
+                        promoteChild(childKey)
+                        delay(360)
+                    }
+
+                    // Phase 5: Child dismissal / merge
+                    val remainingChild = engineState.childNotices.firstOrNull()?.key
+                    if (remainingChild != null) {
+                        dismissNotification(remainingChild)
+                        delay(260)
+                    }
+
+                    // Phase 6: Swipe-up collapse to compact pill
+                    expand(false)
+                    delay(300)
+
+                    // Phase 7: Re-expand island
+                    expand(true)
+                    delay(340)
+                }
+                mutable.update { it.copy(feedback = "Layered Animation Benchmark completed ($cycles cycles)") }
+            } finally {
+                mutable.update { it.copy(sequenceRunning = false) }
+                onComplete?.invoke()
+            }
+        }
+        sequence = job
+        return job
+    }
+
     fun runChecks() { checks.value = playgroundSelfChecks() }
 }
 

@@ -27,6 +27,27 @@ class DynamicIslandPlaygroundActivity : ComponentActivity() {
                 }, onStopOverlay = { stopService(Intent(this, PlaygroundOverlayService::class.java)) })
             }
         }
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        if (intent == null) return
+        val startOverlay = intent.getBooleanExtra("start_overlay", false)
+        if (startOverlay && Settings.canDrawOverlays(this)) {
+            ContextCompat.startForegroundService(this, Intent(this, PlaygroundOverlayService::class.java))
+        }
+        val runBenchmark = intent.getBooleanExtra("run_benchmark", false) || intent.action == "ai.emots.kishan_dynamic.BENCHMARK"
+        val cycles = intent.getIntExtra("benchmark_cycles", 12)
+        if (runBenchmark) {
+            window.decorView.postDelayed({
+                PlaygroundSession.controller.runLayeredAnimationBenchmark(cycles)
+            }, 600)
+        }
     }
     override fun onResume() { super.onResume(); PlaygroundSession.activity(true) }
     override fun onPause() { PlaygroundSession.activity(false); super.onPause() }

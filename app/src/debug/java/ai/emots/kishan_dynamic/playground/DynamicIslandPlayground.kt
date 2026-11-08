@@ -64,6 +64,7 @@ fun DynamicIslandPlayground(
                         }
                         AppButton("New arrival", controller::addLayeredArrival, style = AppButtonStyle.Secondary)
                         AppButton("50 queued messages", { controller.loadNotificationScenario(50) }, style = AppButtonStyle.Secondary)
+                        AppButton("Run 500+ frame benchmark", { controller.runLayeredAnimationBenchmark(12) }, style = AppButtonStyle.Tonal)
                         AppButton("Toggle lock-screen redaction", controller::layeredRedaction, style = AppButtonStyle.Secondary)
                         AppButton("Interrupt with call", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IncomingCallPreempt) }, style = AppButtonStyle.Secondary)
                         AppButton("End call / restore", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.CallEnded) }, style = AppButtonStyle.Secondary)
@@ -72,7 +73,7 @@ fun DynamicIslandPlayground(
                             AppButton("Hold / release ${child.appName}", { if(child.isPaused) controller.releaseChild(child.key) else controller.touchChild(child.key) }, style = AppButtonStyle.Secondary)
                             AppButton("Expire ${child.appName}", { controller.childTimeout(child.key, child.token) }, style = AppButtonStyle.Secondary)
                         }
-                        AppText(snapshot.eventTrace.joinToString("\n"), style = AppTheme.typography.caption)
+                        AppText(snapshot.eventTrace.take(15).joinToString("\n"), style = AppTheme.typography.caption)
                     }
                     0 -> {
                         AppSectionTitle("Phone simulation")

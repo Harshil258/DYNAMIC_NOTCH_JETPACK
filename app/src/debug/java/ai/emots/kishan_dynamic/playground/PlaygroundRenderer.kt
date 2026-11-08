@@ -144,7 +144,7 @@ fun PlaygroundPhonePreview(snapshot: PlaygroundSnapshot, controller: PlaygroundC
         snapshot.state.presentationMode == IslandPresentationMode.EXPANDED, (28 * o.density).toInt(),
         (11 * o.density).toInt(), (o.cameraClearance * o.density).toInt(),
         if (cameraWidth > 0) listOf(hole) else emptyList())
-    val height = maxOf(140f, (placement.top + islandSize.height) / o.density + 20).coerceAtMost(700f)
+    val height = 240.dp
     Box(Modifier.fillMaxWidth().testTag("playground_preview")
         .onGloballyPositioned { viewportBounds = it.boundsInRoot() }) {
         ScaledPhone((o.width * o.density).toInt()) {
@@ -152,7 +152,7 @@ fun PlaygroundPhonePreview(snapshot: PlaygroundSnapshot, controller: PlaygroundC
                 LocalDensity provides Density(o.density, o.fontScale),
                 LocalLayoutDirection provides if (o.rtl) LayoutDirection.Rtl else LayoutDirection.Ltr) {
                 AppTheme(darkTheme = true) {
-                Box(Modifier.width(o.width.dp).height(height.dp).onGloballyPositioned { phoneBounds = it.boundsInRoot() }.background(AppTheme.colors.stageMid,
+                Box(Modifier.width(o.width.dp).height(height).onGloballyPositioned { phoneBounds = it.boundsInRoot() }.background(AppTheme.colors.stageMid,
                     RoundedCornerShape(AppTheme.radius.lg)).border(1.dp, AppTheme.colors.border, RoundedCornerShape(AppTheme.radius.lg))) {
                     Row(Modifier.fillMaxWidth().height(28.dp).padding(start = if (o.camera == CameraPreset.Left) (cameraLeft + cameraWidth + 8).dp else 16.dp, end = 16.dp),
                         verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {

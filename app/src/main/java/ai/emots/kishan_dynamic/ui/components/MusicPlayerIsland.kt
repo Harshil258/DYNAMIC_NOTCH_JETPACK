@@ -236,7 +236,7 @@ fun MusicPlayerIsland(
                     )
                 }
 
-                // Play / Pause (Primary centerpiece: 38dp white circle with 48dp touch area)
+                // Play / Pause (Centerpiece: Solid white glyph directly on black OLED surface, matching Group 3.png & Expanded.svg)
                 Box(
                     modifier = Modifier
                         .size((48.dp * scale).coerceAtLeast(48.dp))
@@ -248,19 +248,11 @@ fun MusicPlayerIsland(
                         .semantics { contentDescription = if (playing) "Pause playback" else "Play playback" },
                     contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(38.dp * scale)
-                            .clip(CircleShape)
-                            .background(Color.White),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
-                            tint = Color.Black,
-                            size = 18.dp * scale
-                        )
-                    }
+                    AppleIcon(
+                        glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
+                        tint = Color.White,
+                        size = 28.dp * scale
+                    )
                 }
 
                 // Forward (44dp touch area, 22dp glyph)
@@ -313,6 +305,7 @@ fun AppleAudioScrubber(
     progress: Float,
     onProgressChange: (Float) -> Unit,
     onProgressChangeFinished: () -> Unit,
+    activeColor: Color = Color(0xFFFF2D55),
     modifier: Modifier = Modifier
 ) {
     Canvas(
@@ -356,11 +349,11 @@ fun AppleAudioScrubber(
             cornerRadius = cornerRadius
         )
 
-        // 2. Active played track (solid white)
+        // 2. Active played track (vibrant magenta/pink matching Group 3.png)
         val activeWidth = (w * progress).coerceIn(0f, w)
         if (activeWidth > 0f) {
             drawRoundRect(
-                color = Color.White,
+                color = activeColor,
                 topLeft = Offset(0f, centerY - trackHeight / 2f),
                 size = Size(activeWidth, trackHeight),
                 cornerRadius = cornerRadius

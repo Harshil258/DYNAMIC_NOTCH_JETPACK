@@ -69,11 +69,22 @@ internal fun TimerCompactContent(label: String, progress: Float) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        TimerProgressRing(progress = progress, size = 21.dp, strokeWidth = 3.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            TimerProgressRing(progress = progress, size = 18.dp, strokeWidth = 2.5.dp)
+            Text(
+                text = "Timer",
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                color = IslandColors.CapsuleOrange
+            )
+        }
         Text(
             text = label,
             fontSize = 13.sp,

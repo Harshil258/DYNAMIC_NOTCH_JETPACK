@@ -355,6 +355,25 @@ data class AppIslandTokens(
     val expandedSideMargin: Dp = 11.dp,
     /** Repeated notification/call capsule height in Dynamic Island-0...10.svg. */
     val standardExpandedHeight: Dp = 86.dp,
+    /** Mathematical 50% corner radius for 86dp standard contextual alert capsules (86 / 2 = 43). */
+    val standardExpandedCorner: Dp = 43.dp,
+    /** User-confirmed Minimal capsule silhouette (108 × 32, radius ≈ 16). */
+    val minimalCapsuleWidth: Dp = 108.dp,
+    val minimalCapsuleHeight: Dp = 32.dp,
+    val minimalCapsuleCorner: Dp = 16.dp,
+    /** Contextual full-width CTA (335 × 43, radius 21.5 in 367-wide surface). */
+    val ctaFullWidth: Dp = 335.dp,
+    val ctaHeight: Dp = 43.dp,
+    val ctaCorner: Dp = 21.5.dp,
+    /** Side-by-side CTA option (161.5 × 43 each, radius 21.5, gap 12). */
+    val ctaSplitWidth: Dp = 161.5.dp,
+    val ctaSplitGap: Dp = 12.dp,
+    /** Expanded media album artwork (53 × 53, radius 8, left inset 24). */
+    val mediaAlbumArtSize: Dp = 53.dp,
+    val mediaAlbumArtCorner: Dp = 8.dp,
+    val mediaAlbumArtLeftInset: Dp = 24.dp,
+    /** Turn-by-turn route surface canonical height from Expanded.svg (185.3dp). */
+    val navigationExpandedHeight: Dp = 185.3.dp,
     /** Music expanded height (full sheet with scrubber and controls). */
     val musicExpandedHeight: Dp = 177.dp,
     /** Call expanded height (full sheet with action buttons). */

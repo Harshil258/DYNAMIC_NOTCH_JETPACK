@@ -304,7 +304,7 @@ internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp {
         IslandDemoState.SharedMediaCallExpanded -> 172.64.dp
         IslandDemoState.MusicExpanded,
         IslandDemoState.VideoRemoteExpanded -> tokens.musicExpandedHeight
-        IslandDemoState.ColorOptions -> 185.3.dp
+        IslandDemoState.ColorOptions -> tokens.navigationExpandedHeight
         else -> tokens.standardExpandedHeight
     }
 }
@@ -507,7 +507,7 @@ fun DynamicIslandPill(
         islandTokens.compactContentGap + compactLabelWidth
     val baseWidth: Dp = when (state) {
         IslandDemoState.Idle -> islandTokens.compactWidth
-        IslandDemoState.Minimal -> islandTokens.splitMainWidth
+        IslandDemoState.Minimal -> islandTokens.minimalCapsuleWidth
         IslandDemoState.MusicCompact -> 156.dp
         IslandDemoState.CallCompact -> 118.dp
         IslandDemoState.ChargingCompact -> 106.dp
@@ -603,8 +603,8 @@ fun DynamicIslandPill(
     val targetCornerRadiusDp: Dp = if (isCutoutDot) {
         cutoutDotSizeDp.coerceIn(24.dp, 56.dp) / 2
     } else when (state) {
+        IslandDemoState.Minimal -> islandTokens.minimalCapsuleCorner
         IslandDemoState.Idle,
-        IslandDemoState.Minimal,
         IslandDemoState.MusicCompact,
         IslandDemoState.CallCompact,
         IslandDemoState.ChargingCompact,
@@ -626,13 +626,18 @@ fun DynamicIslandPill(
         IslandDemoState.NavigationCompact -> islandTokens.compactHeight / 2
 
         IslandDemoState.PremiumExpiryExpanded -> islandTokens.expandedCardCorner
-        IslandDemoState.NotificationExpanded -> if (isNotificationExpanded) islandTokens.expandedCorner else 39.dp
+        IslandDemoState.NotificationExpanded -> islandTokens.expandedCorner
         IslandDemoState.SilentModeExpanded,
         IslandDemoState.ChargingExpanded,
         IslandDemoState.LowBatteryExpanded -> islandTokens.alertHeight / 2
 
-        IslandDemoState.TimerExpanded -> 40.dp
-        IslandDemoState.CallExpanded -> 42.dp
+        IslandDemoState.TimerExpanded -> islandTokens.standardExpandedCorner
+        IslandDemoState.CallExpanded,
+        IslandDemoState.FaceTimeCallExpanded,
+        IslandDemoState.SharedMediaCallExpanded,
+        IslandDemoState.MusicExpanded,
+        IslandDemoState.VideoRemoteExpanded,
+        IslandDemoState.ColorOptions -> islandTokens.expandedCorner
 
         IslandDemoState.NotificationImage,
         IslandDemoState.CallAvatars,
@@ -645,7 +650,7 @@ fun DynamicIslandPill(
         IslandDemoState.AirPodsConnected,
         IslandDemoState.SatelliteConnected,
         IslandDemoState.FindMyAlert,
-        IslandDemoState.MovedToIPhone -> 43.dp
+        IslandDemoState.MovedToIPhone -> islandTokens.standardExpandedCorner
 
         else -> islandTokens.expandedCorner
     }

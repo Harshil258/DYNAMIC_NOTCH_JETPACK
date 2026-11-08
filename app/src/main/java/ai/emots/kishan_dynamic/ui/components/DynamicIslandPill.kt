@@ -507,27 +507,27 @@ fun DynamicIslandPill(
     val baseWidth: Dp = when (state) {
         IslandDemoState.Idle -> islandTokens.compactWidth
         IslandDemoState.Minimal -> islandTokens.splitMainWidth
-        IslandDemoState.MusicCompact -> islandTokens.mediaCompactWidth
-        IslandDemoState.CallCompact -> 152.dp
-        IslandDemoState.ChargingCompact -> 132.dp
-        IslandDemoState.LowBatteryCompact -> 132.dp
-        IslandDemoState.SilentModeCompact -> 152.dp
+        IslandDemoState.MusicCompact -> 156.dp
+        IslandDemoState.CallCompact -> 118.dp
+        IslandDemoState.ChargingCompact -> 106.dp
+        IslandDemoState.LowBatteryCompact -> 106.dp
+        IslandDemoState.SilentModeCompact -> 114.dp
         IslandDemoState.NotificationCompact,
         IslandDemoState.NotificationStacked -> notificationWidth
-        IslandDemoState.NotificationWithMusicCompact -> islandTokens.mediaCompactWidth
+        IslandDemoState.NotificationWithMusicCompact -> 156.dp
         IslandDemoState.VibrateModeCompact,
         IslandDemoState.NormalModeCompact,
         IslandDemoState.RingerVolumeCompact,
-        IslandDemoState.MediaVolumeCompact -> 172.dp
+        IslandDemoState.MediaVolumeCompact -> 126.dp
         IslandDemoState.BluetoothConnected,
-        IslandDemoState.BluetoothConnecting -> 196.dp
-        IslandDemoState.TimerCompact -> islandTokens.timerCompactWidth
-        IslandDemoState.DeliveryCompact -> 160.dp
-        IslandDemoState.FlightCompact -> 160.dp
-        IslandDemoState.SportsCompact -> 156.dp
-        IslandDemoState.NavigationCompact -> 156.dp
-        IslandDemoState.TimerImage -> 168.dp
-        IslandDemoState.NotificationImage -> 160.dp
+        IslandDemoState.BluetoothConnecting -> 132.dp
+        IslandDemoState.TimerCompact -> 128.dp
+        IslandDemoState.DeliveryCompact -> 136.dp
+        IslandDemoState.FlightCompact -> 136.dp
+        IslandDemoState.SportsCompact -> 136.dp
+        IslandDemoState.NavigationCompact -> 136.dp
+        IslandDemoState.TimerImage -> 136.dp
+        IslandDemoState.NotificationImage -> 136.dp
         IslandDemoState.CallAvatars -> maxExpanded
         // Expanded sheets: the device width minus iOS side margins, capped.
         else -> maxExpanded
@@ -536,7 +536,7 @@ fun DynamicIslandPill(
     val density = androidx.compose.ui.platform.LocalDensity.current
     val cutoutDotSizeDp = with(density) { (cutoutSizePx.toFloat() / density.density).dp }
 
-    val splitExtras = if (isSplit) islandTokens.splitGap + islandTokens.minimumActionTarget else 0.dp
+    val splitExtras = if (isSplit) islandTokens.splitGap + islandTokens.sideSize else 0.dp
     val maxMainWidth = (maxExpanded - splitExtras).coerceAtLeast(islandTokens.compactHeight)
     val requestedWidth = if (isCompact && state != IslandDemoState.NotificationCompact &&
         state != IslandDemoState.NotificationStacked) baseWidth * safeHorizontalScale else baseWidth
@@ -841,7 +841,6 @@ fun DynamicIslandPill(
                 modifier = Modifier
                     .islandInspectableRegion("Shell")
                     .then(Modifier.semantics { testTag = "island_surface" })
-                    .then(if (isCompact) Modifier.minimumInteractiveComponentSize() else Modifier)
                     .animatedIslandDimensions({ animatedWidth }, { animatedHeight })
                     .graphicsLayer {
                         scaleX = pressScale
@@ -1248,7 +1247,6 @@ fun DynamicIslandPill(
                 val bubbleProgress = (animatedSideSize / islandTokens.sideSize).coerceIn(0f, 1f)
                 Box(
                     modifier = Modifier
-                        .minimumInteractiveComponentSize()
                         .size(animatedSideSize)
                         .graphicsLayer {
                             scaleX = companionPressScale * bubbleProgress

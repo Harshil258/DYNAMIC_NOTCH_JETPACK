@@ -35,9 +35,9 @@ data class PlaygroundOptions(
     val manualSize: Boolean = false, val widthOverride: Float = 160f, val heightOverride: Float = 80f,
     val minimumWidth: Float = 0f, val maximumWidth: Float = 408f, val maximumHeight: Float = 600f,
     val compactHeight: Float = 36.67f, val horizontalPadding: Float = 12f,
-    val verticalPadding: Float = 16f, val iconSize: Float = 20f, val textGap: Float = 8f,
-    val corner: Float = 24f, val overrideCorner: Boolean = false,
-    val cameraClearance: Float = 4f, val actionSize: Float = 50f, val actionGap: Float = 12f
+    val verticalPadding: Float = 14f, val iconSize: Float = 18f, val textGap: Float = 8f,
+    val corner: Float = 20f, val overrideCorner: Boolean = false,
+    val cameraClearance: Float = 4f, val actionSize: Float = 34f, val actionGap: Float = 10f
 )
 data class PlaygroundSnapshot(
     val selected: PlaygroundCase = PlaygroundCase.Idle,

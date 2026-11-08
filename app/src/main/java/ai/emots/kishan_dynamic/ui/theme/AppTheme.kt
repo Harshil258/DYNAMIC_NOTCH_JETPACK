@@ -232,6 +232,7 @@ data class AppTypographyTokens(
     val islandSubtitle: TextStyle,
     val islandTime: TextStyle,
     val islandBadge: TextStyle,
+    val islandAction: TextStyle = button,
     val badge: TextStyle
 )
 
@@ -297,22 +298,38 @@ data class AppIslandTokens(
      * but they all consume this one token in the app.
      */
     val compactHeight: Dp = 36.67.dp,
+    /** Mathematical 50% capsule radius for compact state. */
+    val compactCorner: Dp = 18.335.dp,
     /** Content insets: never used as a substitute for physical camera clearance. */
     val compactHorizontalInset: Dp = 12.dp,
     val compactContentGap: Dp = 8.dp,
-    val expandedContentInset: Dp = 16.dp,
-    val expandedContentGap: Dp = 12.dp,
+    val expandedContentInset: Dp = 14.dp,
+    val expandedContentGap: Dp = 10.dp,
     val expandedMinHeight: Dp = 48.dp,
     val cameraClearance: Dp = 4.dp,
-    val expandedCardCorner: Dp = 24.dp,
+    val expandedCardCorner: Dp = 20.dp,
     val expandedIconSize: Dp = 32.dp,
     val minimumActionTarget: Dp = 48.dp,
+    /** Island-native action control dimensions (authentic pill button). */
+    val actionControlHeight: Dp = 34.dp,
+    val actionControlCorner: Dp = 17.dp,
+    val actionControlIconSize: Dp = 16.dp,
+    val actionControlPaddingHorizontal: Dp = 12.dp,
+    /** Satellite mini-island dimensions (subordinate layered capsule). */
+    val satelliteHeight: Dp = 38.dp,
+    val satelliteCorner: Dp = 19.dp,
+    val satelliteIconSize: Dp = 16.dp,
+    val satelliteWidthMin: Dp = 260.dp,
+    val satelliteWidthMax: Dp = 312.dp,
+    /** Overflow affordance pill (+N more). */
+    val overflowHeight: Dp = 28.dp,
+    val overflowCorner: Dp = 14.dp,
     /** True iOS idle capsule width — never stretch this to the screen. */
     val compactWidth: Dp = 126.dp,
     val compactMaxWidth: Dp = 250.dp,
     /** Android does not expose exact status-icon bounds; preserve a central budget. */
     val compactStatusSideReserve: Dp = 72.dp,
-    val compactIconSize: Dp = 20.dp,
+    val compactIconSize: Dp = 18.dp,
     /** Compact media capsule: from iPhone 15 Pro-1.svg (190pt x 38pt). */
     val mediaCompactWidth: Dp = 190.dp,
     /** Compact timer width from Prototype.svg (222pt x 37pt). */
@@ -495,27 +512,33 @@ private fun typographyFor(windowSize: AppWindowSize, fonts: AppFontTokens): AppT
         ),
         islandTitle = TextStyle(
             fontFamily = fonts.display,
-            fontWeight = FontWeight.Bold,
-            fontSize = (17.5f * scaleFactor).sp,
-            lineHeight = (22f * scaleFactor).sp
+            fontWeight = FontWeight.SemiBold,
+            fontSize = (14.5f * scaleFactor).sp,
+            lineHeight = (19f * scaleFactor).sp
         ),
         islandSubtitle = TextStyle(
             fontFamily = fonts.body,
             fontWeight = FontWeight.Normal,
-            fontSize = (13.5f * scaleFactor).sp,
-            lineHeight = (18f * scaleFactor).sp
+            fontSize = (13f * scaleFactor).sp,
+            lineHeight = (17f * scaleFactor).sp
         ),
         islandTime = TextStyle(
             fontFamily = fonts.mono,
             fontWeight = FontWeight.Medium,
-            fontSize = (11.5f * scaleFactor).sp,
-            lineHeight = (15f * scaleFactor).sp
+            fontSize = (11f * scaleFactor).sp,
+            lineHeight = (14f * scaleFactor).sp
         ),
         islandBadge = TextStyle(
             fontFamily = fonts.body,
             fontWeight = FontWeight.Bold,
             fontSize = (9.5f * scaleFactor).sp,
             lineHeight = (12f * scaleFactor).sp
+        ),
+        islandAction = TextStyle(
+            fontFamily = fonts.body,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = (13f * scaleFactor).sp,
+            lineHeight = (16f * scaleFactor).sp
         ),
         badge = TextStyle(
             fontFamily = fonts.display,

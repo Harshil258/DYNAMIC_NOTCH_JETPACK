@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.notification.*
 import ai.emots.kishan_dynamic.ui.motion.*
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
@@ -98,7 +99,7 @@ fun LayeredMiniIslands(
         }
     }
     // Satellite capsule width: distinctly narrower than main expanded island (32dp inset relative to parent)
-    val satelliteWidthDp = (mainWidthDp - 32.dp).coerceIn(240.dp, 336.dp)
+    val satelliteWidthDp = (mainWidthDp - 32.dp).coerceIn(AppTheme.island.satelliteWidthMin, AppTheme.island.satelliteWidthMax)
 
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Box(Modifier.onSizeChanged { mainHeight = it.height; mainWidth = it.width }) { main() }
@@ -110,7 +111,7 @@ fun LayeredMiniIslands(
                     .heightIn(max = available.coerceAtLeast(0).dp),
                 userScrollEnabled = false,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(order, key = { it }) { key ->
                     val child = children.firstOrNull { it.key == key } ?: retained[key]
@@ -136,16 +137,16 @@ fun LayeredMiniIslands(
             }
 
             // Stage 2: Safe height calculation for overflow affordance
-            val overflowHeightDp = (36 * config.fontScale.coerceAtLeast(1f) + 6).dp
-            val estimatedCardsHeightDp = (children.size * 54 * config.fontScale.coerceAtLeast(1f) + (children.size - 1).coerceAtLeast(0) * 6).dp
+            val overflowHeightDp = (28 * config.fontScale.coerceAtLeast(1f) + 4).dp
+            val estimatedCardsHeightDp = (children.size * 42 * config.fontScale.coerceAtLeast(1f) + (children.size - 1).coerceAtLeast(0) * 4).dp
             val canFitOverflow = (available.dp >= estimatedCardsHeightDp + overflowHeightDp)
 
             if (p.overflow > 0 && canFitOverflow) {
                 val next = state.childNotices.filter { it.key != state.selectedKey }.getOrNull(p.visibleLimit)
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(4.dp))
                 Row(
                     modifier = Modifier
-                        .heightIn(min = 44.dp)
+                        .height(AppTheme.island.overflowHeight)
                         .clickable(
                             enabled = next != null,
                             role = Role.Button,
@@ -153,26 +154,26 @@ fun LayeredMiniIslands(
                         ) {
                             next?.let { onPromote(it.key, it.arrivalToken) }
                         }
-                        .background(Color(0xFF0C0E14), RoundedCornerShape(18.dp))
-                        .border(1.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(18.dp))
-                        .padding(horizontal = 16.dp, vertical = 6.dp)
+                        .background(Color(0xFF0C0E14), RoundedCornerShape(AppTheme.island.overflowCorner))
+                        .border(0.75.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(AppTheme.island.overflowCorner))
+                        .padding(horizontal = 12.dp)
                         .testTag("child_overflow"),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     Text(
                         text = "+${p.overflow} more",
-                        style = AppTheme.typography.caption.copy(fontWeight = FontWeight.SemiBold),
+                        style = AppTheme.typography.caption.copy(fontWeight = FontWeight.SemiBold, fontSize = 11.sp),
                         color = Color.White
                     )
                     Text(
                         text = "·",
-                        style = AppTheme.typography.caption,
+                        style = AppTheme.typography.caption.copy(fontSize = 11.sp),
                         color = Color.White.copy(alpha = 0.5f)
                     )
                     Text(
                         text = "Tap to view",
-                        style = AppTheme.typography.caption,
+                        style = AppTheme.typography.caption.copy(fontSize = 11.sp),
                         color = Color.White.copy(alpha = 0.75f)
                     )
                 }
@@ -233,7 +234,7 @@ fun MiniNotificationIsland(
         animationSpec = if (reduced) snap() else AppMotion.islandSpring(),
         label = "child_emerge_merge"
     )
-    val shape = RoundedCornerShape(20.dp)
+    val shape = RoundedCornerShape(AppTheme.island.satelliteCorner)
     val copyAlpha by animateFloatAsState(
         targetValue = if (shown) 1f else 0f,
         animationSpec = if (reduced) snap() else tween(AppMotion.DurationFast, AppMotion.StaggerStep.toInt()),
@@ -253,7 +254,7 @@ fun MiniNotificationIsland(
                 onPhase(ChildLifecycle.PROMOTING)
                 onPromote()
             }
-            .padding(top = 4.dp, start = 4.dp, end = 4.dp)
+            .padding(top = 2.dp, start = 2.dp, end = 2.dp)
             .graphicsLayer {
                 alpha = progress
                 translationY = if (reduced) 0f else -size.height * (1f - progress)
@@ -262,18 +263,18 @@ fun MiniNotificationIsland(
                 transformOrigin = TransformOrigin(0.5f, 0f)
             }
             .background(Color(0xFF0C0E14), shape)
-            .border(1.dp, Color.White.copy(alpha = 0.10f), shape)
-            .heightIn(min = 48.dp)
-            .padding(horizontal = 14.dp, vertical = 8.dp)
+            .border(0.75.dp, Color.White.copy(alpha = 0.12f), shape)
+            .height(AppTheme.island.satelliteHeight)
+            .padding(horizontal = 12.dp, vertical = 4.dp)
             .testTag("child_${child.key}"),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         PackageIcon(
             packageName = child.packageName,
             modifier = Modifier
-                .size(22.dp)
-                .clip(RoundedCornerShape(6.dp)),
+                .size(AppTheme.island.satelliteIconSize)
+                .clip(RoundedCornerShape(4.5.dp)),
             contentDescription = "${child.appName} icon"
         )
         Column(
@@ -286,9 +287,9 @@ fun MiniNotificationIsland(
                 text = child.appName,
                 style = AppTheme.typography.caption.copy(
                     fontWeight = FontWeight.Medium,
-                    fontSize = androidx.compose.ui.unit.TextUnit(11f, androidx.compose.ui.unit.TextUnitType.Sp)
+                    fontSize = androidx.compose.ui.unit.TextUnit(10.5f, androidx.compose.ui.unit.TextUnitType.Sp)
                 ),
-                color = Color.White.copy(alpha = 0.60f),
+                color = Color.White.copy(alpha = 0.55f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -296,13 +297,13 @@ fun MiniNotificationIsland(
             val displayText = if (redacted) "Unlock to view content" else child.text
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
             ) {
                 Text(
                     text = displayTitle,
                     style = AppTheme.typography.bodySmall.copy(
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = androidx.compose.ui.unit.TextUnit(13f, androidx.compose.ui.unit.TextUnitType.Sp)
+                        fontSize = androidx.compose.ui.unit.TextUnit(12f, androidx.compose.ui.unit.TextUnitType.Sp)
                     ),
                     color = Color.White,
                     maxLines = 1,
@@ -313,14 +314,14 @@ fun MiniNotificationIsland(
                     Text(
                         text = "·",
                         style = AppTheme.typography.caption,
-                        color = Color.White.copy(alpha = 0.40f)
+                        color = Color.White.copy(alpha = 0.35f)
                     )
                     Text(
                         text = displayText,
                         style = AppTheme.typography.bodySmall.copy(
-                            fontSize = androidx.compose.ui.unit.TextUnit(12.5f, androidx.compose.ui.unit.TextUnitType.Sp)
+                            fontSize = androidx.compose.ui.unit.TextUnit(11.5f, androidx.compose.ui.unit.TextUnitType.Sp)
                         ),
-                        color = Color.White.copy(alpha = 0.75f),
+                        color = Color.White.copy(alpha = 0.70f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f, fill = false)

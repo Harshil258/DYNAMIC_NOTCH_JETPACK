@@ -65,11 +65,11 @@ fun IncomingCallIsland(
 
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val avatarSize = (56.dp * scale)
-        val buttonSize = (52.dp * scale).coerceAtLeast(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-        val startPad = (24.dp * scale)
-        val endPad = (25.dp * scale)
-        val vPad = (15.dp * scale)
+        val avatarSize = (44.dp * scale)
+        val buttonSize = (44.dp * scale).coerceAtLeast(38.dp)
+        val startPad = (16.dp * scale)
+        val endPad = (16.dp * scale)
+        val vPad = (12.dp * scale)
 
         Row(
             modifier = Modifier
@@ -124,9 +124,9 @@ fun IncomingCallIsland(
                     Text(
                         text = name,
                         color = Color.White,
-                        fontSize = (17f * scale).sp,
+                        fontSize = (15f * scale).sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.3).sp,
+                        letterSpacing = (-0.2).sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -135,12 +135,12 @@ fun IncomingCallIsland(
 
             Spacer(modifier = Modifier.width(10.dp * scale))
 
-            // RIGHT: Red Decline Button (52dp) + Green Accept Button (52dp)
+            // RIGHT: Red Decline Button (44dp) + Green Accept Button (44dp)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
             ) {
-                // Red Decline Button (52dp circle)
+                // Red Decline Button
                 if (canDecline) {
                     Box(
                         modifier = Modifier
@@ -158,11 +158,11 @@ fun IncomingCallIsland(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = 35.dp * scale)
+                        AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = 22.dp * scale)
                     }
                 }
 
-                // Green Accept Button (52dp circle)
+                // Green Accept Button
                 Box(
                     modifier = Modifier
                         .size(buttonSize)
@@ -179,7 +179,7 @@ fun IncomingCallIsland(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 30.dp * scale)
+                    AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 22.dp * scale)
                 }
             }
         }

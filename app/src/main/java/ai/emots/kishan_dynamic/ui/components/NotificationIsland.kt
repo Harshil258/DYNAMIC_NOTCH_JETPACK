@@ -34,6 +34,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.Spring
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextOverflow
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
@@ -281,9 +288,10 @@ fun NotificationIslandExpanded(
                     if (onDismiss != null) {
                         Box(
                             modifier = Modifier
-                                .size(AppTheme.island.minimumActionTarget)
+                                .size((28.dp * scale).coerceAtLeast(24.dp))
                                 .clip(CircleShape)
                                 .background(Color(0xFF2C2C2E))
+                                .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                                 .clickable(onClick = onDismiss),
                             contentAlignment = Alignment.Center
                         ) {
@@ -370,9 +378,10 @@ fun NotificationIslandExpanded(
                         if (onToggleExpand != null) {
                             Box(
                                 modifier = Modifier
-                                    .size(AppTheme.island.minimumActionTarget)
+                                    .size((28.dp * scale).coerceAtLeast(24.dp))
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
+                                    .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                                     .clickable(onClick = onToggleExpand),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -387,9 +396,10 @@ fun NotificationIslandExpanded(
                         if (onDismiss != null) {
                             Box(
                                 modifier = Modifier
-                                    .size(AppTheme.island.minimumActionTarget)
+                                    .size((28.dp * scale).coerceAtLeast(24.dp))
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
+                                    .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                                     .clickable(onClick = onDismiss),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -592,15 +602,99 @@ fun NotificationChronometerText(
 }
 
 @Composable
+fun IslandActionChip(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    glyph: AppleGlyph? = null,
+    isPrimary: Boolean = false,
+    isDestructive: Boolean = false,
+    scale: Float = 1f
+) {
+    val reducedMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scaleState = animateFloatAsState(
+        targetValue = if (pressed) 0.95f else 1f,
+        animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
+        label = "chip_scale"
+    )
+    val h = (34.dp * scale).coerceAtLeast(30.dp)
+    val r = h / 2
+    val shape = RoundedCornerShape(r)
+    val bg = when {
+        isPrimary -> Color(0xFF2979FF)
+        isDestructive -> Color(0x33FA3532)
+        else -> Color(0xFF2C2C2E)
+    }
+    val textColor = when {
+        isPrimary -> Color.White
+        isDestructive -> Color(0xFFFF453A)
+        else -> Color.White
+    }
+    val borderBrush = when {
+        isPrimary -> null
+        isDestructive -> Brush.linearGradient(listOf(Color(0x66FA3532), Color(0x33FA3532)))
+        else -> Brush.linearGradient(listOf(Color(0x33FFFFFF), Color(0x14FFFFFF)))
+    }
+
+    Row(
+        modifier = modifier
+            .graphicsLayer {
+                val s = if (reducedMotion) 1f else scaleState.value
+                scaleX = s
+                scaleY = s
+            }
+            .height(h)
+            .clip(shape)
+            .background(bg, shape)
+            .then(if (borderBrush != null) Modifier.border(0.75.dp, borderBrush, shape) else Modifier)
+            .clickable(
+                interactionSource = interaction,
+                indication = androidx.compose.material3.ripple(),
+                role = Role.Button,
+                onClick = onClick
+            )
+            .padding(horizontal = (13.dp * scale).coerceAtLeast(10.dp)),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
+    ) {
+        if (glyph != null) {
+            AppleIcon(glyph = glyph, tint = textColor, size = 13.dp * scale)
+        }
+        Text(
+            text = text,
+            color = textColor,
+            fontSize = (13f * scale).sp,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
 private fun NotificationActionButton(
     label: String,
     scale: Float,
     onClick: () -> Unit
 ) {
-    ai.emots.kishan_dynamic.ui.kit.AppButton(
-        text = label, onClick = onClick,
-        style = ai.emots.kishan_dynamic.ui.kit.AppButtonStyle.Secondary,
-        fillMaxWidth = false
+    val isDestructive = label.contains("Dismiss", ignoreCase = true) ||
+        label.contains("Delete", ignoreCase = true) ||
+        label.contains("Decline", ignoreCase = true) ||
+        label.contains("Cancel", ignoreCase = true)
+    val isPrimary = label.contains("Reply", ignoreCase = true) ||
+        label.contains("Open", ignoreCase = true) ||
+        label.contains("Join", ignoreCase = true) ||
+        label.contains("Copy", ignoreCase = true) ||
+        label.contains("Accept", ignoreCase = true)
+
+    IslandActionChip(
+        text = label,
+        onClick = onClick,
+        isPrimary = isPrimary,
+        isDestructive = isDestructive,
+        scale = scale
     )
 }
 
@@ -612,13 +706,14 @@ private fun NotificationPagerButton(
 ) {
     Box(
         modifier = Modifier
-            .size(AppTheme.island.minimumActionTarget)
+            .size((28.dp * scale).coerceAtLeast(24.dp))
             .clip(CircleShape)
-            .background(IslandColors.ButtonNeutral)
+            .background(Color(0xFF2C2C2E))
+            .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(label, color = Color.White, fontSize = 19.sp * scale, fontWeight = FontWeight.Bold)
+        Text(label, color = Color.White, fontSize = 13.sp * scale, fontWeight = FontWeight.SemiBold)
     }
 }
 
@@ -650,9 +745,9 @@ fun NotificationNavigationCard(
     val density = LocalDensity.current
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (22.dp * scale)
-        val vPad = (16.dp * scale)
-        val iconSize = (44.dp * scale)
+        val hPad = (16.dp * scale)
+        val vPad = (12.dp * scale)
+        val iconSize = (40.dp * scale)
 
         val titleLower = notification.title.lowercase()
         val textLower = notification.text.lowercase()
@@ -776,9 +871,9 @@ fun NotificationTransportCard(
     val density = LocalDensity.current
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (22.dp * scale)
-        val vPad = (16.dp * scale)
-        val iconSize = (44.dp * scale)
+        val hPad = (16.dp * scale)
+        val vPad = (12.dp * scale)
+        val iconSize = (40.dp * scale)
 
         Row(
             modifier = Modifier
@@ -896,9 +991,9 @@ fun NotificationProgressCard(
     val density = LocalDensity.current
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (22.dp * scale)
-        val vPad = (16.dp * scale)
-        val iconSize = (44.dp * scale)
+        val hPad = (16.dp * scale)
+        val vPad = (12.dp * scale)
+        val iconSize = (40.dp * scale)
 
         val progressRatio = if (notification.progressMax > 0) {
             (notification.progress.toFloat() / notification.progressMax.toFloat()).coerceIn(0f, 1f)
@@ -1066,9 +1161,9 @@ fun NotificationPictureCard(
     val density = LocalDensity.current
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (20.dp * scale)
-        val vPad = (14.dp * scale)
-        val thumbSize = (50.dp * scale)
+        val hPad = (16.dp * scale)
+        val vPad = (12.dp * scale)
+        val thumbSize = (44.dp * scale)
 
         if (isReplying && replyAction != null) {
             Column(
@@ -1191,9 +1286,10 @@ fun NotificationPictureCard(
                         if (onToggleExpand != null) {
                             Box(
                                 modifier = Modifier
-                                    .size(AppTheme.island.minimumActionTarget)
+                                    .size((28.dp * scale).coerceAtLeast(24.dp))
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
+                                    .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                                     .clickable(onClick = onToggleExpand),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -1208,9 +1304,10 @@ fun NotificationPictureCard(
                         if (onDismiss != null && notification.isClearable) {
                             Box(
                                 modifier = Modifier
-                                    .size(AppTheme.island.minimumActionTarget)
+                                    .size((28.dp * scale).coerceAtLeast(24.dp))
                                     .clip(CircleShape)
                                     .background(Color(0xFF2C2C2E))
+                                    .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                                     .clickable(onClick = onDismiss),
                                 contentAlignment = Alignment.Center
                             ) {
@@ -1374,16 +1471,17 @@ fun NotificationPictureCard(
                     if (onToggleExpand != null) {
                         Box(
                             modifier = Modifier
-                                .size(AppTheme.island.minimumActionTarget)
+                                .size((28.dp * scale).coerceAtLeast(24.dp))
                                 .clip(CircleShape)
-                                .background(IslandColors.ButtonNeutral)
+                                .background(Color(0xFF2C2C2E))
+                                .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                                 .clickable(onClick = onToggleExpand),
                             contentAlignment = Alignment.Center
                         ) {
                             AppleIcon(
                                 glyph = AppleGlyph.ChevronRight,
                                 tint = Color.White,
-                                size = 12.dp * scale,
+                                size = 11.dp * scale,
                                 modifier = Modifier.graphicsLayer { rotationZ = 90f }
                             )
                         }

@@ -93,10 +93,10 @@ internal fun TimerExpandedContent(
     val isPaused = !timerRunning
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (17.dp * scale)
-        val vPad = (16.dp * scale)
-        val btnSize = (52.dp * scale).coerceAtLeast(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-        val iconSize = (28.dp * scale)
+        val hPad = (16.dp * scale)
+        val vPad = (12.dp * scale)
+        val btnSize = (42.dp * scale).coerceAtLeast(36.dp)
+        val iconSize = (20.dp * scale)
 
         Row(
             modifier = Modifier
@@ -157,7 +157,7 @@ internal fun TimerExpandedContent(
                 Text(
                     text = if (isPaused) "Paused" else label,
                     color = IslandColors.CapsuleOrange,
-                    fontSize = (30f * scale).sp,
+                    fontSize = (25f * scale).sp,
                     fontWeight = FontWeight.Bold
                 )
             }

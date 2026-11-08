@@ -463,6 +463,10 @@ class IslandBehaviorEngine(
 
         // Check selectedKey resolution (UX-C05 / A13 / A14 / A15)
         val wasSelected = state.selectedKey == notificationId
+        val cancelTimerEffect = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW && wasSelected) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
+        val removeEffects = cancelChildEffect + cancelTimerEffect
 
         if (!wasSelected) {
             // Non-selected item removed: selectedKey stays valid, count decrements (A15)
@@ -491,7 +495,7 @@ class IslandBehaviorEngine(
                     tombstones = updatedTombstones
                 ),
                 action = IslandDomainAction.CollapseToCompact,
-                effects = cancelChildEffect,
+                effects = removeEffects,
                 reason = "final_item_removed_return_idle"
             )
         }
@@ -513,7 +517,7 @@ class IslandBehaviorEngine(
                 tombstones = updatedTombstones
             ),
             action = IslandDomainAction.SelectNextOrPrevious,
-            effects = cancelChildEffect,
+            effects = removeEffects,
             reason = "selected_item_removed_select_neighbor"
         )
     }
@@ -533,6 +537,11 @@ class IslandBehaviorEngine(
         val cancelChildEffects = state.childNotices.filterNot { it.key in activeKeys }
             .map { IslandSideEffect.CancelChildTimer(it.key) }
         val updatedTombstones = state.tombstones.filterKeys { it in activeKeys }
+
+        val wasSelected = state.selectedKey != null && state.selectedKey !in activeKeys
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW && wasSelected) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
 
         val newSelected = if (state.selectedKey in activeKeys) {
             state.selectedKey
@@ -555,7 +564,7 @@ class IslandBehaviorEngine(
                 tombstones = updatedTombstones
             ),
             action = IslandDomainAction.KeepSelectedKey,
-            effects = cancelChildEffects,
+            effects = cancelChildEffects + cancelTimerEffects,
             reason = "reconcile_active_sources"
         )
     }
@@ -585,6 +594,7 @@ class IslandBehaviorEngine(
                 IslandBehaviorDecision(
                     state = state.copy(
                         selectedKey = targetKey,
+                        queue = state.queue.copy(activeNotificationId = targetKey),
                         ownership = IslandInteractionOwnership.USER_EXPANDED,
                         targetPresentation = IslandPresentationTarget.USER_EXPANDED
                     ),
@@ -595,10 +605,14 @@ class IslandBehaviorEngine(
             }
             // UX-C03 / A03: >= 2 notifications -> Open horizontal pager, newest first
             else -> {
-                val newestKey = state.queue.notifications.first().id
+                val newestNotification = state.queue.notifications.maxWithOrNull(
+                    compareBy<NotificationInfo> { it.timestamp }.thenBy { it.id }
+                ) ?: state.queue.notifications.first()
+                val newestKey = newestNotification.id
                 IslandBehaviorDecision(
                     state = state.copy(
                         selectedKey = newestKey,
+                        queue = state.queue.copy(activeNotificationId = newestKey),
                         ownership = IslandInteractionOwnership.PAGER_ACTIVE,
                         targetPresentation = IslandPresentationTarget.PAGER
                     ),

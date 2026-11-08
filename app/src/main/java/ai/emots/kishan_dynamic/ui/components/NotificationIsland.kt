@@ -502,7 +502,12 @@ fun NotificationIslandExpanded(
             Column(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight()
                     .onSizeChanged { size -> with(density) { onHeightChange?.invoke(size.height.toDp()) } }
-                    .padding(AppTheme.island.expandedContentInset),
+                    .padding(
+                        start = AppTheme.island.expandedContentInset,
+                        end = AppTheme.island.expandedContentInset,
+                        top = AppTheme.island.expandedContentInset,
+                        bottom = if (pagerLabel != null) AppTheme.island.expandedContentInset + 14.dp else AppTheme.island.expandedContentInset
+                    ),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.island.expandedContentGap)
             ) {
                 Row(
@@ -663,10 +668,15 @@ fun NotificationNavigationCard(
                 .wrapContentHeight()
                 .onSizeChanged { size ->
                     with(density) {
-                        onHeightChange?.invoke(size.height.toDp() + (if (pagerLabel != null) 12.dp else 0.dp))
+                        onHeightChange?.invoke(size.height.toDp())
                     }
                 }
-                .padding(horizontal = hPad, vertical = vPad),
+                .padding(
+                    start = hPad,
+                    end = hPad,
+                    top = vPad,
+                    bottom = if (pagerLabel != null) vPad + 14.dp else vPad
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -776,10 +786,15 @@ fun NotificationTransportCard(
                 .wrapContentHeight()
                 .onSizeChanged { size ->
                     with(density) {
-                        onHeightChange?.invoke(size.height.toDp() + (if (pagerLabel != null) 12.dp else 0.dp))
+                        onHeightChange?.invoke(size.height.toDp())
                     }
                 }
-                .padding(horizontal = hPad, vertical = vPad),
+                .padding(
+                    start = hPad,
+                    end = hPad,
+                    top = vPad,
+                    bottom = if (pagerLabel != null) vPad + 14.dp else vPad
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -896,10 +911,15 @@ fun NotificationProgressCard(
                 .wrapContentHeight()
                 .onSizeChanged { size ->
                     with(density) {
-                        onHeightChange?.invoke(size.height.toDp() + (if (pagerLabel != null) 12.dp else 0.dp))
+                        onHeightChange?.invoke(size.height.toDp())
                     }
                 }
-                .padding(horizontal = hPad, vertical = vPad),
+                .padding(
+                    start = hPad,
+                    end = hPad,
+                    top = vPad,
+                    bottom = if (pagerLabel != null) vPad + 14.dp else vPad
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -1671,8 +1691,8 @@ fun NotificationIslandExpandedPager(
         }
 
         // Pager Indicator Dots (authentic iOS UIPageControl style with sliding window)
-        // Rendered exclusively when card is expanded with reserved bottom clearance below action pills
-        if (isCardExpanded && notifications.size > 1 && replyingNotificationId == null) {
+        // Displayed for multi-notification expanded pager (2+ notifications) without requiring extra gesture
+        if (notifications.size > 1 && replyingNotificationId == null) {
             val totalPages = notifications.size
             val maxVisibleDots = 7
             val (startIndex, endIndex) = if (totalPages <= maxVisibleDots) {
@@ -1682,6 +1702,8 @@ fun NotificationIslandExpandedPager(
                 val start = (currentPage - half).coerceIn(0, totalPages - maxVisibleDots)
                 start to (start + maxVisibleDots - 1)
             }
+
+            val reducedMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
 
             Row(
                 modifier = Modifier
@@ -1694,22 +1716,47 @@ fun NotificationIslandExpandedPager(
                 for (i in startIndex..endIndex) {
                     val isCurrent = i == currentPage
                     val isEdge = (i == startIndex && startIndex > 0) || (i == endIndex && endIndex < totalPages - 1)
-                    val dotSize = when {
+                    val targetDotSize = when {
                         isCurrent -> 6.5.dp
                         isEdge -> 3.5.dp
                         else -> 5.dp
                     }
-                    val alpha = when {
+                    val targetAlpha = when {
                         isCurrent -> 1f
                         isEdge -> 0.22f
                         else -> 0.45f
                     }
+
+                    val dotSize by androidx.compose.animation.core.animateDpAsState(
+                        targetValue = targetDotSize,
+                        animationSpec = if (reducedMotion) {
+                            androidx.compose.animation.core.snap()
+                        } else {
+                            androidx.compose.animation.core.spring(
+                                dampingRatio = androidx.compose.animation.core.Spring.DampingRatioMediumBouncy,
+                                stiffness = androidx.compose.animation.core.Spring.StiffnessMedium
+                            )
+                        },
+                        label = "dotSize_$i"
+                    )
+                    val dotAlpha by androidx.compose.animation.core.animateFloatAsState(
+                        targetValue = targetAlpha,
+                        animationSpec = if (reducedMotion) {
+                            androidx.compose.animation.core.snap()
+                        } else {
+                            androidx.compose.animation.core.spring(
+                                stiffness = androidx.compose.animation.core.Spring.StiffnessMedium
+                            )
+                        },
+                        label = "dotAlpha_$i"
+                    )
+
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 2.5.dp)
                             .size(dotSize)
                             .clip(CircleShape)
-                            .background(Color.White.copy(alpha = alpha))
+                            .background(Color.White.copy(alpha = dotAlpha))
                     )
                 }
             }

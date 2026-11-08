@@ -174,11 +174,8 @@ class NotificationReducer {
 
     private fun sortQueue(list: List<NotificationInfo>): List<NotificationInfo> {
         return list.sortedWith(
-            compareByDescending<NotificationInfo> { NotificationPriorityPolicy.isFinancialOrOtp(it) }
-                .thenByDescending { it.isPriority }
-                .thenByDescending { it.importance }
-                .thenByDescending { it.isOngoing }
-                .thenByDescending { it.timestamp }
+            compareByDescending<NotificationInfo> { it.timestamp }
+                .thenByDescending { it.id }
         )
     }
 

@@ -35,11 +35,12 @@ class NotificationEngineeringRegressionTest {
         assertEquals(2, state.notifications.size)
     }
 
-    @Test fun quieterArrivalDoesNotStealHighImportanceSelection() {
+    @Test fun newestArrivalBecomesActiveRegardlessOfImportance() {
         var state = reducer.reduce(NotificationQueueState(), NotificationEvent.Posted(
-            item("urgent").copy(isPriority = true, importance = 4)))
+            item("urgent", time = 1).copy(isPriority = true, importance = 4)))
         state = reducer.reduce(state, NotificationEvent.Posted(item("quiet", time = 100).copy(importance = 1)))
-        assertEquals("urgent", state.activeNotificationId)
+        // UX-C03: Default queue ordering is newest-first
+        assertEquals("quiet", state.activeNotificationId)
     }
 
     @Test fun largeOngoingBurstRemainsBoundedAndRetainsSelection() {

@@ -4,6 +4,7 @@ import ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicy
 import ai.emots.kishan_dynamic.data.model.NotificationActionInfo
 import ai.emots.kishan_dynamic.data.model.NotificationInfo
 import ai.emots.kishan_dynamic.data.notification.NotificationEvent
+import ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicy
 import ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy
 import ai.emots.kishan_dynamic.data.notification.NotificationQueueState
 import ai.emots.kishan_dynamic.data.notification.NotificationReducer
@@ -281,6 +282,56 @@ class NotificationAndMediaRealWorldScenarioTest {
             "Second item must also be financial or OTP",
             NotificationPriorityPolicy.isFinancialOrOtp(state.notifications[1])
         )
+    }
+
+    @Test
+    fun olderHighPriorityOtpAndNewerOrdinaryMessageCoexistence() {
+        var state = NotificationQueueState()
+
+        val olderOtp = createNotification(
+            id = "older_otp",
+            pkg = "com.google.android.apps.messaging",
+            appName = "Messages",
+            title = "OTP Alert",
+            text = "Your OTP is 849201 for bank auth",
+            time = 1000L
+        )
+        assertTrue(NotificationPriorityPolicy.isFinancialOrOtp(olderOtp))
+        assertTrue(NotificationInterruptionPolicy.isCriticalInterruption(olderOtp))
+
+        state = reducer.reduce(state, NotificationEvent.Posted(olderOtp))
+        assertEquals("older_otp", state.activeNotificationId)
+
+        val newerChat = createNotification(
+            id = "newer_chat",
+            pkg = "com.whatsapp",
+            appName = "WhatsApp",
+            title = "Arjun",
+            text = "Are you available?",
+            time = 2000L
+        )
+        assertFalse(NotificationPriorityPolicy.isFinancialOrOtp(newerChat))
+
+        state = reducer.reduce(state, NotificationEvent.Posted(newerChat))
+
+        // UX-C03: Default Pager ordering must be newest first
+        assertEquals(listOf("newer_chat", "older_otp"), state.notifications.map { it.id })
+        assertEquals("newer_chat", state.activeNotificationId)
+
+        // Opening compact island via behavior engine selects the newer notification
+        val behaviorEngine = ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngine(reducer)
+        val initialBehaviorState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(queue = state)
+        val tapCompactDecision = behaviorEngine.reduce(
+            initialBehaviorState,
+            ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact,
+            nowMonotonic = 10_000L
+        )
+        assertEquals("newer_chat", tapCompactDecision.state.selectedKey)
+        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.PAGER, tapCompactDecision.state.targetPresentation)
+
+        // Legitimate priority handling remains functional: OTP is recognized as critical interruption
+        assertTrue(NotificationInterruptionPolicy.isCriticalInterruption(olderOtp))
+        assertEquals(8, NotificationPriorityPolicy.recommendedDisplaySeconds(olderOtp, userSeconds = 3))
     }
 
     @Test

@@ -496,4 +496,240 @@ class IslandRuntimeIntegrationTest {
         assertEquals(IslandPresentationTarget.COMPACT, IslandStateManager.behaviorState.targetPresentation)
         assertEquals("Queue must retain the notification in compact mode", 1, IslandStateManager.notificationSourceIds().size)
     }
+
+    // =========================================================================
+    // Task 04B: Production Entry Point Full Lifecycle Test
+    // =========================================================================
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_14_productionEntryPoint_fullPreviewLifecycle_singleAuthoritativeScheduler() = kotlinx.coroutines.test.runTest {
+        IslandStateManager.setScopeForTesting(this)
+
+        val notif = sampleNotification("prod-notif", "Production Incoming Message")
+        IslandStateManager.postNotification(notif, autoExpand = true, displaySeconds = 3)
+
+        // 1. Initial intake expands into transient preview via engine StartPreviewTimer effect
+        val initial = IslandStateManager.currentState.value as IslandState.Notification
+        assertTrue("Heads-up notification must auto-expand into preview", initial.isExpanded)
+        assertFalse("Transient preview must not be marked expandedByUser", initial.expandedByUser)
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+        val initialToken = IslandStateManager.behaviorState.activeToken
+        assertTrue("Active token must be assigned", initialToken > 0L)
+
+        // 2. Advance time by 3500ms past the 3s preview duration
+        testScheduler.advanceTimeBy(3500L)
+        testScheduler.runCurrent()
+
+        // 3. Real timer callback must execute PreviewTimeout, transitioning engine to COMPACT and UI to compact
+        val collapsed = IslandStateManager.currentState.value as IslandState.Notification
+        assertFalse("Rendered state must be compact after timer expires", collapsed.isExpanded)
+        assertEquals(IslandInteractionOwnership.SYSTEM_IDLE, IslandStateManager.behaviorState.ownership)
+        assertEquals(IslandPresentationTarget.COMPACT, IslandStateManager.behaviorState.targetPresentation)
+
+        // 4. Canonical queue and Android notification must NOT be dismissed
+        assertEquals(1, IslandStateManager.notificationSourceIds().size)
+        assertEquals("prod-notif", IslandStateManager.behaviorState.selectedKey)
+    }
+
+    // =========================================================================
+    // Task 04B: Explicit Collapse Cancels Preview Timer
+    // =========================================================================
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_15_explicitCollapse_cancelsPreviewTimer_and_doesNotDuplicateTimeout() = kotlinx.coroutines.test.runTest {
+        IslandStateManager.setScopeForTesting(this)
+
+        val notif = sampleNotification("swipe-notif", "Swipe Message")
+        IslandStateManager.postNotification(notif, autoExpand = true, displaySeconds = 3)
+
+        val initial = IslandStateManager.currentState.value as IslandState.Notification
+        assertTrue(initial.isExpanded)
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+
+        // User explicitly swipes up to collapse
+        IslandStateManager.collapseExpanded()
+
+        val afterSwipe = IslandStateManager.currentState.value as IslandState.Notification
+        assertFalse("Must collapse immediately on user swipe", afterSwipe.isExpanded)
+        assertEquals(IslandInteractionOwnership.SYSTEM_IDLE, IslandStateManager.behaviorState.ownership)
+        assertEquals(IslandPresentationTarget.COMPACT, IslandStateManager.behaviorState.targetPresentation)
+
+        // Advance time past the original timer deadline
+        testScheduler.advanceTimeBy(4000L)
+        testScheduler.runCurrent()
+
+        // Still compact, queue untouched
+        val afterTime = IslandStateManager.currentState.value as IslandState.Notification
+        assertFalse(afterTime.isExpanded)
+        assertEquals(1, IslandStateManager.notificationSourceIds().size)
+    }
+
+    // =========================================================================
+    // Task 04B: User Expansion Cancels Preview Timer & Preserves User State
+    // =========================================================================
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_16_userExpansion_cancelsPreviewTimer_preservesUserExpandedState() = kotlinx.coroutines.test.runTest {
+        IslandStateManager.setScopeForTesting(this)
+
+        val notif = sampleNotification("user-expand-notif", "User Reading Message")
+        IslandStateManager.postNotification(notif, autoExpand = true, displaySeconds = 3)
+
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+
+        // User interacts by selecting or expanding card
+        IslandStateManager.selectNotification("user-expand-notif")
+
+        val userState = IslandStateManager.currentState.value as IslandState.Notification
+        assertTrue(userState.isExpanded)
+        assertTrue(userState.expandedByUser)
+        assertEquals(IslandInteractionOwnership.PAGER_ACTIVE, IslandStateManager.behaviorState.ownership)
+
+        // Advance time past the 3s preview duration
+        testScheduler.advanceTimeBy(4000L)
+        testScheduler.runCurrent()
+
+        // Must NOT collapse because user owns the surface!
+        val afterTime = IslandStateManager.currentState.value as IslandState.Notification
+        assertTrue("User-owned expansion must not auto-collapse", afterTime.isExpanded)
+        assertTrue(afterTime.expandedByUser)
+        assertEquals(IslandInteractionOwnership.PAGER_ACTIVE, IslandStateManager.behaviorState.ownership)
+    }
+
+    // =========================================================================
+    // Task 04B: Call Interruption Preempts Preview Timer & Restores State
+    // =========================================================================
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_17_callInterruption_cancelsPreviewTimer_and_restoresStateAfterCall() = kotlinx.coroutines.test.runTest {
+        IslandStateManager.setScopeForTesting(this)
+
+        val notif = sampleNotification("call-preempt-notif", "Message Before Call")
+        IslandStateManager.postNotification(notif, autoExpand = true, displaySeconds = 3)
+
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+
+        // Incoming call preempts preview
+        val contact = ContactInfo("Alice", "+1234567890")
+        IslandStateManager.postIncomingCall(contact)
+
+        assertTrue("Call must take over presentation", IslandStateManager.currentState.value is IslandState.IncomingCall)
+        assertEquals(IslandInteractionOwnership.INTERRUPTED, IslandStateManager.behaviorState.ownership)
+
+        // Advance time past preview timer duration while call is active
+        testScheduler.advanceTimeBy(5000L)
+        testScheduler.runCurrent()
+
+        // Call ends
+        IslandStateManager.endCall()
+
+        // Island restores interrupted notification presentation without crash or corrupted ownership
+        val restored = IslandStateManager.currentState.value
+        assertTrue("Notification presentation must be restored after call ends", restored is IslandState.Notification)
+        assertEquals(1, IslandStateManager.notificationSourceIds().size)
+    }
+
+    // =========================================================================
+    // Task 04B: Second Incoming Notification Spawns Child Satellite Notice
+    // =========================================================================
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_18_secondIncomingNotification_spawnsChildNotice_mainPreviewTimerCompletes() = kotlinx.coroutines.test.runTest {
+        IslandStateManager.setScopeForTesting(this)
+
+        val notif1 = sampleNotification("main-notif", "Main Message")
+        IslandStateManager.postNotification(notif1, autoExpand = true, displaySeconds = 3)
+
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+
+        // While notif1 is still in preview, notif2 arrives
+        val notif2 = sampleNotification("second-notif", "Second Message")
+        IslandStateManager.postNotification(notif2, autoExpand = true, displaySeconds = 3)
+
+        // notif2 is spawned as a child satellite notice (UX-C11 / A06)
+        assertEquals(1, IslandStateManager.behaviorState.childNotices.size)
+        assertEquals("second-notif", IslandStateManager.behaviorState.childNotices.first().key)
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+
+        // Advance time past the main preview duration
+        testScheduler.advanceTimeBy(3500L)
+        testScheduler.runCurrent()
+
+        // Main preview collapses to compact and merges child visually
+        val collapsed = IslandStateManager.currentState.value as IslandState.Notification
+        assertFalse(collapsed.isExpanded)
+        assertEquals(IslandInteractionOwnership.SYSTEM_IDLE, IslandStateManager.behaviorState.ownership)
+        assertEquals(0, IslandStateManager.behaviorState.childNotices.size)
+        assertEquals(2, IslandStateManager.notificationSourceIds().size)
+    }
+
+    // =========================================================================
+    // Task 04B: Stale Timer Callback Ignored Due To Token Validation
+    // =========================================================================
+    @Test
+    fun test_19_staleTimerCallback_ignored_dueToTokenValidation() {
+        val notif = sampleNotification("stale-test", "Stale Message")
+        IslandStateManager.postNotification(notif, autoExpand = true, displaySeconds = 3)
+
+        val realToken = IslandStateManager.behaviorState.activeToken
+
+        // Dispatch a fake timeout event with stale token (realToken - 999)
+        val staleDecision = IslandStateManager.dispatchBehaviorEvent(
+            IslandEngineEvent.PreviewTimeout(realToken - 999L)
+        )
+
+        assertEquals(IslandDomainAction.None, staleDecision.action)
+        assertEquals("stale_preview_token_ignored", staleDecision.reason)
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+    }
+
+    // =========================================================================
+    // Task 04B: Older High-Priority OTP & Newer Ordinary Message Coexistence
+    // =========================================================================
+    @Test
+    fun test_20_olderHighPriorityOtp_and_newerOrdinaryMessage_pagerOpensOnNewerMessage() {
+        val olderOtp = NotificationInfo(
+            id = "older_otp",
+            packageName = "com.google.android.apps.messaging",
+            appName = "Messages",
+            title = "Bank OTP Verification",
+            text = "Your OTP is 918234",
+            timestamp = 1000L,
+            isPriority = true,
+            category = "msg"
+        )
+        val newerChat = NotificationInfo(
+            id = "newer_chat",
+            packageName = "com.whatsapp",
+            appName = "WhatsApp",
+            title = "Rahul",
+            text = "Are we still meeting?",
+            timestamp = 2000L,
+            isPriority = false,
+            category = "msg"
+        )
+
+        // Post older OTP first
+        IslandStateManager.postNotification(olderOtp, autoExpand = false, displaySeconds = 3)
+        // Post newer ordinary message second
+        IslandStateManager.postNotification(newerChat, autoExpand = false, displaySeconds = 3)
+
+        assertEquals(2, IslandStateManager.notificationSourceIds().size)
+
+        // Queue order must be strictly newest first (UX-C03)
+        val queue = IslandStateManager.behaviorState.queue.notifications
+        assertEquals(listOf("newer_chat", "older_otp"), queue.map { it.id })
+
+        // User taps compact island to open horizontal pager
+        IslandStateManager.openNotifications(selectNext = false)
+
+        // Opening compact Island must select the most recent notification (UX-C03)
+        assertEquals("newer_chat", IslandStateManager.behaviorState.selectedKey)
+        assertEquals(IslandInteractionOwnership.PAGER_ACTIVE, IslandStateManager.behaviorState.ownership)
+        assertEquals(IslandPresentationTarget.PAGER, IslandStateManager.behaviorState.targetPresentation)
+
+        // OTP high-priority classification remains independently functional
+        assertTrue(NotificationPriorityPolicy.isFinancialOrOtp(olderOtp))
+        assertTrue(NotificationInterruptionPolicy.isCriticalInterruption(olderOtp))
+    }
 }

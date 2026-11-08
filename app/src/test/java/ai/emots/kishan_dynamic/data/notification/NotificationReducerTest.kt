@@ -19,13 +19,31 @@ class NotificationReducerTest {
     )
 
     @Test
-    fun priorityNotificationsBecomeActiveWithoutDroppingExistingItems() {
+    fun newestFirstDeterminesQueueOrderRegardlessOfPriority() {
         var state = NotificationQueueState()
+        // normal item with newer timestamp 20
         state = reducer.reduce(state, NotificationEvent.Posted(notification("normal", false, 20)))
+        // priority item with older timestamp 10
         state = reducer.reduce(state, NotificationEvent.Posted(notification("priority", true, 10)))
 
-        assertEquals(listOf("priority", "normal"), state.notifications.map { it.id })
-        assertEquals("priority", state.activeNotificationId)
+        // UX-C03: Newest first -> normal (20) precedes priority (10)
+        assertEquals(listOf("normal", "priority"), state.notifications.map { it.id })
+        assertEquals("normal", state.activeNotificationId)
+
+        // Posting a priority item with newer timestamp 30 makes it active and head of queue
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("urgent", true, 30)))
+        assertEquals(listOf("urgent", "normal", "priority"), state.notifications.map { it.id })
+        assertEquals("urgent", state.activeNotificationId)
+    }
+
+    @Test
+    fun deterministicTieBreakingForEqualTimestamps() {
+        var state = NotificationQueueState()
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("item_a", false, 100)))
+        state = reducer.reduce(state, NotificationEvent.Posted(notification("item_b", false, 100)))
+
+        // Equal timestamps broken deterministically by ID descending
+        assertEquals(listOf("item_b", "item_a"), state.notifications.map { it.id })
     }
 
     @Test

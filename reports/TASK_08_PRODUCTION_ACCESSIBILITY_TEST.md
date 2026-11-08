@@ -5,6 +5,7 @@
 **Repository:** `Harshil258/DYNAMIC_NOTCH_JETPACK`  
 **Branch:** `codex/task-05-layered-mini-islands`  
 **Base Commit:** `4a00f70b1d19ff5e8b45564b4ac30fd539ad0dc9`  
+**Task 08 Commit SHA:** `e3ff844750ac81f5fbffa217c8422d20ceeefc9d`  
 
 ---
 

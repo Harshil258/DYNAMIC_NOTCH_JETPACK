@@ -361,6 +361,86 @@ class PlaygroundController(
         }
     }
 
+    fun loadNotificationScenario(count: Int) {
+        cancelSequence()
+        engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
+        if (count == 0) {
+            select(PlaygroundCase.Idle)
+            return
+        }
+        val list = (1..count).map { i ->
+            mockNotification(mutable.value.options).copy(
+                id = "mock-$i",
+                title = "Notification $i",
+                text = "Message content for item $i of $count."
+            )
+        }
+        for (item in list.reversed()) {
+            engineState = behaviorEngine.reduce(
+                engineState,
+                ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(item, autoExpand = false),
+                0L
+            ).state
+        }
+        val expandDecision = behaviorEngine.reduce(
+            engineState,
+            ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact,
+            0L
+        )
+        engineState = expandDecision.state
+        syncStateFromEngine(expandDecision)
+        message("Loaded $count notifications scenario (${if (count == 1) "Single card" else "Horizontal Pager"})")
+    }
+
+    fun scenarioPage5Arrival() {
+        loadNotificationScenario(12)
+        val targetId = "mock-5"
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.SelectPage(targetId))
+        val newNotice = mockNotification(mutable.value.options).copy(
+            id = "mock-new-arrival",
+            title = "New Arrival while on Page 5",
+            text = "Notice spawned while reader is inspecting page 5."
+        )
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(newNotice, autoExpand = true))
+        message("Page 5 arrival: reading selection pinned at $targetId")
+    }
+
+    fun scenarioSelectedRemoval() {
+        val selected = engineState.selectedKey ?: "mock-1"
+        dismissNotification(selected)
+        message("Selected removal: dismissed $selected, neighbor selected")
+    }
+
+    fun scenarioNonSelectedRemoval() {
+        val active = engineState.selectedKey
+        val nonSelected = engineState.queue.notifications.firstOrNull { it.id != active }?.id
+        if (nonSelected != null) {
+            removeSourceNotification(nonSelected)
+            message("Non-selected removal: removed $nonSelected, active $active kept")
+        }
+    }
+
+    fun scenarioSameKeyUpdate() {
+        val active = engineState.selectedKey ?: "mock-1"
+        val updated = mockNotification(mutable.value.options).copy(
+            id = active,
+            title = "Updated in-place!",
+            text = "Content refreshed at ${System.currentTimeMillis() % 10000}ms without changing page."
+        )
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.UpdateNotification(updated))
+        message("Same-key update applied in-place to $active")
+    }
+
+    fun scenarioCallRestore() {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IncomingCallPreempt)
+        message("Incoming call preempted island")
+    }
+
+    fun scenarioCallEndRestore() {
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.CallEnded)
+        message("Call ended: island restored")
+    }
+
     fun cancelSequence() { sequence?.cancel(); sequence = null; mutable.update { it.copy(sequenceRunning = false) } }
     fun runChecks() { checks.value = playgroundSelfChecks() }
 }

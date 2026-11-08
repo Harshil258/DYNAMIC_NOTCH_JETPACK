@@ -79,4 +79,66 @@ class PlaygroundControllerTest {
         assertEquals(0L, disabled.durationNanos)
         assertEquals(200f, disabled.getValueFromNanos(0), .01f)
     }
+
+    @Test fun notificationScenariosLoadCorrectCapacityAndPresentation() = runBlocking {
+        val controller = PlaygroundController(this)
+
+        // 0 -> Idle
+        controller.loadNotificationScenario(0)
+        assertEquals(PlaygroundCase.Idle, controller.snapshot.value.selected)
+        assertEquals(IslandState.Minimal, controller.snapshot.value.state)
+
+        // 1 -> Single card expanded
+        controller.loadNotificationScenario(1)
+        val s1 = controller.snapshot.value.state as IslandState.Notification
+        assertTrue(s1.isExpanded)
+        assertEquals(1, s1.notifications.size)
+
+        // 2 -> Pager with 2 items
+        controller.loadNotificationScenario(2)
+        val s2 = controller.snapshot.value.state as IslandState.Notification
+        assertTrue(s2.isExpanded)
+        assertEquals(2, s2.notifications.size)
+
+        // 12, 25, 50
+        for (count in listOf(12, 25, 50)) {
+            controller.loadNotificationScenario(count)
+            val sc = controller.snapshot.value.state as IslandState.Notification
+            assertTrue(sc.isExpanded)
+            assertEquals(count, sc.notifications.size)
+            assertEquals(count, controller.engineState.canonicalQueueCount)
+        }
+    }
+
+    @Test fun playgroundInteractiveScenariosOperateDeterministically() = runBlocking {
+        val controller = PlaygroundController(this)
+
+        // Page 5 arrival scenario
+        controller.scenarioPage5Arrival()
+        assertEquals("mock-5", controller.engineState.selectedKey)
+        assertEquals(13, controller.engineState.canonicalQueueCount)
+        assertEquals(1, controller.engineState.pendingChildNoticesCount)
+
+        // Same-key update scenario
+        controller.scenarioSameKeyUpdate()
+        val updated = controller.engineState.queue.notifications.first { it.id == "mock-5" }
+        assertEquals("Updated in-place!", updated.title)
+        assertEquals("mock-5", controller.engineState.selectedKey)
+
+        // Non-selected background removal
+        val beforeCount = controller.engineState.canonicalQueueCount
+        controller.scenarioNonSelectedRemoval()
+        assertEquals(beforeCount - 1, controller.engineState.canonicalQueueCount)
+        assertEquals("mock-5", controller.engineState.selectedKey)
+
+        // Selected removal
+        controller.scenarioSelectedRemoval()
+        assertNotEquals("mock-5", controller.engineState.selectedKey)
+
+        // Call preempt and restore
+        controller.scenarioCallRestore()
+        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.INTERRUPTED, controller.engineState.ownership)
+        controller.scenarioCallEndRestore()
+        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.SYSTEM_IDLE, controller.engineState.ownership)
+    }
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.data.model.IslandState
 import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.ui.components.IslandMotionCurve
 import ai.emots.kishan_dynamic.ui.kit.*
@@ -142,6 +143,28 @@ fun DynamicIslandPlayground(
                         AppText("Expand notification details to inspect every source action. All source IDs and content here are synthetic.", style = AppTheme.typography.caption)
                         AppButton("Burst: 30 rapid notifications", controller::burst, modifier = Modifier.testTag("run_burst"))
                         AppText("Applied mock events: ${snapshot.eventCount}. Rapid updates may coalesce to a frame, as in the production renderer.", style = AppTheme.typography.caption)
+                        AppSectionTitle("Horizontal Pager Scenarios")
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            AppButton("0 (Idle)", { controller.loadNotificationScenario(0) }, style = AppButtonStyle.Secondary, modifier = Modifier.weight(1f))
+                            AppButton("1 (Single)", { controller.loadNotificationScenario(1) }, style = AppButtonStyle.Secondary, modifier = Modifier.weight(1f))
+                            AppButton("2 (Pager)", { controller.loadNotificationScenario(2) }, style = AppButtonStyle.Secondary, modifier = Modifier.weight(1f))
+                        }
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            AppButton("12 Notices", { controller.loadNotificationScenario(12) }, style = AppButtonStyle.Secondary, modifier = Modifier.weight(1f))
+                            AppButton("25 Notices", { controller.loadNotificationScenario(25) }, style = AppButtonStyle.Secondary, modifier = Modifier.weight(1f))
+                            AppButton("50 Notices", { controller.loadNotificationScenario(50) }, style = AppButtonStyle.Secondary, modifier = Modifier.weight(1f))
+                        }
+                        AppButton("Scenario: Page 5 Arrival Pin", controller::scenarioPage5Arrival, style = AppButtonStyle.Secondary)
+                        AppButton("Scenario: Selected Dismissal (Next/Prev)", controller::scenarioSelectedRemoval, style = AppButtonStyle.Secondary)
+                        AppButton("Scenario: Non-selected Background Removal", controller::scenarioNonSelectedRemoval, style = AppButtonStyle.Secondary)
+                        AppButton("Scenario: Same-key In-place Update", controller::scenarioSameKeyUpdate, style = AppButtonStyle.Secondary)
+                        AppButton("Scenario: Call Preempt & Restore", {
+                            if (controller.snapshot.value.state is IslandState.IncomingCall) {
+                                controller.scenarioCallEndRestore()
+                            } else {
+                                controller.scenarioCallRestore()
+                            }
+                        }, style = AppButtonStyle.Secondary)
                         SequenceButtons(controller)
                     }
                     5 -> {

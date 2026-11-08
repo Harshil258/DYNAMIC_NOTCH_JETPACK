@@ -1397,6 +1397,116 @@ fun NotificationIslandExpandedPager(
 ) {
     if (notifications.isEmpty()) return
 
+    // 1 item -> direct single-card expand without pager overhead
+    if (notifications.size == 1) {
+        val item = notifications[0]
+        val isReplying = replyingNotificationId == item.id
+        val currentReplyAction = if (isReplying) replyAction else null
+        val template = resolveNotificationTemplate(item)
+
+        Box(modifier = modifier.fillMaxWidth()) {
+            when (template) {
+                NotificationTemplateType.NAVIGATION -> {
+                    NotificationNavigationCard(
+                        notification = item,
+                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                        onDismiss = { onDismiss(item) },
+                        pagerLabel = null,
+                        onHeightChange = { h -> onHeightChange?.invoke(h) }
+                    )
+                }
+                NotificationTemplateType.TRANSPORT -> {
+                    NotificationTransportCard(
+                        notification = item,
+                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                        onDismiss = { onDismiss(item) },
+                        pagerLabel = null,
+                        onHeightChange = { h -> onHeightChange?.invoke(h) }
+                    )
+                }
+                NotificationTemplateType.PROGRESS -> {
+                    NotificationProgressCard(
+                        notification = item,
+                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                        onDismiss = { onDismiss(item) },
+                        pagerLabel = null,
+                        onHeightChange = { h -> onHeightChange?.invoke(h) }
+                    )
+                }
+                NotificationTemplateType.PICTURE -> {
+                    NotificationPictureCard(
+                        notification = item,
+                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                        onDismiss = { onDismiss(item) },
+                        isReplying = isReplying,
+                        replyAction = currentReplyAction,
+                        onSendReply = onSendReply,
+                        onCancelReply = onCancelReply,
+                        pagerLabel = null,
+                        isCardExpanded = isCardExpanded,
+                        onToggleExpand = onToggleExpand,
+                        onHeightChange = { h -> onHeightChange?.invoke(h) }
+                    )
+                }
+                NotificationTemplateType.TIMER -> {
+                    NotificationIslandExpanded(
+                        appName = item.appName,
+                        appPackageName = item.packageName,
+                        imagePath = item.imagePath,
+                        sender = item.title.ifBlank { item.appName },
+                        message = item.text,
+                        actionLabel = item.actions.firstOrNull()?.label ?: "Pause",
+                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                        actions = item.actions,
+                        onActionSelected = { act -> onActionSelected(item, act) },
+                        pagerLabel = null,
+                        onDismiss = { onDismiss(item) },
+                        showChronometer = true,
+                        chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
+                        chronometerCountDown = item.chronometerCountDown,
+                        isReplying = isReplying,
+                        replyAction = currentReplyAction,
+                        onSendReply = onSendReply,
+                        onCancelReply = onCancelReply,
+                        isCardExpanded = isCardExpanded,
+                        onToggleExpand = onToggleExpand,
+                        onHeightChange = { h -> onHeightChange?.invoke(h) }
+                    )
+                }
+                NotificationTemplateType.STANDARD -> {
+                    NotificationIslandExpanded(
+                        appName = item.appName,
+                        appPackageName = item.packageName,
+                        imagePath = item.imagePath,
+                        sender = item.title.ifBlank { item.appName },
+                        message = item.text,
+                        expandedText = item.expandedText,
+                        inboxLines = item.inboxLines,
+                        actionLabel = item.actions.firstOrNull()?.label.orEmpty(),
+                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                        actions = item.actions,
+                        onActionSelected = { act -> onActionSelected(item, act) },
+                        pagerLabel = null,
+                        onDismiss = if (item.isClearable) { { onDismiss(item) } } else null,
+                        progress = if (item.progressMax > 0) item.progress.toFloat() / item.progressMax.toFloat() else null,
+                        isProgressIndeterminate = item.isProgressIndeterminate,
+                        showChronometer = item.showChronometer,
+                        chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
+                        chronometerCountDown = item.chronometerCountDown,
+                        isReplying = isReplying,
+                        replyAction = currentReplyAction,
+                        onSendReply = onSendReply,
+                        onCancelReply = onCancelReply,
+                        isCardExpanded = isCardExpanded,
+                        onToggleExpand = onToggleExpand,
+                        onHeightChange = { h -> onHeightChange?.invoke(h) }
+                    )
+                }
+            }
+        }
+        return
+    }
+
     val pagerState = rememberPagerState(
         initialPage = activeIndex.coerceIn(0, notifications.lastIndex),
         pageCount = { notifications.size }
@@ -1455,7 +1565,7 @@ fun NotificationIslandExpandedPager(
             beyondViewportPageCount = 1
         ) { page ->
             val item = notifications.getOrNull(page) ?: return@HorizontalPager
-            val pagerLabel = if (notifications.size > 1) "${page + 1}/${notifications.size}" else null
+            val pagerLabel = if (notifications.size > 1) "${page + 1} of ${notifications.size}" else null
             val isReplying = replyingNotificationId == item.id
             val currentReplyAction = if (isReplying) replyAction else null
             val template = resolveNotificationTemplate(item)

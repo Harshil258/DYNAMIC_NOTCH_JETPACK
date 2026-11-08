@@ -82,12 +82,20 @@ object IslandStateManager {
     var behaviorState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
         private set
 
+    @androidx.annotation.VisibleForTesting
+    fun setScopeForTesting(testScope: CoroutineScope) {
+        scope = testScope
+    }
+
     fun dispatchBehaviorEvent(
         event: ai.emots.kishan_dynamic.data.notification.IslandEngineEvent,
         nowMonotonic: Long = System.nanoTime() / 1_000_000L
     ): ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision {
         synchronized(stateLock) {
-            val decision = behaviorEngine.reduce(behaviorState, event, nowMonotonic)
+            val settings = ai.emots.kishan_dynamic.data.notification.IslandBehaviorSettings(
+                previewDurationMs = (notificationDisplaySeconds * 1000L).coerceAtLeast(1000L)
+            )
+            val decision = behaviorEngine.reduce(behaviorState, event, nowMonotonic, settings)
             behaviorState = decision.state
             notificationQueue = decision.state.queue
             executeEngineEffects(decision.effects)
@@ -111,6 +119,7 @@ object IslandStateManager {
                                 val current = _currentState.value
                                 if (current is IslandState.Notification && current.isExpanded && !current.expandedByUser) {
                                     _currentState.value = current.copy(isExpanded = false)
+                                    notificationAutoExpand = false
                                 }
                             }
                         }
@@ -128,6 +137,10 @@ object IslandStateManager {
                             )
                         }
                     }
+                }
+                is ai.emots.kishan_dynamic.data.notification.IslandSideEffect.CancelChildTimer -> {
+                    childTimerJobs[effect.childKey]?.cancel()
+                    childTimerJobs.remove(effect.childKey)
                 }
                 is ai.emots.kishan_dynamic.data.notification.IslandSideEffect.CancelTimer -> {
                     previewTimerJob?.cancel()
@@ -213,6 +226,7 @@ object IslandStateManager {
             notificationReplayGuard.clear()
             specializedNotificationIds.clear()
 
+            scope = CoroutineScope(mainDispatcher + Job())
             _currentState.value = IslandState.Minimal
         }
     }
@@ -518,16 +532,6 @@ object IslandStateManager {
                 ai.emots.kishan_dynamic.data.notification.IslandSuppressionTombstoneRegistry.clear(notification.id)
             }
 
-            dispatchBehaviorEvent(
-                if (existing != null) {
-                    ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.UpdateNotification(notification)
-                } else {
-                    ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(
-                        notification,
-                        isMilestone = shouldResurface
-                    )
-                }
-            )
             val boostedDisplaySeconds = ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy
                 .recommendedDisplaySeconds(notification, displaySeconds)
             notificationDisplaySeconds = boostedDisplaySeconds.coerceIn(1, 60)
@@ -554,9 +558,23 @@ object IslandStateManager {
             )
             // Only a newly presented transient may start a timed peek. Updates to a
             // user-owned surface and notifications deferred by calls stay compact later.
-            notificationAutoExpand = autoExpand && existing == null &&
+            val shouldAutoExpand = autoExpand && existing == null &&
                 decision.kind == ai.emots.kishan_dynamic.data.notification.NotificationEventKind.TRANSIENT &&
                 presentationDecision == NotificationPresentationDecision.PRESENT
+            notificationAutoExpand = shouldAutoExpand
+
+            dispatchBehaviorEvent(
+                if (existing != null) {
+                    ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.UpdateNotification(notification)
+                } else {
+                    ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(
+                        notification,
+                        isMilestone = shouldResurface,
+                        autoExpand = shouldAutoExpand
+                    )
+                }
+            )
+
             if (presentationDecision == NotificationPresentationDecision.PRESENT &&
                 NotificationInterruptionPolicy.isCriticalInterruption(notification) &&
                 IslandPresentationOwnershipPolicy.isUserOwned(currentPresentation) &&
@@ -1611,6 +1629,7 @@ object IslandStateManager {
     }
 
     private fun scheduleNotificationExpiry() {
+        if (previewTimerJob?.isActive == true) return
         if (notificationQueue.notifications.isEmpty()) return
         if (_currentState.value !is IslandState.Notification &&
             _currentState.value !is IslandState.NotificationWithMusic

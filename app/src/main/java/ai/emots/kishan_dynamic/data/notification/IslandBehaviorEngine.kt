@@ -75,6 +75,7 @@ sealed interface IslandSideEffect {
     data class LaunchContentIntent(val notificationId: String) : IslandSideEffect
     data class StartPreviewTimer(val token: Long, val durationMs: Long) : IslandSideEffect
     data class StartChildTimer(val childKey: String, val token: Long, val durationMs: Long) : IslandSideEffect
+    data class CancelChildTimer(val childKey: String) : IslandSideEffect
     data class CancelTimer(val token: Long) : IslandSideEffect
     data class LogTrace(val record: IslandTraceRecord) : IslandSideEffect
 }
@@ -86,7 +87,8 @@ sealed interface IslandEngineEvent {
     data class IngestNotification(
         val notification: NotificationInfo,
         val isRestored: Boolean = false,
-        val isMilestone: Boolean = false
+        val isMilestone: Boolean = false,
+        val autoExpand: Boolean = true
     ) : IslandEngineEvent
 
     data class UpdateNotification(val notification: NotificationInfo) : IslandEngineEvent
@@ -145,6 +147,18 @@ data class IslandBehaviorState(
     val previousOwnership: IslandInteractionOwnership = IslandInteractionOwnership.SYSTEM_IDLE,
     val suspendedBeforeCall: IslandBehaviorState? = null
 ) {
+    val canonicalQueueCount: Int
+        get() = queue.notifications.size
+
+    val pendingChildNoticesCount: Int
+        get() = childNotices.size
+
+    fun visibleChildCount(limit: Int = 2): Int =
+        minOf(childNotices.size, limit)
+
+    fun childOverflowCount(limit: Int = 2): Int =
+        (childNotices.size - limit).coerceAtLeast(0)
+
     val totalPendingCount: Int
         get() = (queue.notifications.size - 1).coerceAtLeast(0)
 
@@ -296,8 +310,10 @@ class IslandBehaviorEngine(
                 isMilestone = isMilestoneResurfacing,
                 token = childToken
             )
-            val updatedChildren = (listOf(newChild) + state.childNotices.filterNot { it.key == incoming.id })
-                .take(settings.maxChildNotices)
+            val candidateChildren = (listOf(newChild) + state.childNotices.filterNot { it.key == incoming.id })
+            val updatedChildren = candidateChildren.take(settings.maxChildNotices)
+            val evicted = candidateChildren.drop(settings.maxChildNotices)
+            val cancelEffects = evicted.map { IslandSideEffect.CancelChildTimer(it.key) }
 
             return IslandBehaviorDecision(
                 state = state.copy(
@@ -307,7 +323,7 @@ class IslandBehaviorEngine(
                     nextChildToken = childToken + 1
                 ),
                 action = IslandDomainAction.UpsertChildNotice,
-                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, childToken, settings.childDurationMs)),
+                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, childToken, settings.childDurationMs)) + cancelEffects,
                 reason = "user_expanded_active_pin_selection_spawn_child"
             )
         }
@@ -330,8 +346,10 @@ class IslandBehaviorEngine(
                 isMilestone = isMilestoneResurfacing,
                 token = childToken
             )
-            val updatedChildren = (listOf(newChild) + state.childNotices.filterNot { it.key == incoming.id })
-                .take(settings.maxChildNotices)
+            val candidateChildren = (listOf(newChild) + state.childNotices.filterNot { it.key == incoming.id })
+            val updatedChildren = candidateChildren.take(settings.maxChildNotices)
+            val evicted = candidateChildren.drop(settings.maxChildNotices)
+            val cancelEffects = evicted.map { IslandSideEffect.CancelChildTimer(it.key) }
 
             return IslandBehaviorDecision(
                 state = state.copy(
@@ -341,7 +359,7 @@ class IslandBehaviorEngine(
                     nextChildToken = childToken + 1
                 ),
                 action = IslandDomainAction.UpsertChildNotice,
-                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, childToken, settings.childDurationMs)),
+                effects = listOf(IslandSideEffect.StartChildTimer(incoming.id, childToken, settings.childDurationMs)) + cancelEffects,
                 reason = "transient_preview_active_spawn_child"
             )
         }
@@ -351,6 +369,23 @@ class IslandBehaviorEngine(
             state.queue,
             NotificationEvent.Posted(incoming, isSilentUpdate = false)
         )
+
+        // Stage 0A: Respect notification preview eligibility
+        if (!event.autoExpand) {
+            return IslandBehaviorDecision(
+                state = state.copy(
+                    queue = updatedQueue,
+                    selectedKey = incoming.id,
+                    ownership = IslandInteractionOwnership.SYSTEM_IDLE,
+                    targetPresentation = IslandPresentationTarget.COMPACT,
+                    tombstones = updatedTombstones
+                ),
+                action = IslandDomainAction.CollapseToCompact,
+                effects = emptyList(),
+                reason = "ingest_auto_expand_disabled_stay_compact"
+            )
+        }
+
         val nextToken = state.activeToken + 1
         val duration = if (isMilestoneResurfacing) settings.milestoneDurationMs else settings.previewDurationMs
 
@@ -419,6 +454,9 @@ class IslandBehaviorEngine(
 
         // Remove from child notices if present (A39: no ghost child)
         val updatedChildren = state.childNotices.filterNot { it.key == notificationId }
+        val cancelChildEffect = if (state.childNotices.any { it.key == notificationId }) {
+            listOf(IslandSideEffect.CancelChildTimer(notificationId))
+        } else emptyList()
 
         // Update queue
         val updatedQueue = reducer.reduce(state.queue, NotificationEvent.Removed(notificationId))
@@ -435,6 +473,7 @@ class IslandBehaviorEngine(
                     tombstones = updatedTombstones
                 ),
                 action = IslandDomainAction.KeepSelectedKey,
+                effects = cancelChildEffect,
                 reason = "non_selected_removed"
             )
         }
@@ -452,6 +491,7 @@ class IslandBehaviorEngine(
                     tombstones = updatedTombstones
                 ),
                 action = IslandDomainAction.CollapseToCompact,
+                effects = cancelChildEffect,
                 reason = "final_item_removed_return_idle"
             )
         }
@@ -473,6 +513,7 @@ class IslandBehaviorEngine(
                 tombstones = updatedTombstones
             ),
             action = IslandDomainAction.SelectNextOrPrevious,
+            effects = cancelChildEffect,
             reason = "selected_item_removed_select_neighbor"
         )
     }
@@ -489,6 +530,8 @@ class IslandBehaviorEngine(
         }
 
         val updatedChildren = state.childNotices.filter { it.key in activeKeys }
+        val cancelChildEffects = state.childNotices.filterNot { it.key in activeKeys }
+            .map { IslandSideEffect.CancelChildTimer(it.key) }
         val updatedTombstones = state.tombstones.filterKeys { it in activeKeys }
 
         val newSelected = if (state.selectedKey in activeKeys) {
@@ -512,12 +555,16 @@ class IslandBehaviorEngine(
                 tombstones = updatedTombstones
             ),
             action = IslandDomainAction.KeepSelectedKey,
+            effects = cancelChildEffects,
             reason = "reconcile_active_sources"
         )
     }
 
     private fun handleTapCompact(state: IslandBehaviorState): IslandBehaviorDecision {
         val count = state.queue.notifications.size
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
 
         return when {
             // UX-C01 / A01: 0 notifications + idle -> Open Quick Controls
@@ -528,6 +575,7 @@ class IslandBehaviorEngine(
                         targetPresentation = IslandPresentationTarget.QUICK_CONTROLS
                     ),
                     action = IslandDomainAction.OpenQuickControls,
+                    effects = cancelTimerEffects,
                     reason = "idle_tap_opens_quick_controls"
                 )
             }
@@ -541,6 +589,7 @@ class IslandBehaviorEngine(
                         targetPresentation = IslandPresentationTarget.USER_EXPANDED
                     ),
                     action = IslandDomainAction.ExpandNotification,
+                    effects = cancelTimerEffects,
                     reason = "single_notification_expand"
                 )
             }
@@ -554,6 +603,7 @@ class IslandBehaviorEngine(
                         targetPresentation = IslandPresentationTarget.PAGER
                     ),
                     action = IslandDomainAction.OpenPager,
+                    effects = cancelTimerEffects,
                     reason = "multi_notification_open_pager"
                 )
             }
@@ -589,6 +639,7 @@ class IslandBehaviorEngine(
                 targetPresentation = IslandPresentationTarget.USER_EXPANDED
             ),
             action = IslandDomainAction.ExpandNotification,
+            effects = listOf(IslandSideEffect.CancelChildTimer(childKey)),
             reason = "child_promoted_to_main"
         )
     }
@@ -607,11 +658,15 @@ class IslandBehaviorEngine(
         // Evaluate whether system dismissal is enabled and permitted (A17 vs A18 vs A19)
         val canSystemDismiss = settings.defaultOsDismiss && (targetItem?.isClearable == true)
 
-        val effects = if (canSystemDismiss) {
+        val cancelChildEffects = if (state.childNotices.any { it.key == keyToDismiss }) {
+            listOf(IslandSideEffect.CancelChildTimer(keyToDismiss))
+        } else emptyList()
+
+        val effects = (if (canSystemDismiss) {
             listOf(IslandSideEffect.CancelAndroidNotification(keyToDismiss))
         } else {
             emptyList()
-        }
+        }) + cancelChildEffects
 
         val action = if (canSystemDismiss) {
             IslandDomainAction.RequestSystemDismiss
@@ -668,6 +723,11 @@ class IslandBehaviorEngine(
 
     private fun handleSwipeUp(state: IslandBehaviorState): IslandBehaviorDecision {
         // U01 / PD-010: Swipe up collapses card to compact, queue and OS shade UNCHANGED
+        val cancelChildEffects = state.childNotices.map { IslandSideEffect.CancelChildTimer(it.key) }
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
+
         return IslandBehaviorDecision(
             state = state.copy(
                 ownership = IslandInteractionOwnership.SYSTEM_IDLE,
@@ -675,12 +735,18 @@ class IslandBehaviorEngine(
                 childNotices = emptyList() // Children merge visually on collapse (A07)
             ),
             action = IslandDomainAction.CollapseToCompact,
+            effects = cancelChildEffects + cancelTimerEffects,
             reason = "swipe_up_collapse_preserve_queue"
         )
     }
 
     private fun handleOutsideTap(state: IslandBehaviorState): IslandBehaviorDecision {
         // Outside tap collapses card, preserves queue
+        val cancelChildEffects = state.childNotices.map { IslandSideEffect.CancelChildTimer(it.key) }
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
+
         return IslandBehaviorDecision(
             state = state.copy(
                 ownership = IslandInteractionOwnership.SYSTEM_IDLE,
@@ -688,6 +754,7 @@ class IslandBehaviorEngine(
                 childNotices = emptyList()
             ),
             action = IslandDomainAction.CollapseToCompact,
+            effects = cancelChildEffects + cancelTimerEffects,
             reason = "outside_tap_collapse_preserve_queue"
         )
     }
@@ -701,6 +768,8 @@ class IslandBehaviorEngine(
             return IslandBehaviorDecision(state = state, action = IslandDomainAction.None, reason = "stale_preview_token_ignored")
         }
 
+        val cancelChildEffects = state.childNotices.map { IslandSideEffect.CancelChildTimer(it.key) }
+
         // A05 / A07: Preview timeout completes: collapse to compact, merge children visually, keep queue!
         return IslandBehaviorDecision(
             state = state.copy(
@@ -709,6 +778,7 @@ class IslandBehaviorEngine(
                 childNotices = emptyList() // A07: children visually merge into main
             ),
             action = IslandDomainAction.CollapseToCompact,
+            effects = cancelChildEffects,
             reason = "preview_timeout_collapse_merge_children"
         )
     }
@@ -800,6 +870,9 @@ class IslandBehaviorEngine(
             return IslandBehaviorDecision(state = state, action = IslandDomainAction.None, reason = "invalid_page_key")
         }
         val updatedQueue = reducer.reduce(state.queue, NotificationEvent.Selected(notificationId))
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
 
         return IslandBehaviorDecision(
             state = state.copy(
@@ -809,6 +882,7 @@ class IslandBehaviorEngine(
                 targetPresentation = IslandPresentationTarget.PAGER
             ),
             action = IslandDomainAction.KeepSelectedKey,
+            effects = cancelTimerEffects,
             reason = "page_selected"
         )
     }
@@ -816,6 +890,9 @@ class IslandBehaviorEngine(
     private fun handleNextPage(state: IslandBehaviorState): IslandBehaviorDecision {
         val updatedQueue = reducer.reduce(state.queue, NotificationEvent.Next)
         val newKey = updatedQueue.activeNotificationId
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
 
         return IslandBehaviorDecision(
             state = state.copy(
@@ -825,6 +902,7 @@ class IslandBehaviorEngine(
                 targetPresentation = IslandPresentationTarget.PAGER
             ),
             action = IslandDomainAction.KeepSelectedKey,
+            effects = cancelTimerEffects,
             reason = "next_page"
         )
     }
@@ -832,6 +910,9 @@ class IslandBehaviorEngine(
     private fun handlePreviousPage(state: IslandBehaviorState): IslandBehaviorDecision {
         val updatedQueue = reducer.reduce(state.queue, NotificationEvent.Previous)
         val newKey = updatedQueue.activeNotificationId
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
 
         return IslandBehaviorDecision(
             state = state.copy(
@@ -841,12 +922,18 @@ class IslandBehaviorEngine(
                 targetPresentation = IslandPresentationTarget.PAGER
             ),
             action = IslandDomainAction.KeepSelectedKey,
+            effects = cancelTimerEffects,
             reason = "previous_page"
         )
     }
 
     private fun handleIncomingCall(state: IslandBehaviorState): IslandBehaviorDecision {
         // C01: Incoming call preempts ordinary preview, preserves suspended state
+        val cancelChildEffects = state.childNotices.map { IslandSideEffect.CancelChildTimer(it.key) }
+        val cancelTimerEffects = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) {
+            listOf(IslandSideEffect.CancelTimer(state.activeToken))
+        } else emptyList()
+
         return IslandBehaviorDecision(
             state = state.copy(
                 suspendedBeforeCall = state,
@@ -855,6 +942,7 @@ class IslandBehaviorEngine(
                 childNotices = emptyList()
             ),
             action = IslandDomainAction.ExpandNotification,
+            effects = cancelChildEffects + cancelTimerEffects,
             reason = "incoming_call_preemption"
         )
     }

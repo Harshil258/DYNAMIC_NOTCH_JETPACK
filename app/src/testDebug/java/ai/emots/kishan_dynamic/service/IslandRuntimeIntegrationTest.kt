@@ -402,4 +402,98 @@ class IslandRuntimeIntegrationTest {
         assertTrue(IslandSuppressionTombstoneRegistry.isSuppressed("idem-2"))
         assertEquals(IslandState.Minimal, IslandStateManager.currentState.value)
     }
+
+    // =========================================================================
+    // Stage 0A: Notification preview eligibility & autoExpand=false verification
+    // =========================================================================
+    @Test
+    fun test_11_previewEligibility_autoExpandFalse_staysCompactAndOwnershipSystemIdle() {
+        val notif = sampleNotification("notif-compact", "Compact Only")
+        IslandStateManager.postNotification(notif, autoExpand = false, displaySeconds = 3)
+
+        val current = IslandStateManager.currentState.value as IslandState.Notification
+        assertFalse("Notification posted with autoExpand=false must NOT expand", current.isExpanded)
+        assertEquals(IslandInteractionOwnership.SYSTEM_IDLE, IslandStateManager.behaviorState.ownership)
+        assertEquals(IslandPresentationTarget.COMPACT, IslandStateManager.behaviorState.targetPresentation)
+
+        // Subsequent notification posted with autoExpand=false also stays compact and does not spawn child mini-island
+        val notif2 = sampleNotification("notif-compact-2", "Second Compact")
+        IslandStateManager.postNotification(notif2, autoExpand = false, displaySeconds = 3)
+
+        val current2 = IslandStateManager.currentState.value as IslandState.Notification
+        assertFalse("Second notification must also remain compact", current2.isExpanded)
+        assertEquals(IslandInteractionOwnership.SYSTEM_IDLE, IslandStateManager.behaviorState.ownership)
+        assertEquals(0, IslandStateManager.behaviorState.childNotices.size)
+        assertEquals(2, IslandStateManager.behaviorState.canonicalQueueCount)
+    }
+
+    // =========================================================================
+    // Stage 0C: Child timer cleanup and overflow accounting verification
+    // =========================================================================
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_12_childTimerCleanup_and_overflowAccounting() = kotlinx.coroutines.test.runTest {
+        IslandStateManager.setScopeForTesting(this)
+
+        // User expands island with notif-1
+        val notif1 = sampleNotification("notif-1", "Main Notification")
+        IslandStateManager.postNotification(notif1, autoExpand = true, displaySeconds = 3)
+        IslandStateManager.dispatchBehaviorEvent(IslandEngineEvent.TapCompact) // USER_EXPANDED
+
+        assertEquals(IslandInteractionOwnership.USER_EXPANDED, IslandStateManager.behaviorState.ownership)
+
+        // Ingest 5 child notifications into user-expanded island
+        for (i in 2..6) {
+            IslandStateManager.postNotification(sampleNotification("child-$i", "Child $i"), autoExpand = true, displaySeconds = 3)
+        }
+
+        // Canonical queue count is 6 (1 main + 5 children)
+        assertEquals(6, IslandStateManager.behaviorState.canonicalQueueCount)
+
+        // maxChildNotices is 4 -> childNotices size is 4, child-2 was evicted
+        assertEquals(4, IslandStateManager.behaviorState.pendingChildNoticesCount)
+
+        // visibleChildCount with limit 2 is 2
+        assertEquals(2, IslandStateManager.behaviorState.visibleChildCount(limit = 2))
+
+        // childOverflowCount with limit 2 is (4 - 2) = 2 (NOT counting queued background items)
+        assertEquals(2, IslandStateManager.behaviorState.childOverflowCount(limit = 2))
+
+        // Tap child-6 to promote it -> child-6 is removed from childNotices and its timer canceled
+        IslandStateManager.dispatchBehaviorEvent(IslandEngineEvent.TapChild("child-6"))
+        assertEquals("child-6", IslandStateManager.behaviorState.selectedKey)
+        assertFalse(IslandStateManager.behaviorState.childNotices.any { it.key == "child-6" })
+
+        // Collapse island -> all remaining child notices are cleared and their timers canceled
+        IslandStateManager.collapseExpanded()
+        assertEquals(0, IslandStateManager.behaviorState.pendingChildNoticesCount)
+        assertEquals(6, IslandStateManager.behaviorState.canonicalQueueCount)
+    }
+
+    // =========================================================================
+    // Stage 0D: Deterministic timer integration test advancing virtual time
+    // =========================================================================
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun test_13_deterministic_previewTimeout_collapsesBothEngineAndPresentationWithoutManualCalls() = kotlinx.coroutines.test.runTest {
+        IslandStateManager.setScopeForTesting(this)
+
+        val notif = sampleNotification("notif-auto", "Auto Message")
+        IslandStateManager.postNotification(notif, autoExpand = true, displaySeconds = 3)
+
+        val before = IslandStateManager.currentState.value as IslandState.Notification
+        assertTrue("Initial state must be expanded preview", before.isExpanded)
+        assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+
+        // Advance virtual time past the 3-second preview duration
+        testScheduler.advanceTimeBy(3500L)
+        testScheduler.runCurrent()
+
+        // Verify BOTH engine ownership and visible presentation collapsed to compact WITHOUT manual fallback calls!
+        val after = IslandStateManager.currentState.value as IslandState.Notification
+        assertFalse("Visible presentation must collapse to compact automatically", after.isExpanded)
+        assertEquals(IslandInteractionOwnership.SYSTEM_IDLE, IslandStateManager.behaviorState.ownership)
+        assertEquals(IslandPresentationTarget.COMPACT, IslandStateManager.behaviorState.targetPresentation)
+        assertEquals("Queue must retain the notification in compact mode", 1, IslandStateManager.notificationSourceIds().size)
+    }
 }

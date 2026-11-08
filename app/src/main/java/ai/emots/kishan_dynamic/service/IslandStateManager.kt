@@ -81,9 +81,23 @@ object IslandStateManager {
 
     private val notificationReducer = NotificationReducer()
     val behaviorEngine = ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngine(notificationReducer)
-    @Volatile
-    var behaviorState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
-        private set
+    private val _behaviorPresentation = MutableStateFlow(ai.emots.kishan_dynamic.data.notification.IslandBehaviorState())
+    val behaviorPresentation: StateFlow<ai.emots.kishan_dynamic.data.notification.IslandBehaviorState> = _behaviorPresentation.asStateFlow()
+    var behaviorState: ai.emots.kishan_dynamic.data.notification.IslandBehaviorState
+        get() = _behaviorPresentation.value
+        private set(value) { _behaviorPresentation.value = value }
+
+    fun promoteChild(key: String, arrivalToken: Long) {
+        synchronized(stateLock) {
+            val decision = dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapChild(key, arrivalToken))
+            if (decision.reason == "child_promoted_to_main") {
+                renderNotificationSurface()
+                val current = _currentState.value as? IslandState.Notification
+                if (current != null) _currentState.value = current.copy(isExpanded = true, expandedByUser = true)
+                markNotificationSeen(key)
+            }
+        }
+    }
 
     @androidx.annotation.VisibleForTesting
     fun setScopeForTesting(testScope: CoroutineScope) {
@@ -101,6 +115,9 @@ object IslandStateManager {
             val decision = behaviorEngine.reduce(behaviorState, event, nowMonotonic, settings)
             behaviorState = decision.state
             notificationQueue = decision.state.queue
+            // Bound timer registry to pending identities; completed and selected children cannot leak jobs.
+            val pending = decision.state.childNotices.map { it.key }.toSet()
+            childTimerJobs.keys.filterNot { it in pending }.forEach { childTimerJobs.remove(it)?.cancel() }
             executeEngineEffects(decision.effects)
             return decision
         }
@@ -132,6 +149,7 @@ object IslandStateManager {
                     }
                 }
                 is ai.emots.kishan_dynamic.data.notification.IslandSideEffect.StartChildTimer -> {
+                    if (behaviorState.childNotices.none { it.key == effect.childKey }) continue
                     childTimerJobs[effect.childKey]?.cancel()
                     val childKey = effect.childKey
                     val token = effect.token

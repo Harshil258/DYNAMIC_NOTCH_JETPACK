@@ -450,14 +450,14 @@ class IslandRuntimeIntegrationTest {
         // Canonical queue count is 6 (1 main + 5 children)
         assertEquals(6, IslandStateManager.behaviorState.canonicalQueueCount)
 
-        // maxChildNotices is 4 -> childNotices size is 4, child-2 was evicted
-        assertEquals(4, IslandStateManager.behaviorState.pendingChildNoticesCount)
+        // Task05: all five pending arrivals retained; visibility is a separate projection.
+        assertEquals(5, IslandStateManager.behaviorState.pendingChildNoticesCount)
 
         // visibleChildCount with limit 2 is 2
         assertEquals(2, IslandStateManager.behaviorState.visibleChildCount(limit = 2))
 
-        // childOverflowCount with limit 2 is (4 - 2) = 2 (NOT counting queued background items)
-        assertEquals(2, IslandStateManager.behaviorState.childOverflowCount(limit = 2))
+        // Pending overflow is five arrivals minus two visible.
+        assertEquals(3, IslandStateManager.behaviorState.childOverflowCount(limit = 2))
 
         // Tap child-6 to promote it -> child-6 is removed from childNotices and its timer canceled
         IslandStateManager.dispatchBehaviorEvent(IslandEngineEvent.TapChild("child-6"))

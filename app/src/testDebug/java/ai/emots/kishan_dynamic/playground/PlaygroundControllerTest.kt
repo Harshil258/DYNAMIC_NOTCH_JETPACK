@@ -141,4 +141,16 @@ class PlaygroundControllerTest {
         controller.scenarioCallEndRestore()
         assertEquals(ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.SYSTEM_IDLE, controller.engineState.ownership)
     }
+    @Test fun layoutObservationCannotReplaceAnotherSelectedFixture() = runBlocking {
+        val controller = PlaygroundController(this)
+        controller.layeredScenario(1)
+        controller.select(PlaygroundCase.Music)
+        val music = controller.snapshot.value.state
+        controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildVisibleLimitChanged(0))
+        assertEquals(music, controller.snapshot.value.state)
+        assertEquals(PlaygroundCase.Music, controller.snapshot.value.selected)
+        assertTrue(controller.snapshot.value.behavior.childNotices.isEmpty())
+        controller.stopClock()
+    }
+
 }

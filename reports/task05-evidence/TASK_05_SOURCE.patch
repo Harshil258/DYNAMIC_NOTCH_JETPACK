@@ -1,0 +1,984 @@
+diff --git a/app/src/androidTest/java/ai/emots/kishan_dynamic/LayeredMiniIslandsInstrumentedTest.kt b/app/src/androidTest/java/ai/emots/kishan_dynamic/LayeredMiniIslandsInstrumentedTest.kt
+new file mode 100644
+index 0000000..d2c5317
+--- /dev/null
++++ b/app/src/androidTest/java/ai/emots/kishan_dynamic/LayeredMiniIslandsInstrumentedTest.kt
+@@ -0,0 +1,167 @@
++package ai.emots.kishan_dynamic
++
++import android.graphics.Bitmap
++import android.content.res.Configuration
++import androidx.compose.runtime.*
++import androidx.compose.foundation.layout.*
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.platform.LocalLayoutDirection
++import androidx.compose.ui.unit.LayoutDirection
++import androidx.compose.ui.platform.LocalDensity
++import androidx.compose.ui.unit.Density
++import androidx.compose.ui.platform.LocalConfiguration
++import androidx.compose.ui.platform.testTag
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.graphics.asAndroidBitmap
++import androidx.compose.ui.test.*
++import androidx.compose.ui.test.junit4.createComposeRule
++import androidx.test.ext.junit.runners.AndroidJUnit4
++import androidx.test.platform.app.InstrumentationRegistry
++import ai.emots.kishan_dynamic.data.model.NotificationInfo
++import ai.emots.kishan_dynamic.data.notification.*
++import ai.emots.kishan_dynamic.service.IslandStateManager
++import ai.emots.kishan_dynamic.ui.components.*
++import ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion
++import ai.emots.kishan_dynamic.ui.theme.AppTheme
++import org.junit.*
++import org.junit.Assert.*
++import org.junit.runner.RunWith
++import java.io.File
++
++/** Direct Codex/ADB exploration; fixture actions only, no Android notification APIs. */
++@RunWith(AndroidJUnit4::class)
++class LayeredMiniIslandsInstrumentedTest {
++    @get:Rule val compose = createComposeRule()
++    private val engine = IslandBehaviorEngine()
++    private var state by mutableStateOf(IslandBehaviorState())
++    private var now = 1000L
++    private fun event(e: IslandEngineEvent) { state = engine.reduce(state, e, now++).state }
++    private fun sample(id: String) = NotificationInfo(id = id, packageName = "fixture.$id", appName = when(id) {
++        "main" -> "WhatsApp"; "child-1" -> "Telegram"; "child-2" -> "Gmail"; else -> "Instagram"
++    }, title = "Alex · $id", text = "Synthetic preview for visual validation", timestamp = now++)
++    @Before fun prepare() {
++        IslandStateManager.setPaywallActive(true)
++        ai.emots.kishan_dynamic.service.PermissionUtils.isAwaitingAccessibilityReturn = false
++        event(IslandEngineEvent.IngestNotification(sample("main"), autoExpand = false))
++        event(IslandEngineEvent.TapCompact)
++    }
++    @After fun finish() { IslandStateManager.setPaywallActive(false) }
++    private fun render(width: Int = 360, font: Float = 1f, reduced: Boolean = true, rtl: Boolean = false) {
++        compose.setContent {
++            val config = Configuration(LocalConfiguration.current).apply { screenWidthDp = width; screenHeightDp = 800; fontScale = font }
++            CompositionLocalProvider(LocalConfiguration provides config, LocalReducedMotion provides reduced,
++                LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
++                LocalDensity provides Density(minOf(LocalDensity.current.density, LocalConfiguration.current.screenWidthDp * LocalDensity.current.density / width), font)) {
++                AppTheme(darkTheme = true) {
++                    Box(Modifier.width(width.dp)) {
++                        LayeredMiniIslands(state, onEvent = ::event,
++                            onPromote = { key, token -> event(IslandEngineEvent.TapChild(key, token)) }) {
++                            DynamicIslandPill(
++                                state = IslandDemoState.NotificationExpanded,
++                                notifications = state.queue.notifications.map { ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicy.notification(it, state.childPrivacy.deviceLocked, state.childPrivacy.hideSensitiveContent) }, notificationActiveIndex = state.queue.activeIndex,
++                                onNotificationSelect = { event(IslandEngineEvent.SelectPage(it)) },
++                                modifier = Modifier.width(width.dp).testTag("fixture_main"))
++                        }
++                    }
++                }
++            }
++        }
++    }
++    private fun arrive(n: Int) = compose.runOnIdle { repeat(n) { event(IslandEngineEvent.IngestNotification(sample("child-${it+1}"))) } }
++    private fun shot(name: String) {
++        val target = InstrumentationRegistry.getInstrumentation().targetContext
++        val folder = File(target.filesDir, "task05-evidence").apply { mkdirs() }
++        File(folder, "$name.png").outputStream().use { compose.onRoot().captureToImage().asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, it) }
++    }
++    @Test fun newestInsertionIsBelowMainAndMaintainsIdentity() {
++        render(430); arrive(2)
++        compose.onNodeWithTag("child_child-1").assertExists()
++        val before = compose.onNodeWithTag("child_child-1").fetchSemanticsNode().boundsInRoot.top
++        compose.runOnIdle { event(IslandEngineEvent.IngestNotification(sample("child-3"))) }
++        compose.waitForIdle()
++        val main = compose.onNodeWithTag("fixture_main", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
++        val latest = compose.onNodeWithTag("child_child-3").fetchSemanticsNode().boundsInRoot
++        val older = compose.onNodeWithTag("child_child-1").fetchSemanticsNode().boundsInRoot
++        assertTrue(latest.top >= main.bottom); assertTrue(older.top > before)
++        assertEquals("main", state.selectedKey); assertEquals(4, state.canonicalQueueCount)
++        shot("three-card-stack")
++    }
++    @Test fun promotionTapAndExpiryKeepCanonicalPagerQueue() {
++        render(); arrive(3)
++        compose.onNodeWithTag("child_child-2").performClick()
++        compose.waitUntil(5000) { state.selectedKey == "child-2" }
++        compose.onNodeWithTag("child_child-2").assertDoesNotExist()
++        assertEquals(4, state.canonicalQueueCount)
++        val child = state.childNotices.first()
++        compose.runOnIdle { event(IslandEngineEvent.ChildTimeout(child.key, child.token)) }
++        compose.waitForIdle()
++        assertTrue(state.queue.notifications.any { it.id == child.key }); assertEquals(4, state.canonicalQueueCount)
++        shot("promoted-main-and-merged-child")
++    }
++    @Test fun burstOverflowCountsOnlyNewArrivals() {
++        render(430); arrive(25)
++        compose.onNodeWithTag("child_overflow").assertTextContains("+22", substring = true)
++        assertEquals(26, state.canonicalQueueCount); assertEquals(25, state.pendingChildNoticesCount)
++        shot("overflow-25-arrivals")
++    }
++    @Test fun narrowLargeTextRedactionAndReducedMotion() {
++        render(320, 2f, rtl = true); arrive(3)
++        compose.runOnIdle {
++            event(IslandEngineEvent.UpdateNotification(sample("child-3").copy(
++                title = "A deliberately long sender name for narrow RTL layout validation",
++                text = "A multiline synthetic message preview that must remain readable and bounded at large font sizes.")))
++        }
++        compose.waitForIdle()
++        shot("narrow-large-text-rtl")
++        compose.runOnIdle { event(IslandEngineEvent.PrivacyChanged(ChildPrivacyPolicy(true, true))) }
++        compose.onNodeWithTag("child_child-3").assertExists()
++        compose.onAllNodesWithText("New notification", useUnmergedTree = true).onFirst().assertExists()
++        shot("narrow-large-text-redaction")
++    }
++    @Test fun promotionCannotSelectReusedSourceIdentity() {
++        render(reduced = false); arrive(1)
++        compose.waitForIdle()
++        compose.onNodeWithTag("child_child-1").assertExists()
++        compose.mainClock.autoAdvance = false
++        compose.onNodeWithTag("child_child-1").performClick()
++        compose.runOnIdle {
++            event(IslandEngineEvent.RemoveNotification("child-1"))
++            event(IslandEngineEvent.IngestNotification(sample("child-1")))
++        }
++        compose.waitForIdle()
++        // Advance beyond the promotion window while leaving the replacement queued.
++        compose.mainClock.advanceTimeBy(1000)
++        compose.mainClock.autoAdvance = true
++        compose.waitUntil(5000) { state.childLifecycles["child-1"] != ChildLifecycle.PROMOTING }
++        compose.runOnIdle { assertEquals("main", state.selectedKey); assertEquals(2, state.canonicalQueueCount) }
++    }
++    @Test fun horizontalPagerRemainsInteractiveWithChildren() {
++        render(430); arrive(3)
++        compose.onNodeWithTag("fixture_main", useUnmergedTree = true).performTouchInput { swipeRight() }
++        compose.waitUntil(5000) { state.selectedKey != "main" }
++        assertEquals(4, state.canonicalQueueCount)
++        assertTrue(state.queue.notifications.any { it.id == "main" })
++        shot("pager-swipe-with-children")
++    }
++    @Test fun captureActualEmergenceAndMergeFrames() {
++        render(430, reduced = false)
++        compose.waitForIdle()
++        compose.mainClock.autoAdvance = false
++        arrive(1)
++        compose.mainClock.advanceTimeBy(240)
++        shot("emerging-frame")
++        compose.mainClock.advanceTimeBy(1000)
++        compose.mainClock.autoAdvance = true
++        compose.waitForIdle()
++        val child = state.childNotices.single()
++        compose.mainClock.autoAdvance = false
++        compose.runOnIdle { event(IslandEngineEvent.ChildTimeout(child.key, child.token)) }
++        compose.mainClock.advanceTimeBy(96)
++        shot("merge-frame")
++        compose.mainClock.advanceTimeBy(1000)
++        compose.mainClock.autoAdvance = true
++        compose.waitForIdle()
++        assertEquals(2, state.canonicalQueueCount)
++    }
++
++}
+diff --git a/app/src/androidTest/java/ai/emots/kishan_dynamic/LayeredMiniIslandsOverlayTest.kt b/app/src/androidTest/java/ai/emots/kishan_dynamic/LayeredMiniIslandsOverlayTest.kt
+new file mode 100644
+index 0000000..8361cbc
+--- /dev/null
++++ b/app/src/androidTest/java/ai/emots/kishan_dynamic/LayeredMiniIslandsOverlayTest.kt
+@@ -0,0 +1,88 @@
++package ai.emots.kishan_dynamic
++
++import android.content.Intent
++import android.graphics.Bitmap
++import android.graphics.Rect
++import android.os.SystemClock
++import android.provider.Settings
++import android.view.InputDevice
++import android.view.MotionEvent
++import androidx.core.content.ContextCompat
++import androidx.test.ext.junit.rules.ActivityScenarioRule
++import androidx.test.ext.junit.runners.AndroidJUnit4
++import androidx.test.platform.app.InstrumentationRegistry
++import ai.emots.kishan_dynamic.playground.*
++import org.junit.*
++import org.junit.Assert.*
++import org.junit.runner.RunWith
++import java.io.File
++
++/** Plain Android instrumentation: the service window must use the real frame clock. */
++@RunWith(AndroidJUnit4::class)
++class LayeredMiniIslandsOverlayTest {
++    @get:Rule val activity = ActivityScenarioRule(DynamicIslandPlaygroundActivity::class.java)
++    @After fun stop() { activity.scenario.onActivity { it.stopService(Intent(it, PlaygroundOverlayService::class.java)) } }
++    private fun until(timeoutMs: Long = 10000, condition: () -> Boolean) {
++        val deadline = SystemClock.uptimeMillis() + timeoutMs
++        while (SystemClock.uptimeMillis() < deadline) {
++            if (condition()) return
++            SystemClock.sleep(25)
++        }
++        fail("Physical state: ${PlaygroundSession.physicalInfo.value}; running=${PlaygroundSession.overlayRunning.value}; pending=${PlaygroundSession.controller.snapshot.value.behavior.pendingChildNoticesCount}; phases=${PlaygroundSession.controller.snapshot.value.behavior.childLifecycles.values}")
++    }
++    @Test fun physicalMockWindowWrapsStackAndOutsideStopButtonReceivesTouch() {
++        val controller = PlaygroundSession.controller
++        activity.scenario.onActivity {
++            Assume.assumeTrue("Overlay permission required on authorized device", Settings.canDrawOverlays(it))
++            controller.options { PlaygroundOptions(guides = false) }
++            controller.layeredScenario(3)
++            ContextCompat.startForegroundService(it, Intent(it, PlaygroundOverlayService::class.java))
++        }
++        until {
++            PlaygroundSession.overlayRunning.value && PlaygroundSession.physicalInfo.value.contains("unlocked") &&
++                controller.snapshot.value.behavior.childLifecycles.values.count { it == ai.emots.kishan_dynamic.data.notification.ChildLifecycle.VISIBLE } >= 2 &&
++                Regex("window [1-9][0-9]*×[1-9][0-9]*px").containsMatchIn(PlaygroundSession.physicalInfo.value)
++        }
++        val info = PlaygroundSession.physicalInfo.value
++        val match = Regex("window ([0-9]+)×([0-9]+)px").find(info)!!
++        val height = match.groupValues[2].toInt()
++        activity.scenario.onActivity { assertTrue("Not a full-screen catcher: $info", height < it.resources.displayMetrics.heightPixels * .8f) }
++        assertEquals(4, controller.snapshot.value.behavior.canonicalQueueCount)
++        val instrumentation = InstrumentationRegistry.getInstrumentation()
++        val folder = File(instrumentation.targetContext.filesDir, "task05-evidence").apply { mkdirs() }
++        File(folder, "physical-window-info.txt").writeText(info)
++        instrumentation.uiAutomation.takeScreenshot().let { bitmap ->
++            File(folder, "native-mock-overlay.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
++        }
++        // Dynamically ground the owner-app stop action; no direct callback or made-up pass-through.
++        val automation = instrumentation.uiAutomation
++        val serviceInfo = automation.serviceInfo
++        serviceInfo.flags = serviceInfo.flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
++        automation.serviceInfo = serviceInfo
++        var bounds: Rect? = null
++        val lookupDeadline = SystemClock.uptimeMillis() + 2000
++        while (bounds == null && SystemClock.uptimeMillis() < lookupDeadline) {
++            val roots = automation.windows.mapNotNull { it.root } + listOfNotNull(automation.rootInActiveWindow)
++            val node = roots.flatMap { it.findAccessibilityNodeInfosByText("Stop physical overlay") }
++                .firstOrNull { it.isVisibleToUser }
++            node?.let { Rect().apply { it.getBoundsInScreen(this) } }?.takeIf { !it.isEmpty }?.let { bounds = it }
++            if (bounds == null) SystemClock.sleep(25)
++        }
++        // Coordinate fallback verified by direct ADB exploration on the authorized Realme.
++        // Scale the observed text bounds from 1080×2400 for equivalent display geometry.
++        val screen = instrumentation.targetContext.getSystemService(android.view.WindowManager::class.java).maximumWindowMetrics.bounds
++        val target = bounds ?: Rect((screen.width() * 364 / 1080), (screen.height() * 2135 / 2400),
++            (screen.width() * 717 / 1080), (screen.height() * 2158 / 2400))
++        assertTrue("Stop action must be outside the native overlay's height budget", target.centerY() > height + 200)
++        val down = SystemClock.uptimeMillis()
++        listOf(MotionEvent.ACTION_DOWN, MotionEvent.ACTION_UP).forEachIndexed { index, action ->
++            MotionEvent.obtain(down, down + index * 40, action, target.exactCenterX(), target.exactCenterY(), 0).useEvent {
++                it.source = InputDevice.SOURCE_TOUCHSCREEN
++                assertTrue(automation.injectInputEvent(it, true))
++            }
++        }
++        until(5000) { !PlaygroundSession.overlayRunning.value }
++        assertEquals(4, controller.snapshot.value.behavior.canonicalQueueCount)
++    }
++    private inline fun MotionEvent.useEvent(block: (MotionEvent) -> Unit) { try { block(this) } finally { recycle() } }
++}
+diff --git a/app/src/debug/java/ai/emots/kishan_dynamic/playground/DynamicIslandPlayground.kt b/app/src/debug/java/ai/emots/kishan_dynamic/playground/DynamicIslandPlayground.kt
+index 5a4c41a..f84a043 100644
+--- a/app/src/debug/java/ai/emots/kishan_dynamic/playground/DynamicIslandPlayground.kt
++++ b/app/src/debug/java/ai/emots/kishan_dynamic/playground/DynamicIslandPlayground.kt
+@@ -35 +35 @@ fun DynamicIslandPlayground(
+-    val sections = listOf("Live Preview", "States", "Animations", "Geometry", "Stress Tests", "Test Results")
++    val sections = listOf("Live Preview", "States", "Animations", "Geometry", "Stress Tests", "Test Results", "Mini-Islands")
+@@ -57,0 +58,19 @@ fun DynamicIslandPlayground(
++                    6 -> {
++                        val behavior = snapshot.behavior
++                        AppSectionTitle("Layered Mini-Islands Lab")
++                        AppText("Queue ${behavior.canonicalQueueCount} · pending ${behavior.pendingChildNoticesCount} · visible ${minOf(behavior.visibleChildLimit, behavior.pendingChildNoticesCount)} · overflow ${behavior.pendingChildOverflowCount} · selected ${behavior.selectedKey}", style = AppTheme.typography.caption)
++                        listOf(1, 2, 3, 10, 25).forEach { n ->
++                            AppButton("Main + $n arrivals", { controller.layeredScenario(n) }, style = AppButtonStyle.Secondary)
++                        }
++                        AppButton("New arrival", controller::addLayeredArrival, style = AppButtonStyle.Secondary)
++                        AppButton("50 queued messages", { controller.loadNotificationScenario(50) }, style = AppButtonStyle.Secondary)
++                        AppButton("Toggle lock-screen redaction", controller::layeredRedaction, style = AppButtonStyle.Secondary)
++                        AppButton("Interrupt with call", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IncomingCallPreempt) }, style = AppButtonStyle.Secondary)
++                        AppButton("End call / restore", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.CallEnded) }, style = AppButtonStyle.Secondary)
++                        behavior.childNotices.take(3).forEach { child ->
++                            AppButton("Remove source ${child.appName}", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.RemoveNotification(child.key)) }, style = AppButtonStyle.Secondary)
++                            AppButton("Hold / release ${child.appName}", { if(child.isPaused) controller.releaseChild(child.key) else controller.touchChild(child.key) }, style = AppButtonStyle.Secondary)
++                            AppButton("Expire ${child.appName}", { controller.childTimeout(child.key, child.token) }, style = AppButtonStyle.Secondary)
++                        }
++                        AppText(snapshot.eventTrace.joinToString("\n"), style = AppTheme.typography.caption)
++                    }
+diff --git a/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundModel.kt b/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundModel.kt
+index 6a811c4..6466328 100644
+--- a/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundModel.kt
++++ b/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundModel.kt
+@@ -47,0 +48,2 @@ data class PlaygroundSnapshot(
++    val behavior: ai.emots.kishan_dynamic.data.notification.IslandBehaviorState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(),
++    val layeredRedaction: Boolean = false, val eventTrace: List<String> = emptyList(),
+@@ -57,0 +60 @@ class PlaygroundController(
++    private val childTimers = mutableMapOf<String, Job>()
+@@ -70 +73,21 @@ class PlaygroundController(
+-        syncStateFromEngine(decision)
++        childTimers.keys.filterNot { k -> engineState.childNotices.any { it.key == k } }.forEach { childTimers.remove(it)?.cancel() }
++        decision.effects.forEach { effect ->
++            when(effect) {
++                is ai.emots.kishan_dynamic.data.notification.IslandSideEffect.StartChildTimer -> {
++                    childTimers.remove(effect.childKey)?.cancel()
++                    childTimers[effect.childKey] = scope.launch {
++                        delay(effect.durationMs)
++                        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildTimeout(effect.childKey, effect.token))
++                    }
++                }
++                is ai.emots.kishan_dynamic.data.notification.IslandSideEffect.CancelChildTimer -> childTimers.remove(effect.childKey)?.cancel()
++                else -> Unit // Sandbox never executes Android cancellation or external PendingIntents.
++            }
++        }
++        val trace = "${event.javaClass.simpleName}: ${decision.reason}"
++        if (event is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildPhaseChanged ||
++            event is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildVisibleLimitChanged ||
++            event is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PrivacyChanged) {
++            // Presentation observation must not replace a selected music/call/demo fixture.
++            mutable.update { it.copy(behavior = engineState, eventTrace = (listOf(trace) + it.eventTrace).take(80), eventCount = it.eventCount + 1) }
++        } else syncStateFromEngine(decision, trace)
+@@ -74 +97 @@ class PlaygroundController(
+-    private fun syncStateFromEngine(decision: ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision? = null) {
++    private fun syncStateFromEngine(decision: ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision? = null, trace: String? = null) {
+@@ -78,0 +102,2 @@ class PlaygroundController(
++            engineState.ownership == ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.INTERRUPTED ->
++                IslandState.IncomingCall(ai.emots.kishan_dynamic.data.model.ContactInfo("Mock caller", ""))
+@@ -122,0 +148,2 @@ class PlaygroundController(
++                behavior = engineState,
++                eventTrace = if (trace == null) it.eventTrace else (listOf(trace) + it.eventTrace).take(80),
+@@ -134,0 +162,4 @@ class PlaygroundController(
++        if (current.behavior.childNotices.isNotEmpty() || current.behavior.queue.notifications.size > 1) {
++            syncStateFromEngine()
++            return
++        }
+@@ -140,0 +172 @@ class PlaygroundController(
++        childTimers.values.forEach { it.cancel() }; childTimers.clear()
+@@ -173 +205 @@ class PlaygroundController(
+-            else -> Unit
++            else -> { engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState() }
+@@ -179 +211 @@ class PlaygroundController(
+-        mutable.update { it.copy(selected = case, state = mockState(case, it.options),
++        mutable.update { it.copy(selected = case, behavior = engineState, state = mockState(case, it.options),
+@@ -206 +238 @@ class PlaygroundController(
+-    fun stopClock() { clock?.cancel(); clock = null }
++    fun stopClock() { clock?.cancel(); clock = null; childTimers.values.forEach { it.cancel() }; childTimers.clear() }
+@@ -353,0 +386 @@ class PlaygroundController(
++            var delivered = 0
+@@ -357,0 +391 @@ class PlaygroundController(
++                    delivered++
+@@ -360 +394,2 @@ class PlaygroundController(
+-            } finally { mutable.update { it.copy(sequenceRunning = false) } }
++            } finally { mutable.update { it.copy(sequenceRunning = false,
++                feedback = "$delivered / 30 mock arrivals · ${engineState.canonicalQueueCount} retained") } }
+@@ -363,0 +399,20 @@ class PlaygroundController(
++    fun layeredScenario(count: Int) {
++        loadNotificationScenario(1)
++        repeat(count) { addLayeredArrival() }
++    }
++    private var arrivalId = 0
++    fun addLayeredArrival() {
++        arrivalId++
++        val apps = listOf("Telegram", "Gmail", "Instagram")
++        val app = apps[(arrivalId - 1) % apps.size]
++        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(
++            mockNotification(mutable.value.options).copy(id = "layer-$arrivalId", appName = app,
++                packageName = when(app) { "Telegram" -> "org.telegram.messenger"; "Gmail" -> "com.google.android.gm"; else -> "com.instagram.android" },
++                title = "Alex · update $arrivalId", text = "Synthetic message preview. Your main reading stays in place.", timestamp = System.currentTimeMillis() + arrivalId)))
++    }
++    fun layeredRedaction() {
++        mutable.update { it.copy(layeredRedaction = !it.layeredRedaction) }
++        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PrivacyChanged(
++            ai.emots.kishan_dynamic.data.notification.ChildPrivacyPolicy(mutable.value.layeredRedaction, true)))
++    }
++
+@@ -365,0 +421 @@ class PlaygroundController(
++        childTimers.values.forEach { it.cancel() }; childTimers.clear()
+diff --git a/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundOverlayService.kt b/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundOverlayService.kt
+index c8f6d84..39d830a 100644
+--- a/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundOverlayService.kt
++++ b/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundOverlayService.kt
+@@ -75 +75,2 @@ class PlaygroundOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner,
+-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
++                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
++                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+@@ -139 +140 @@ class PlaygroundOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner,
+-        PlaygroundSession.physicalInfo.value = "Actual device: ${metrics.widthPixels}×${metrics.heightPixels}px · density ${metrics.density} · ${cutouts.size} cutout(s) · window ${body.width}×${body.height}px · ${if (locked) "hidden on keyguard" else "unlocked"}"
++        PlaygroundSession.physicalInfo.value = "Actual device: ${window?.bounds?.width() ?: metrics.widthPixels}×${window?.bounds?.height() ?: metrics.heightPixels}px · density ${metrics.density} · ${cutouts.size} cutout(s) · window ${body.width}×${body.height}px · ${if (locked) "hidden on keyguard" else "unlocked"}"
+diff --git a/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundRenderer.kt b/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundRenderer.kt
+index de9e5e9..e800ad8 100644
+--- a/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundRenderer.kt
++++ b/app/src/debug/java/ai/emots/kishan_dynamic/playground/PlaygroundRenderer.kt
+@@ -79,0 +80,4 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
++                LayeredMiniIslands(state = snapshot.behavior, modifier = modifier, redacted = snapshot.layeredRedaction,
++                    enabled = source is IslandState.Notification && source.isExpanded,
++                    onEvent = { controller.dispatchEngineEvent(it) },
++                    onPromote = { key, token -> controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapChild(key, token)) }) {
+@@ -81 +85 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
+-                    state = resolveOverlayDemoState(source, count), modifier = modifier,
++                    state = resolveOverlayDemoState(source, count),
+@@ -104,0 +109 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
++                }
+@@ -159 +164,2 @@ fun PlaygroundPhonePreview(snapshot: PlaygroundSnapshot, controller: PlaygroundC
+-                    Box(Modifier.align(Alignment.TopCenter).offset(y = (placement.top / o.density).dp)) {
++                    Box(Modifier.align(Alignment.TopCenter).offset(y = (placement.top / o.density).dp)
++                        .wrapContentHeight(align = Alignment.Top, unbounded = true)) {
+diff --git a/app/src/main/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngine.kt b/app/src/main/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngine.kt
+index e35428c..5f5738e 100644
+--- a/app/src/main/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngine.kt
++++ b/app/src/main/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngine.kt
+@@ -55,0 +56,3 @@ enum class IslandDomainAction {
++enum class ChildLifecycle { QUEUED, EMERGING, SETTLING, VISIBLE, TOUCH_HELD, RELEASED, EXITING, MERGED, PROMOTING, MAIN_SELECTED }
++data class ChildPrivacyPolicy(val deviceLocked: Boolean = false, val hideSensitiveContent: Boolean = true)
++
+@@ -66 +69,4 @@ data class ChildNotice(
+-    val token: Long = 0L
++    val token: Long = 0L,
++    val remainingMs: Long = 0L,
++    val arrivalToken: Long = token,
++    val hasSettled: Boolean = false
+@@ -96,0 +103,3 @@ sealed interface IslandEngineEvent {
++    data class ChildPhaseChanged(val key: String, val phase: ChildLifecycle) : IslandEngineEvent
++    data class ChildVisibleLimitChanged(val limit: Int) : IslandEngineEvent
++    data class PrivacyChanged(val policy: ChildPrivacyPolicy) : IslandEngineEvent
+@@ -99 +108 @@ sealed interface IslandEngineEvent {
+-    data class TapChild(val childKey: String) : IslandEngineEvent
++    data class TapChild(val childKey: String, val expectedArrivalToken: Long? = null) : IslandEngineEvent
+@@ -128 +137 @@ data class IslandBehaviorSettings(
+-    val maxChildNotices: Int = 4,
++    val maxChildNotices: Int = 50,
+@@ -130,0 +140 @@ data class IslandBehaviorSettings(
++    val childReleaseGraceMs: Long = 2000L,
+@@ -143,0 +154,3 @@ data class IslandBehaviorState(
++    val childLifecycles: Map<String, ChildLifecycle> = emptyMap(),
++    val childPrivacy: ChildPrivacyPolicy = ChildPrivacyPolicy(),
++    val visibleChildLimit: Int = 2,
+@@ -152,0 +166,3 @@ data class IslandBehaviorState(
++    val pendingChildOverflowCount: Int
++        get() = (childNotices.size - visibleChildLimit).coerceAtLeast(0)
++
+@@ -197 +213,21 @@ class IslandBehaviorEngine(
+-        val decision = when (event) {
++        val rawDecision = when (event) {
++            is IslandEngineEvent.ChildVisibleLimitChanged -> IslandBehaviorDecision(state.copy(visibleChildLimit = event.limit.coerceIn(0, 3)), IslandDomainAction.None)
++            is IslandEngineEvent.PrivacyChanged -> IslandBehaviorDecision(state.copy(childPrivacy = event.policy), IslandDomainAction.None)
++            is IslandEngineEvent.ChildPhaseChanged -> {
++                val phases = state.childLifecycles.toMutableMap()
++                if (event.phase == ChildLifecycle.MERGED || event.phase == ChildLifecycle.MAIN_SELECTED) phases.remove(event.key)
++                else if (event.key in phases) phases[event.key] = event.phase
++                val child = state.childNotices.firstOrNull { it.key == event.key }
++                if (event.phase == ChildLifecycle.VISIBLE && child != null && !child.hasSettled) {
++                    // Visible readability budget starts once. Overflow still has an arrival TTL.
++                    val duration = if (child.isMilestone) settings.milestoneDurationMs else settings.childDurationMs
++                    val token = state.nextChildToken
++                    val settled = child.copy(hasSettled = true, token = token,
++                        expiresAtMonotonic = nowMonotonic + duration,
++                        remainingMs = if (child.isPaused) maxOf(child.remainingMs, duration) else child.remainingMs)
++                    IslandBehaviorDecision(state.copy(childLifecycles = phases,
++                        childNotices = state.childNotices.map { if (it.key == child.key) settled else it },
++                        nextChildToken = token + 1), IslandDomainAction.None,
++                        effects = if (child.isPaused) emptyList() else listOf(IslandSideEffect.StartChildTimer(child.key, token, duration)))
++                } else IslandBehaviorDecision(state.copy(childLifecycles = phases), IslandDomainAction.None)
++            }
+@@ -204 +240 @@ class IslandBehaviorEngine(
+-            is IslandEngineEvent.TapChild -> handleTapChild(state, event.childKey)
++            is IslandEngineEvent.TapChild -> handleTapChild(state, event.childKey, event.expectedArrivalToken)
+@@ -218 +254 @@ class IslandBehaviorEngine(
+-            is IslandEngineEvent.TouchChild -> handleTouchChild(state, event.childKey)
++            is IslandEngineEvent.TouchChild -> handleTouchChild(state, event.childKey, nowMonotonic)
+@@ -222,0 +259,18 @@ class IslandBehaviorEngine(
++        val phases = rawDecision.state.childLifecycles.toMutableMap()
++        rawDecision.state.childNotices.forEach {
++            phases.putIfAbsent(it.key, ChildLifecycle.QUEUED)
++            if (it.isPaused) phases[it.key] = ChildLifecycle.TOUCH_HELD
++            else if (event is IslandEngineEvent.ReleaseChild && event.childKey == it.key) phases[it.key] = ChildLifecycle.RELEASED
++        }
++        state.childNotices.filterNot { old -> rawDecision.state.childNotices.any { it.key == old.key } }.forEach {
++            phases[it.key] = if (event is IslandEngineEvent.TapChild && event.childKey == it.key) ChildLifecycle.MAIN_SELECTED else ChildLifecycle.EXITING
++        }
++        // At most 50 pending + three outgoing render identities. Terminal entries age out deterministically.
++        val boundedPhases = phases.entries.toList().takeLast(53).associate { it.key to it.value }
++        val retainedKeys = rawDecision.state.queue.notifications.map { it.id }.toSet()
++        val decision = rawDecision.copy(state = rawDecision.state.copy(
++            ownership = if (rawDecision.state.ownership == IslandInteractionOwnership.CHILD_INTERACTION && rawDecision.state.childNotices.none { it.isPaused }) rawDecision.state.previousOwnership else rawDecision.state.ownership,
++            childLifecycles = if (rawDecision.state.ownership == IslandInteractionOwnership.INTERRUPTED ||
++                rawDecision.state.targetPresentation in setOf(IslandPresentationTarget.COMPACT, IslandPresentationTarget.IDLE, IslandPresentationTarget.HIDDEN, IslandPresentationTarget.QUICK_CONTROLS)) emptyMap() else boundedPhases,
++            childNotices = rawDecision.state.childNotices.filter { it.key in retainedKeys && it.key != rawDecision.state.selectedKey }
++        ))
+@@ -247,0 +302,4 @@ class IslandBehaviorEngine(
++        // Same-source updates are authoritative copy updates, never fresh arrivals.
++        if (state.queue.notifications.any { it.id == incoming.id }) {
++            return handleUpdate(state, IslandEngineEvent.UpdateNotification(incoming), nowMonotonic, settings)
++        }
+@@ -287,0 +346,4 @@ class IslandBehaviorEngine(
++        if (state.ownership == IslandInteractionOwnership.INTERRUPTED) {
++            val queue = reducer.reduce(state.queue, NotificationEvent.Posted(incoming, isSilentUpdate = true))
++            return IslandBehaviorDecision(state.copy(queue = queue), IslandDomainAction.None, reason = "arrival_deferred_during_call")
++        }
+@@ -314,2 +376,2 @@ class IslandBehaviorEngine(
+-            val updatedChildren = candidateChildren.take(settings.maxChildNotices)
+-            val evicted = candidateChildren.drop(settings.maxChildNotices)
++            val updatedChildren = candidateChildren.filter { child -> updatedQueue.notifications.any { it.id == child.key } }.take(settings.maxChildNotices.coerceIn(0, 50))
++            val evicted = candidateChildren.filterNot { it in updatedChildren }
+@@ -350,2 +412,2 @@ class IslandBehaviorEngine(
+-            val updatedChildren = candidateChildren.take(settings.maxChildNotices)
+-            val evicted = candidateChildren.drop(settings.maxChildNotices)
++            val updatedChildren = candidateChildren.filter { child -> updatedQueue.notifications.any { it.id == child.key } }.take(settings.maxChildNotices.coerceIn(0, 50))
++            val evicted = candidateChildren.filterNot { it in updatedChildren }
+@@ -643 +705,2 @@ class IslandBehaviorEngine(
+-        childKey: String
++        childKey: String,
++        expectedArrivalToken: Long?
+@@ -644,0 +708,4 @@ class IslandBehaviorEngine(
++        if (expectedArrivalToken != null && state.childNotices.none { it.key == childKey && it.arrivalToken == expectedArrivalToken }) return IslandBehaviorDecision(state, IslandDomainAction.None, reason = "stale_child_identity")
++        if (state.childNotices.none { it.key == childKey } || state.queue.notifications.none { it.id == childKey }) {
++            return IslandBehaviorDecision(state, IslandDomainAction.None, reason = "stale_child_promotion_ignored")
++        }
+@@ -650,0 +718 @@ class IslandBehaviorEngine(
++                queue = reducer.reduce(state.queue, NotificationEvent.Selected(childKey)),
+@@ -825 +893,2 @@ class IslandBehaviorEngine(
+-        childKey: String
++        childKey: String,
++        nowMonotonic: Long
+@@ -829 +898,3 @@ class IslandBehaviorEngine(
+-        val prev = if (state.ownership != IslandInteractionOwnership.CHILD_INTERACTION) state.ownership else state.previousOwnership
++        if (child.isPaused) return IslandBehaviorDecision(state, IslandDomainAction.None, reason = "child_already_held")
++        val owned = if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) IslandInteractionOwnership.USER_EXPANDED else state.ownership
++        val prev = if (state.ownership != IslandInteractionOwnership.CHILD_INTERACTION) owned else state.previousOwnership
+@@ -831 +902 @@ class IslandBehaviorEngine(
+-            if (it.key == childKey) it.copy(isPaused = true) else it
++            if (it.key == childKey) it.copy(isPaused = true, remainingMs = (it.expiresAtMonotonic - nowMonotonic).coerceAtLeast(1L)) else it
+@@ -837 +908,2 @@ class IslandBehaviorEngine(
+-                previousOwnership = prev
++                previousOwnership = prev,
++                targetPresentation = if (state.targetPresentation == IslandPresentationTarget.TRANSIENT_PREVIEW) IslandPresentationTarget.USER_EXPANDED else state.targetPresentation
+@@ -839,0 +912 @@ class IslandBehaviorEngine(
++            effects = listOf(IslandSideEffect.CancelChildTimer(childKey)) + if (state.ownership == IslandInteractionOwnership.TRANSIENT_PREVIEW) listOf(IslandSideEffect.CancelTimer(state.activeToken)) else emptyList(),
+@@ -851,0 +925 @@ class IslandBehaviorEngine(
++        if (!child.isPaused) return IslandBehaviorDecision(state, IslandDomainAction.None, reason = "child_not_held")
+@@ -857 +931 @@ class IslandBehaviorEngine(
+-                expiresAtMonotonic = nowMonotonic + settings.childDurationMs
++                expiresAtMonotonic = nowMonotonic + child.remainingMs.coerceAtLeast(1L) + settings.childReleaseGraceMs
+@@ -860 +934 @@ class IslandBehaviorEngine(
+-        val targetOwnership = if (state.previousOwnership != IslandInteractionOwnership.CHILD_INTERACTION) {
++        val targetOwnership = if (updatedChildren.any { it.isPaused }) { IslandInteractionOwnership.CHILD_INTERACTION } else if (state.previousOwnership != IslandInteractionOwnership.CHILD_INTERACTION) {
+@@ -874 +948 @@ class IslandBehaviorEngine(
+-            effects = listOf(IslandSideEffect.StartChildTimer(childKey, nextToken, settings.childDurationMs)),
++            effects = listOf(IslandSideEffect.StartChildTimer(childKey, nextToken, child.remainingMs.coerceAtLeast(1L) + settings.childReleaseGraceMs)),
+@@ -893,0 +968 @@ class IslandBehaviorEngine(
++                childNotices = state.childNotices.filterNot { it.key == notificationId },
+@@ -944,0 +1020 @@ class IslandBehaviorEngine(
++        if (state.ownership == IslandInteractionOwnership.INTERRUPTED) return IslandBehaviorDecision(state, IslandDomainAction.None, reason = "call_already_owns_surface")
+@@ -967 +1043 @@ class IslandBehaviorEngine(
+-        return if (restore != null && restore.queue.notifications.isNotEmpty()) {
++        return if (restore != null && state.queue.notifications.isNotEmpty()) {
+@@ -970,0 +1047,4 @@ class IslandBehaviorEngine(
++                    queue = state.queue,
++                    childPrivacy = state.childPrivacy,
++                    selectedKey = restore.selectedKey?.takeIf { key -> state.queue.notifications.any { it.id == key } } ?: state.queue.activeNotificationId,
++                    childNotices = emptyList(),
+diff --git a/app/src/main/java/ai/emots/kishan_dynamic/service/IslandOverlayService.kt b/app/src/main/java/ai/emots/kishan_dynamic/service/IslandOverlayService.kt
+index 5f32324..98a6463 100644
+--- a/app/src/main/java/ai/emots/kishan_dynamic/service/IslandOverlayService.kt
++++ b/app/src/main/java/ai/emots/kishan_dynamic/service/IslandOverlayService.kt
+@@ -514,0 +515 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
++                val childBehavior by IslandStateManager.behaviorPresentation.collectAsState()
+@@ -524,0 +526,9 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
++                LaunchedEffect(isDeviceLocked, hideSensitiveContent) {
++                    IslandStateManager.dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PrivacyChanged(
++                        ai.emots.kishan_dynamic.data.notification.ChildPrivacyPolicy(isDeviceLocked, hideSensitiveContent)))
++                }
++                LaunchedEffect(replyingNotificationId) {
++                    if (replyingNotificationId != null) IslandStateManager.dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.StartReply)
++                    else if (IslandStateManager.behaviorState.ownership == ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.REPLY_ACTIVE)
++                        IslandStateManager.dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ExitReply)
++                }
+@@ -651,0 +662,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
++                            ai.emots.kishan_dynamic.ui.components.LayeredMiniIslands(
++                                state = childBehavior.copy(childPrivacy = ai.emots.kishan_dynamic.data.notification.ChildPrivacyPolicy(isDeviceLocked, hideSensitiveContent)),
++                                redacted = isDeviceLocked && hideSensitiveContent,
++                                enabled = (renderedState as? IslandState.Notification)?.isExpanded == true && replyingNotificationId == null,
++                                onEvent = { IslandStateManager.dispatchBehaviorEvent(it) },
++                                onPromote = IslandStateManager::promoteChild
++                            ) {
+@@ -879,0 +897 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
++                            }
+diff --git a/app/src/main/java/ai/emots/kishan_dynamic/service/IslandStateManager.kt b/app/src/main/java/ai/emots/kishan_dynamic/service/IslandStateManager.kt
+index a1fe02f..3860d97 100644
+--- a/app/src/main/java/ai/emots/kishan_dynamic/service/IslandStateManager.kt
++++ b/app/src/main/java/ai/emots/kishan_dynamic/service/IslandStateManager.kt
+@@ -84,3 +84,17 @@ object IslandStateManager {
+-    @Volatile
+-    var behaviorState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
+-        private set
++    private val _behaviorPresentation = MutableStateFlow(ai.emots.kishan_dynamic.data.notification.IslandBehaviorState())
++    val behaviorPresentation: StateFlow<ai.emots.kishan_dynamic.data.notification.IslandBehaviorState> = _behaviorPresentation.asStateFlow()
++    var behaviorState: ai.emots.kishan_dynamic.data.notification.IslandBehaviorState
++        get() = _behaviorPresentation.value
++        private set(value) { _behaviorPresentation.value = value }
++
++    fun promoteChild(key: String, arrivalToken: Long) {
++        synchronized(stateLock) {
++            val decision = dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapChild(key, arrivalToken))
++            if (decision.reason == "child_promoted_to_main") {
++                renderNotificationSurface()
++                val current = _currentState.value as? IslandState.Notification
++                if (current != null) _currentState.value = current.copy(isExpanded = true, expandedByUser = true)
++                markNotificationSeen(key)
++            }
++        }
++    }
+@@ -103,0 +118,3 @@ object IslandStateManager {
++            // Bound timer registry to pending identities; completed and selected children cannot leak jobs.
++            val pending = decision.state.childNotices.map { it.key }.toSet()
++            childTimerJobs.keys.filterNot { it in pending }.forEach { childTimerJobs.remove(it)?.cancel() }
+@@ -134,0 +152 @@ object IslandStateManager {
++                    if (behaviorState.childNotices.none { it.key == effect.childKey }) continue
+diff --git a/app/src/main/java/ai/emots/kishan_dynamic/ui/components/LayeredMiniIslands.kt b/app/src/main/java/ai/emots/kishan_dynamic/ui/components/LayeredMiniIslands.kt
+new file mode 100644
+index 0000000..931f15d
+--- /dev/null
++++ b/app/src/main/java/ai/emots/kishan_dynamic/ui/components/LayeredMiniIslands.kt
+@@ -0,0 +1,179 @@
++package ai.emots.kishan_dynamic.ui.components
++
++import androidx.compose.animation.core.*
++import androidx.compose.foundation.background
++import androidx.compose.foundation.border
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.interaction.*
++import androidx.compose.foundation.layout.*
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material3.Text
++import androidx.compose.runtime.*
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.graphics.TransformOrigin
++import androidx.compose.ui.graphics.graphicsLayer
++import androidx.compose.ui.platform.LocalConfiguration
++import androidx.compose.ui.layout.onSizeChanged
++import androidx.compose.ui.platform.LocalDensity
++import androidx.compose.ui.platform.testTag
++import androidx.compose.ui.semantics.Role
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.style.TextOverflow
++import androidx.compose.ui.unit.dp
++import ai.emots.kishan_dynamic.data.notification.*
++import ai.emots.kishan_dynamic.ui.motion.*
++import ai.emots.kishan_dynamic.ui.theme.AppTheme
++import kotlinx.coroutines.delay
++
++/** A projection of the canonical engine snapshot, never a second notification queue. */
++data class ChildStackPresentation(
++    val selectedKey: String?, val ownership: IslandInteractionOwnership,
++    val children: List<ChildNotice>, val visibleLimit: Int, val overflow: Int,
++    val redacted: Boolean
++)
++
++fun IslandBehaviorState.childPresentation(availableHeightDp: Int, fontScale: Float, redacted: Boolean, maxVisible: Int = 3): ChildStackPresentation {
++    val expanded = targetPresentation in setOf(IslandPresentationTarget.USER_EXPANDED,
++        IslandPresentationTarget.PAGER, IslandPresentationTarget.TRANSIENT_PREVIEW, IslandPresentationTarget.REPLY)
++    val limit = when {
++        !expanded || ownership == IslandInteractionOwnership.INTERRUPTED || availableHeightDp < 96 -> 0
++        else -> (availableHeightDp / (96 * fontScale.coerceAtLeast(1f))).toInt().coerceIn(1, maxVisible.coerceIn(1, 3))
++    }
++    val pending = childNotices.filter { it.key != selectedKey && queue.notifications.any { n -> n.id == it.key } }
++    val safeChildren = pending.take(limit).map { child ->
++        val source = queue.notifications.first { it.id == child.key }
++        val safe = ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicy.notification(source,
++            childPrivacy.deviceLocked, childPrivacy.hideSensitiveContent)
++        child.copy(title = safe.title, text = safe.text)
++    }
++    return ChildStackPresentation(selectedKey, ownership, safeChildren, limit,
++        (pending.size - limit).coerceAtLeast(0), redacted)
++}
++
++enum class ChildVisualPhase { QUEUED, EMERGING, SETTLING, VISIBLE, TOUCH_HELD, RELEASED, EXITING, MERGED, PROMOTING, MAIN_SELECTED }
++
++/** One window, wrap-content. Animation registry retains only outgoing rendered identities. */
++@Composable
++fun LayeredMiniIslands(
++    state: IslandBehaviorState, modifier: Modifier = Modifier, redacted: Boolean = false, enabled: Boolean = true,
++    onEvent: (IslandEngineEvent) -> Unit, onPromote: (String, Long) -> Unit,
++    main: @Composable () -> Unit
++) {
++    val config = LocalConfiguration.current
++    var promoting by remember { mutableStateOf<Pair<String, Long>?>(null) }
++    val reduced = LocalReducedMotion.current
++    val currentPromote by rememberUpdatedState(onPromote)
++    LaunchedEffect(promoting) {
++        val key = promoting ?: return@LaunchedEffect
++        delay(if (reduced) 0 else AppMotion.DurationMedium.toLong())
++        currentPromote(key.first, key.second); promoting = null
++    }
++    var mainWidth by remember { mutableIntStateOf(0) }
++    var mainHeight by remember { mutableIntStateOf(0) }
++    val density = LocalDensity.current
++    val available = config.screenHeightDp - with(density) { mainHeight.toDp().value.toInt() } - 96
++    val p = state.childPresentation(available, config.fontScale, redacted, if (config.screenWidthDp < 393) 2 else 3)
++    val presentedLimit = if (enabled) p.visibleLimit else 0
++    LaunchedEffect(presentedLimit) {
++        if (state.visibleChildLimit != presentedLimit) onEvent(IslandEngineEvent.ChildVisibleLimitChanged(presentedLimit))
++    }
++    val children = if (enabled) p.children else emptyList()
++    val retained = remember { mutableStateMapOf<String, ChildNotice>() }
++    SideEffect {
++        if (!enabled) retained.clear() else {
++            children.forEach { retained[it.key] = it }
++            // Coalesce only old exit visuals under pressure, never pending arrivals.
++            val visibleKeys = children.map { it.key }.toSet()
++            val keep = visibleKeys + retained.keys.filterNot { it in visibleKeys }.takeLast(3)
++            retained.keys.toList().filterNot { it in keep }.forEach { retained.remove(it) }
++        }
++    }
++    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
++        Box(Modifier.onSizeChanged { mainHeight = it.height; mainWidth = it.width }) { main() }
++        // Reserve no full-screen layer: only actual visible cards plus their spacing are measured.
++        val order = (children.map { it.key } + retained.keys.filterNot { k -> children.any { it.key == k } }).distinct()
++        LazyColumn(Modifier.width(with(density) { mainWidth.toDp() }.coerceAtLeast(48.dp))
++            .heightIn(max = available.coerceAtLeast(0).dp), userScrollEnabled = false,
++            horizontalAlignment = Alignment.CenterHorizontally) {
++        items(if (enabled) order else emptyList(), key = { it }) { key ->
++            val child = children.firstOrNull { it.key == key } ?: retained[key]
++            if (child != null) key(key, child.arrivalToken) {
++                val visible = children.any { it.key == key } && promoting?.first != key
++                MiniNotificationIsland(child, visible, p.redacted || (state.childPrivacy.deviceLocked && (state.childPrivacy.hideSensitiveContent || !visible)),
++                    width = with(density) { mainWidth.toDp() },
++                    modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null,
++                        placementSpec = if (LocalReducedMotion.current) snap() else AppMotion.islandSpring()),
++                    onHeld = { held -> onEvent(if (held) IslandEngineEvent.TouchChild(key) else IslandEngineEvent.ReleaseChild(key)) },
++                    onPromote = { promoting = key to child.arrivalToken }, onPhase = { phase -> onEvent(IslandEngineEvent.ChildPhaseChanged(key, phase)) },
++                    onMerged = { retained.remove(key) })
++            }
++        }
++        }
++        if (enabled && p.overflow > 0) {
++            val next = state.childNotices.filter { it.key != state.selectedKey }.getOrNull(p.visibleLimit)
++            Text("+${p.overflow} new · view next", style = AppTheme.typography.caption, color = Color.White,
++                modifier = Modifier.width(with(density) { mainWidth.toDp() }.coerceAtLeast(48.dp))
++                    .heightIn(min = 48.dp).clickable(enabled = next != null, role = Role.Button) {
++                        next?.let { onPromote(it.key, it.arrivalToken) }
++                    }.background(Color.Black, RoundedCornerShape(AppTheme.spacing.lg))
++                    .wrapContentSize().padding(AppTheme.spacing.sm).testTag("child_overflow"))
++        }
++    }
++}
++
++@Composable
++fun MiniNotificationIsland(child: ChildNotice, visible: Boolean, redacted: Boolean, width: androidx.compose.ui.unit.Dp,
++                           modifier: Modifier = Modifier, onHeld: (Boolean) -> Unit, onPhase: (ChildLifecycle) -> Unit, onPromote: () -> Unit, onMerged: () -> Unit) {
++    val reduced = LocalReducedMotion.current
++    val source = remember { MutableInteractionSource() }
++    val held by source.collectIsPressedAsState()
++    var phase by remember { mutableStateOf(ChildVisualPhase.QUEUED) }
++    var shown by remember { mutableStateOf(false) }
++    LaunchedEffect(held) { if (held) { phase = ChildVisualPhase.TOUCH_HELD; onHeld(true) }
++        else { if (phase == ChildVisualPhase.TOUCH_HELD) phase = ChildVisualPhase.RELEASED; onHeld(false) } }
++    LaunchedEffect(visible) {
++        if (visible) {
++            phase = ChildVisualPhase.EMERGING; onPhase(ChildLifecycle.EMERGING); shown = true
++            delay(if (reduced) 0 else AppMotion.StaggerStep)
++            phase = ChildVisualPhase.SETTLING; onPhase(ChildLifecycle.SETTLING)
++            delay(if (reduced) 0 else AppMotion.DurationMedium.toLong())
++            phase = ChildVisualPhase.VISIBLE; onPhase(ChildLifecycle.VISIBLE)
++        } else {
++            phase = ChildVisualPhase.EXITING; onPhase(ChildLifecycle.EXITING); shown = false
++            delay(if (reduced) 0 else AppMotion.DurationMedium.toLong())
++            phase = ChildVisualPhase.MERGED; onPhase(ChildLifecycle.MERGED); onMerged()
++        }
++    }
++    val progress by animateFloatAsState(if (shown) 1f else 0f,
++        if (reduced) snap() else AppMotion.islandSpring(), label = "child_emerge_merge")
++    val shape = RoundedCornerShape(AppTheme.spacing.xxl)
++    val copyAlpha by animateFloatAsState(if (shown) 1f else 0f,
++        if (reduced) snap() else tween(AppMotion.DurationFast, AppMotion.StaggerStep.toInt()), label = "child_copy_stagger")
++    Row(modifier.width(width.coerceAtLeast(48.dp))
++        .clickable(enabled = visible, interactionSource = source, indication = null, role = Role.Button,
++            onClickLabel = "Read notification in main island") { phase = ChildVisualPhase.PROMOTING; onPhase(ChildLifecycle.PROMOTING); onPromote() }
++        .padding(top = AppTheme.spacing.sm, start = AppTheme.spacing.sm, end = AppTheme.spacing.sm)
++        .graphicsLayer {
++            alpha = progress; translationY = if (reduced) 0f else -size.height * (1 - progress)
++            scaleX = if (reduced) 1f else .9f + .1f * progress
++            scaleY = if (reduced) 1f else .35f + .65f * progress
++            transformOrigin = TransformOrigin(.5f, 0f)
++        }.background(Color.Black, shape).border(1.dp, Color.White.copy(alpha = .12f), shape)
++        .heightIn(min = 48.dp).padding(AppTheme.spacing.md).testTag("child_${child.key}"),
++        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
++        // Reliable fallback, including missing/invalid package artwork. Never performs external actions.
++        PackageIcon(packageName = child.packageName, modifier = Modifier.size(32.dp).clip(RoundedCornerShape(AppTheme.spacing.sm)), contentDescription = "${child.appName} icon")
++        Column(Modifier.weight(1f).graphicsLayer { alpha = copyAlpha }) {
++            Text(child.appName, style = AppTheme.typography.caption, color = Color.White.copy(alpha = .65f), maxLines = 1, overflow = TextOverflow.Ellipsis)
++            Text(if (redacted) "New notification" else child.title.ifBlank { child.appName },
++                style = AppTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
++            if (!redacted && child.text.isNotBlank()) Text(child.text, style = AppTheme.typography.bodySmall,
++                color = Color.White.copy(alpha = .8f), maxLines = 2, overflow = TextOverflow.Ellipsis)
++        }
++    }
++}
+diff --git a/app/src/test/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngineTest.kt b/app/src/test/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngineTest.kt
+index e90a8c3..009c14e 100644
+--- a/app/src/test/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngineTest.kt
++++ b/app/src/test/java/ai/emots/kishan_dynamic/data/notification/IslandBehaviorEngineTest.kt
+@@ -620 +620 @@ class IslandBehaviorEngineTest {
+-        // First became transient preview, remaining child notices capped to maxChildNotices (4)
++        // First became transient preview, remaining 24 arrivals retained independently of visible limit
+@@ -622 +622 @@ class IslandBehaviorEngineTest {
+-        assertEquals(4, state.childNotices.size)
++        assertEquals(24, state.childNotices.size)
+diff --git a/app/src/test/java/ai/emots/kishan_dynamic/data/notification/LayeredMiniIslandsTest.kt b/app/src/test/java/ai/emots/kishan_dynamic/data/notification/LayeredMiniIslandsTest.kt
+new file mode 100644
+index 0000000..486c19b
+--- /dev/null
++++ b/app/src/test/java/ai/emots/kishan_dynamic/data/notification/LayeredMiniIslandsTest.kt
+@@ -0,0 +1,130 @@
++package ai.emots.kishan_dynamic.data.notification
++
++import ai.emots.kishan_dynamic.data.model.NotificationInfo
++import ai.emots.kishan_dynamic.ui.components.childPresentation
++import org.junit.Assert.*
++import org.junit.Test
++
++class LayeredMiniIslandsTest {
++    private val engine = IslandBehaviorEngine()
++    private fun notice(id: String, time: Long = 1) = NotificationInfo(id = id, packageName = "mock.chat", appName = "Chat", title = "Sender $id", text = "Preview", timestamp = time)
++    private fun reading(old: Int = 1): IslandBehaviorState {
++        var state = IslandBehaviorState()
++        repeat(old) { state = engine.reduce(state, IslandEngineEvent.IngestNotification(notice("old-$it", it.toLong()), autoExpand = false), 0).state }
++        return engine.reduce(state, IslandEngineEvent.TapCompact, 0).state
++    }
++    private fun arrivals(state: IslandBehaviorState, count: Int): IslandBehaviorState {
++        var result = state
++        repeat(count) { result = engine.reduce(result, IslandEngineEvent.IngestNotification(notice("new-$it", 100 + it.toLong())), 100 + it.toLong()).state }
++        return result
++    }
++    @Test fun oldQueueIsNotPendingOverflow() {
++        val start = reading(12); val s = arrivals(start, 4)
++        assertEquals(start.selectedKey, s.selectedKey)
++        assertEquals(16, s.canonicalQueueCount); assertEquals(4, s.pendingChildNoticesCount)
++        val p = s.childPresentation(220, 1f, false)
++        assertEquals(listOf("new-3", "new-2"), p.children.map { it.key }); assertEquals(2, p.overflow)
++    }
++    @Test fun adaptiveLimitsHonorHeightAndLargeText() {
++        val s = arrivals(reading(), 10)
++        assertEquals(1, s.childPresentation(190, 1f, false).children.size)
++        assertEquals(2, s.childPresentation(250, 1f, false).children.size)
++        assertEquals(3, s.childPresentation(800, 1f, false).children.size)
++        assertEquals(1, s.childPresentation(250, 2f, false).children.size)
++        assertEquals(0, s.childPresentation(80, 1f, false).children.size)
++    }
++    @Test fun burstBoundedAtCanonicalCapacityWithNoDuplicateKeys() {
++        val s = arrivals(reading(), 250)
++        assertEquals(50, s.canonicalQueueCount)
++        assertTrue(s.pendingChildNoticesCount <= 49); assertTrue(s.childLifecycles.size <= 53)
++        assertEquals(s.pendingChildNoticesCount, s.childNotices.map { it.key }.distinct().size)
++        assertTrue(s.childNotices.all { c -> s.queue.notifications.any { it.id == c.key } })
++    }
++    @Test fun independentDeadlineSurvivesLaterArrivalAndSameKeyUpdate() {
++        val s = arrivals(reading(), 1); val c = s.childNotices.single()
++        val next = engine.reduce(s, IslandEngineEvent.IngestNotification(notice("other")), 2000).state
++        val update = engine.reduce(next, IslandEngineEvent.IngestNotification(notice(c.key).copy(title = "Updated")), 2500).state
++        assertEquals(c.expiresAtMonotonic, update.childNotices.first { it.key == c.key }.expiresAtMonotonic)
++        assertEquals(c.token, update.childNotices.first { it.key == c.key }.token)
++        assertEquals("Updated", update.childNotices.first { it.key == c.key }.title)
++    }
++    @Test fun touchPreservesRemainingTimeWithoutExtendingOtherChildren() {
++        val s = arrivals(reading(), 2); val c = s.childNotices.last()
++        val held = engine.reduce(s, IslandEngineEvent.TouchChild(c.key), 1100).state
++        val released = engine.reduce(held, IslandEngineEvent.ReleaseChild(c.key), 9000)
++        val timer = released.effects.filterIsInstance<IslandSideEffect.StartChildTimer>().single()
++        assertEquals(6000, timer.durationMs)
++        assertEquals(s.childNotices.first().expiresAtMonotonic, released.state.childNotices.first().expiresAtMonotonic)
++        assertEquals(released.state, engine.reduce(released.state, IslandEngineEvent.ChildTimeout(c.key, c.token), 9500).state)
++    }
++    @Test fun expiringSiblingDoesNotUnpauseHeldChildOrCancelAndroid() {
++        val s = arrivals(reading(), 2); val held = s.childNotices.first(); val other = s.childNotices.last()
++        val touched = engine.reduce(s, IslandEngineEvent.TouchChild(held.key), 1000).state
++        val expiry = engine.reduce(touched, IslandEngineEvent.ChildTimeout(other.key, other.token), 6000)
++        assertEquals(3, expiry.state.canonicalQueueCount); assertTrue(expiry.state.childNotices.single().isPaused)
++        assertTrue(expiry.effects.none { it is IslandSideEffect.CancelAndroidNotification })
++    }
++    @Test fun promotionSelectsExactlyOneExistingPagerIdentity() {
++        val s = arrivals(reading(), 3); val target = s.childNotices.last().key
++        val promoted = engine.reduce(s, IslandEngineEvent.TapChild(target), 400)
++        assertEquals(target, promoted.state.selectedKey); assertEquals(target, promoted.state.queue.activeNotificationId)
++        assertEquals(s.canonicalQueueCount, promoted.state.canonicalQueueCount)
++        assertTrue(promoted.state.queue.notifications.any { it.id == s.selectedKey })
++        assertTrue(promoted.state.childNotices.none { it.key == target })
++        assertTrue(promoted.effects.none { it is IslandSideEffect.CancelAndroidNotification })
++    }
++    @Test fun stalePromotionAndReusedKeyCannotSelectRemovedSource() {
++        val s = arrivals(reading(), 1); val c = s.childNotices.single()
++        val removed = engine.reduce(s, IslandEngineEvent.RemoveNotification(c.key), 300).state
++        assertEquals(removed, engine.reduce(removed, IslandEngineEvent.TapChild(c.key), 400).state)
++        val reused = engine.reduce(removed, IslandEngineEvent.IngestNotification(notice(c.key, 500)), 500).state
++        assertEquals(reused, engine.reduce(reused, IslandEngineEvent.ChildTimeout(c.key, c.token), 600).state)
++    }
++    @Test fun callRetainsLiveQueueWithoutResurrectingChildrenOrRemovedSources() {
++        val s = arrivals(reading(), 2)
++        val call = engine.reduce(s, IslandEngineEvent.IncomingCallPreempt, 200).state
++        val removed = engine.reduce(call, IslandEngineEvent.RemoveNotification("new-0"), 300).state
++        val during = engine.reduce(removed, IslandEngineEvent.IngestNotification(notice("during")), 400).state
++        assertEquals(IslandInteractionOwnership.INTERRUPTED, during.ownership)
++        val restored = engine.reduce(during, IslandEngineEvent.CallEnded, 9000).state
++        assertTrue(restored.childNotices.isEmpty()); assertTrue(restored.childLifecycles.isEmpty()); assertTrue(restored.queue.notifications.none { it.id == "new-0" })
++        assertTrue(restored.queue.notifications.any { it.id == "during" })
++    }
++    @Test fun replyAndCollapsePreserveQueueAndNeverEmitAndroidCancellation() {
++        val s = engine.reduce(reading(), IslandEngineEvent.StartReply, 0).state
++        val incoming = arrivals(s, 25)
++        assertEquals(s.selectedKey, incoming.selectedKey); assertEquals(IslandInteractionOwnership.REPLY_ACTIVE, incoming.ownership)
++        val collapse = engine.reduce(incoming, IslandEngineEvent.SwipeUp, 2000)
++        assertEquals(26, collapse.state.canonicalQueueCount); assertTrue(collapse.state.childNotices.isEmpty())
++        assertTrue(collapse.effects.none { it is IslandSideEffect.CancelAndroidNotification })
++    }
++    @Test fun privacyProjectionNeverExposesSensitiveText() {
++        val s = arrivals(reading(), 1)
++        val locked = engine.reduce(s, IslandEngineEvent.PrivacyChanged(ChildPrivacyPolicy(true, true)), 200).state
++        val child = locked.childPresentation(300, 1f, false).children.single()
++        assertEquals("New notification", child.text); assertFalse(child.title.contains("Sender"))
++    }
++    @Test fun touchingTransientChildClaimsReadingAndPublishesOverflowLimit() {
++        var s = engine.reduce(IslandBehaviorState(), IslandEngineEvent.IngestNotification(notice("main")), 0).state
++        s = arrivals(s, 4)
++        val held = engine.reduce(s, IslandEngineEvent.TouchChild("new-3"), 200)
++        assertEquals(IslandInteractionOwnership.USER_EXPANDED, held.state.previousOwnership)
++        assertTrue(held.effects.any { it is IslandSideEffect.CancelTimer })
++        val layout = engine.reduce(held.state, IslandEngineEvent.ChildVisibleLimitChanged(1), 300).state
++        assertEquals(1, layout.visibleChildLimit); assertEquals(3, layout.pendingChildOverflowCount)
++        val removed = engine.reduce(layout, IslandEngineEvent.RemoveNotification("new-3"), 400).state
++        assertEquals(IslandInteractionOwnership.USER_EXPANDED, removed.ownership)
++    }
++
++    @Test fun readableBudgetStartsOnceWithoutResettingSiblings() {
++        val s = arrivals(reading(), 2)
++        val child = s.childNotices.first()
++        val settled = engine.reduce(s, IslandEngineEvent.ChildPhaseChanged(child.key, ChildLifecycle.VISIBLE), 1000)
++        assertEquals(6000, settled.state.childNotices.first().expiresAtMonotonic)
++        assertEquals(s.childNotices.last().expiresAtMonotonic, settled.state.childNotices.last().expiresAtMonotonic)
++        val again = engine.reduce(settled.state, IslandEngineEvent.ChildPhaseChanged(child.key, ChildLifecycle.VISIBLE), 2000)
++        assertEquals(6000, again.state.childNotices.first().expiresAtMonotonic)
++        assertTrue(again.effects.none { it is IslandSideEffect.StartChildTimer })
++    }
++
++}
+diff --git a/app/src/testDebug/java/ai/emots/kishan_dynamic/playground/PlaygroundControllerTest.kt b/app/src/testDebug/java/ai/emots/kishan_dynamic/playground/PlaygroundControllerTest.kt
+index 656de35..9d3e4a4 100644
+--- a/app/src/testDebug/java/ai/emots/kishan_dynamic/playground/PlaygroundControllerTest.kt
++++ b/app/src/testDebug/java/ai/emots/kishan_dynamic/playground/PlaygroundControllerTest.kt
+@@ -143,0 +144,12 @@ class PlaygroundControllerTest {
++    @Test fun layoutObservationCannotReplaceAnotherSelectedFixture() = runBlocking {
++        val controller = PlaygroundController(this)
++        controller.layeredScenario(1)
++        controller.select(PlaygroundCase.Music)
++        val music = controller.snapshot.value.state
++        controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildVisibleLimitChanged(0))
++        assertEquals(music, controller.snapshot.value.state)
++        assertEquals(PlaygroundCase.Music, controller.snapshot.value.selected)
++        assertTrue(controller.snapshot.value.behavior.childNotices.isEmpty())
++        controller.stopClock()
++    }
++
+diff --git a/app/src/testDebug/java/ai/emots/kishan_dynamic/service/IslandRuntimeIntegrationTest.kt b/app/src/testDebug/java/ai/emots/kishan_dynamic/service/IslandRuntimeIntegrationTest.kt
+index ee2a5a4..b824c6f 100644
+--- a/app/src/testDebug/java/ai/emots/kishan_dynamic/service/IslandRuntimeIntegrationTest.kt
++++ b/app/src/testDebug/java/ai/emots/kishan_dynamic/service/IslandRuntimeIntegrationTest.kt
+@@ -453,2 +453,2 @@ class IslandRuntimeIntegrationTest {
+-        // maxChildNotices is 4 -> childNotices size is 4, child-2 was evicted
+-        assertEquals(4, IslandStateManager.behaviorState.pendingChildNoticesCount)
++        // Task05: all five pending arrivals retained; visibility is a separate projection.
++        assertEquals(5, IslandStateManager.behaviorState.pendingChildNoticesCount)
+@@ -459,2 +459,2 @@ class IslandRuntimeIntegrationTest {
+-        // childOverflowCount with limit 2 is (4 - 2) = 2 (NOT counting queued background items)
+-        assertEquals(2, IslandStateManager.behaviorState.childOverflowCount(limit = 2))
++        // Pending overflow is five arrivals minus two visible.
++        assertEquals(3, IslandStateManager.behaviorState.childOverflowCount(limit = 2))

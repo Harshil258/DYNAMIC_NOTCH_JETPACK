@@ -1,0 +1,53 @@
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig
+> Task :app:generateDebugResources
+> Task :app:injectCrashlyticsMappingFileIdDebug
+> Task :app:processDebugGoogleServices
+> Task :app:packageDebugResources
+> Task :app:processDebugNavigationResources
+> Task :app:javaPreCompileDebug
+> Task :app:parseDebugLocalResources
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:compileDebugNavigationResources
+> Task :app:generateDebugRFile
+> Task :app:mergeDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:processDebugResources
+> Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileDebugUnitTest
+> Task :app:compileDebugKotlin
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/data/notification/NotificationArtworkRepository.kt:187:65 'static field EXTRA_LARGE_ICON: String' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/data/notification/NotificationArtworkRepository.kt:189:63 'static field EXTRA_LARGE_ICON: String' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/data/premium/MobileAdsBannerGateway.kt:96:41 'suspend fun load(adRequest: BannerAdRequest): AdLoadResult<BannerAd>' is deprecated. Use AdView.loadAd() or BannerAdPreloader instead.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/ActionSystemController.kt:98:84 'static field LOCATION_MODE: String' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/CallSystemController.kt:30:29 'fun acceptRingingCall(): Unit' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/CallSystemController.kt:38:46 'fun endCall(): Boolean' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/CallSystemController.kt:50:34 'var isSpeakerphoneOn: Boolean' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/CallSystemController.kt:52:26 'var isSpeakerphoneOn: Boolean' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/CallSystemController.kt:53:26 'var isSpeakerphoneOn: Boolean' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/IslandNotificationListener.kt:268:45 'field contentView: RemoteViews!' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/IslandNotificationListener.kt:360:73 'field priority: Int' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/IslandNotificationListener.kt:360:98 'static field PRIORITY_HIGH: Int' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/IslandNotificationListener.kt:578:40 'field contentView: RemoteViews!' is deprecated. Deprecated in Java.
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/main/java/ai/emots/kishan_dynamic/service/TelephonyStateReceiver.kt:23:73 'static field EXTRA_INCOMING_NUMBER: String' is deprecated. Deprecated in Java.
+
+> Task :app:compileDebugJavaWithJavac
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:processDebugJavaRes
+> Task :app:compileDebugUnitTestKotlin
+w: file:///Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/src/test/java/ai/emots/kishan_dynamic/data/notification/NotificationEventPolicyTest.kt:67:77 Unnecessary non-null assertion (!!) on a non-null receiver of type 'Long'.
+
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes
+> Task :app:testDebugUnitTest
+
+BUILD SUCCESSFUL in 4m 32s
+28 actionable tasks: 28 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.5.0-milestone-7/userguide/configuration_cache_enabling.html

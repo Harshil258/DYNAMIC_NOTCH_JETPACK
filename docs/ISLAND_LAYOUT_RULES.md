@@ -75,3 +75,10 @@ References are visual evidence, not Android hardware measurements.
   no action overlap, no giant compact remainder, and multiple expanded families.
 - Before/after screenshots must distinguish actual overlay from synthetic Compose
   fixtures. Compilation does not establish visual or device compatibility.
+
+## Layered notification children
+
+- Main selection stays pinned on ordinary arrivals. Children use stable source/arrival identities and the same renderer in the overlay and debug Lab.
+- Keep the canonical 50-item queue separate from pending arrivals and the adaptive visible subset (at most two below 393dp; at most three otherwise, further constrained by height/font). Overflow counts fresh pending arrivals only.
+- Each child owns its deadline. First settling starts its readable budget once; hold pauses that child; release resumes remaining time plus the master specification’s 2s grace. Visual expiry never cancels an Android notification.
+- Child targets include their deliberate 8dp clearances. A native rectangular window does not provide transparent-pixel pass-through; do not claim it does. See [Task 05 touch evidence](../reports/TASK_05_OVERLAY_AND_TOUCH_SAFETY.md).

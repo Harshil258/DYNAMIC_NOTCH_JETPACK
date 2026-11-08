@@ -617,9 +617,9 @@ class IslandBehaviorEngineTest {
         assertEquals(25, state.queue.notifications.size)
         assertEquals(25, state.queue.notifications.map { it.id }.distinct().size)
         assertNotNull(state.selectedKey)
-        // First became transient preview, remaining child notices capped to maxChildNotices (4)
+        // First became transient preview, remaining 24 arrivals retained independently of visible limit
         assertEquals(IslandPresentationTarget.TRANSIENT_PREVIEW, state.targetPresentation)
-        assertEquals(4, state.childNotices.size)
+        assertEquals(24, state.childNotices.size)
     }
 
     // =========================================================================

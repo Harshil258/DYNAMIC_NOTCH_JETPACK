@@ -72,7 +72,8 @@ class PlaygroundOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner,
         params = WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
             PixelFormat.TRANSLUCENT).apply {
                 gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
                 if (Build.VERSION.SDK_INT >= 28) layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
@@ -136,7 +137,7 @@ class PlaygroundOverlayService : Service(), LifecycleOwner, ViewModelStoreOwner,
             layout.x = placement.centerOffsetX; layout.y = placement.top; layout.width = width; layout.height = height; layout.flags = flags
             runCatching { manager.updateViewLayout(body, layout) }
         }
-        PlaygroundSession.physicalInfo.value = "Actual device: ${metrics.widthPixels}×${metrics.heightPixels}px · density ${metrics.density} · ${cutouts.size} cutout(s) · window ${body.width}×${body.height}px · ${if (locked) "hidden on keyguard" else "unlocked"}"
+        PlaygroundSession.physicalInfo.value = "Actual device: ${window?.bounds?.width() ?: metrics.widthPixels}×${window?.bounds?.height() ?: metrics.heightPixels}px · density ${metrics.density} · ${cutouts.size} cutout(s) · window ${body.width}×${body.height}px · ${if (locked) "hidden on keyguard" else "unlocked"}"
     }
     override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig); view?.requestApplyInsets(); view?.post { updatePlacement() }

@@ -45,6 +45,8 @@ data class PlaygroundSnapshot(
     val options: PlaygroundOptions = PlaygroundOptions(),
     val feedback: String = "Mock data · production renderer",
     val timerSeconds: Int = 215, val recordingSeconds: Int = 42,
+    val behavior: ai.emots.kishan_dynamic.data.notification.IslandBehaviorState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState(),
+    val layeredRedaction: Boolean = false, val eventTrace: List<String> = emptyList(),
     val replay: Int = 0, val sequenceRunning: Boolean = false, val eventCount: Int = 0
 )
 data class PlaygroundCheck(val name: String, val passed: Boolean, val detail: String)
@@ -55,6 +57,7 @@ class PlaygroundController(
 ) {
     private val mutable = MutableStateFlow(PlaygroundSnapshot())
     val snapshot = mutable.asStateFlow()
+    private val childTimers = mutableMapOf<String, Job>()
     private var sequence: Job? = null
     private var clock: Job? = null
     val checks = MutableStateFlow<List<PlaygroundCheck>>(emptyList())
@@ -67,15 +70,37 @@ class PlaygroundController(
     ): ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision {
         val decision = behaviorEngine.reduce(engineState, event, nowMonotonic)
         engineState = decision.state
-        syncStateFromEngine(decision)
+        childTimers.keys.filterNot { k -> engineState.childNotices.any { it.key == k } }.forEach { childTimers.remove(it)?.cancel() }
+        decision.effects.forEach { effect ->
+            when(effect) {
+                is ai.emots.kishan_dynamic.data.notification.IslandSideEffect.StartChildTimer -> {
+                    childTimers.remove(effect.childKey)?.cancel()
+                    childTimers[effect.childKey] = scope.launch {
+                        delay(effect.durationMs)
+                        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildTimeout(effect.childKey, effect.token))
+                    }
+                }
+                is ai.emots.kishan_dynamic.data.notification.IslandSideEffect.CancelChildTimer -> childTimers.remove(effect.childKey)?.cancel()
+                else -> Unit // Sandbox never executes Android cancellation or external PendingIntents.
+            }
+        }
+        val trace = "${event.javaClass.simpleName}: ${decision.reason}"
+        if (event is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildPhaseChanged ||
+            event is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ChildVisibleLimitChanged ||
+            event is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PrivacyChanged) {
+            // Presentation observation must not replace a selected music/call/demo fixture.
+            mutable.update { it.copy(behavior = engineState, eventTrace = (listOf(trace) + it.eventTrace).take(80), eventCount = it.eventCount + 1) }
+        } else syncStateFromEngine(decision, trace)
         return decision
     }
 
-    private fun syncStateFromEngine(decision: ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision? = null) {
+    private fun syncStateFromEngine(decision: ai.emots.kishan_dynamic.data.notification.IslandBehaviorDecision? = null, trace: String? = null) {
         val q = engineState.queue
         val presentation = engineState.targetPresentation
         val currentSnap = mutable.value
         val newState = when {
+            engineState.ownership == ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.INTERRUPTED ->
+                IslandState.IncomingCall(ai.emots.kishan_dynamic.data.model.ContactInfo("Mock caller", ""))
             presentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.QUICK_CONTROLS -> {
                 IslandState.ActionControl(notificationCount = q.notifications.size)
             }
@@ -120,6 +145,8 @@ class PlaygroundController(
         val actionText = decision?.action?.name ?: "Synchronized"
         mutable.update {
             it.copy(
+                behavior = engineState,
+                eventTrace = if (trace == null) it.eventTrace else (listOf(trace) + it.eventTrace).take(80),
                 selected = newSelected,
                 state = newState,
                 feedback = "Engine: $actionText · ${engineState.ownership.name} · ${q.notifications.size} queued",
@@ -132,12 +159,17 @@ class PlaygroundController(
         mutable.update { it.copy(options = change(it.options)) }
         // Refresh mock copy immediately, keeping the current expansion when possible.
         val current = mutable.value
+        if (current.behavior.childNotices.isNotEmpty() || current.behavior.queue.notifications.size > 1) {
+            syncStateFromEngine()
+            return
+        }
         mutable.update { it.copy(state = mockState(current.selected, current.options,
             expanded = current.state.presentationMode == IslandPresentationMode.EXPANDED)) }
     }
 
     fun select(case: PlaygroundCase) {
         cancelSequence()
+        childTimers.values.forEach { it.cancel() }; childTimers.clear()
         when (case) {
             PlaygroundCase.Idle -> {
                 engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
@@ -170,13 +202,13 @@ class PlaygroundController(
                     targetPresentation = ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.QUICK_CONTROLS
                 )
             }
-            else -> Unit
+            else -> { engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState() }
         }
         emit(case)
     }
 
     private fun emit(case: PlaygroundCase) {
-        mutable.update { it.copy(selected = case, state = mockState(case, it.options),
+        mutable.update { it.copy(selected = case, behavior = engineState, state = mockState(case, it.options),
             feedback = "${case.title} · simulated fixture", eventCount = it.eventCount + 1) }
         startClock()
     }
@@ -203,7 +235,7 @@ class PlaygroundController(
         }
     }
 
-    fun stopClock() { clock?.cancel(); clock = null }
+    fun stopClock() { clock?.cancel(); clock = null; childTimers.values.forEach { it.cancel() }; childTimers.clear() }
 
     fun selectNotification(id: String) {
         dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.SelectPage(id))
@@ -351,18 +383,42 @@ class PlaygroundController(
         cancelSequence()
         sequence = scope.launch {
             mutable.update { it.copy(sequenceRunning = true) }
+            var delivered = 0
             try {
                 for (i in 1..30) {
                     val notification = mockNotification(mutable.value.options).copy(id = "mock-$i", title = "Mock update $i")
                     dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(notification))
+                    delivered++
                     delay(60)
                 }
-            } finally { mutable.update { it.copy(sequenceRunning = false) } }
+            } finally { mutable.update { it.copy(sequenceRunning = false,
+                feedback = "$delivered / 30 mock arrivals · ${engineState.canonicalQueueCount} retained") } }
         }
+    }
+
+    fun layeredScenario(count: Int) {
+        loadNotificationScenario(1)
+        repeat(count) { addLayeredArrival() }
+    }
+    private var arrivalId = 0
+    fun addLayeredArrival() {
+        arrivalId++
+        val apps = listOf("Telegram", "Gmail", "Instagram")
+        val app = apps[(arrivalId - 1) % apps.size]
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(
+            mockNotification(mutable.value.options).copy(id = "layer-$arrivalId", appName = app,
+                packageName = when(app) { "Telegram" -> "org.telegram.messenger"; "Gmail" -> "com.google.android.gm"; else -> "com.instagram.android" },
+                title = "Alex · update $arrivalId", text = "Synthetic message preview. Your main reading stays in place.", timestamp = System.currentTimeMillis() + arrivalId)))
+    }
+    fun layeredRedaction() {
+        mutable.update { it.copy(layeredRedaction = !it.layeredRedaction) }
+        dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PrivacyChanged(
+            ai.emots.kishan_dynamic.data.notification.ChildPrivacyPolicy(mutable.value.layeredRedaction, true)))
     }
 
     fun loadNotificationScenario(count: Int) {
         cancelSequence()
+        childTimers.values.forEach { it.cancel() }; childTimers.clear()
         engineState = ai.emots.kishan_dynamic.data.notification.IslandBehaviorState()
         if (count == 0) {
             select(PlaygroundCase.Idle)

@@ -102,3 +102,9 @@ Baselines were produced on the connected Realme / Android 13 with density/font
 controlled by the fixture. Another OS/font renderer may require a separately
 reviewed baseline. These are not evidence of real call/media delivery, frame-time
 performance, TalkBack traversal or universal camera/OEM compatibility.
+
+## Layered Mini-Islands Lab (Task 05)
+
+The debug **Mini-Islands** tab drives the canonical behavior engine and shared production child renderer. It offers 1/2/3 children, 10/25 bursts, 50 queued items, independent expiry, touch pause/release, source removal, promotion, calls and redaction. Existing device/font/RTL/reduced-motion controls apply. Presentation observations cannot replace a selected media/call fixture.
+
+See [Task 05 evidence](../reports/TASK_05_TEST_AND_VISUAL_EVIDENCE.md) and [window limitations](../reports/TASK_05_OVERLAY_AND_TOUCH_SAFETY.md). Native application-window tests are distinct from production accessibility-window acceptance.

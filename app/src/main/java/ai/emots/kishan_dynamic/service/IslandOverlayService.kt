@@ -512,6 +512,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
 
             setContent {
                 val islandState by IslandStateManager.currentState.collectAsState()
+                val childBehavior by IslandStateManager.behaviorPresentation.collectAsState()
                 val unseenNotificationCount by IslandStateManager.unseenNotificationCount.collectAsState()
                 val isEnabled by preferences.islandEnabled.collectAsState(initial = true)
                 val alwaysOnTop by preferences.alwaysOnTop.collectAsState(initial = true)
@@ -522,6 +523,15 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                 val compactMusicControls by preferences.compactMusicControls.collectAsState(initial = false)
                 val isProActive by preferences.isProActive.collectAsState(initial = false)
                 val isDeviceLocked by deviceLocked.collectAsState()
+                LaunchedEffect(isDeviceLocked, hideSensitiveContent) {
+                    IslandStateManager.dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PrivacyChanged(
+                        ai.emots.kishan_dynamic.data.notification.ChildPrivacyPolicy(isDeviceLocked, hideSensitiveContent)))
+                }
+                LaunchedEffect(replyingNotificationId) {
+                    if (replyingNotificationId != null) IslandStateManager.dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.StartReply)
+                    else if (IslandStateManager.behaviorState.ownership == ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.REPLY_ACTIVE)
+                        IslandStateManager.dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ExitReply)
+                }
                 val widthScale by preferences.widthScale.collectAsState(
                     initial = AuroraPreferences.DEFAULT_WIDTH_SCALE
                 )
@@ -649,6 +659,13 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                             val bluetoothState = renderedState as? IslandState.BluetoothDevice
                             val batteryState = renderedState as? IslandState.Charging
                             val premiumExpiryState = renderedState as? IslandState.PremiumExpiry
+                            ai.emots.kishan_dynamic.ui.components.LayeredMiniIslands(
+                                state = childBehavior.copy(childPrivacy = ai.emots.kishan_dynamic.data.notification.ChildPrivacyPolicy(isDeviceLocked, hideSensitiveContent)),
+                                redacted = isDeviceLocked && hideSensitiveContent,
+                                enabled = (renderedState as? IslandState.Notification)?.isExpanded == true && replyingNotificationId == null,
+                                onEvent = { IslandStateManager.dispatchBehaviorEvent(it) },
+                                onPromote = IslandStateManager::promoteChild
+                            ) {
                             DynamicIslandPill(
                                 state = demoState,
                                 horizontalScale = widthScale,
@@ -877,6 +894,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     }
                                 }
                             )
+                            }
                         }
                         }
                     }

@@ -32,7 +32,7 @@ fun DynamicIslandPlayground(
     var measurements by remember { mutableStateOf("Waiting for layout") }
     val geometry = remember { PlaygroundGeometry() }
     val o = snapshot.options
-    val sections = listOf("Live Preview", "States", "Animations", "Geometry", "Stress Tests", "Test Results")
+    val sections = listOf("Live Preview", "States", "Animations", "Geometry", "Stress Tests", "Test Results", "Mini-Islands")
     AppScreen(scrollable = false, topBar = {
         AppTopBar(title = "Dynamic Island Lab", subtitle = "Debug only · isolated mock data", onBack = onBack)
     }, bottomAction = {
@@ -55,6 +55,25 @@ fun DynamicIslandPlayground(
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
                 .padding(vertical = AppTheme.spacing.md), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
                 when (section) {
+                    6 -> {
+                        val behavior = snapshot.behavior
+                        AppSectionTitle("Layered Mini-Islands Lab")
+                        AppText("Queue ${behavior.canonicalQueueCount} · pending ${behavior.pendingChildNoticesCount} · visible ${minOf(behavior.visibleChildLimit, behavior.pendingChildNoticesCount)} · overflow ${behavior.pendingChildOverflowCount} · selected ${behavior.selectedKey}", style = AppTheme.typography.caption)
+                        listOf(1, 2, 3, 10, 25).forEach { n ->
+                            AppButton("Main + $n arrivals", { controller.layeredScenario(n) }, style = AppButtonStyle.Secondary)
+                        }
+                        AppButton("New arrival", controller::addLayeredArrival, style = AppButtonStyle.Secondary)
+                        AppButton("50 queued messages", { controller.loadNotificationScenario(50) }, style = AppButtonStyle.Secondary)
+                        AppButton("Toggle lock-screen redaction", controller::layeredRedaction, style = AppButtonStyle.Secondary)
+                        AppButton("Interrupt with call", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IncomingCallPreempt) }, style = AppButtonStyle.Secondary)
+                        AppButton("End call / restore", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.CallEnded) }, style = AppButtonStyle.Secondary)
+                        behavior.childNotices.take(3).forEach { child ->
+                            AppButton("Remove source ${child.appName}", { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.RemoveNotification(child.key)) }, style = AppButtonStyle.Secondary)
+                            AppButton("Hold / release ${child.appName}", { if(child.isPaused) controller.releaseChild(child.key) else controller.touchChild(child.key) }, style = AppButtonStyle.Secondary)
+                            AppButton("Expire ${child.appName}", { controller.childTimeout(child.key, child.token) }, style = AppButtonStyle.Secondary)
+                        }
+                        AppText(snapshot.eventTrace.joinToString("\n"), style = AppTheme.typography.caption)
+                    }
                     0 -> {
                         AppSectionTitle("Phone simulation")
                         AppScrollableTabs(playgroundDevices.map { it.name }, o.deviceIndex, { index ->

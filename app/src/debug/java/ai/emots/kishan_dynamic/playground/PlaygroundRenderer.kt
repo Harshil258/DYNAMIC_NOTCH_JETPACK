@@ -77,8 +77,12 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
             AnimatedVisibility(visible = source != IslandState.Hidden,
                 enter = islandVisibilityEnter(reduced, settings.motion),
                 exit = islandVisibilityExit(reduced, settings.motion)) {
+                LayeredMiniIslands(state = snapshot.behavior, modifier = modifier, redacted = snapshot.layeredRedaction,
+                    enabled = source is IslandState.Notification && source.isExpanded,
+                    onEvent = { controller.dispatchEngineEvent(it) },
+                    onPromote = { key, token -> controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapChild(key, token)) }) {
                 DynamicIslandPill(
-                    state = resolveOverlayDemoState(source, count), modifier = modifier,
+                    state = resolveOverlayDemoState(source, count),
                     onTap = { controller.interaction() }, onLongPress = { controller.interaction(longPress = true) },
                     onCompanionTap = { controller.interaction(companion = true) },
                     onCompanionLongPress = { controller.interaction(longPress = true) },
@@ -102,6 +106,7 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
                     onUtilityAction = { controller.message("Mock utility: ${it.name} · no external action") },
                     onOpenNotifications = { controller.select(PlaygroundCase.Expanded) }
                 )
+                }
             }
         }
     }
@@ -156,7 +161,8 @@ fun PlaygroundPhonePreview(snapshot: PlaygroundSnapshot, controller: PlaygroundC
                     }
                     if (cameraWidth > 0) Box(Modifier.offset(cameraLeft.dp, 2.dp).size(cameraWidth.dp, 24.dp)
                         .background(Color.Black, RoundedCornerShape(12.dp)))
-                    Box(Modifier.align(Alignment.TopCenter).offset(y = (placement.top / o.density).dp)) {
+                    Box(Modifier.align(Alignment.TopCenter).offset(y = (placement.top / o.density).dp)
+                        .wrapContentHeight(align = Alignment.Top, unbounded = true)) {
                         PlaygroundIsland(snapshot, controller, geometry, Modifier.onSizeChanged {
                             if (islandSize != it) { islandSize = it; onSize("${(it.width / o.density).toInt()} × ${(it.height / o.density).toInt()}dp") }
                         })

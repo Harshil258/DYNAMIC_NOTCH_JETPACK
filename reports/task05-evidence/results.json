@@ -1,0 +1,15 @@
+{
+  "base": "3e47d3f9686473b2c17b3e038d3d6c8f61e8f5ce",
+  "branch": "codex/task-05-layered-mini-islands",
+  "captured_at": "2026-11-08T07:01:08.684467+00:00",
+  "jvm": {
+    "tests": 481,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "compose_device_tests": 13,
+  "native_application_window_tests": 1,
+  "production_accessibility_window": "NOT RUN / BLOCKED - unbound service",
+  "real_ime_calls_keyguard_rotation_talkback_frame_pacing": "NOT RUN"
+}

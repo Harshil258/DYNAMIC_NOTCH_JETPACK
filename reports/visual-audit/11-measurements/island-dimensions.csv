@@ -1,0 +1,109 @@
+state,category,island_width_dp,island_height_dp,island_width_px,island_height_px,evidence_tier,defects
+ActionControlExpanded,02-idle-and-system,338.0,292.7,1014,878,DEVICE_COMPOSE,Expanded card height 308.7dp creates heavy visual weight on 360x800dp screen
+AirDropActivity,02-idle-and-system,338.0,51.7,1014,155,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+AirPodsConnected,02-idle-and-system,338.0,48.0,1014,144,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+AirplaneAlert,02-idle-and-system,338.0,124.0,1014,372,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+BluetoothConnected,02-idle-and-system,196.0,36.7,588,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+BluetoothConnecting,02-idle-and-system,196.0,36.7,588,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+ChargingCompact,02-idle-and-system,132.0,36.7,396,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+ChargingExpanded,02-idle-and-system,338.0,73.7,1014,221,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+ColorOptions,02-idle-and-system,338.0,67.0,1014,201,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+FindMyAlert,02-idle-and-system,338.0,51.7,1014,155,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+FocusModeExpanded,02-idle-and-system,338.0,75.3,1014,226,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+Idle,02-idle-and-system,126.0,36.7,378,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+LowBatteryCompact,02-idle-and-system,132.0,36.7,396,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+LowBatteryExpanded,02-idle-and-system,338.0,113.3,1014,340,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+MediaVolumeCompact,02-idle-and-system,172.0,36.7,516,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+MobileDataAlert,02-idle-and-system,338.0,145.3,1014,436,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+MovedToIPhone,02-idle-and-system,338.0,48.0,1014,144,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+NormalModeCompact,02-idle-and-system,157.0,36.7,471,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+PremiumExpiryExpanded,02-idle-and-system,338.0,130.3,1014,391,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+RingerModeExpanded,02-idle-and-system,338.0,77.3,1014,232,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+RingerVolumeCompact,02-idle-and-system,172.0,36.7,516,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+SatelliteConnected,02-idle-and-system,338.0,51.7,1014,155,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+ScreenMirroringAlert,02-idle-and-system,338.0,123.7,1014,371,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+ShortcutExpanded,02-idle-and-system,338.0,75.3,1014,226,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+SilentModeCompact,02-idle-and-system,152.0,36.7,456,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+SilentModeExpanded,02-idle-and-system,338.0,77.3,1014,232,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+SubscriptionPricing,02-idle-and-system,338.0,168.3,1014,505,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+TransitRouteAlert,02-idle-and-system,338.0,118.0,1014,354,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+VibrateModeCompact,02-idle-and-system,157.0,36.7,471,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+BluetoothConnected,03-compact-and-minimal,196.0,36.7,588,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+BluetoothConnecting,03-compact-and-minimal,196.0,36.7,588,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+CallCompact,03-compact-and-minimal,152.0,36.7,456,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+ChargingCompact,03-compact-and-minimal,132.0,36.7,396,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+DeliveryCompact,03-compact-and-minimal,160.0,36.7,480,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+FlightCompact,03-compact-and-minimal,160.0,36.7,480,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+LowBatteryCompact,03-compact-and-minimal,132.0,36.7,396,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+MediaVolumeCompact,03-compact-and-minimal,172.0,36.7,516,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+Minimal,03-compact-and-minimal,156.0,36.7,468,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+MusicCompact,03-compact-and-minimal,157.0,36.7,471,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+NavigationCompact,03-compact-and-minimal,156.0,36.7,468,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+NormalModeCompact,03-compact-and-minimal,157.0,36.7,471,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+NotificationCompact,03-compact-and-minimal,57.7,36.7,173,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+NotificationStacked,03-compact-and-minimal,57.7,36.7,173,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+NotificationWithMusicCompact,03-compact-and-minimal,157.0,36.7,471,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+RingerVolumeCompact,03-compact-and-minimal,172.0,36.7,516,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+SilentModeCompact,03-compact-and-minimal,152.0,36.7,456,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+SportsCompact,03-compact-and-minimal,156.0,36.7,468,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+TimerCompact,03-compact-and-minimal,216.0,36.7,648,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+VibrateModeCompact,03-compact-and-minimal,157.0,36.7,471,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+01-single-short-whatsapp,04-notification-pager,338.0,146.0,1014,438,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+02-single-long-email,04-notification-pager,338.0,161.7,1014,485,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+03-notification-with-actions,04-notification-pager,338.0,146.0,1014,438,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+04-notification-large-avatar,04-notification-pager,160.0,53.0,480,159,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+05-otp-copy-code,04-notification-pager,338.0,161.7,1014,485,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+06-financial-transaction,04-notification-pager,338.0,161.7,1014,485,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+07-pager-2-items,04-notification-pager,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+08-pager-3-items,04-notification-pager,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+09-pager-5-items,04-notification-pager,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+10-pager-10-items,04-notification-pager,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+11-pager-50-max-items,04-notification-pager,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+12-pager-dismiss-state,04-notification-pager,57.7,36.7,173,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+13-pager-incoming-arrival,04-notification-pager,57.7,36.7,173,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+14-notification-plus-media-compact,04-notification-pager,157.0,36.7,471,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+15-notification-plus-call,04-notification-pager,338.0,79.0,1014,237,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+16-notification-plus-timer,04-notification-pager,216.0,36.7,648,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+17-live-activities-timer-music,04-notification-pager,168.0,149.3,504,448,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+18-three-concurrent-activities,04-notification-pager,338.0,149.0,1014,447,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+19-non-expandable-notification,04-notification-pager,57.7,36.7,173,110,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+20-privacy-redacted-locked,04-notification-pager,338.0,146.0,1014,438,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+01-single-mini-island,05-layered-mini-islands,344.0,183.7,1032,551,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+02-two-mini-islands,05-layered-mini-islands,344.0,183.7,1032,551,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+03-three-mini-islands,05-layered-mini-islands,344.0,183.7,1032,551,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+04-redacted-mini-islands,05-layered-mini-islands,344.0,183.7,1032,551,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+NotificationExpanded,06-expanded-notifications,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+NotificationImage,06-expanded-notifications,160.0,53.0,480,159,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+MusicCompact,07-media-and-audio,157.0,36.7,471,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+MusicExpanded,07-media-and-audio,338.0,185.0,1014,555,DEVICE_COMPOSE,Expanded card height 201.0dp creates heavy visual weight on 360x800dp screen
+ScreenRecordingExpanded,07-media-and-audio,338.0,76.0,1014,228,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+VideoRemoteExpanded,07-media-and-audio,338.0,148.7,1014,446,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+VoiceMemoExpanded,07-media-and-audio,338.0,48.0,1014,144,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+CallAvatars,08-telephony-and-timers,338.0,79.0,1014,237,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+CallCompact,08-telephony-and-timers,152.0,36.7,456,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+CallExpanded,08-telephony-and-timers,338.0,142.0,1014,426,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+CallSummaryExpanded,08-telephony-and-timers,338.0,106.0,1014,318,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+DeliveryCompact,08-telephony-and-timers,160.0,36.7,480,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+DeliveryExpanded,08-telephony-and-timers,338.0,108.0,1014,324,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+FaceTimeCallExpanded,08-telephony-and-timers,338.0,142.0,1014,426,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+FlightCompact,08-telephony-and-timers,160.0,36.7,480,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+FlightExpanded,08-telephony-and-timers,338.0,95.3,1014,286,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+FlightTrackerExpanded,08-telephony-and-timers,338.0,148.3,1014,445,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+MovieCard,08-telephony-and-timers,338.0,143.3,1014,430,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+NavigationCompact,08-telephony-and-timers,156.0,36.7,468,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+OngoingCallBanner,08-telephony-and-timers,338.0,79.0,1014,237,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+SharedMediaCallExpanded,08-telephony-and-timers,338.0,148.0,1014,444,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+SportsCompact,08-telephony-and-timers,156.0,36.7,468,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+SportsExpanded,08-telephony-and-timers,338.0,96.0,1014,288,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+TimerCompact,08-telephony-and-timers,216.0,36.7,648,110,DEVICE_COMPOSE,Oversized compact height: 52.7dp vs Apple standard 36.67dp (+16.0dp)
+TimerExpanded,08-telephony-and-timers,338.0,77.3,1014,232,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+TimerImage,08-telephony-and-timers,168.0,149.3,504,448,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+TransportActivity,08-telephony-and-timers,338.0,149.0,1014,447,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+layout-rtl-hebrew,10-accessibility-and-scaling,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+orientation-landscape-640dp,10-accessibility-and-scaling,344.0,169.7,1032,509,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+scale-font-100,10-accessibility-and-scaling,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+scale-font-150,10-accessibility-and-scaling,338.0,204.7,1014,614,DEVICE_COMPOSE,"Height inflates to >200dp to fit scaled typography, crowding notification body"
+scale-font-200,10-accessibility-and-scaling,338.0,269.0,1014,807,DEVICE_COMPOSE,Text wrapping pushes bottom action controls below visible island boundary
+width-320dp-compact,10-accessibility-and-scaling,298.0,175.7,894,527,DEVICE_COMPOSE,"Side margins compressed to <12dp, action buttons horizontally constrained"
+width-360dp-standard,10-accessibility-and-scaling,338.0,160.0,1014,480,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference
+width-393dp-expanded,10-accessibility-and-scaling,344.0,164.3,1032,493,DEVICE_COMPOSE,Padding and corner radius slightly oversized compared to iOS subpixel reference

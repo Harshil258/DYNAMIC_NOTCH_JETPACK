@@ -1,0 +1,210 @@
+{
+  "device": "Realme 8 (RMX3085)",
+  "physical_display": {
+    "resolution": "1080x2400",
+    "density_dpi": 480,
+    "density_factor": 3.0,
+    "logical_viewport_dp": "360x800",
+    "status_bar_height_px": 110,
+    "status_bar_height_dp": 36.67,
+    "nav_bar_height_px": 132,
+    "nav_bar_height_dp": 44.0,
+    "punch_hole_cutout": {
+      "bounds_px": "[-4, 0, 154, 110]",
+      "bounds_dp": "[-1.33, 0, 51.33, 36.67]",
+      "position": "top-left"
+    }
+  },
+  "design_token_measurements": {
+    "top_bar": {
+      "height_dp": 56.0,
+      "title_size_sp": 20.0,
+      "back_button_size_dp": 48.0,
+      "horizontal_padding_dp": 16.0
+    },
+    "bottom_dock": {
+      "dock_height_dp": 64.0,
+      "dock_inset_dp": 92.0,
+      "icon_size_dp": 19.0,
+      "label_size_sp": 11.0,
+      "elevation_dp": 8.0,
+      "border_width_dp": 0.5
+    },
+    "primary_buttons": {
+      "standard_height_dp": 56.0,
+      "corner_radius_dp": 28.0,
+      "text_size_sp": 16.0,
+      "horizontal_padding_dp": 24.0,
+      "vertical_padding_dp": 16.0,
+      "touch_target_dp": 56.0
+    },
+    "cards_and_containers": {
+      "corner_radius_dp": 16.0,
+      "internal_padding_dp": 16.0,
+      "border_width_dp": 1.0,
+      "vertical_spacing_dp": 12.0
+    },
+    "dynamic_island_pill": {
+      "compact_height_dp": 52.7,
+      "compact_height_apple_ref_dp": 36.67,
+      "height_disparity_dp": 16.03,
+      "compact_min_width_dp": 173.0,
+      "compact_min_width_apple_ref_dp": 126.0,
+      "width_disparity_dp": 47.0,
+      "expanded_max_width_dp": 354.0,
+      "expanded_corner_radius_dp": 43.0,
+      "compact_corner_radius_dp": 26.3,
+      "satellite_height_dp": 48.0,
+      "satellite_gap_dp": 6.0
+    }
+  },
+  "screens_measured": [
+    {
+      "id": "01",
+      "name": "StartupSplashScreen",
+      "route": "Startup",
+      "type": "Splash",
+      "full_file": "09-app-pages/01-startup-splash.png"
+    },
+    {
+      "id": "02",
+      "name": "OnboardingScreen",
+      "route": "Onboarding",
+      "type": "Walkthrough Carousel",
+      "full_file": "09-app-pages/02-onboarding.png"
+    },
+    {
+      "id": "03",
+      "name": "PermissionScreen",
+      "route": "PermissionHub",
+      "type": "Permission Checklist",
+      "full_file": "09-app-pages/03-permission-hub.png"
+    },
+    {
+      "id": "04",
+      "name": "MainContainerScreen - Tab 0 (Island)",
+      "route": "MainHub",
+      "type": "Home / Activation",
+      "full_file": "09-app-pages/04-main-hub-tab0-island.png"
+    },
+    {
+      "id": "05",
+      "name": "MainContainerScreen - Tab 1 (Features)",
+      "route": "Features",
+      "type": "Feature Catalog",
+      "full_file": "09-app-pages/05-main-hub-tab1-features.png"
+    },
+    {
+      "id": "06",
+      "name": "MainContainerScreen - Tab 2 (Live)",
+      "route": "LiveActivities",
+      "type": "Activity List",
+      "full_file": "09-app-pages/06-main-hub-tab2-live.png"
+    },
+    {
+      "id": "07",
+      "name": "MainContainerScreen - Tab 3 (Settings)",
+      "route": "SettingsVault",
+      "type": "Settings Vault",
+      "full_file": "09-app-pages/07-main-hub-tab3-settings.png"
+    },
+    {
+      "id": "08",
+      "name": "DisplaySettingsScreen",
+      "route": "DisplaySettings",
+      "type": "Notch Calibration & Appearance",
+      "full_file": "09-app-pages/08-display-settings.png"
+    },
+    {
+      "id": "09",
+      "name": "ThemeSettingsScreen",
+      "route": "ThemeSettings",
+      "type": "Custom RGB Color Picker",
+      "full_file": "09-app-pages/09-theme-settings.png"
+    },
+    {
+      "id": "10",
+      "name": "QuickControlScreen",
+      "route": "QuickControl",
+      "type": "Action Island Shortcuts",
+      "full_file": "09-app-pages/10-quick-control.png"
+    },
+    {
+      "id": "11",
+      "name": "NotificationSettingsScreen",
+      "route": "NotificationSettings",
+      "type": "Notification Preferences",
+      "full_file": "09-app-pages/11-notification-settings.png"
+    },
+    {
+      "id": "12",
+      "name": "SoundSettingsScreen",
+      "route": "SoundSettings",
+      "type": "Ringer & HUD Toggles",
+      "full_file": "09-app-pages/12-sound-settings.png"
+    },
+    {
+      "id": "13",
+      "name": "CallSettingsScreen",
+      "route": "CallSettings",
+      "type": "Call Coordinator & Privacy",
+      "full_file": "09-app-pages/13-call-settings.png"
+    },
+    {
+      "id": "14",
+      "name": "MusicSettingsScreen",
+      "route": "MusicSettings",
+      "type": "Media Session Audio Wave",
+      "full_file": "09-app-pages/14-music-settings.png"
+    },
+    {
+      "id": "15",
+      "name": "BatterySettingsScreen",
+      "route": "BatterySettings",
+      "type": "Charging Animations",
+      "full_file": "09-app-pages/15-battery-settings.png"
+    },
+    {
+      "id": "16",
+      "name": "LanguageScreen",
+      "route": "LanguageSelection",
+      "type": "Localization Picker",
+      "full_file": "09-app-pages/16-language-selection.png"
+    },
+    {
+      "id": "17",
+      "name": "PremiumScreen",
+      "route": "Premium",
+      "type": "Aurora Pro Paywall",
+      "full_file": "09-app-pages/17-premium-paywall.png"
+    },
+    {
+      "id": "18",
+      "name": "AboutScreen",
+      "route": "About",
+      "type": "Developer Attribution & Version",
+      "full_file": "09-app-pages/18-about-screen.png"
+    },
+    {
+      "id": "19",
+      "name": "FeedbackScreen",
+      "route": "Feedback",
+      "type": "User Feedback & Rating",
+      "full_file": "09-app-pages/19-feedback-screen.png"
+    },
+    {
+      "id": "20",
+      "name": "ComponentGalleryScreen",
+      "route": "ComponentGallery",
+      "type": "Aurora Design System Gallery",
+      "full_file": "09-app-pages/20-component-gallery.png"
+    },
+    {
+      "id": "21",
+      "name": "DynamicIslandPlayground",
+      "route": "Playground",
+      "type": "Interactive Island Lab",
+      "full_file": "09-app-pages/21-playground.png"
+    }
+  ]
+}

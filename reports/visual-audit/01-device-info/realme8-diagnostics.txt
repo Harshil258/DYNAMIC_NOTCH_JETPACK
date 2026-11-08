@@ -1,0 +1,37 @@
+=== REALME 8 HARDWARE & DISPLAY DIAGNOSTICS ===
+Date: Sun Nov  8 21:08:52 IST 2026
+
+--- BUILD & DEVICE INFO ---
+Model: RMX3085
+Brand: realme
+Manufacturer: realme
+Device: RMX3085L1
+Android Version: 13
+SDK: 33
+Build ID: RMX3085_11_F.15
+
+--- WINDOW MANAGER METRICS ---
+Physical Size: Physical size: 1080x2400
+Physical Density: Physical density: 480
+Font Scale: 1.0
+
+--- DISPLAY CUTOUT & INSETS ---
+  mViewports=[DisplayViewport{type=INTERNAL, valid=true, isActive=true, displayId=0, uniqueId='local:0', physicalPort=0, orientation=0, logicalFrame=Rect(0, 0 - 1080, 2400), physicalFrame=Rect(0, 0 - 1080, 2400), deviceWidth=1080, deviceHeight=2400}]
+  DisplayDeviceInfo{"Built-in Screen": uniqueId="local:0", 1080 x 2400, modeId 1, defaultModeId 1, supportedModes [{id=1, width=1080, height=2400, fps=60.0, alternativeRefreshRates=[]}], colorMode 0, supportedColorModes [0], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[2, 3, 4], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, allmSupported false, gameContentTypeSupported false, density 480, 409.432 x 409.127 dpi, appVsyncOff 2400001, presDeadline 28600000, cutout DisplayCutout{insets=Rect(0, 110 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(-4, 0 - 154, 110), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2400 physicalDisplayWidth=1080 physicalDisplayHeight=2400 density={3.0} cutoutSpec={M -544,0 L -544,110 L -386,110 L -386,0 Z} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}}}, touch INTERNAL, rotation 0, type INTERNAL, address {port=0}, deviceProductInfo null, state ON, frameRateOverride , brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 1243.3484, FLAG_ALLOWED_TO_BE_DEFAULT_DISPLAY, FLAG_ROTATES_WITH_CONTENT, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, installOrientation 0}
+    mBaseDisplayInfo=DisplayInfo{"Built-in Screen", displayId 0", displayGroupId 0, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, real 1080 x 2400, largest app 1080 x 2400, smallest app 1080 x 2400, appVsyncOff 2400001, presDeadline 28600000, mode 1, defaultMode 1, modes [{id=1, width=1080, height=2400, fps=60.0, alternativeRefreshRates=[]}], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[2, 3, 4], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, userDisabledHdrTypes [], minimalPostProcessingSupported false, rotation 0, state ON, type INTERNAL, uniqueId "local:0", app 1080 x 2400, density 480 (409.432 x 409.127) dpi, layerStack 0, colorMode 0, supportedColorModes [0], address {port=0}, deviceProductInfo null, removeMode 0, refreshRateOverride 0.0, brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 1243.3484, installOrientation ROTATION_0}
+    mOverrideDisplayInfo=DisplayInfo{"Built-in Screen", displayId 0", displayGroupId 0, FLAG_SECURE, FLAG_SUPPORTS_PROTECTED_BUFFERS, FLAG_TRUSTED, real 1080 x 2400, largest app 2158 x 2158, smallest app 1080 x 970, appVsyncOff 2400001, presDeadline 28600000, mode 1, defaultMode 1, modes [{id=1, width=1080, height=2400, fps=60.0, alternativeRefreshRates=[]}], hdrCapabilities HdrCapabilities{mSupportedHdrTypes=[2, 3, 4], mMaxLuminance=500.0, mMaxAverageLuminance=500.0, mMinLuminance=0.0}, userDisabledHdrTypes [], minimalPostProcessingSupported false, rotation 0, state ON, type INTERNAL, uniqueId "local:0", app 1080 x 2158, density 480 (409.432 x 409.127) dpi, layerStack 0, colorMode 0, supportedColorModes [0], address {port=0}, deviceProductInfo null, removeMode 0, refreshRateOverride 0.0, brightnessMinimum 0.0, brightnessMaximum 1.0, brightnessDefault 1243.3484, installOrientation ROTATION_0}
+
+--- WINDOW MANAGER INSETS (STATUS BAR & NAV BAR) ---
+  DisplayFrames w=1080 h=2400 r=0
+      mDisplayCutoutTouchableRegionSize=36
+  WindowInsetsStateController
+    InsetsState
+      mDisplayCutout=DisplayCutout{insets=Rect(0, 110 - 0, 0) waterfall=Insets{left=0, top=0, right=0, bottom=0} boundingRect={Bounds=[Rect(0, 0 - 0, 0), Rect(-4, 0 - 154, 110), Rect(0, 0 - 0, 0), Rect(0, 0 - 0, 0)]} cutoutPathParserInfo={CutoutPathParserInfo{displayWidth=1080 displayHeight=2400 physicalDisplayWidth=1080 physicalDisplayHeight=2400 density={3.0} cutoutSpec={M -544,0 L -544,110 L -386,110 L -386,0 Z} rotation={0} scale={1.0} physicalPixelDisplaySizeRatio={1.0}}}}
+
+--- ACCESSIBILITY SERVICES STATUS ---
+enabled_accessibility_services: null
+accessibility_enabled: 0
+
+--- INSTALLED PACKAGES CHECK ---
+package:com.island.dynamicnotch
+package:com.island.dynamicnotch.test

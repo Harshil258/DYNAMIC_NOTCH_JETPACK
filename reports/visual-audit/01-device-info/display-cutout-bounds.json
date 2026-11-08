@@ -1,0 +1,42 @@
+{
+  "device_model": "Realme 8 (RMX3085)",
+  "android_version": "13 (SDK 33, Build RMX3085_11_F.15)",
+  "physical_screen": {
+    "width_px": 1080,
+    "height_px": 2400,
+    "density_dpi": 480,
+    "density_scale": 3.0,
+    "refresh_rate_hz": 60.0,
+    "aspect_ratio": "20:9"
+  },
+  "logical_viewport": {
+    "width_dp": 360.0,
+    "height_dp": 800.0,
+    "usable_height_without_bars_dp": 719.33,
+    "usable_height_edge_to_edge_dp": 800.0
+  },
+  "display_cutout": {
+    "type": "PUNCH_HOLE",
+    "location": "TOP_LEFT",
+    "insets_px": { "left": 0, "top": 110, "right": 0, "bottom": 0 },
+    "insets_dp": { "left": 0.0, "top": 36.67, "right": 0.0, "bottom": 0.0 },
+    "bounding_box_px": { "left": -4, "top": 0, "right": 154, "bottom": 110 },
+    "bounding_box_dp": { "left": -1.33, "top": 0.0, "right": 51.33, "bottom": 36.67 },
+    "cutout_spec": "M -544,0 L -544,110 L -386,110 L -386,0 Z",
+    "cutout_center_x_px": 75,
+    "cutout_center_y_px": 55,
+    "cutout_diameter_px": 110,
+    "cutout_diameter_dp": 36.67
+  },
+  "system_bars": {
+    "status_bar_height_px": 110,
+    "status_bar_height_dp": 36.67,
+    "navigation_bar_height_px": 132,
+    "navigation_bar_height_dp": 44.0
+  },
+  "accessibility_overlay_status": {
+    "enabled_accessibility_services": "null",
+    "accessibility_enabled": 0,
+    "verdict": "BLOCKED / NOT BOUND"
+  }
+}

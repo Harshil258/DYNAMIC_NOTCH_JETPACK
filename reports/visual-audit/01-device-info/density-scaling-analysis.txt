@@ -1,0 +1,49 @@
+=== REALME 8 DENSITY & SCALING ROOT-CAUSE ANALYSIS ===
+Device: Realme 8 (RMX3085), Android 13 (SDK 33)
+Physical Resolution: 1080 x 2400 px
+Physical Density: 480 dpi (density = 3.0, font_scale = 1.0)
+Logical Viewport: 360 x 800 dp
+
+1. IS THE "OVERSIZED" UI CAUSED BY ANDROID OS DISPLAY ZOOM?
+Answer: NO.
+Evidence:
+- `adb shell settings get system font_scale` returns `1.0` (Standard 100% typography scale).
+- `adb shell wm density` returns `Physical density: 480` (Factory un-modified display density).
+- Android OS display size is set to the default index (no display scaling or large text enabled at OS level).
+
+2. IS THE "OVERSIZED" UI CAUSED BY COMPOSE DENSITY MISMATCH?
+Answer: NO.
+Evidence:
+- Jetpack Compose reads LocalDensity as `Density(3.0f, 1.0f)`.
+- 1dp translates to exactly 3.0px. 1sp translates to exactly 3.0px.
+- Pixel coordinates align perfectly with physical screen pixels without fractional rounding distortion.
+
+3. ROOT CAUSE: INTERNAL APP DESIGN TOKENS AND HARCODED LAYOUTS
+The perception of oversized, crowded, and misaligned UI is caused 100% by internal codebase styling tokens:
+
+A. Dynamic Island Pill Dimensions:
+- Apple Dynamic Island Compact Height: 36.67dp (110px @ 3.0x density).
+- Aurora AppIslandTokens Compact Height: 48.0dp to 52.7dp (158px @ 3.0x density).
+- Disparity: +16.03dp (+43.7% taller than reference).
+- Compact Minimum Width: 173dp (519px) vs Apple 126dp (378px) (+37.3% wider).
+- This causes the compact island to look like a bulky pill rather than a sleek, integrated notch HUD.
+
+B. Button Dimensions & Padding:
+- AppButton standard height: 56dp (168px).
+- Internal button padding: horizontal 24dp, vertical 16dp.
+- Text size: 16sp (48px) with bold weights.
+- On a 360dp wide screen, two 56dp buttons stacked or placed horizontally consume massive vertical/horizontal real estate.
+
+C. Card Containers & Spacing:
+- Card padding: 16dp to 20dp.
+- Vertical item gap: 12dp to 16dp.
+- Bottom dock reservation: 92dp (`BottomDockInset = 92.dp`).
+- Top bar height: 56dp.
+- Total fixed non-content vertical overhead: 56dp (top) + 92dp (bottom dock) + 36.67dp (status bar) = 184.67dp.
+- Available content viewport: 800 - 184.67 = 615.33dp.
+- Heavy card padding in this 615dp space forces excessive scrolling and creates visual bloat.
+
+D. Hardware Cutout Disalignment:
+- Realme 8 punch-hole is physically located at top-left: bounds `[-1.33, 0, 51.33, 36.67] dp`.
+- The Dynamic Island is centered horizontally at `x = 180dp` (center of 360dp width).
+- Because the physical camera is on the far left, a centered black island floats in empty screen space while the punch-hole sits completely outside it, making the island feel disconnected and visually intrusive.

@@ -1,125 +1,121 @@
-# TASK 07 Report: Animation Performance & Multi-Cycle Device Profiling
+# TASK 07 Report: Animation Performance & Frame Latency Breakdown
 
 **Role:** Senior Android QA, Jetpack Compose and Accessibility Engineer  
 **Principal Product Architect:** ChatGPT  
 **Repository:** `Harshil258/DYNAMIC_NOTCH_JETPACK`  
-**Branch:** `codex/task-05-layered-mini-islands`  
+**Base Branch:** `codex/task-05-layered-mini-islands`  
 **Base Commit:** `c5e98d76f118bdb16211e36ab85bf44bd5c28505`  
 
 ---
 
-## 1. Executive Summary & Hardware Setup
+## 1. Executive Summary & Testbed Hardware
 
-During Task 07 verification, animation performance was profiled directly on physical target hardware using `dumpsys gfxinfo` over a continuous, multi-cycle stress test executing >150 animation frames.
+Animation performance was profiled on target hardware (`Realme 8`, Android 13) during a continuous multi-cycle benchmark (`LayeredMiniIslandsAnimationBenchmarkTest`) executing 160 frames across main island expansion/collapse, subordinate satellite emergence, horizontal pager swiping, tap promotion, and visual merge transitions.
 
-### Target Hardware Environment
+Raw performance data was extracted directly via `dumpsys gfxinfo com.island.dynamicnotch` and archived in `docs/design/task07-evidence/animation-benchmark.txt`.
+
+### Physical Device Environment
 - **Device Model:** Realme 8 (`RMX3085`, Board: `RMX3085L1`)
 - **Android OS:** Android 13 (API 33, Build: `SP1A.210812.016`)
 - **Display Resolution:** 1080 × 2400 pixels
-- **Display Refresh Rate:** 60 Hz (16.67ms frame budget)
+- **Display Refresh Rate:** 60 Hz (Target frame budget: 16.67 ms)
 - **Screen Density:** 480 dpi (`density = 3.0`)
 - **Graphics Pipeline:** Skia (OpenGL)
 
-### Profiled Test Execution
-- **Instrumented Test:** `ai.emots.kishan_dynamic.LayeredMiniIslandsAnimationBenchmarkTest`
-- **Execution Target:** Physical device over ADB connection
-- **Cycles Executed:** 10 continuous multi-phase cycles exercising:
-  1. Main island expansion and collapse springs
-  2. 3-child satellite card emergence animations
-  3. Continuous horizontal pager swiping under live satellite child load
-  4. Child promotion animations (subordinate card promoting to primary card)
-  5. Child merge / dismissal transitions
-  6. Bulk queue scenario resets (0 to 12 items)
-- **Total Profiled Frames:** **160 frames** (exceeding the 150-frame requirement)
-
 ---
 
-## 2. Key Metrics & Profiler Results
+## 2. Complete Raw Frame Metrics (`animation-benchmark.txt`)
 
-The benchmark data was captured directly from `dumpsys gfxinfo com.island.dynamicnotch` and saved in `docs/design/task07-evidence/animation-benchmark.txt`:
+In strict compliance with ChatGPT's instruction:
+> *"Distinguish CPU/GPU frame timings from actual end-to-end frame duration. Do not assert smooth 60 FPS solely from a GPU median."*
 
-| Metric | Measured Value | Target / Budget | Assessment |
+The complete, unvarnished frame statistics from the physical device are reported below:
+
+### Overall End-to-End Frame Latency (UI Thread + RenderThread + GPU)
+| Metric | Measured Value | Budget (60 FPS) | Assessment |
 | :--- | :---: | :---: | :---: |
-| **Total Frames Rendered** | **160** | > 150 frames | **MET** |
-| **50th Percentile GPU Render Time** | **14.0 ms** | < 16.6 ms (60 fps) | **OPTIMAL (PASS)** |
+| **Total Frames Rendered** | **160** | > 150 frames | **SAMPLE SUFFICIENT** |
+| **Janky Frames (Frame Deadline Missed)** | **121 (75.62%)** | < 5% | **JANK DETECTED (HIGH)** |
+| **Janky Frames (Legacy)** | **123 (76.88%)** | < 5% | **JANK DETECTED (HIGH)** |
+| **50th Percentile (Median Frame Duration)** | **150 ms** | < 16.67 ms | **EXCEEDS BUDGET** |
+| **90th Percentile Frame Duration** | **600 ms** | < 33.3 ms | **EXCEEDS BUDGET** |
+| **95th Percentile Frame Duration** | **800 ms** | < 50.0 ms | **EXCEEDS BUDGET** |
+| **99th Percentile Frame Duration** | **1800 ms** | < 100.0 ms | **EXCEEDS BUDGET** |
+| **Number Missed Vsync Events** | **103** | 0 | **HIGH** |
+| **Number High Input Latency** | **99** | 0 | **HIGH** |
+| **Number Slow UI Thread** | **103** | 0 | **PRIMARY BOTTLENECK** |
+| **Number Slow Bitmap Uploads** | **3** | 0 | **LOW (MINIMAL)** |
+| **Number Slow Issue Draw Commands** | **121** | 0 | **ELEVATED BY UI STALL** |
+
+### Isolated GPU Pipeline Latency (Skia OpenGL Rasterization)
+| Metric | Measured Value | Budget (60 FPS) | Assessment |
+| :--- | :---: | :---: | :---: |
+| **50th Percentile GPU Render Time** | **14.0 ms** | < 16.67 ms | **OPTIMAL (PASS)** |
 | **90th Percentile GPU Render Time** | **22.0 ms** | < 33.3 ms | **ACCEPTABLE (PASS)** |
 | **95th Percentile GPU Render Time** | **23.0 ms** | < 33.3 ms | **ACCEPTABLE (PASS)** |
-| **99th Percentile GPU Render Time** | **24.0 ms** | < 50.0 ms | **STABLE (PASS)** |
+| **99th Percentile GPU Render Time** | **24.0 ms** | < 50.0 ms | **ACCEPTABLE (PASS)** |
+| **Maximum Observed GPU Render Time** | **24.0 ms** | < 50.0 ms | **ZERO GPU SPIKES > 24ms** |
+
+### Memory & Window Resource Utilization
+| Resource | Measured Value | Target Budget | Assessment |
+| :--- | :---: | :---: | :---: |
 | **Total GPU Memory Footprint** | **12.64 MB** | < 50 MB | **HIGHLY EFFICIENT** |
-| **GPU Purgeable Memory** | **8.09 MB** | — | **HEALTHY CACHE** |
+| **GPU Purgeable Cache** | **8.09 MB** | — | **HEALTHY CACHE** |
+| **Texture Cache** | **6.23 MB** | < 20 MB | **OPTIMAL** |
+| **RenderTarget Cache** | **4.26 MB** | < 15 MB | **OPTIMAL** |
 | **Total CPU Memory (Glyph Cache)** | **289.87 KB** | < 5 MB | **EXCELLENT** |
-| **ViewRootImpl Count** | **1** | 1 | **NO WINDOW LEAKS** |
+| **Active ViewRootImpl Count** | **1** | 1 | **NO WINDOW LEAKS** |
 | **Attached Views Count** | **7** | < 20 | **MINIMAL NODE TREE** |
-| **RenderNode Capacity** | **13.75 kB / 45.49 kB** | < 100 kB | **LIGHTWEIGHT** |
+| **RenderNode Capacity Used** | **13.75 kB / 45.49 kB** | < 100 kB | **LIGHTWEIGHT** |
 
 ---
 
-## 3. Dissecting CPU UI Thread vs GPU Draw Times
+## 3. Dissecting the Divergence: 14ms GPU vs 150ms Median Total Frame Time
 
-The benchmark reported a high percentage of missed vsync deadlines on the UI thread (`75.62% janky frames (legacy)`), but a remarkably smooth and fast **14ms median GPU render time**.
+The physical device profiling presents a clear technical divergence:
+1. **GPU draw and rasterization pipeline:** Consistently fast, completing in **14ms median** and never exceeding **24ms** across all 160 frames.
+2. **End-to-end frame duration:** Reported **121 janky frames (75.62%)** with a median of **150ms** and P90 of **600ms**.
 
-A technical breakdown explains this divergence:
-
-### A. The GPU Rendering Reality: 11ms to 24ms (Median 14ms)
-When isolating GPU rasterization and draw command issuance, the Skia OpenGL pipeline exhibits exceptional performance:
-- Over **70% of all frames** rendered in **13ms to 15ms**, comfortably beneath the 16.6ms deadline.
-- The 99th percentile GPU latency peaked at only **24ms**, demonstrating zero GPU pipeline stalls or heavy shader recompilations.
-- The entire GPU memory footprint is just **12.64 MB**, of which **8.09 MB** is immediately reclaimable purgeable cache. Texture cache consumed **6.23 MB**, and render targets consumed **4.26 MB**.
-
-### B. The UI Thread Benchmark Artifacts
-The high UI thread time (`Number Slow UI thread: 103`) is an expected artifact of the automated test harness:
-1. **Synchronous Bulk Data Ingestion:**
-   Each cycle in the test loop executed `controller.loadNotificationScenario(12)`, which synchronously instantiates 12 rich mock notifications, hashes their stable keys, generates avatars, and updates the reactive `StateFlow` on the Android main thread.
-2. **Instrumentation Synchronization Overhead:**
-   Between each animation phase, the test harness called `composeTestRule.waitForIdle()` and `InstrumentationRegistry.getInstrumentation().waitForIdleSync()`. In Android UIAutomator/Espresso testing, idling calls block the UI looper until idle, creating synthetic delays that `gfxinfo` registers as "Slow UI thread" and "Missed Vsync".
-3. **Absence of Micro-Stutters During Motion:**
-   During the actual spring animation ticks (`MainTransitionSpec` damping ratio 0.82, stiffness 380f), the UI thread merely updates animated float offsets (`animateFloatAsState`). Because the composable hierarchy is shallow (only 7 views, 13.75 kB render nodes), recomposition cost per frame is negligible (< 1.8ms).
+### Technical Root Cause Breakdown:
+1. **Synchronous Test Driver Ingestion on Main Thread:**
+   In `LayeredMiniIslandsAnimationBenchmarkTest.kt`, the benchmark loop executed `controller.loadNotificationScenario(12)` synchronously on the Android main thread at each test cycle. This triggered simultaneous avatar bitmap extraction, SHA-256 key hashing for 12 items, and StateFlow emissions directly inside the UI thread's looper message queue.
+2. **Instrumentation Synchronization Stalls (`Number Slow UI thread: 103`):**
+   Between animation steps, the test harness invoked `composeTestRule.waitForIdle()` and `InstrumentationRegistry.getInstrumentation().waitForIdleSync()`. Android Espresso/UIAutomator idling hooks block the UI thread until message queues drain, which Android's `gfxinfo` profiler accurately flags as "Slow UI thread", "Missed Vsync", and "Frame deadline missed".
+3. **Pure Compose Animation Spring Execution:**
+   When examining the isolated GPU histogram (Section 4), 70.6% of draw passes executed within 15ms. The Compose spring specs (`dampingRatio = 0.82f`, `stiffness = 380f`) update float offsets efficiently without structural layout invalidations. However, when paired with the synchronous instrumentation driver, the overall end-to-end frame rate is throttled by main thread delays.
 
 ---
 
-## 4. Comprehensive GPU Latency Distribution
+## 4. Full GPU Latency Histogram
 
-From the captured `GPU HISTOGRAM` in `animation-benchmark.txt`:
-
+Directly from `animation-benchmark.txt` line 26:
 ```text
-Latency Bucket   | Frame Count | Percentage | Cumulative
------------------|-------------|------------|------------
-11 ms            |      5      |    3.1%    |    3.1%
-12 ms            |      8      |    5.0%    |    8.1%
-13 ms            |     31      |   19.4%    |   27.5%
-14 ms (Median)   |     47      |   29.4%    |   56.9%  <-- 56.9% within 14ms
-15 ms            |     22      |   13.8%    |   70.6%  <-- 70.6% within 15ms (full 60fps)
-16 ms            |      7      |    4.4%    |   75.0%
-17 ms            |      3      |    1.9%    |   76.9%
-18 ms            |      6      |    3.8%    |   80.6%
-19 ms            |      1      |    0.6%    |   81.3%
-20 ms            |      3      |    1.9%    |   83.1%
-21 ms            |      7      |    4.4%    |   87.5%
-22 ms (90th)     |     10      |    6.3%    |   93.8%  <-- 93.8% within 22ms
-23 ms (95th)     |      7      |    4.4%    |   98.1%
-24 ms (99th)     |      3      |    1.9%    |  100.0%  <-- 100% within 24ms
-> 25 ms          |      0      |    0.0%    |  100.0%
+GPU Latency Bucket | Frames | Percentage | Cumulative
+-------------------|--------|------------|------------
+11 ms              |    5   |    3.1%    |    3.1%
+12 ms              |    8   |    5.0%    |    8.1%
+13 ms              |   31   |   19.4%    |   27.5%
+14 ms (Median)     |   47   |   29.4%    |   56.9%  <-- 56.9% <= 14ms
+15 ms              |   22   |   13.8%    |   70.6%  <-- 70.6% <= 15ms
+16 ms              |    7   |    4.4%    |   75.0%
+17 ms              |    3   |    1.9%    |   76.9%
+18 ms              |    6   |    3.8%    |   80.6%
+19 ms              |    1   |    0.6%    |   81.3%
+20 ms              |    3   |    1.9%    |   83.1%
+21 ms              |    7   |    4.4%    |   87.5%
+22 ms (90th)       |   10   |    6.3%    |   93.8%  <-- 93.8% <= 22ms
+23 ms (95th)       |    7   |    4.4%    |   98.1%
+24 ms (99th)       |    3   |    1.9%    |  100.0%  <-- 100% <= 24ms
+> 24 ms            |    0   |    0.0%    |  100.0%  <-- Zero frames > 24ms
 ```
 
-Every single GPU frame completed in **24ms or less**, with zero GPU frame outliers exceeding 24ms across the entire 160-frame run.
-
 ---
 
-## 5. Architectural Performance Safeguards
+## 5. Performance Verdict & Truth Statement
 
-The sustained 14ms median performance is guaranteed by three structural mechanisms in the code:
-
-1. **Subordinate Card Limiter (`maxChildCount = 3`):**
-   Even when 25 to 50 notifications arrive in a rapid burst (`IM-02`), `LayeredMiniIslandsPresenter` caps the rendered child cards to at most 3. The remaining notifications are aggregated into a lightweight `+N more` pill, preventing unbounded allocation of render nodes and texture memory.
-2. **Deterministic Elevation & Alpha Stacking:**
-   Cards compute their visual translation (`targetOffsetY`), alpha (`0.92f * index`), and scale (`1f - 0.04f * index`) via direct math modifiers rather than nested layout passes.
-3. **Zero Layout Recalculation on Swipe:**
-   Horizontal pager navigation uses Compose `Modifier.graphicsLayer` translation for page dragging, bypassing measure/layout phases entirely during gesture tracking.
-
----
-
-## 6. Performance Verdict
-
-- **GPU Animation Pipeline:** **PASS** (14.0 ms 50th percentile, 22.0 ms 90th percentile, 24.0 ms max).
-- **Memory Footprint:** **PASS** (12.64 MB GPU RAM, 289 KB CPU RAM, zero view leaks).
-- **Animation Stability:** **PASS** (Multi-cycle stress run completed with zero crashes, ANRs, or render node overflow).
+1. **GPU Pipeline Health:** **PASS**
+   GPU command issuance and Skia rasterization operate cleanly at a **14.0 ms median** (well within the 16.67ms 60 FPS budget), with a low memory footprint (12.64 MB VRAM).
+2. **End-to-End Frame Rate under Automated Instrumentation:** **JANK OBSERVED (75.62% Janky Frames)**
+   We do **NOT** claim smooth 60 FPS end-to-end performance under the existing test harness. The 150ms median frame duration demonstrates that the automated test driver introduces severe UI thread contention (`103 slow UI thread frames`, `103 missed vsyncs`).
+3. **Required Performance Action:**
+   To validate genuine 60 FPS user-perceived smoothness without test-induced jank, the test driver must be decoupled from the UI thread (moving scenario loading to a background dispatcher and replacing blocking `waitForIdle()` with choreographer frame polling).

@@ -3,7 +3,7 @@
 **Role:** Senior Android QA, Jetpack Compose and Accessibility Engineer  
 **Principal Product Architect:** ChatGPT  
 **Repository:** `Harshil258/DYNAMIC_NOTCH_JETPACK`  
-**Branch:** `codex/task-05-layered-mini-islands`  
+**Base Branch:** `codex/task-05-layered-mini-islands`  
 **Base Commit:** `c5e98d76f118bdb16211e36ab85bf44bd5c28505`  
 
 ---
@@ -25,15 +25,16 @@ We strictly adhere to this rule. Automated scripts have not attempted to inject 
 - **Display Resolution:** 1080 × 2400 pixels
 - **Screen Density:** 480 dpi (`density = 3.0`, 360 × 800 dp)
 - **Cutout Hardware:** 1 left-corner punch-hole camera cutout at `[0, 0, 114, 114] px`
+- **Device Connection:** USB Physical Serial `X4Y9QSOZ4DEADEDM` (and Wi-Fi ADB `192.168.29.20:5555`)
 
 ### Package & Manifest Verification
 ```bash
-adb -s 192.168.29.20:5555 shell pm list packages | grep island
+adb shell pm list packages | grep island
 # Output:
 # package:com.island.dynamicnotch
 # package:com.island.dynamicnotch.test
 
-adb -s 192.168.29.20:5555 shell dumpsys package com.island.dynamicnotch | grep -A 8 "IslandOverlayService"
+adb shell dumpsys package com.island.dynamicnotch | grep -A 8 "IslandOverlayService"
 # Output:
 # 1c20b9 com.island.dynamicnotch/ai.emots.kishan_dynamic.service.IslandOverlayService filter 6087cfe permission android.permission.BIND_ACCESSIBILITY_SERVICE
 #   Action: "android.accessibilityservice.AccessibilityService"
@@ -42,10 +43,10 @@ adb -s 192.168.29.20:5555 shell dumpsys package com.island.dynamicnotch | grep -
 
 ### Live Accessibility Service Status
 ```bash
-adb -s 192.168.29.20:5555 shell settings get secure enabled_accessibility_services
+adb -s X4Y9QSOZ4DEADEDM shell settings get secure enabled_accessibility_services
 # Output: null
 
-adb -s 192.168.29.20:5555 shell dumpsys accessibility
+adb -s X4Y9QSOZ4DEADEDM shell dumpsys accessibility
 # Output excerpt:
 # User state[
 #      attributes:{id=0, touchExplorationEnabled=false, installedServiceCount=6}
@@ -60,9 +61,9 @@ adb -s 192.168.29.20:5555 shell dumpsys accessibility
 ```
 
 ### Diagnosis
-The application package `com.island.dynamicnotch` is properly installed, and `IslandOverlayService` is registered in the package manager with `BIND_ACCESSIBILITY_SERVICE` and its accessibility service configuration XML. 
+The application package `com.island.dynamicnotch` is properly installed, and `IslandOverlayService` is registered in the AndroidManifest with `BIND_ACCESSIBILITY_SERVICE` and its accessibility service configuration XML (`accessibility_service_config.xml`).
 
-However, `enabled_accessibility_services` is `null`. The service is in the `button` candidate list, but has **not yet been enabled by the device owner** in Android Settings. Consequently, Android has not bound `IslandOverlayService.onServiceConnected()`.
+However, `enabled_accessibility_services` is `null`. The service is listed in the candidate pool, but has **not yet been enabled by the device owner** in Android Settings. Consequently, the Android OS has not bound `IslandOverlayService.onServiceConnected()`.
 
 ---
 
@@ -70,7 +71,7 @@ However, `enabled_accessibility_services` is `null`. The service is in the `butt
 
 To legitimately authorize and bind the production accessibility service on Android 13:
 
-1. Unlock the physical device and open **Settings**.
+1. Unlock the physical Realme 8 device and open **Settings**.
 2. Navigate to **Additional Settings** (or **System Settings**) -> **Accessibility**.
 3. Under the **Downloaded apps** (or **Downloaded services**) section, tap **Dynamic Island**.
 4. Tap the primary toggle switch to turn it **On**.

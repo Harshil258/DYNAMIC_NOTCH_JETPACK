@@ -241,6 +241,18 @@ class PlaygroundController(
         dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.SelectPage(id))
     }
 
+    fun openNotifications(selectNext: Boolean = false) {
+        if (engineState.queue.notifications.isEmpty()) {
+            val n = mockNotification(mutable.value.options)
+            dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(n, autoExpand = false))
+        }
+        if (selectNext && engineState.queue.notifications.size > 1) {
+            dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.NextPage)
+        } else {
+            dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact)
+        }
+    }
+
     fun dismissActiveNotification() {
         val activeId = engineState.selectedKey ?: engineState.queue.activeNotificationId
         if (activeId != null) {

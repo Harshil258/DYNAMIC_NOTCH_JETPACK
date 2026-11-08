@@ -127,4 +127,81 @@ class LayeredMiniIslandsTest {
         assertTrue(again.effects.none { it is IslandSideEffect.StartChildTimer })
     }
 
+    @Test fun zeroHeightOrConstrainedScreenCollapsesChildPresentationWithoutDanglingOverflow() {
+        val s = arrivals(reading(), 5)
+        assertEquals(5, s.pendingChildNoticesCount)
+
+        // Low height: 80dp (insufficient for child card)
+        val p80 = s.childPresentation(80, 1f, false)
+        assertEquals(0, p80.visibleLimit)
+        assertTrue(p80.children.isEmpty())
+        assertEquals(0, p80.overflow) // Collapsed: zero cards and zero dangling overflow
+
+        // Extremely short / keyboard open / landscape constrained: 40dp
+        val p40 = s.childPresentation(40, 1f, false)
+        assertEquals(0, p40.visibleLimit)
+        assertTrue(p40.children.isEmpty())
+        assertEquals(0, p40.overflow)
+
+        // 0dp or negative available height
+        val p0 = s.childPresentation(0, 1f, false)
+        assertEquals(0, p0.visibleLimit)
+        assertTrue(p0.children.isEmpty())
+        assertEquals(0, p0.overflow)
+
+        val pNeg = s.childPresentation(-20, 1f, false)
+        assertEquals(0, pNeg.visibleLimit)
+        assertTrue(pNeg.children.isEmpty())
+        assertEquals(0, pNeg.overflow)
+
+        // All 6 notifications remain completely preserved in canonical queue
+        assertEquals(6, s.canonicalQueueCount)
+    }
+
+    @Test fun fontScaleAdaptsSafelyAcross1_0_1_5_and_2_0() {
+        val s = arrivals(reading(), 8)
+
+        // 1.0x font scale with 250dp height
+        val p10 = s.childPresentation(250, 1.0f, false)
+        assertEquals(2, p10.children.size)
+        assertEquals(6, p10.overflow)
+
+        // 1.5x font scale with 250dp height (slot height increases to ~144dp)
+        val p15 = s.childPresentation(250, 1.5f, false)
+        assertEquals(1, p15.children.size)
+        assertEquals(7, p15.overflow)
+
+        // 2.0x accessibility font scale with 250dp height (slot height increases to ~192dp)
+        val p20 = s.childPresentation(250, 2.0f, false)
+        assertEquals(1, p20.children.size)
+        assertEquals(7, p20.overflow)
+
+        // 2.0x font scale on short screen 150dp -> collapses safely (150 < 192)
+        val p20Short = s.childPresentation(150, 2.0f, false)
+        assertEquals(0, p20Short.children.size)
+        assertEquals(0, p20Short.overflow)
+    }
+
+    @Test fun stablePagerSelectionThroughoutChildInteractions() {
+        val s = arrivals(reading(5), 4)
+        val originalSelectedKey = s.selectedKey
+        assertNotNull(originalSelectedKey)
+
+        // Child arrival does not change selected key
+        val arrival = engine.reduce(s, IslandEngineEvent.IngestNotification(notice("incoming-new")), 1000).state
+        assertEquals(originalSelectedKey, arrival.selectedKey)
+
+        // Child touch does not change selected key
+        val touch = engine.reduce(arrival, IslandEngineEvent.TouchChild("new-0"), 1200).state
+        assertEquals(originalSelectedKey, touch.selectedKey)
+
+        // Child timeout does not change selected key
+        val child = arrival.childNotices.first { it.key == "new-1" }
+        val expiry = engine.reduce(touch, IslandEngineEvent.ChildTimeout(child.key, child.token), 7000).state
+        assertEquals(originalSelectedKey, expiry.selectedKey)
+
+        // Child removal does not change selected key
+        val removed = engine.reduce(expiry, IslandEngineEvent.RemoveNotification("new-2"), 8000).state
+        assertEquals(originalSelectedKey, removed.selectedKey)
+    }
 }

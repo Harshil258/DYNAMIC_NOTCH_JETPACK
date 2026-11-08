@@ -91,7 +91,7 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
                     notificationActiveIndex = (source as? IslandState.Notification)?.activeIndex ?: 0,
                     onNotificationSelect = controller::selectNotification,
                     onNotificationAction = { _, action -> if (action.id == "mock-retry") controller.select(PlaygroundCase.Success) else controller.message("Mock action: ${action.label} · no external action") },
-                    onNotificationDismiss = { controller.select(PlaygroundCase.Idle) },
+                    onNotificationDismiss = { id -> controller.dismissNotification(id) },
                     musicTrack = (source as? IslandState.Music)?.track ?: (source as? IslandState.NotificationWithMusic)?.track,
                     musicIsPlaying = (source as? IslandState.Music)?.isPlaying ?: true,
                     callContact = (source as? IslandState.IncomingCall)?.contact ?: (source as? IslandState.OngoingCall)?.contact,
@@ -104,7 +104,7 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
                     onMusicSeek = { controller.message("Mock seek: ${(it * 100).toInt()}%") },
                     onSystemTileClick = { controller.message("Mock tile: ${it.title} · system setting unchanged") },
                     onUtilityAction = { controller.message("Mock utility: ${it.name} · no external action") },
-                    onOpenNotifications = { controller.select(PlaygroundCase.Expanded) }
+                    onOpenNotifications = { controller.openNotifications() }
                 )
                 }
             }

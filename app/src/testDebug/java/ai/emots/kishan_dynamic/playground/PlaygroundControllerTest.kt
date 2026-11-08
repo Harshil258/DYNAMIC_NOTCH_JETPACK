@@ -153,4 +153,76 @@ class PlaygroundControllerTest {
         controller.stopClock()
     }
 
+    @Test fun playgroundDismissCallbackPreservesRemainingQueueAndSelection() = runBlocking {
+        val controller = PlaygroundController(this)
+        controller.loadNotificationScenario(3)
+        assertEquals(3, controller.engineState.canonicalQueueCount)
+        val initialSelected = controller.engineState.selectedKey
+        assertNotNull(initialSelected)
+
+        // Dismiss the selected notification via dismissNotification (invoked by onNotificationDismiss)
+        controller.dismissNotification(initialSelected!!)
+        assertEquals(2, controller.engineState.canonicalQueueCount)
+        val remainingState = controller.snapshot.value.state as IslandState.Notification
+        assertEquals(2, remainingState.notifications.size)
+        assertTrue(remainingState.isExpanded)
+        assertNotEquals(initialSelected, controller.engineState.selectedKey)
+
+        // Dismiss the second
+        val secondSelected = controller.engineState.selectedKey!!
+        controller.dismissNotification(secondSelected)
+        assertEquals(1, controller.engineState.canonicalQueueCount)
+
+        // Dismiss the final notification -> cleanly returns to Idle capsule
+        val lastSelected = controller.engineState.selectedKey!!
+        controller.dismissNotification(lastSelected)
+        assertEquals(0, controller.engineState.canonicalQueueCount)
+        assertEquals(PlaygroundCase.Idle, controller.snapshot.value.selected)
+        assertEquals(IslandState.Minimal, controller.snapshot.value.state)
+    }
+
+    @Test fun playgroundOpenNotificationsCallbackPreservesExistingQueue() = runBlocking {
+        val controller = PlaygroundController(this)
+        controller.loadNotificationScenario(4)
+        assertEquals(4, controller.engineState.canonicalQueueCount)
+        val originalIds = controller.engineState.queue.notifications.map { it.id }
+
+        // Switch to quick controls (which retains queue in engine)
+        controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapCompact)
+        // Call openNotifications() callback (which is wired to onOpenNotifications in Quick Controls)
+        controller.openNotifications()
+
+        // Verify the 4 original notifications were NOT replaced by a synthetic single card!
+        assertEquals(4, controller.engineState.canonicalQueueCount)
+        assertEquals(originalIds, controller.engineState.queue.notifications.map { it.id })
+        val state = controller.snapshot.value.state as IslandState.Notification
+        assertEquals(4, state.notifications.size)
+        assertTrue(state.isExpanded)
+    }
+
+    @Test fun playgroundChildPromotionAndSwipeUpCollapseUseSharedEngine() = runBlocking {
+        val controller = PlaygroundController(this)
+        controller.layeredScenario(3)
+        val initialSelected = controller.engineState.selectedKey
+        assertEquals(3, controller.engineState.pendingChildNoticesCount)
+
+        // Child touch & release
+        val targetChild = controller.engineState.childNotices.first().key
+        controller.touchChild(targetChild)
+        assertTrue(controller.engineState.childNotices.first { it.key == targetChild }.isPaused)
+        controller.releaseChild(targetChild)
+
+        // Child promotion
+        controller.promoteChild(targetChild)
+        assertEquals(targetChild, controller.engineState.selectedKey)
+        assertEquals(targetChild, controller.engineState.queue.activeNotificationId)
+        assertTrue(controller.engineState.childNotices.none { it.key == targetChild })
+
+        // Non-destructive swipe-up collapse
+        controller.expand(false)
+        val compactState = controller.snapshot.value.state as IslandState.Notification
+        assertFalse(compactState.isExpanded)
+        assertEquals(4, controller.engineState.canonicalQueueCount) // Main + 3 arrivals retained in queue!
+        assertTrue(controller.engineState.childNotices.isEmpty()) // Satellite children cleared on collapse
+    }
 }

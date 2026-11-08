@@ -254,79 +254,66 @@ fun MiniNotificationIsland(
                 onPhase(ChildLifecycle.PROMOTING)
                 onPromote()
             }
-            .padding(top = 2.dp, start = 2.dp, end = 2.dp)
             .graphicsLayer {
                 alpha = progress
                 translationY = if (reduced) 0f else -size.height * (1f - progress)
-                scaleX = if (reduced) 1f else 0.92f + 0.08f * progress
-                scaleY = if (reduced) 1f else 0.40f + 0.60f * progress
+                scaleX = if (reduced) 1f else 0.94f + 0.06f * progress
+                scaleY = if (reduced) 1f else 0.50f + 0.50f * progress
                 transformOrigin = TransformOrigin(0.5f, 0f)
             }
-            .background(Color(0xFF0C0E14), shape)
-            .border(0.75.dp, Color.White.copy(alpha = 0.12f), shape)
+            .background(Color(0xFF000000), shape)
+            .border(0.5.dp, Color.White.copy(alpha = 0.15f), shape)
             .height(AppTheme.island.satelliteHeight)
-            .padding(horizontal = 12.dp, vertical = 4.dp)
+            .padding(horizontal = 10.dp)
             .testTag("child_${child.key}"),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(7.dp)
     ) {
         PackageIcon(
             packageName = child.packageName,
             modifier = Modifier
                 .size(AppTheme.island.satelliteIconSize)
-                .clip(RoundedCornerShape(4.5.dp)),
+                .clip(RoundedCornerShape(4.dp)),
             contentDescription = "${child.appName} icon"
         )
-        Column(
+        Row(
             modifier = Modifier
                 .weight(1f)
                 .graphicsLayer { alpha = copyAlpha },
-            verticalArrangement = Arrangement.Center
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
+            val displayTitle = if (redacted) "Notification" else child.title.ifBlank { child.appName }
+            val displayText = if (redacted) "Hidden" else child.text
+
             Text(
-                text = child.appName,
+                text = displayTitle,
                 style = AppTheme.typography.caption.copy(
-                    fontWeight = FontWeight.Medium,
-                    fontSize = androidx.compose.ui.unit.TextUnit(10.5f, androidx.compose.ui.unit.TextUnitType.Sp)
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 11.5.sp
                 ),
-                color = Color.White.copy(alpha = 0.55f),
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            val displayTitle = if (redacted) "New notification" else child.title.ifBlank { child.appName }
-            val displayText = if (redacted) "Unlock to view content" else child.text
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(3.dp)
-            ) {
+
+            if (displayText.isNotBlank()) {
                 Text(
-                    text = displayTitle,
-                    style = AppTheme.typography.bodySmall.copy(
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = androidx.compose.ui.unit.TextUnit(12f, androidx.compose.ui.unit.TextUnitType.Sp)
+                    text = "·",
+                    style = AppTheme.typography.caption.copy(fontSize = 11.sp),
+                    color = Color.White.copy(alpha = 0.4f)
+                )
+                Text(
+                    text = displayText,
+                    style = AppTheme.typography.caption.copy(
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Normal
                     ),
-                    color = Color.White,
+                    color = Color(0xFFA4A4A9),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f, fill = false)
                 )
-                if (displayText.isNotBlank()) {
-                    Text(
-                        text = "·",
-                        style = AppTheme.typography.caption,
-                        color = Color.White.copy(alpha = 0.35f)
-                    )
-                    Text(
-                        text = displayText,
-                        style = AppTheme.typography.bodySmall.copy(
-                            fontSize = androidx.compose.ui.unit.TextUnit(11.5f, androidx.compose.ui.unit.TextUnitType.Sp)
-                        ),
-                        color = Color.White.copy(alpha = 0.70f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f, fill = false)
-                    )
-                }
             }
         }
     }

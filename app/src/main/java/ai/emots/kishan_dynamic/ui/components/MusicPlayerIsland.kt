@@ -74,176 +74,232 @@ fun MusicPlayerIsland(
     // Controls: ◀◀ ▶ ▶▶ AirPlay - solid white icons on black
     // Compact: album art + track title + waveform
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val albumArtSize = (53.dp * scale)
+        val albumArtSize = 48.dp * scale
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 32.dp * scale, bottom = 12.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp * scale, vertical = 12.dp * scale),
+            verticalArrangement = Arrangement.spacedBy(10.dp * scale)
         ) {
-            // TOP ROW: 53dp Album Art (rx=8dp) at X=24dp + Title/Artist + Live Equalizer (rx=35.1dp from right edge)
+            // ROW 1: Album Art (48dp squircle) + Title & Artist Column + Live Equalizer
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp * scale, end = 35.dp * scale),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
+                // 48dp Album Art squircle
+                Box(
+                    modifier = Modifier
+                        .size(albumArtSize)
+                        .clip(RoundedCornerShape(10.dp * scale))
+                        .background(Color(0xFF1C1C1E))
+                        .border(0.5.dp, Color(0x33FFFFFF), RoundedCornerShape(10.dp * scale)),
+                    contentAlignment = Alignment.Center
                 ) {
-                    // 53dp Album Art (rx=8dp matching Dynamic Island-11.svg at X=24dp, Y=32dp)
-                    Box(
-                        modifier = Modifier
-                            .size(albumArtSize)
-                            .clip(RoundedCornerShape(8.dp * scale))
-                            .background(Color.Black)
-                            .border(0.75.dp, Color(0x33FFFFFF), RoundedCornerShape(8.dp * scale)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        UriArtwork(
-                            uri = albumArtUri,
-                            fallbackRes = R.drawable.music_album_art,
-                            contentDescription = "Album art",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds
-                        )
-                    }
-
-                    // Gap between Album Art right edge (77dp) and Title left edge (98.4dp) = 21.4dp
-                    Spacer(modifier = Modifier.width(21.4.dp * scale))
-
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = title,
-                                color = Color.White,
-                                fontSize = (16f * scale).sp,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-
-                            Spacer(modifier = Modifier.width(6.2.dp * scale))
-
-                            // Apple [E] Explicit Badge (15x15, rx=3.5 matching Dynamic Island-11.svg)
-                            Box(
-                                modifier = Modifier
-                                    .size(15.dp * scale)
-                                    .clip(RoundedCornerShape(3.5.dp * scale))
-                                    .background(Color.White),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "E",
-                                    color = Color.Black,
-                                    fontSize = (8f * scale).sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-                        // Gap between Title bottom (54.5dp) and Artist top (63.1dp) = 8.6dp (Spacer 5dp)
-                        Spacer(modifier = Modifier.height(5.dp * scale))
-
-                        Text(
-                            text = artist,
-                            color = Color(0xFF9A9A9A),
-                            fontSize = (13.5f * scale).sp,
-                            fontWeight = FontWeight.Normal,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
+                    UriArtwork(
+                        uri = albumArtUri,
+                        fallbackRes = R.drawable.music_album_art,
+                        contentDescription = "Album art",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(12.dp * scale))
 
-                // Reference equalizer (Minimal.svg / Dynamic Island-11.svg: 19.8x22.4dp at X=312..332dp)
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = title.ifBlank { "Now playing" },
+                            color = Color.White,
+                            fontSize = (15f * scale).sp,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+
+                        Spacer(modifier = Modifier.width(5.dp * scale))
+
+                        // Apple [E] Explicit Badge
+                        Box(
+                            modifier = Modifier
+                                .size(13.dp * scale)
+                                .clip(RoundedCornerShape(3.dp * scale))
+                                .background(Color.White.copy(alpha = 0.85f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "E",
+                                color = Color.Black,
+                                fontSize = (7.5f * scale).sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(2.dp * scale))
+
+                    Text(
+                        text = artist.ifBlank { "Unknown Artist" },
+                        color = Color(0xFF9A9A9A),
+                        fontSize = (12.5f * scale).sp,
+                        fontWeight = FontWeight.Normal,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(10.dp * scale))
+
+                // Equalizer on right
                 LiveEqualizerMini(
-                    width = 20.dp * scale,
-                    height = 22.dp * scale,
+                    width = 18.dp * scale,
+                    height = 20.dp * scale,
                     animated = playing
                 )
             }
 
-            // MIDDLE ROW: Scrubber Slider with Time (Dynamic Island-11: 240x6.5 bar, rx=3.25, 25dp side padding)
-            if (showScrubber) Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 25.dp * scale),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = currentTime,
-                    fontSize = (11f * scale).sp,
-                    color = Color(0xFF9A9A9A),
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = FontFamily.Monospace
-                )
+            // ROW 2: Scrubber timeline: currentTime | Progress Bar | remainingTime
+            if (showScrubber) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = currentTime,
+                        fontSize = (11f * scale).sp,
+                        color = Color(0xFF8E8E93),
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily.Monospace
+                    )
 
-                // Exact 14.25dp gap from time to track
-                Spacer(modifier = Modifier.width(14.dp * scale))
+                    Spacer(modifier = Modifier.width(10.dp * scale))
 
-                // Linear Progress Track (6.5dp height with 3.25dp radius)
-                AppleAudioScrubber(
-                    progress = progress,
-                    onProgressChange = { value ->
-                        isDragging = true
-                        progress = value
-                        onSeek(value)
-                    },
-                    onProgressChangeFinished = {
-                        isDragging = false
-                        onSeek(progress)
-                    },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-                )
+                    AppleAudioScrubber(
+                        progress = progress,
+                        onProgressChange = { value ->
+                            isDragging = true
+                            progress = value
+                            onSeek(value)
+                        },
+                        onProgressChangeFinished = {
+                            isDragging = false
+                            onSeek(progress)
+                        },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(26.dp * scale)
+                    )
 
-                // Exact 14.24dp gap from track to time
-                Spacer(modifier = Modifier.width(14.dp * scale))
+                    Spacer(modifier = Modifier.width(10.dp * scale))
 
-                Text(
-                    text = remainingTime,
-                    fontSize = (11f * scale).sp,
-                    color = Color(0xFF9A9A9A),
-                    fontWeight = FontWeight.Medium,
-                    fontFamily = FontFamily.Monospace
-                )
+                    Text(
+                        text = remainingTime,
+                        fontSize = (11f * scale).sp,
+                        color = Color(0xFF8E8E93),
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
             }
 
-            // Four equal control regions; no reference-coordinate offsets or pinned overlaps.
+            // ROW 3: Transport controls directly on black OLED surface
+            // Clean, balanced vector glyphs without bloated grey circle containers
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.expandedContentInset),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp * scale),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
-                    glyph = AppleGlyph.Backward, contentDescription = "Previous track", iconSize = 24.dp,
-                    onClick = { progress = 0f; onPrevious() }
-                )
-                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
-                    glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
-                    contentDescription = if (playing) "Pause playback" else "Play playback", iconSize = 24.dp,
-                    onClick = { playing = !playing; onPlayPause() }
-                )
-                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
-                    glyph = AppleGlyph.Forward, contentDescription = "Next track", iconSize = 24.dp,
-                    onClick = { progress = (progress + 0.05f).coerceAtMost(1f); onNext() }
-                )
-                ai.emots.kishan_dynamic.ui.kit.AppIconButton(
-                    glyph = AppleGlyph.AirPlay, contentDescription = "Audio output", iconSize = 24.dp,
-                    onClick = { isAirPlayConnected = !isAirPlayConnected; onAirPlay() }
-                )
+                // Rewind (44dp touch area, 22dp glyph)
+                Box(
+                    modifier = Modifier
+                        .size((44.dp * scale).coerceAtLeast(44.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { progress = 0f; onPrevious() }
+                        )
+                        .semantics { contentDescription = "Previous track" },
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.Backward,
+                        tint = Color.White,
+                        size = 22.dp * scale
+                    )
+                }
+
+                // Play / Pause (Primary centerpiece: 38dp white circle with 48dp touch area)
+                Box(
+                    modifier = Modifier
+                        .size((48.dp * scale).coerceAtLeast(48.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { playing = !playing; onPlayPause() }
+                        )
+                        .semantics { contentDescription = if (playing) "Pause playback" else "Play playback" },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(38.dp * scale)
+                            .clip(CircleShape)
+                            .background(Color.White),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
+                            tint = Color.Black,
+                            size = 18.dp * scale
+                        )
+                    }
+                }
+
+                // Forward (44dp touch area, 22dp glyph)
+                Box(
+                    modifier = Modifier
+                        .size((44.dp * scale).coerceAtLeast(44.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { progress = (progress + 0.05f).coerceAtMost(1f); onNext() }
+                        )
+                        .semantics { contentDescription = "Next track" },
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.Forward,
+                        tint = Color.White,
+                        size = 22.dp * scale
+                    )
+                }
+
+                // AirPlay / Route (44dp touch area, 19dp glyph)
+                Box(
+                    modifier = Modifier
+                        .size((44.dp * scale).coerceAtLeast(44.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = { isAirPlayConnected = !isAirPlayConnected; onAirPlay() }
+                        )
+                        .semantics { contentDescription = "Audio output" },
+                    contentAlignment = Alignment.Center
+                ) {
+                    AppleIcon(
+                        glyph = AppleGlyph.AirPlay,
+                        tint = if (isAirPlayConnected) IslandColors.CapsuleCyan else Color(0xFF8E8E93),
+                        size = 19.dp * scale
+                    )
+                }
             }
         }
     }

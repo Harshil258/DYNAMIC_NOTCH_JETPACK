@@ -16,6 +16,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -217,24 +219,26 @@ fun OngoingCallIslandExpanded(
     var isVideoOn by remember(variant) { mutableStateOf(variant == OngoingCallVariant.SharedMedia) }
     var isSharePlay by remember(variant) { mutableStateOf(variant == OngoingCallVariant.SharedMedia) }
 
-    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth().wrapContentHeight()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonSize = (50.64.dp * scale).coerceAtLeast(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-        val hPad = ((if (variant == OngoingCallVariant.SharedMedia) 24.dp else 29.dp) * scale)
-        val topPad = ((if (variant == OngoingCallVariant.SharedMedia) 32.dp else 34.dp) * scale)
-        val bottomPad = (24.dp * scale)
-        val avatarSize = ((if (variant == OngoingCallVariant.SharedMedia) 53.dp else 44.dp) * scale)
+        val buttonVisualSize = 38.dp * scale
+        val buttonTouchSize = (44.dp * scale).coerceAtLeast(44.dp)
+        val iconGlyphSize = 18.dp * scale
+        val hPad = 20.dp * scale
+        val topPad = 14.dp * scale
+        val bottomPad = 14.dp * scale
+        val avatarSize = 40.dp * scale
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(
                     start = hPad,
                     end = hPad,
                     top = topPad,
                     bottom = bottomPad
                 ),
-            verticalArrangement = Arrangement.SpaceBetween
+            verticalArrangement = Arrangement.spacedBy(14.dp * scale)
         ) {
             // ROW 1: Avatar + Name + Subtitle + Info button (matches Dynamic Island-14.svg)
             Row(
@@ -311,117 +315,149 @@ fun OngoingCallIslandExpanded(
                 }
             }
 
-            // ROW 2: 5 action buttons. The supplied -13/-14/-15 files are
-            // separate visual variants, so their selected controls are seeded
-            // independently instead of being flattened into one card.
+            // ROW 2: Balanced circular call action controls
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // 1. Speaker Button (Audio route: Inactive #2A292D / Active White)
+                // 1. Speaker Button (Audio route: Inactive #2C2C2E / Active White)
                 Box(
                     modifier = Modifier
-                        .size(buttonSize)
-                        .clip(CircleShape)
-                        .background(
-                            if (variant == OngoingCallVariant.FaceTime) Color.White
-                            else if (isSpeaker) Color.White else IslandColors.ButtonGlass
-                        )
+                        .size(buttonTouchSize)
                         .clickable {
                             isSpeaker = !isSpeaker
                             onControlAction(IslandControlAction.CallToggleSpeaker)
-                        },
+                        }
+                        .semantics { contentDescription = "Toggle speakerphone" },
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(
-                        glyph = if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker,
-                        tint = if (variant == OngoingCallVariant.FaceTime || isSpeaker) Color.Black else Color.White,
-                        size = if (variant == OngoingCallVariant.FaceTime) 29.dp * scale else 38.dp * scale
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(buttonVisualSize)
+                            .clip(CircleShape)
+                            .background(
+                                if (variant == OngoingCallVariant.FaceTime) Color.White
+                                else if (isSpeaker) Color.White else IslandColors.ButtonGlass
+                            )
+                            .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker,
+                            tint = if (variant == OngoingCallVariant.FaceTime || isSpeaker) Color.Black else Color.White,
+                            size = iconGlyphSize
+                        )
+                    }
                 }
 
-                // 2. Microphone / Mute Button (Dynamic Island-14.svg: Active White background + Black mic)
+                // 2. Microphone / Mute Button
                 Box(
                     modifier = Modifier
-                        .size(buttonSize)
-                        .clip(CircleShape)
-                        .background(if (isMuted) Color.White else IslandColors.ButtonGlass)
+                        .size(buttonTouchSize)
                         .clickable {
                             isMuted = !isMuted
                             onControlAction(IslandControlAction.CallToggleMute)
-                        },
+                        }
+                        .semantics { contentDescription = "Toggle microphone mute" },
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Microphone,
-                        tint = if (isMuted) Color.Black else Color.White,
-                        size = 33.dp * scale
-                    )
-                }
-
-                // Generic Android Telecom calls do not expose portable video or
-                // SharePlay commands. Keep those controls in the explicitly
-                // app-owned FaceTime/SharedMedia preview variants only, so a
-                // live phone call never presents a button that silently does
-                // nothing.
-                if (variant != OngoingCallVariant.Standard) {
-                    // 3. FaceTime Video Camera Button (Inactive #2A292D / Active White)
                     Box(
                         modifier = Modifier
-                            .size(buttonSize)
+                            .size(buttonVisualSize)
                             .clip(CircleShape)
-                            .background(if (isVideoOn) Color.White else IslandColors.ButtonGlass)
+                            .background(if (isMuted) Color.White else IslandColors.ButtonGlass)
+                            .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = AppleGlyph.Microphone,
+                            tint = if (isMuted) Color.Black else Color.White,
+                            size = iconGlyphSize
+                        )
+                    }
+                }
+
+                if (variant != OngoingCallVariant.Standard) {
+                    // 3. FaceTime Video Camera Button
+                    Box(
+                        modifier = Modifier
+                            .size(buttonTouchSize)
                             .clickable {
                                 isVideoOn = !isVideoOn
                                 onControlAction(IslandControlAction.CallToggleVideo)
-                            },
+                            }
+                            .semantics { contentDescription = "Toggle video camera" },
                         contentAlignment = Alignment.Center
                     ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.FaceTimeVideo,
-                            tint = if (isVideoOn) Color.Black else Color.White,
-                            size = 36.dp * scale
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(buttonVisualSize)
+                                .clip(CircleShape)
+                                .background(if (isVideoOn) Color.White else IslandColors.ButtonGlass)
+                                .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AppleIcon(
+                                glyph = AppleGlyph.FaceTimeVideo,
+                                tint = if (isVideoOn) Color.Black else Color.White,
+                                size = iconGlyphSize
+                            )
+                        }
                     }
 
-                    // 4. SharePlay Button (Inactive #2A292D / Active White)
+                    // 4. SharePlay Button
                     Box(
                         modifier = Modifier
-                            .size(buttonSize)
-                            .clip(CircleShape)
-                            .background(if (isSharePlay) Color.White else IslandColors.ButtonGlass)
+                            .size(buttonTouchSize)
                             .clickable {
                                 isSharePlay = !isSharePlay
                                 onControlAction(IslandControlAction.CallToggleSharePlay)
-                            },
+                            }
+                            .semantics { contentDescription = "Toggle SharePlay" },
                         contentAlignment = Alignment.Center
                     ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.SharePlay,
-                            tint = if (isSharePlay) Color.Black else Color.White,
-                            size = 40.dp * scale
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(buttonVisualSize)
+                                .clip(CircleShape)
+                                .background(if (isSharePlay) Color.White else IslandColors.ButtonGlass)
+                                .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AppleIcon(
+                                glyph = AppleGlyph.SharePlay,
+                                tint = if (isSharePlay) Color.Black else Color.White,
+                                size = iconGlyphSize
+                            )
+                        }
                     }
                 }
 
-                // 5. End Call Button (Apple Red #FA3532 with 26dp white phone-down icon)
+                // 5. End Call Button (Apple Red #FA3532 with phone-down icon)
                 Box(
                     modifier = Modifier
-                        .size(buttonSize)
-                        .clip(CircleShape)
-                        .background(IslandColors.CapsuleRed)
+                        .size(buttonTouchSize)
                         .clickable {
                             onEndCall()
                             onControlAction(IslandControlAction.CallEnd)
-                        },
+                        }
+                        .semantics { contentDescription = "End call" },
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(
-                        glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall,
-                        tint = Color.White,
-                        size = 35.dp * scale
-                    )
+                    Box(
+                        modifier = Modifier
+                            .size(buttonVisualSize)
+                            .clip(CircleShape)
+                            .background(IslandColors.CapsuleRed),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall,
+                            tint = Color.White,
+                            size = iconGlyphSize
+                        )
+                    }
                 }
             }
         }

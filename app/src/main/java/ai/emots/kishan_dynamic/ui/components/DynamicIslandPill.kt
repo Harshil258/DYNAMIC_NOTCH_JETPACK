@@ -262,11 +262,12 @@ internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp {
         IslandDemoState.ActionControlExpanded -> 210.dp
         IslandDemoState.PremiumExpiryExpanded -> 112.dp
 
-        IslandDemoState.NotificationExpanded,
         IslandDemoState.SilentModeExpanded,
-        IslandDemoState.RingerModeExpanded,
         IslandDemoState.ChargingExpanded,
-        IslandDemoState.LowBatteryExpanded,
+        IslandDemoState.LowBatteryExpanded -> tokens.alertHeight
+
+        IslandDemoState.NotificationExpanded,
+        IslandDemoState.RingerModeExpanded,
         IslandDemoState.NotificationImage,
         IslandDemoState.CallAvatars,
         IslandDemoState.OngoingCallBanner,
@@ -627,9 +628,12 @@ fun DynamicIslandPill(
         IslandDemoState.PremiumExpiryExpanded -> islandTokens.expandedCardCorner
         IslandDemoState.NotificationExpanded -> if (isNotificationExpanded) islandTokens.expandedCorner else 39.dp
         IslandDemoState.SilentModeExpanded,
-        IslandDemoState.TimerExpanded,
         IslandDemoState.ChargingExpanded,
-        IslandDemoState.LowBatteryExpanded,
+        IslandDemoState.LowBatteryExpanded -> islandTokens.alertHeight / 2
+
+        IslandDemoState.TimerExpanded -> 40.dp
+        IslandDemoState.CallExpanded -> 42.dp
+
         IslandDemoState.NotificationImage,
         IslandDemoState.CallAvatars,
         IslandDemoState.OngoingCallBanner,
@@ -2493,70 +2497,56 @@ private fun LowBatteryCompactContent() {
 private fun LowBatteryExpandedContent() {
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (24.dp * scale)
-        val tPad = (20.dp * scale)
-        val bPad = (18.dp * scale)
-        val iconBoxSize = (42.dp * scale)
-        val iconSize = (26.dp * scale)
-        val btnHeight = (43.dp * scale)
+        val hPad = (20.dp * scale)
+        val vPad = (12.dp * scale)
+        val iconBoxSize = (36.dp * scale)
+        val iconSize = (20.dp * scale)
 
-        Column(
+        Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = hPad, end = hPad, top = tPad, bottom = bPad),
-            verticalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = hPad, vertical = vPad),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Box(
                     modifier = Modifier
                         .size(iconBoxSize)
                         .clip(CircleShape)
-                        .background(IslandColors.ButtonRed),
+                        .background(IslandColors.CapsuleRed.copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
                     AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.CapsuleRed, size = iconSize)
                 }
 
-                Spacer(modifier = Modifier.width(14.dp * scale))
+                Spacer(modifier = Modifier.width(12.dp * scale))
 
-                Column(modifier = Modifier.weight(1f)) {
+                Column(verticalArrangement = Arrangement.Center) {
                     Text(
                         text = "Low Battery",
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = (14.5f * scale).sp,
                         fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        maxLines = 1
                     )
                     Spacer(modifier = Modifier.height(2.dp * scale))
                     Text(
-                        text = "20% Battery Remaining",
-                        color = Color(0xFF818383),
-                        fontSize = (12.5f * scale).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        text = "20% Remaining",
+                        color = IslandColors.CapsuleRed,
+                        fontSize = (12f * scale).sp,
+                        fontWeight = FontWeight.Medium
                     )
                 }
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(btnHeight)
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(IslandColors.ButtonRed),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Close",
-                    color = IslandColors.CapsuleRed,
-                    fontSize = (15f * scale).sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            Text(
+                text = "20%",
+                fontSize = (22f * scale).sp,
+                fontWeight = FontWeight.Bold,
+                color = IslandColors.CapsuleRed,
+                fontFamily = FontFamily.Monospace
+            )
         }
     }
 }

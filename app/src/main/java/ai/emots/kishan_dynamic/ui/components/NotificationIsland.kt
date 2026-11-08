@@ -240,8 +240,8 @@ fun NotificationIslandExpanded(
     val density = LocalDensity.current
     androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (20.dp * scale)
-        val vPad = (12.dp * scale)
+        val hPad = 16.dp * scale
+        val vPad = 12.dp * scale
 
         if (isReplying && replyAction != null) {
             Column(
@@ -253,8 +253,8 @@ fun NotificationIslandExpanded(
                             onHeightChange?.invoke(size.height.toDp())
                         }
                     }
-                    .padding(horizontal = hPad, vertical = (13.dp * scale)),
-                verticalArrangement = Arrangement.spacedBy(10.dp * scale)
+                    .padding(horizontal = hPad, vertical = vPad),
+                verticalArrangement = Arrangement.spacedBy(8.dp * scale)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -263,21 +263,21 @@ fun NotificationIslandExpanded(
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp * scale),
+                        horizontalArrangement = Arrangement.spacedBy(7.dp * scale),
                         modifier = Modifier.weight(1f, fill = false)
                     ) {
                         NotificationArtwork(
                             imagePath = imagePath,
                             packageName = appPackageName,
                             modifier = Modifier
-                                .size(20.dp * scale)
-                                .clip(CircleShape),
+                                .size(18.dp * scale)
+                                .clip(RoundedCornerShape(4.dp * scale)),
                             contentDescription = "$appName icon"
                         )
                         AppText(
                             text = if (pagerLabel == null) "$appName · $sender" else "$appName · $sender · $pagerLabel",
                             style = AppTheme.typography.caption,
-                            fontSize = (12f * scale).sp,
+                            fontSize = (11.5f * scale).sp,
                             color = Color.White,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
@@ -288,17 +288,17 @@ fun NotificationIslandExpanded(
                     if (onDismiss != null) {
                         Box(
                             modifier = Modifier
-                                .size((28.dp * scale).coerceAtLeast(24.dp))
+                                .size(24.dp * scale)
                                 .clip(CircleShape)
                                 .background(Color(0xFF2C2C2E))
-                                .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
+                                .border(0.5.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                                 .clickable(onClick = onDismiss),
                             contentAlignment = Alignment.Center
                         ) {
                             AppleIcon(
                                 glyph = AppleGlyph.Close,
                                 tint = Color(0xFFA4A4A9),
-                                size = 10.dp * scale
+                                size = 9.dp * scale
                             )
                         }
                     }
@@ -309,7 +309,7 @@ fun NotificationIslandExpanded(
                         text = message,
                         style = AppTheme.typography.caption,
                         fontSize = (12.5f * scale).sp,
-                        color = Color(0xFF9A9A9A),
+                        color = Color(0xFFDDDDDD),
                         maxLines = 2,
                         overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
@@ -322,8 +322,8 @@ fun NotificationIslandExpanded(
                     scale = scale
                 )
             }
-        } else if (isCardExpanded) {
-            // STATE 2: EXPANDED DETAILED CARD (Zero wasted space, dynamic content height)
+        } else {
+            // UNIFIED CONTENT-DRIVEN EXPANDED CARD (Zero wasted space, authentic Apple visual balance)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -333,15 +333,10 @@ fun NotificationIslandExpanded(
                             onHeightChange?.invoke(size.height.toDp())
                         }
                     }
-                    .padding(
-                        start = hPad,
-                        end = hPad,
-                        top = (13.dp * scale),
-                        bottom = if (pagerLabel != null) (26.dp * scale) else (14.dp * scale)
-                    ),
-                verticalArrangement = Arrangement.spacedBy(10.dp * scale)
+                    .padding(horizontal = hPad, vertical = vPad),
+                verticalArrangement = Arrangement.spacedBy(8.dp * scale)
             ) {
-                // 1. TOP HEADER ROW (App Icon, App Name, Pager count, Collapse chevron, Dismiss)
+                // 1. TOP HEADER ROW (App Icon, App Name, Pager count badge, Dismiss)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -349,19 +344,19 @@ fun NotificationIslandExpanded(
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp * scale),
+                        horizontalArrangement = Arrangement.spacedBy(7.dp * scale),
                         modifier = Modifier.weight(1f, fill = false)
                     ) {
                         NotificationArtwork(
                             imagePath = imagePath,
                             packageName = appPackageName,
                             modifier = Modifier
-                                .size(20.dp * scale)
-                                .clip(CircleShape),
+                                .size(18.dp * scale)
+                                .clip(RoundedCornerShape(4.dp * scale)),
                             contentDescription = "$appName icon"
                         )
                         AppText(
-                            text = if (pagerLabel == null) appName else "$appName · $pagerLabel",
+                            text = appName,
                             style = AppTheme.typography.caption,
                             fontSize = (12f * scale).sp,
                             color = Color(0xFFA4A4A9),
@@ -373,74 +368,93 @@ fun NotificationIslandExpanded(
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
+                        horizontalArrangement = Arrangement.spacedBy(7.dp * scale)
                     ) {
-                        if (onToggleExpand != null) {
+                        if (pagerLabel != null) {
                             Box(
                                 modifier = Modifier
-                                    .size((28.dp * scale).coerceAtLeast(24.dp))
-                                    .clip(CircleShape)
+                                    .clip(RoundedCornerShape(10.dp * scale))
                                     .background(Color(0xFF2C2C2E))
-                                    .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
-                                    .clickable(onClick = onToggleExpand),
+                                    .border(0.5.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(10.dp * scale))
+                                    .padding(horizontal = 7.dp * scale, vertical = 2.dp * scale),
                                 contentAlignment = Alignment.Center
                             ) {
-                                AppleIcon(
-                                    glyph = AppleGlyph.ChevronRight,
-                                    tint = Color.White,
-                                    size = 11.dp * scale,
-                                    modifier = Modifier.graphicsLayer { rotationZ = -90f }
+                                Text(
+                                    text = pagerLabel,
+                                    fontSize = (10f * scale).sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color(0xFFDDDDDD)
                                 )
                             }
                         }
+
                         if (onDismiss != null) {
                             Box(
                                 modifier = Modifier
-                                    .size((28.dp * scale).coerceAtLeast(24.dp))
-                                    .clip(CircleShape)
-                                    .background(Color(0xFF2C2C2E))
-                                    .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
+                                    .size((44.dp * scale).coerceAtLeast(44.dp))
                                     .clickable(onClick = onDismiss),
                                 contentAlignment = Alignment.Center
                             ) {
-                                AppleIcon(
-                                    glyph = AppleGlyph.Close,
-                                    tint = Color(0xFFA4A4A9),
-                                    size = 10.dp * scale
-                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp * scale)
+                                        .clip(CircleShape)
+                                        .background(Color(0xFF2C2C2E))
+                                        .border(0.5.dp, Color.White.copy(alpha = 0.15f), CircleShape),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    AppleIcon(
+                                        glyph = AppleGlyph.Close,
+                                        tint = Color(0xFFA4A4A9),
+                                        size = 9.dp * scale
+                                    )
+                                }
                             }
                         }
                     }
                 }
 
-                // 2. MIDDLE MESSAGE BODY ROW (Avatar on left, Sender & full readable multi-line text)
+                // 2. MIDDLE MESSAGE BODY ROW (Avatar on left, Sender & full readable text)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp * scale)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp * scale)
                 ) {
                     NotificationArtwork(
                         imagePath = imagePath,
                         packageName = appPackageName,
                         modifier = Modifier
-                            .size(44.dp * scale)
+                            .size(36.dp * scale)
                             .clip(CircleShape),
                         contentDescription = "$appName avatar"
                     )
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(3.dp * scale)
+                        verticalArrangement = Arrangement.spacedBy(2.dp * scale)
                     ) {
-                        AppText(
-                            text = sender,
-                            style = AppTheme.typography.islandTitle,
-                            fontSize = (16f * scale).sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            AppText(
+                                text = sender,
+                                style = AppTheme.typography.islandTitle,
+                                fontSize = (14.5f * scale).sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                            )
+                            if (showChronometer && chronometerBaseElapsedRealtime > 0L) {
+                                NotificationChronometerText(
+                                    baseElapsedRealtime = chronometerBaseElapsedRealtime,
+                                    countDown = chronometerCountDown,
+                                    fontSize = (11f * scale).sp
+                                )
+                            }
+                        }
 
                         val fullMessageText = when {
                             inboxLines.isNotEmpty() -> inboxLines.joinToString("\n")
@@ -452,19 +466,20 @@ fun NotificationIslandExpanded(
                             AppText(
                                 text = fullMessageText,
                                 style = AppTheme.typography.caption,
-                                fontSize = (13.5f * scale).sp,
-                                lineHeight = (18.5f * scale).sp,
+                                fontSize = (12.5f * scale).sp,
+                                lineHeight = (17f * scale).sp,
                                 color = Color(0xFFDDDDDD),
-                                maxLines = 5,
+                                maxLines = if (isCardExpanded) 5 else 2,
                                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                             )
                         }
+
                         if (progress != null || isProgressIndeterminate) {
                             Spacer(modifier = Modifier.height(4.dp * scale))
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(4.dp * scale)
+                                    .height(3.dp * scale)
                                     .clip(RoundedCornerShape(percent = 50))
                                     .background(Color(0x553A3A3C))
                             ) {
@@ -481,7 +496,7 @@ fun NotificationIslandExpanded(
                     }
                 }
 
-                // 3. BOTTOM ACTIONS ROW (Dedicated horizontal row right underneath the message)
+                // 3. BOTTOM ACTIONS ROW (Dedicated horizontal row with 32dp action chips)
                 if (actions.isNotEmpty() || actionLabel.isNotBlank()) {
                     Row(
                         modifier = Modifier
@@ -505,61 +520,6 @@ fun NotificationIslandExpanded(
                                 onClick = onAction
                             )
                         }
-                    }
-                }
-            }
-        } else {
-            Column(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                    .onSizeChanged { size -> with(density) { onHeightChange?.invoke(size.height.toDp()) } }
-                    .padding(
-                        start = AppTheme.island.expandedContentInset,
-                        end = AppTheme.island.expandedContentInset,
-                        top = AppTheme.island.expandedContentInset,
-                        bottom = if (pagerLabel != null) AppTheme.island.expandedContentInset + 14.dp else AppTheme.island.expandedContentInset
-                    ),
-                verticalArrangement = Arrangement.spacedBy(AppTheme.island.expandedContentGap)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(AppTheme.island.expandedContentGap)
-                ) {
-                    NotificationArtwork(
-                        imagePath = imagePath, packageName = appPackageName,
-                        modifier = Modifier.size(AppTheme.island.expandedIconSize).clip(CircleShape),
-                        contentDescription = "$appName icon"
-                    )
-                    Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
-                        AppText(
-                            text = if (pagerLabel == null) appName else "$appName · $pagerLabel",
-                            style = AppTheme.typography.caption, color = IslandColors.TextSecondary
-                        )
-                        AppText(text = sender, style = AppTheme.typography.islandTitle,
-                            color = Color.White, maxLines = 2,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
-                        if (message.isNotBlank()) AppText(
-                            text = message, style = AppTheme.typography.bodySmall,
-                            color = IslandColors.TextSecondary, maxLines = 2,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
-                        if (showChronometer && chronometerBaseElapsedRealtime > 0L) {
-                            NotificationChronometerText(chronometerBaseElapsedRealtime, chronometerCountDown)
-                        }
-                    }
-                }
-                if (actions.isNotEmpty() || actionLabel.isNotBlank() || onToggleExpand != null) {
-                    FlowRow(
-                        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
-                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-                    ) {
-                        val primary = actions.firstOrNull()
-                        if (primary != null) {
-                            NotificationActionButton(primary.label, scale) { onActionSelected(primary) }
-                        } else if (actionLabel.isNotBlank()) {
-                            NotificationActionButton(actionLabel, scale, onAction)
-                        }
-                        if (onToggleExpand != null) NotificationActionButton("Expand", scale, onToggleExpand)
                     }
                 }
             }
@@ -619,11 +579,11 @@ fun IslandActionChip(
         animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
         label = "chip_scale"
     )
-    val h = (34.dp * scale).coerceAtLeast(30.dp)
+    val h = (32.dp * scale).coerceAtLeast(28.dp)
     val r = h / 2
     val shape = RoundedCornerShape(r)
     val bg = when {
-        isPrimary -> Color(0xFF2979FF)
+        isPrimary -> Color(0xFF0A84FF)
         isDestructive -> Color(0x33FA3532)
         else -> Color(0xFF2C2C2E)
     }
@@ -638,38 +598,44 @@ fun IslandActionChip(
         else -> Brush.linearGradient(listOf(Color(0x33FFFFFF), Color(0x14FFFFFF)))
     }
 
-    Row(
+    Box(
         modifier = modifier
-            .graphicsLayer {
-                val s = if (reducedMotion) 1f else scaleState.value
-                scaleX = s
-                scaleY = s
-            }
-            .height(h)
-            .clip(shape)
-            .background(bg, shape)
-            .then(if (borderBrush != null) Modifier.border(0.75.dp, borderBrush, shape) else Modifier)
+            .heightIn(min = 44.dp)
             .clickable(
                 interactionSource = interaction,
-                indication = androidx.compose.material3.ripple(),
+                indication = null,
                 role = Role.Button,
                 onClick = onClick
-            )
-            .padding(horizontal = (13.dp * scale).coerceAtLeast(10.dp)),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
+            ),
+        contentAlignment = Alignment.Center
     ) {
-        if (glyph != null) {
-            AppleIcon(glyph = glyph, tint = textColor, size = 13.dp * scale)
+        Row(
+            modifier = Modifier
+                .graphicsLayer {
+                    val s = if (reducedMotion) 1f else scaleState.value
+                    scaleX = s
+                    scaleY = s
+                }
+                .height(h)
+                .clip(shape)
+                .background(bg, shape)
+                .then(if (borderBrush != null) Modifier.border(0.5.dp, borderBrush, shape) else Modifier)
+                .padding(horizontal = (12.dp * scale).coerceAtLeast(10.dp)),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
+        ) {
+            if (glyph != null) {
+                AppleIcon(glyph = glyph, tint = textColor, size = 13.dp * scale)
+            }
+            Text(
+                text = text,
+                color = textColor,
+                fontSize = (12.5f * scale).sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
-        Text(
-            text = text,
-            color = textColor,
-            fontSize = (13f * scale).sp,
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +28,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -63,17 +66,19 @@ fun IncomingCallIsland(
     val declineScale by rememberPressScale(declineInteraction)
     val acceptScale by rememberPressScale(acceptInteraction)
 
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth().wrapContentHeight()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val avatarSize = (44.dp * scale)
-        val buttonSize = (44.dp * scale).coerceAtLeast(38.dp)
-        val startPad = (16.dp * scale)
-        val endPad = (16.dp * scale)
-        val vPad = (12.dp * scale)
+        val avatarSize = 40.dp * scale
+        val buttonVisualSize = 38.dp * scale
+        val buttonTouchSize = (44.dp * scale).coerceAtLeast(44.dp)
+        val iconGlyphSize = 18.dp * scale
+        val startPad = 16.dp * scale
+        val endPad = 16.dp * scale
+        val vPad = 12.dp * scale
 
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(start = startPad, end = endPad, top = vPad, bottom = vPad),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -135,51 +140,65 @@ fun IncomingCallIsland(
 
             Spacer(modifier = Modifier.width(10.dp * scale))
 
-            // RIGHT: Red Decline Button (44dp) + Green Accept Button (44dp)
+            // RIGHT: Decline Button + Accept Button with 44dp hit areas and 38dp visual circles
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp * scale)
+                horizontalArrangement = Arrangement.spacedBy(10.dp * scale)
             ) {
                 // Red Decline Button
                 if (canDecline) {
                     Box(
                         modifier = Modifier
-                            .size(buttonSize)
-                            .graphicsLayer {
-                                scaleX = declineScale
-                                scaleY = declineScale
-                            }
-                            .clip(CircleShape)
-                            .background(CallRed)
+                            .size(buttonTouchSize)
                             .clickable(
                                 interactionSource = declineInteraction,
                                 indication = null,
                                 onClick = onDecline
-                            ),
+                            )
+                            .semantics { contentDescription = "Decline call" },
                         contentAlignment = Alignment.Center
                     ) {
-                        AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = 22.dp * scale)
+                        Box(
+                            modifier = Modifier
+                                .size(buttonVisualSize)
+                                .graphicsLayer {
+                                    scaleX = declineScale
+                                    scaleY = declineScale
+                                }
+                                .clip(CircleShape)
+                                .background(CallRed),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = iconGlyphSize)
+                        }
                     }
                 }
 
                 // Green Accept Button
                 Box(
                     modifier = Modifier
-                        .size(buttonSize)
-                        .graphicsLayer {
-                            scaleX = acceptScale
-                            scaleY = acceptScale
-                        }
-                        .clip(CircleShape)
-                        .background(CallGreen)
+                        .size(buttonTouchSize)
                         .clickable(
                             interactionSource = acceptInteraction,
                             indication = null,
                             onClick = onAccept
-                        ),
+                        )
+                        .semantics { contentDescription = "Accept call" },
                     contentAlignment = Alignment.Center
                 ) {
-                    AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 22.dp * scale)
+                    Box(
+                        modifier = Modifier
+                            .size(buttonVisualSize)
+                            .graphicsLayer {
+                                scaleX = acceptScale
+                                scaleY = acceptScale
+                            }
+                            .clip(CircleShape)
+                            .background(CallGreen),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = iconGlyphSize)
+                    }
                 }
             }
         }

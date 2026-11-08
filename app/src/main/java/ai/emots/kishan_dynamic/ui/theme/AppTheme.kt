@@ -311,19 +311,24 @@ data class AppIslandTokens(
     val expandedIconSize: Dp = 32.dp,
     val minimumActionTarget: Dp = 48.dp,
     /** Island-native action control dimensions (authentic pill button). */
-    val actionControlHeight: Dp = 34.dp,
-    val actionControlCorner: Dp = 17.dp,
-    val actionControlIconSize: Dp = 16.dp,
+    val actionControlHeight: Dp = 32.dp,
+    val actionControlCorner: Dp = 16.dp,
+    val actionControlIconSize: Dp = 15.dp,
     val actionControlPaddingHorizontal: Dp = 12.dp,
+    /** System alert capsule height (battery, charging, ringer, bluetooth). */
+    val alertHeight: Dp = 54.dp,
+    /** Utility circular buttons (dismiss close X, collapse chevron). */
+    val utilityButtonSize: Dp = 24.dp,
+    val utilityButtonCorner: Dp = 12.dp,
     /** Satellite mini-island dimensions (subordinate layered capsule). */
-    val satelliteHeight: Dp = 38.dp,
-    val satelliteCorner: Dp = 19.dp,
+    val satelliteHeight: Dp = 32.dp,
+    val satelliteCorner: Dp = 16.dp,
     val satelliteIconSize: Dp = 16.dp,
     val satelliteWidthMin: Dp = 260.dp,
     val satelliteWidthMax: Dp = 312.dp,
     /** Overflow affordance pill (+N more). */
-    val overflowHeight: Dp = 28.dp,
-    val overflowCorner: Dp = 14.dp,
+    val overflowHeight: Dp = 24.dp,
+    val overflowCorner: Dp = 12.dp,
     /** True iOS idle capsule width — never stretch this to the screen. */
     val compactWidth: Dp = 126.dp,
     val compactMaxWidth: Dp = 250.dp,
@@ -350,9 +355,9 @@ data class AppIslandTokens(
     val expandedSideMargin: Dp = 11.dp,
     /** Repeated notification/call capsule height in Dynamic Island-0...10.svg. */
     val standardExpandedHeight: Dp = 86.dp,
-    /** Music expanded height (full sheet with scrubber and controls, from iPhone 15 Pro.svg). */
+    /** Music expanded height (full sheet with scrubber and controls). */
     val musicExpandedHeight: Dp = 177.dp,
-    /** Call expanded height (full sheet with 5 action buttons, from Figma Dynamic Island-2/3.svg). */
+    /** Call expanded height (full sheet with action buttons). */
     val callExpandedHeight: Dp = 166.dp,
     /** Reference device the geometry above was measured on (iPhone 15 Pro). */
     val referenceScreenWidth: Dp = 393.dp

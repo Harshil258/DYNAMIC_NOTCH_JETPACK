@@ -47,7 +47,7 @@ class VisualInventoryCaptureTest {
     @get:Rule val compose = createComposeRule()
 
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
-    private val baseDir = File(targetContext.getExternalFilesDir(null), "visual-redesign").apply { mkdirs() }
+    private val baseDir = File("/sdcard/Download/visual-redesign").apply { mkdirs() }
     private val measurementsList = mutableListOf<JSONObject>()
 
     @Before

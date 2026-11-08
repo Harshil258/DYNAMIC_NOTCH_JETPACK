@@ -443,13 +443,14 @@ internal fun OngoingCallBannerContent() {
 internal fun VoiceMemoExpandedContent(onControlAction: (IslandControlAction) -> Unit = {}) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonSize = (50.5.dp * scale)
-        val squareSize = (24.dp * scale)
+        val buttonTouchSize = (44.dp * scale)
+        val buttonVisualSize = (38.dp * scale)
+        val squareSize = (16.dp * scale)
 
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 24.dp * scale, end = 20.dp * scale),
+                .padding(start = 24.dp * scale, end = 16.dp * scale),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -490,23 +491,29 @@ internal fun VoiceMemoExpandedContent(onControlAction: (IslandControlAction) -> 
                 fontSize = (16.5f * scale).sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,
-                modifier = Modifier.offset(x = 31.dp * scale)
+                modifier = Modifier.offset(x = 16.dp * scale)
             )
 
             Box(
                 modifier = Modifier
-                    .size(buttonSize)
-                    .clip(CircleShape)
-                    .border(width = 2.5.dp * scale, color = Color.White, shape = CircleShape)
+                    .size(buttonTouchSize)
                     .clickable { onControlAction(IslandControlAction.VoiceMemoStop) },
                 contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
-                        .size(squareSize)
-                        .clip(RoundedCornerShape(4.dp * scale))
-                        .background(Color(0xFFFA3532))
-                )
+                        .size(buttonVisualSize)
+                        .clip(CircleShape)
+                        .border(width = 2.dp * scale, color = Color.White, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(squareSize)
+                            .clip(RoundedCornerShape(3.dp * scale))
+                            .background(Color(0xFFFA3532))
+                    )
+                }
             }
         }
     }
@@ -517,13 +524,14 @@ internal fun ScreenRecordingExpandedContent(onControlAction: (IslandControlActio
     val pulseState = rememberBreathing(min = 0.85f, max = 1.0f, durationMillis = 1000)
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonSize = (50.5.dp * scale)
-        val squareSize = (24.dp * scale)
+        val buttonTouchSize = (44.dp * scale)
+        val buttonVisualSize = (38.dp * scale)
+        val squareSize = (16.dp * scale)
 
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 24.dp * scale, end = 20.dp * scale, top = 16.dp * scale, bottom = 16.dp * scale),
+                .padding(start = 24.dp * scale, end = 16.dp * scale, top = 16.dp * scale, bottom = 16.dp * scale),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -566,18 +574,24 @@ internal fun ScreenRecordingExpandedContent(onControlAction: (IslandControlActio
 
             Box(
                 modifier = Modifier
-                    .size(buttonSize)
-                    .clip(CircleShape)
-                    .border(width = 2.5.dp * scale, color = Color.White, shape = CircleShape)
+                    .size(buttonTouchSize)
                     .clickable { onControlAction(IslandControlAction.ScreenRecordingStop) },
                 contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
-                        .size(squareSize)
-                        .clip(RoundedCornerShape(4.dp * scale))
-                        .background(Color(0xFFFA3532))
-                )
+                        .size(buttonVisualSize)
+                        .clip(CircleShape)
+                        .border(width = 2.dp * scale, color = Color.White, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(squareSize)
+                            .clip(RoundedCornerShape(3.dp * scale))
+                            .background(Color(0xFFFA3532))
+                    )
+                }
             }
         }
     }
@@ -942,9 +956,10 @@ internal fun AirDropActivityContent(onControlAction: (IslandControlAction) -> Un
     var isPaused by remember { mutableStateOf(false) }
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val radarSize = (56.dp * scale)
-        val ringSize = (51.33.dp * scale)
-        val innerBoxSize = (22.dp * scale)
+        val radarSize = (44.dp * scale)
+        val buttonTouchSize = (44.dp * scale)
+        val ringSize = (38.dp * scale)
+        val innerBoxSize = (16.dp * scale)
 
         Row(
             modifier = Modifier
@@ -991,49 +1006,50 @@ internal fun AirDropActivityContent(onControlAction: (IslandControlAction) -> Un
 
             Box(
                 modifier = Modifier
-                    .size(ringSize)
+                    .size(buttonTouchSize)
                     .clickable {
                         isPaused = !isPaused
                         onControlAction(IslandControlAction.AirDropPause)
                     },
                 contentAlignment = Alignment.Center
             ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    val strokeW = 4.67f * scale
-                    val pad = strokeW / 2f
-                    val arcSize = androidx.compose.ui.geometry.Size(size.width - strokeW, size.height - strokeW)
+                Box(
+                    modifier = Modifier.size(ringSize),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        val strokeW = 3.5f * scale
+                        val pad = strokeW / 2f
+                        val arcSize = androidx.compose.ui.geometry.Size(size.width - strokeW, size.height - strokeW)
 
-                    drawArc(
-                        color = Color(0xFF37A3DE).copy(alpha = 0.5f),
-                        startAngle = 0f,
-                        sweepAngle = 360f,
-                        useCenter = false,
-                        topLeft = Offset(pad, pad),
-                        size = arcSize,
-                        style = Stroke(width = strokeW)
-                    )
+                        drawArc(
+                            color = Color(0xFF37A3DE).copy(alpha = 0.5f),
+                            startAngle = 0f,
+                            sweepAngle = 360f,
+                            useCenter = false,
+                            topLeft = Offset(pad, pad),
+                            size = arcSize,
+                            style = Stroke(width = strokeW)
+                        )
 
-                    drawArc(
-                        color = Color(0xFF37A3DE),
-                        startAngle = -90f,
-                        sweepAngle = 190f,
-                        useCenter = false,
-                        topLeft = Offset(pad, pad),
-                        size = arcSize,
-                        style = Stroke(width = strokeW, cap = StrokeCap.Round)
+                        drawArc(
+                            color = Color(0xFF37A3DE),
+                            startAngle = -90f,
+                            sweepAngle = 190f,
+                            useCenter = false,
+                            topLeft = Offset(pad, pad),
+                            size = arcSize,
+                            style = Stroke(width = strokeW, cap = StrokeCap.Round)
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(innerBoxSize)
+                            .clip(RoundedCornerShape(4.dp * scale))
+                            .background(Color(0xFF37A3DE).copy(alpha = if (isPaused) 0.55f else 1f))
                     )
                 }
-
-                Box(
-                    modifier = Modifier
-                        .size(innerBoxSize)
-                        .clip(RoundedCornerShape(6.22.dp * scale))
-                        .background(Color(0xFF37A3DE).copy(alpha = if (isPaused) 0.55f else 1f))
-                        .clickable {
-                            isPaused = !isPaused
-                            onControlAction(IslandControlAction.AirDropPause)
-                        }
-                )
             }
         }
     }

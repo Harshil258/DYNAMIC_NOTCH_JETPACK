@@ -77,7 +77,7 @@ fun SportsIslandExpanded(
             ) {
                 Text(
                     text = competition,
-                    fontSize = (13f * scale).sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
                     maxLines = 1,
@@ -93,7 +93,7 @@ fun SportsIslandExpanded(
                     }
                     Text(
                         text = statusLabel,
-                        fontSize = (11f * scale).sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         color = if (isLive) IslandColors.Green else IslandColors.Gray,
                         fontFamily = FontFamily.Monospace,
@@ -123,7 +123,7 @@ fun SportsIslandExpanded(
                         ) {
                             Text(
                                 text = homeCode,
-                                fontSize = (9f * scale).sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -131,7 +131,7 @@ fun SportsIslandExpanded(
                         Spacer(modifier = Modifier.width(6.dp * scale))
                         Text(
                             text = homeName,
-                            fontSize = (14.5f * scale).sp,
+                            fontSize = 14.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             maxLines = 1,
@@ -140,7 +140,7 @@ fun SportsIslandExpanded(
                     }
                     Text(
                         text = homeScorers,
-                        fontSize = (10f * scale).sp,
+                        fontSize = 11.sp,
                         color = IslandColors.Gray,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -151,7 +151,7 @@ fun SportsIslandExpanded(
                 // Centered Monospace Score
                 Text(
                     text = "$homeScore  -  $awayScore",
-                    fontSize = (23f * scale).sp,
+                    fontSize = 23.sp,
                     fontWeight = FontWeight.Bold,
                     color = IslandColors.Yellow,
                     fontFamily = FontFamily.Monospace,
@@ -171,7 +171,7 @@ fun SportsIslandExpanded(
                     ) {
                         Text(
                             text = awayName,
-                            fontSize = (14.5f * scale).sp,
+                            fontSize = 14.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             maxLines = 1,
@@ -187,7 +187,7 @@ fun SportsIslandExpanded(
                         ) {
                             Text(
                                 text = awayCode,
-                                fontSize = (9f * scale).sp,
+                                fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
@@ -195,7 +195,7 @@ fun SportsIslandExpanded(
                     }
                     Text(
                         text = awayScorers,
-                        fontSize = (10f * scale).sp,
+                        fontSize = 11.sp,
                         color = IslandColors.Gray,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -215,7 +215,7 @@ fun SportsIslandExpanded(
             ) {
                 Text(
                     text = matchContext,
-                    fontSize = (10.5f * scale).sp,
+                    fontSize = 11.sp,
                     color = IslandColors.Gray,
                     fontWeight = FontWeight.Medium
                 )

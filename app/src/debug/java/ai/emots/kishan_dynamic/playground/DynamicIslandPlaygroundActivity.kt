@@ -17,7 +17,9 @@ class DynamicIslandPlaygroundActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContent {
             AppTheme(darkTheme = true) {
-                DynamicIslandPlayground(onBack = { finish() }, onPhysicalOverlay = {
+                val galleryState = intent.getStringExtra("gallery_state")
+                if (galleryState != null) PlaygroundGallery(ai.emots.kishan_dynamic.ui.components.IslandDemoState.entries.firstOrNull { it.name == galleryState } ?: ai.emots.kishan_dynamic.ui.components.IslandDemoState.Idle, onBack = { finish() })
+                else DynamicIslandPlayground(onBack = { finish() }, onPhysicalOverlay = {
                     if (!Settings.canDrawOverlays(this)) {
                         PlaygroundSession.controller.message("Grant Android overlay access, then tap Start physical overlay again")
                         startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))

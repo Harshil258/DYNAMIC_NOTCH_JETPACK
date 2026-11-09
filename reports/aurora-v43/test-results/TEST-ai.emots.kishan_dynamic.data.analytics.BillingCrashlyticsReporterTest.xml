@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.108Z" hostname="Vekariyas-Mac-mini.local" time="0.024">
+  <properties/>
+  <testcase name="testOnConnectionLostLogsBillingConnectionLostEvent" classname="ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest" time="0.02"/>
+  <testcase name="testOnPurchaseRecoveredLogsBillingPurchaseRecoveredEvent" classname="ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest" time="0.001"/>
+  <testcase name="testOnConnectionRestoredLogsBillingConnectionRestoredEvent" classname="ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest" time="0.001"/>
+  <testcase name="testOnPurchaseFailedLogsBillingPurchaseFailedEvent" classname="ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest" time="0.0"/>
+  <testcase name="testOnProductQueryFailedLogsBillingProductQueryFailedEvent" classname="ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest" time="0.0"/>
+  <testcase name="testOnConnectionFailedLogsBillingConnectionFailedEvent" classname="ai.emots.kishan_dynamic.data.analytics.BillingCrashlyticsReporterTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

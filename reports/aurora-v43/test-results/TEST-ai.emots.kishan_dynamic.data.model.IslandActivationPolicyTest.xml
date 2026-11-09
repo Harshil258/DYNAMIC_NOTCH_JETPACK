@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.240Z" hostname="Vekariyas-Mac-mini.local" time="0.003">
+  <properties/>
+  <testcase name="servicePaused_whenPermissionGrantedInSettingsButServiceNotConnectedInRuntime" classname="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" time="0.001"/>
+  <testcase name="setupRequired_whenNoPermissionsGranted" classname="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" time="0.0"/>
+  <testcase name="running_whenAllPermissionsConnected_andIslandEnabled" classname="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" time="0.001"/>
+  <testcase name="permissionNeeded_whenOnlyOnePermissionGranted" classname="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" time="0.0"/>
+  <testcase name="readyOff_whenAllPermissionsConnected_butIslandDisabledByUser" classname="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" time="0.0"/>
+  <testcase name="starting_whenActivationInProgress" classname="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" time="0.0"/>
+  <testcase name="readyOff_whenIslandDisabledByUser_evenIfServiceNotYetConnected" classname="ai.emots.kishan_dynamic.data.model.IslandActivationPolicyTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

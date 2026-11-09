@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.671Z" hostname="Vekariyas-Mac-mini.local" time="0.004">
+  <properties/>
+  <testcase name="yearlyPurchaseNeverBecomesLifetime" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.001"/>
+  <testcase name="restorationCorrectlyIdentifiesPurchasedProducts" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="pendingPurchaseDoesNotUnlockPaidAccessPrematurely" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="weeklyPurchaseNeverBecomesLifetime" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.001"/>
+  <testcase name="monthlyPurchaseNeverBecomesLifetime" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="legacyIncorrectlyClassifiedEntitlementIsReconciledCorrectly" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="expiredSubscriptionLosesSubscriptionDerivedAccess" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="installationTrialDoesNotOverridePaidAccess" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="missingExpiryDoesNotProveLifetime" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="offlineStartupHandlesPreviouslyVerifiedOwnershipSafelyWithin7DayCache" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="rewardedAccessDoesNotReplaceVerifiedPaidAccess" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="verifiedLifetimePurchaseRemainsPermanent" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="duplicatePurchaseCallbacksDoNotDuplicateTransactionsOrConversions" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.001"/>
+  <testcase name="refundOrRevocationRemovesEntitlementAppropriately" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.0"/>
+  <testcase name="canceledSubscriptionRetainsEntitlementUntilActualExpiry" classname="ai.emots.kishan_dynamic.data.premium.EntitlementManagerTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

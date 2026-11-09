@@ -78,7 +78,7 @@ internal fun TimerCompactContent(label: String, progress: Float) {
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             TimerProgressRing(progress = progress, size = 18.dp, strokeWidth = 2.5.dp)
-            Text(
+            if (androidx.compose.ui.platform.LocalDensity.current.fontScale <= 1.3f) Text(
                 text = "Timer",
                 fontSize = 11.sp,
                 fontWeight = FontWeight.Medium,
@@ -162,13 +162,13 @@ internal fun TimerExpandedContent(
                 Text(
                     text = "Timer",
                     color = IslandColors.CapsuleOrange,
-                    fontSize = (12f * scale).sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = if (isPaused) "Paused" else label,
                     color = IslandColors.CapsuleOrange,
-                    fontSize = (25f * scale).sp,
+                    fontSize = 25.sp,
                     fontWeight = FontWeight.Bold
                 )
             }

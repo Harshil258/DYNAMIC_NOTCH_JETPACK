@@ -23,7 +23,8 @@ data class MediaPlaybackSnapshot(
     val durationMs: Long,
     val positionMs: Long,
     val isPlaying: Boolean,
-    val albumArtUri: String?
+    val albumArtUri: String?,
+    val supportedActions: Long = 0L
 )
 
 /** Platform command boundary for the media actions rendered by the island. */
@@ -215,7 +216,8 @@ object MediaPlaybackRegistry {
                 android.os.SystemClock.elapsedRealtime()
             ),
             isPlaying = isPlaying,
-            albumArtUri = metadata?.getString(MediaMetadata.METADATA_KEY_ART_URI)
+            albumArtUri = metadata?.getString(MediaMetadata.METADATA_KEY_ART_URI),
+            supportedActions = playbackState?.actions ?: 0L
         )
         updateTicker(isPlaying)
     }

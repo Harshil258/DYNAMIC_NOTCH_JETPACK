@@ -372,6 +372,18 @@ data class AppIslandTokens(
     val mediaAlbumArtSize: Dp = 53.dp,
     val mediaAlbumArtCorner: Dp = 8.dp,
     val mediaAlbumArtLeftInset: Dp = 24.dp,
+    val mediaTopInset: Dp = 32.dp,
+    val mediaBottomInset: Dp = 10.dp,
+    val mediaRegionGap: Dp = 4.dp,
+    val mediaTitleGap: Dp = 21.dp,
+    val mediaTransportLeadingInset: Dp = 74.dp,
+    val mediaTransportSafeWidth: Dp = 293.dp,
+    val callControlSize: Dp = 50.dp,
+    val callControlGlyph: Dp = 22.dp,
+    val callContentInset: Dp = 29.dp,
+    val callTopInset: Dp = 34.dp,
+    val callBottomInset: Dp = 24.dp,
+    val callAvatarSize: Dp = 44.3.dp,
     /** Turn-by-turn route surface canonical height from Expanded.svg (185.3dp). */
     val navigationExpandedHeight: Dp = 185.3.dp,
     /** Music expanded height (full sheet with scrubber and controls). */

@@ -132,7 +132,7 @@ fun OngoingCallIslandBanner(
                         AppText(
                             text = name.split(" ").mapNotNull { it.firstOrNull()?.toString() }.take(2).joinToString("").ifEmpty { name.take(2).uppercase() },
                             style = AppTheme.typography.h2,
-                            fontSize = (20f * scale).sp,
+                            fontSize = 20.sp,
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
@@ -163,7 +163,7 @@ fun OngoingCallIslandBanner(
                     Text(
                         text = duration,
                         color = IslandColors.CapsuleGreen,
-                        fontSize = (12f * scale).sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.1).sp,
                         fontFamily = FontFamily.Monospace
@@ -172,7 +172,7 @@ fun OngoingCallIslandBanner(
                     Text(
                         text = name,
                         color = Color.White,
-                        fontSize = (17f * scale).sp,
+                        fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.3).sp,
                         maxLines = 1,
@@ -203,6 +203,7 @@ fun OngoingCallIslandBanner(
 /**
  * Ongoing call expanded card (166dp-172dp sheet) matching `Dynamic Island-13/14/15.svg`.
  */
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun OngoingCallIslandExpanded(
     name: String = "Tamia Castillo",
@@ -221,13 +222,13 @@ fun OngoingCallIslandExpanded(
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth().wrapContentHeight()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonVisualSize = 38.dp * scale
-        val buttonTouchSize = (44.dp * scale).coerceAtLeast(44.dp)
-        val iconGlyphSize = 18.dp * scale
-        val hPad = 20.dp * scale
-        val topPad = 14.dp * scale
-        val bottomPad = 14.dp * scale
-        val avatarSize = 40.dp * scale
+        val buttonVisualSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlSize
+        val buttonTouchSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlSize
+        val iconGlyphSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlGlyph
+        val hPad = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callContentInset
+        val topPad = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callTopInset
+        val bottomPad = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callBottomInset
+        val avatarSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callAvatarSize
 
         Column(
             modifier = Modifier
@@ -283,7 +284,7 @@ fun OngoingCallIslandExpanded(
                     Text(
                         text = name,
                         color = Color.White,
-                        fontSize = (17f * scale).sp,
+                        fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.3).sp,
                         maxLines = 1,
@@ -293,7 +294,7 @@ fun OngoingCallIslandExpanded(
                     Text(
                         text = if (variant == OngoingCallVariant.SharedMedia) label else "$label",
                         color = Color(0xFF898989),
-                        fontSize = (13f * scale).sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
                         letterSpacing = (-0.1).sp,
                         maxLines = 1,
@@ -316,16 +317,16 @@ fun OngoingCallIslandExpanded(
             }
 
             // ROW 2: Balanced circular call action controls
-            Row(
+            androidx.compose.foundation.layout.FlowRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.md)
             ) {
                 // 1. Speaker Button (Audio route: Inactive #2C2C2E / Active White)
-                Box(
+                if (canRenderIslandControl(IslandControlAction.CallToggleSpeaker)) Box(
                     modifier = Modifier
                         .size(buttonTouchSize)
-                        .clickable {
+                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
                             isSpeaker = !isSpeaker
                             onControlAction(IslandControlAction.CallToggleSpeaker)
                         }
@@ -352,10 +353,10 @@ fun OngoingCallIslandExpanded(
                 }
 
                 // 2. Microphone / Mute Button
-                Box(
+                if (canRenderIslandControl(IslandControlAction.CallToggleMute)) Box(
                     modifier = Modifier
                         .size(buttonTouchSize)
-                        .clickable {
+                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
                             isMuted = !isMuted
                             onControlAction(IslandControlAction.CallToggleMute)
                         }
@@ -380,10 +381,10 @@ fun OngoingCallIslandExpanded(
 
                 if (variant != OngoingCallVariant.Standard) {
                     // 3. FaceTime Video Camera Button
-                    Box(
+                    if (canRenderIslandControl(IslandControlAction.CallToggleVideo)) Box(
                         modifier = Modifier
                             .size(buttonTouchSize)
-                            .clickable {
+                            .clickable(role = androidx.compose.ui.semantics.Role.Button) {
                                 isVideoOn = !isVideoOn
                                 onControlAction(IslandControlAction.CallToggleVideo)
                             }
@@ -407,10 +408,10 @@ fun OngoingCallIslandExpanded(
                     }
 
                     // 4. SharePlay Button
-                    Box(
+                    if (canRenderIslandControl(IslandControlAction.CallToggleSharePlay)) Box(
                         modifier = Modifier
                             .size(buttonTouchSize)
-                            .clickable {
+                            .clickable(role = androidx.compose.ui.semantics.Role.Button) {
                                 isSharePlay = !isSharePlay
                                 onControlAction(IslandControlAction.CallToggleSharePlay)
                             }
@@ -435,10 +436,10 @@ fun OngoingCallIslandExpanded(
                 }
 
                 // 5. End Call Button (Apple Red #FA3532 with phone-down icon)
-                Box(
+                if (canRenderIslandControl(IslandControlAction.CallEnd)) Box(
                     modifier = Modifier
                         .size(buttonTouchSize)
-                        .clickable {
+                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
                             onEndCall()
                             onControlAction(IslandControlAction.CallEnd)
                         }

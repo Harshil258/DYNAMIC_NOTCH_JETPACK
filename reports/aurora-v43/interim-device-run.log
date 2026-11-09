@@ -1,0 +1,100 @@
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stream=
+ai.emots.kishan_dynamic.AuroraV43GalleryTest:
+INSTRUMENTATION_STATUS: test=captureEveryStateAndResponsiveBounds
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=captureEveryStateAndResponsiveBounds
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=2
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed to assert the following: (Text + EditableText = [])
+Semantics of the node:
+Node #14210 at (l=36.0, t=134.0, r=1044.0, b=182.0)px
+EditableText = ''
+TextSelectionRange = 'TextRange(0, 0)'
+IsEditable = 'true'
+ImeAction = 'Default'
+Focused = 'true'
+Text = '[Reply to message...]'
+Actions = [GetTextLayoutResult, SetText, InsertTextAtCursor, SetSelection, PerformImeAction, OnClick, OnLongClick, PasteText, RequestFocus, SetTextSubstitution, ShowTextSubstitution, ClearTextSubstitution, MagnifierPositionInRoot]
+MergeDescendants = 'true'
+Has 2 siblings
+Selector used: (SetText is defined)
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:265)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:255)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals(Assertions.kt:185)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals$default(Assertions.kt:181)
+	at ai.emots.kishan_dynamic.AuroraV43GalleryTest.replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity(AuroraV43GalleryTest.kt:90)
+
+INSTRUMENTATION_STATUS: stream=
+Error in replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity(ai.emots.kishan_dynamic.AuroraV43GalleryTest):
+java.lang.AssertionError: Failed to assert the following: (Text + EditableText = [])
+Semantics of the node:
+Node #14210 at (l=36.0, t=134.0, r=1044.0, b=182.0)px
+EditableText = ''
+TextSelectionRange = 'TextRange(0, 0)'
+IsEditable = 'true'
+ImeAction = 'Default'
+Focused = 'true'
+Text = '[Reply to message...]'
+Actions = [GetTextLayoutResult, SetText, InsertTextAtCursor, SetSelection, PerformImeAction, OnClick, OnLongClick, PasteText, RequestFocus, SetTextSubstitution, ShowTextSubstitution, ClearTextSubstitution, MagnifierPositionInRoot]
+MergeDescendants = 'true'
+Has 2 siblings
+Selector used: (SetText is defined)
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:265)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:255)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals(Assertions.kt:185)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals$default(Assertions.kt:181)
+	at ai.emots.kishan_dynamic.AuroraV43GalleryTest.replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity(AuroraV43GalleryTest.kt:90)
+
+INSTRUMENTATION_STATUS: test=replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_RESULT: stream=
+
+Time: 105.357
+There was 1 failure:
+1) replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity(ai.emots.kishan_dynamic.AuroraV43GalleryTest)
+java.lang.AssertionError: Failed to assert the following: (Text + EditableText = [])
+Semantics of the node:
+Node #14210 at (l=36.0, t=134.0, r=1044.0, b=182.0)px
+EditableText = ''
+TextSelectionRange = 'TextRange(0, 0)'
+IsEditable = 'true'
+ImeAction = 'Default'
+Focused = 'true'
+Text = '[Reply to message...]'
+Actions = [GetTextLayoutResult, SetText, InsertTextAtCursor, SetSelection, PerformImeAction, OnClick, OnLongClick, PasteText, RequestFocus, SetTextSubstitution, ShowTextSubstitution, ClearTextSubstitution, MagnifierPositionInRoot]
+MergeDescendants = 'true'
+Has 2 siblings
+Selector used: (SetText is defined)
+
+	at androidx.compose.ui.test.AssertionsKt.assert(Assertions.kt:265)
+	at androidx.compose.ui.test.AssertionsKt.assert$default(Assertions.kt:255)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals(Assertions.kt:185)
+	at androidx.compose.ui.test.AssertionsKt.assertTextEquals$default(Assertions.kt:181)
+	at ai.emots.kishan_dynamic.AuroraV43GalleryTest.replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity(AuroraV43GalleryTest.kt:90)
+
+FAILURES!!!
+Tests run: 2,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

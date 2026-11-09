@@ -57,8 +57,8 @@ fun MusicPlayerIsland(
 ) {
     var progress by remember { mutableFloatStateOf(initialProgress) }
     var isDragging by remember { mutableStateOf(false) }
-    var playing by remember(isPlaying) { mutableStateOf(isPlaying) }
-    var isAirPlayConnected by remember { mutableStateOf(false) }
+    val playing = isPlaying
+    // Output-route metadata is unavailable here; tapping Settings is not a connection event.
 
     LaunchedEffect(initialProgress) {
         if (!isDragging) {
@@ -76,13 +76,16 @@ fun MusicPlayerIsland(
 
     BoxWithConstraints(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val albumArtSize = 48.dp * scale
+        val compactControlRow = maxWidth < ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaTransportSafeWidth
+        val mediaHorizontalInset = if (compactControlRow) ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.lg else ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaAlbumArtLeftInset
+        val transportLeadingInset = (maxWidth - ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaTransportSafeWidth).coerceIn(0.dp, ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaTransportLeadingInset)
+        val albumArtSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaAlbumArtSize
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp * scale, vertical = 12.dp * scale),
-            verticalArrangement = Arrangement.spacedBy(10.dp * scale)
+                .padding(start = mediaHorizontalInset, end = mediaHorizontalInset, top = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaTopInset, bottom = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaBottomInset),
+            verticalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaRegionGap)
         ) {
             // ROW 1: Album Art (48dp squircle) + Title & Artist Column + Live Equalizer
             Row(
@@ -93,9 +96,9 @@ fun MusicPlayerIsland(
                 Box(
                     modifier = Modifier
                         .size(albumArtSize)
-                        .clip(RoundedCornerShape(10.dp * scale))
+                        .clip(RoundedCornerShape(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaAlbumArtCorner))
                         .background(Color(0xFF1C1C1E))
-                        .border(0.5.dp, Color(0x33FFFFFF), RoundedCornerShape(10.dp * scale)),
+                        .border(0.5.dp, Color(0x33FFFFFF), RoundedCornerShape(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaAlbumArtCorner)),
                     contentAlignment = Alignment.Center
                 ) {
                     UriArtwork(
@@ -107,7 +110,7 @@ fun MusicPlayerIsland(
                     )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp * scale))
+                Spacer(modifier = Modifier.width(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.mediaTitleGap))
 
                 Column(
                     modifier = Modifier.weight(1f),
@@ -117,29 +120,14 @@ fun MusicPlayerIsland(
                         Text(
                             text = title.ifBlank { "Now playing" },
                             color = Color.White,
-                            fontSize = (15f * scale).sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
 
-                        Spacer(modifier = Modifier.width(5.dp * scale))
+                        // Explicit metadata is not supplied by this source model; no fabricated badge.
 
-                        // Apple [E] Explicit Badge
-                        Box(
-                            modifier = Modifier
-                                .size(13.dp * scale)
-                                .clip(RoundedCornerShape(3.dp * scale))
-                                .background(Color.White.copy(alpha = 0.85f)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "E",
-                                color = Color.Black,
-                                fontSize = (7.5f * scale).sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
                     }
 
                     Spacer(modifier = Modifier.height(2.dp * scale))
@@ -147,7 +135,7 @@ fun MusicPlayerIsland(
                     Text(
                         text = artist.ifBlank { "Unknown Artist" },
                         color = Color(0xFF9A9A9A),
-                        fontSize = (12.5f * scale).sp,
+                        fontSize = 12.5.sp,
                         fontWeight = FontWeight.Normal,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -166,13 +154,14 @@ fun MusicPlayerIsland(
 
             // ROW 2: Scrubber timeline: currentTime | Progress Bar | remainingTime
             if (showScrubber) {
+                androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = currentTime,
-                        fontSize = (11f * scale).sp,
+                        fontSize = 11.sp,
                         color = Color(0xFF8E8E93),
                         fontWeight = FontWeight.Medium,
                         fontFamily = FontFamily.Monospace
@@ -200,11 +189,12 @@ fun MusicPlayerIsland(
 
                     Text(
                         text = remainingTime,
-                        fontSize = (11f * scale).sp,
+                        fontSize = 11.sp,
                         color = Color(0xFF8E8E93),
                         fontWeight = FontWeight.Medium,
                         fontFamily = FontFamily.Monospace
                     )
+                }
                 }
             }
 
@@ -213,15 +203,16 @@ fun MusicPlayerIsland(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp * scale),
+                    .padding(start = transportLeadingInset),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Rewind (44dp touch area, 22dp glyph)
-                Box(
+                if (canRenderIslandControl(IslandControlAction.MusicPrevious)) Box(
                     modifier = Modifier
-                        .size((44.dp * scale).coerceAtLeast(44.dp))
+                        .size(48.dp)
                         .clickable(
+                            role = androidx.compose.ui.semantics.Role.Button,
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = { progress = 0f; onPrevious() }
@@ -237,13 +228,14 @@ fun MusicPlayerIsland(
                 }
 
                 // Play / Pause (Centerpiece: Solid white glyph directly on black OLED surface, matching Group 3.png & Expanded.svg)
-                Box(
+                if (canRenderIslandControl(IslandControlAction.MusicPlayPause)) Box(
                     modifier = Modifier
                         .size((48.dp * scale).coerceAtLeast(48.dp))
                         .clickable(
+                            role = androidx.compose.ui.semantics.Role.Button,
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { playing = !playing; onPlayPause() }
+                            onClick = onPlayPause
                         )
                         .semantics { contentDescription = if (playing) "Pause playback" else "Play playback" },
                     contentAlignment = Alignment.Center
@@ -256,10 +248,11 @@ fun MusicPlayerIsland(
                 }
 
                 // Forward (44dp touch area, 22dp glyph)
-                Box(
+                if (canRenderIslandControl(IslandControlAction.MusicNext)) Box(
                     modifier = Modifier
-                        .size((44.dp * scale).coerceAtLeast(44.dp))
+                        .size(48.dp)
                         .clickable(
+                            role = androidx.compose.ui.semantics.Role.Button,
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
                             onClick = { progress = (progress + 0.05f).coerceAtMost(1f); onNext() }
@@ -275,20 +268,21 @@ fun MusicPlayerIsland(
                 }
 
                 // AirPlay / Route (44dp touch area, 19dp glyph)
-                Box(
+                if (!compactControlRow && canRenderIslandControl(IslandControlAction.MusicAirPlay)) Box(
                     modifier = Modifier
-                        .size((44.dp * scale).coerceAtLeast(44.dp))
+                        .size(48.dp)
                         .clickable(
+                            role = androidx.compose.ui.semantics.Role.Button,
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null,
-                            onClick = { isAirPlayConnected = !isAirPlayConnected; onAirPlay() }
+                            onClick = onAirPlay
                         )
                         .semantics { contentDescription = "Audio output" },
                     contentAlignment = Alignment.Center
                 ) {
                     AppleIcon(
                         glyph = AppleGlyph.AirPlay,
-                        tint = if (isAirPlayConnected) IslandColors.CapsuleCyan else Color(0xFF8E8E93),
+                        tint = Color(0xFF8E8E93),
                         size = 19.dp * scale
                     )
                 }

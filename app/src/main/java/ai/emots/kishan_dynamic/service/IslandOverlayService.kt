@@ -513,6 +513,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
             setContent {
                 val islandState by IslandStateManager.currentState.collectAsState()
                 val childBehavior by IslandStateManager.behaviorPresentation.collectAsState()
+                val mediaCapabilitySnapshot by MediaPlaybackRegistry.snapshot.collectAsState()
                 val unseenNotificationCount by IslandStateManager.unseenNotificationCount.collectAsState()
                 val isEnabled by preferences.islandEnabled.collectAsState(initial = true)
                 val alwaysOnTop by preferences.alwaysOnTop.collectAsState(initial = true)
@@ -618,6 +619,26 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 incoming.sourceNotificationId == null || incoming.declineActionId != null
                             } ?: true
                             val musicState = renderedState as? IslandState.Music
+                            val playbackMask = if (musicState?.track?.packageName == mediaCapabilitySnapshot?.packageName)
+                                mediaCapabilitySnapshot?.supportedActions ?: 0L else 0L
+                            fun supportsMedia(mask: Long) = playbackMask and mask != 0L
+                            val availableControls = IslandControlAction.entries.toMutableSet().apply {
+                                if (!supportsMedia(android.media.session.PlaybackState.ACTION_SKIP_TO_PREVIOUS)) remove(IslandControlAction.MusicPrevious)
+                                if (!supportsMedia(android.media.session.PlaybackState.ACTION_SKIP_TO_NEXT)) remove(IslandControlAction.MusicNext)
+                                val toggle = android.media.session.PlaybackState.ACTION_PLAY_PAUSE or
+                                    if (musicState?.isPlaying == true) android.media.session.PlaybackState.ACTION_PAUSE else android.media.session.PlaybackState.ACTION_PLAY
+                                if (!supportsMedia(toggle)) remove(IslandControlAction.MusicPlayPause)
+                                // No Android source bridge exists for the Apple video/share controls.
+                                removeAll(setOf(IslandControlAction.CallToggleVideo, IslandControlAction.CallToggleSharePlay,
+                                    IslandControlAction.VideoSkipBackward, IslandControlAction.VideoPlayPause, IslandControlAction.VideoSkipForward))
+                                val incoming = renderedState as? IslandState.IncomingCall
+                                val ongoing = renderedState as? IslandState.OngoingCall
+                                if (incoming == null || (incoming.acceptActionId == null && !callSystemController.canControlCalls())) remove(IslandControlAction.CallAccept)
+                                if (incoming == null || (incoming.declineActionId == null && !callSystemController.canControlCalls())) remove(IslandControlAction.CallDecline)
+                                if (ongoing == null || (ongoing.endActionId == null && !callSystemController.canControlCalls())) remove(IslandControlAction.CallEnd)
+                                if (!(getSystemService(NOTIFICATION_SERVICE) as android.app.NotificationManager).isNotificationPolicyAccessGranted)
+                                    remove(IslandControlAction.SilentToggle)
+                            }
                             val timerActivity = (renderedState as? IslandState.LiveActivity)?.activity?.takeIf {
                                 it.kind == ai.emots.kishan_dynamic.data.model.LiveActivityKind.TIMER
                             }
@@ -639,11 +660,21 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                     hideSensitiveContent = hideSensitiveContent
                                 )
                             }
-                            LaunchedEffect(notificationItems, replyingNotificationId, replyingAction) {
+                            // Validate against surviving canonical sources while a call temporarily owns the surface.
+                            val replyValidationItems = childBehavior.queue.notifications.map { source ->
+                                LockScreenPrivacyPolicy.notification(source, isDeviceLocked, hideSensitiveContent)
+                            }
+                            val callOwnsPresentation = renderedState is IslandState.IncomingCall || renderedState is IslandState.OngoingCall
+                            LaunchedEffect(callOwnsPresentation, replyingNotificationId) {
+                                if (callOwnsPresentation) restoreOverlayNonFocusable()
+                                else if (replyingNotificationId != null) enableOverlayFocusable()
+                            }
+                            LaunchedEffect(replyValidationItems, replyingNotificationId, replyingAction) {
                                 if (replyingNotificationId != null &&
                                     !ai.emots.kishan_dynamic.data.notification.NotificationReplyLifecyclePolicy.canKeepEditor(
-                                        replyingNotificationId, replyingAction?.id, notificationItems
+                                        replyingNotificationId, replyingAction?.id, replyValidationItems
                                     )) {
+                                    replyingNotificationId?.let { ai.emots.kishan_dynamic.data.notification.ReplyDraftMemory.store.clear(it) }
                                     replyingNotificationId = null
                                     replyingAction = null
                                     restoreOverlayNonFocusable()
@@ -668,6 +699,9 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                             ) {
                             DynamicIslandPill(
                                 state = demoState,
+                                availableControlActions = availableControls,
+                                readablePresentationToken = childBehavior.activeToken.takeIf { childBehavior.ownership == ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.TRANSIENT_PREVIEW },
+                                onPresentationReadable = { IslandStateManager.dispatchBehaviorEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PreviewReadable(it)) },
                                 horizontalScale = widthScale,
                                 flatTop = notchFlatTop,
                                 backgroundArgb = notchBgArgb,
@@ -718,7 +752,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                         IslandStateManager.collapseExpanded()
                                     }
                                 },
-                                onControlAction = ::handleIslandControlAction,
+                                onControlAction = { if (it in availableControls) handleIslandControlAction(it) },
                                 onOpenNotifications = { IslandStateManager.openNotifications() },
                                 actionApps = if (quickControlsEnabled) actionConfig.apps.filter { it.isEnabled } else emptyList(),
                                 actionSystemTiles = if (quickControlsEnabled) actionConfig.systemTiles else emptyList(),
@@ -754,6 +788,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                         NotificationActionRegistry.sendReply(this@IslandOverlayService, notifId, act.id, replyText)
                                     } else false
                                     if (dispatched) {
+                                        notifId?.let { ai.emots.kishan_dynamic.data.notification.ReplyDraftMemory.store.clear(it) }
                                         replyingNotificationId = null
                                         replyingAction = null
                                         restoreOverlayNonFocusable()
@@ -827,7 +862,7 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 callCanDecline = callCanDecline,
                                 musicTrack = musicState?.track,
                                 musicIsPlaying = musicState?.isPlaying ?: true,
-                                musicScrubberEnabled = musicScrubberEnabled,
+                                musicScrubberEnabled = musicScrubberEnabled && supportsMedia(android.media.session.PlaybackState.ACTION_SEEK_TO),
                                 pulseScale = if (isProActive) pulseScale else 1.15f,
                                 pulseDurationMillis = if (isProActive) pulseDuration else 450,
                                 hapticEnabled = if (isProActive) hapticFeedbackEnabled else true,

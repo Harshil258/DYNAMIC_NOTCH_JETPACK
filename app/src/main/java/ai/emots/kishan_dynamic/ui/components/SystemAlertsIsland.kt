@@ -70,9 +70,9 @@ internal fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit
                     Text(
                         text = "Turn Off Airplane Mode or Use",
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = (20f * scale).sp,
+                        lineHeight = 20.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -80,7 +80,7 @@ internal fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit
                     Text(
                         text = "Wi-Fi to Access Data",
                         color = Color(0xFFA4A4A9),
-                        fontSize = (14f * scale).sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -99,7 +99,7 @@ internal fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit
                 Text(
                     text = "Open Settings",
                     color = Color.White,
-                    fontSize = (16f * scale).sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -133,9 +133,9 @@ internal fun ScreenMirroringContent(
                     Text(
                         text = title.ifBlank { "Screen Mirroring" },
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = (20f * scale).sp,
+                        lineHeight = 20.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -143,7 +143,7 @@ internal fun ScreenMirroringContent(
                     Text(
                         text = subtitle.ifBlank { "MacBook Pro" },
                         color = Color(0xFF818383),
-                        fontSize = (13.5f * scale).sp,
+                        fontSize = 13.5.sp,
                         fontWeight = FontWeight.Normal,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -168,7 +168,7 @@ internal fun ScreenMirroringContent(
                 Text(
                     text = "Stop Mirroring",
                     color = Color(0xFF37A3DE),
-                    fontSize = (16f * scale).sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -207,9 +207,9 @@ internal fun MobileDataContent(onControlAction: (IslandControlAction) -> Unit = 
                     Text(
                         text = "Mobile Data is Turned Off",
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        lineHeight = (20f * scale).sp,
+                        lineHeight = 20.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -217,53 +217,19 @@ internal fun MobileDataContent(onControlAction: (IslandControlAction) -> Unit = 
                     Text(
                         text = "Turn on mobile data or use Wi-Fi\nto access data.",
                         color = Color(0xFF818383),
-                        fontSize = (13f * scale).sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
-                        lineHeight = (16.5f * scale).sp,
+                        lineHeight = 16.5.sp,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget),
-                horizontalArrangement = Arrangement.spacedBy(12.dp * scale)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(21.5.dp * scale))
-                        .background(Color(0xFF2C2C2D))
-                        .clickable { onControlAction(IslandControlAction.MobileDataOk) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "OK",
-                        color = Color.White,
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(21.5.dp * scale))
-                        .background(Color(0xFF1A1C2D))
-                        .clickable { onControlAction(IslandControlAction.MobileDataSettings) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Settings",
-                        color = Color(0xFF37A3DE),
-                        fontSize = (16f * scale).sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.md)) {
+                IslandPillAction("OK", { onControlAction(IslandControlAction.MobileDataOk) }, Modifier.weight(1f))
+                IslandPillAction("Settings", { onControlAction(IslandControlAction.MobileDataSettings) }, Modifier.weight(1f),
+                    background = IslandColors.ButtonCyan, textColor = IslandColors.CapsuleCyan)
             }
         }
     }
@@ -294,7 +260,7 @@ internal fun TransitRouteContent(
                     Text(
                         text = title.ifBlank { "Prague Main Train Station" },
                         color = Color.White,
-                        fontSize = (16.5f * scale).sp,
+                        fontSize = 16.5.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -303,7 +269,7 @@ internal fun TransitRouteContent(
                         Text(
                             text = subtitle,
                             color = IslandColors.TextSecondary,
-                            fontSize = (12f * scale).sp,
+                            fontSize = 12.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -322,7 +288,7 @@ internal fun TransitRouteContent(
                 Text(
                     text = "End Route",
                     color = Color(0xFFFA3532),
-                    fontSize = (16f * scale).sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -388,7 +354,7 @@ internal fun TurnByTurnNavigationContent(onControlAction: (IslandControlAction) 
             Text(
                 text = "90 ft",
                 color = Color.White,
-                fontSize = (26f * scale).sp,
+                fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.5).sp
             )
@@ -414,14 +380,14 @@ internal fun TurnByTurnNavigationContent(onControlAction: (IslandControlAction) 
                     Text(
                         text = "North",
                         color = Color.White,
-                        fontSize = (16.5f * scale).sp,
+                        fontSize = 16.5.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.2).sp
                     )
                     Text(
                         text = "San Francisco",
                         color = Color(0xFFA4A4A9),
-                        fontSize = (13.5f * scale).sp,
+                        fontSize = 13.5.sp,
                         fontWeight = FontWeight.Normal,
                         letterSpacing = (-0.1).sp
                     )
@@ -488,7 +454,7 @@ internal fun VoiceMemoExpandedContent(onControlAction: (IslandControlAction) -> 
             Text(
                 text = "00:06",
                 color = Color(0xFFFA3532),
-                fontSize = (16.5f * scale).sp,
+                fontSize = 16.5.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,
                 modifier = Modifier.offset(x = 16.dp * scale)
@@ -553,7 +519,7 @@ internal fun ScreenRecordingExpandedContent(onControlAction: (IslandControlActio
                     Text(
                         text = "00:06",
                         color = Color(0xFFFA3532),
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.Monospace
                     )
@@ -564,7 +530,7 @@ internal fun ScreenRecordingExpandedContent(onControlAction: (IslandControlActio
                 Text(
                     text = "Screen Recording",
                     color = Color.White,
-                    fontSize = (15f * scale).sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.2).sp
                 )
@@ -640,7 +606,7 @@ internal fun ShortcutExpandedContent(onControlAction: (IslandControlAction) -> U
                     Text(
                         text = "Shortcut",
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.3).sp
                     )
@@ -648,7 +614,7 @@ internal fun ShortcutExpandedContent(onControlAction: (IslandControlAction) -> U
                     Text(
                         text = "100%",
                         color = Color(0xFFA4A4A9),
-                        fontSize = (13f * scale).sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Normal
                     )
                 }
@@ -721,7 +687,7 @@ internal fun FocusModeExpandedContent() {
                     Text(
                         text = "Do Not Disturb",
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -730,7 +696,7 @@ internal fun FocusModeExpandedContent() {
                     Text(
                         text = "On",
                         color = Color(0xFF37A3DE),
-                        fontSize = (13f * scale).sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Medium
                     )
                 }
@@ -747,7 +713,7 @@ internal fun FocusModeExpandedContent() {
                 Text(
                     text = "On",
                     color = Color(0xFF37A3DE),
-                    fontSize = (14f * scale).sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -797,7 +763,7 @@ internal fun VideoRemoteExpandedContent(onControlAction: (IslandControlAction) -
                         Text(
                             text = "Video",
                             color = Color.White,
-                            fontSize = (16f * scale).sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -809,7 +775,7 @@ internal fun VideoRemoteExpandedContent(onControlAction: (IslandControlAction) -
                             Text(
                                 text = "Samsung TV",
                                 color = Color(0xFF898989),
-                                fontSize = (13.5f * scale).sp,
+                                fontSize = 13.5.sp,
                                 fontWeight = FontWeight.Normal,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -837,7 +803,7 @@ internal fun VideoRemoteExpandedContent(onControlAction: (IslandControlAction) -
                 Text(
                     text = "0:50",
                     color = Color(0xFF898989),
-                    fontSize = (11f * scale).sp,
+                    fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Medium
                 )
@@ -865,7 +831,7 @@ internal fun VideoRemoteExpandedContent(onControlAction: (IslandControlAction) -
                 Text(
                     text = "-3:11",
                     color = Color(0xFF898989),
-                    fontSize = (11f * scale).sp,
+                    fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Medium
                 )
@@ -988,14 +954,14 @@ internal fun AirDropActivityContent(onControlAction: (IslandControlAction) -> Un
                     Text(
                         text = "AirDrop",
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
                         letterSpacing = (-0.3).sp
                     )
                     Text(
                         text = "from Chris",
                         color = Color(0xFFA4A4A9),
-                        fontSize = (15f * scale).sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Normal,
                         letterSpacing = (-0.2).sp,
                         maxLines = 1,
@@ -1096,7 +1062,7 @@ internal fun AirPodsConnectedContent(
                     Text(
                         text = subtitle.substringBefore(" · ").ifBlank { "Connected" },
                         color = Color(0xFFA4A4A9),
-                        fontSize = (12f * scale).sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         letterSpacing = (-0.1).sp
                     )
@@ -1104,7 +1070,7 @@ internal fun AirPodsConnectedContent(
                     Text(
                         text = title.ifBlank { "Ladislav's AirPods" },
                         color = Color.White,
-                        fontSize = (16f * scale).sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.3).sp,
                         maxLines = 1,
@@ -1148,7 +1114,7 @@ internal fun AirPodsConnectedContent(
                 Text(
                     text = batteryProgress?.let { "${(it * 100).roundToInt()}%" } ?: "—",
                     color = Color(0xFF37C058),
-                    fontSize = (13f * scale).sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.Monospace
                 )
@@ -1197,7 +1163,7 @@ internal fun SatelliteConnectionContent(
                     Text(
                         text = title.ifBlank { "CONNECTED" },
                         color = Color(0xFF37C058),
-                        fontSize = (11f * scale).sp,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp
                     )
@@ -1205,7 +1171,7 @@ internal fun SatelliteConnectionContent(
                     Text(
                         text = subtitle.ifBlank { "Keep pointing at Satellite" },
                         color = Color.White,
-                        fontSize = (15.5f * scale).sp,
+                        fontSize = 15.5.sp,
                         fontWeight = FontWeight.SemiBold,
                         letterSpacing = (-0.2).sp,
                         maxLines = 1,
@@ -1265,7 +1231,7 @@ internal fun FindMyAlertContent(
             Text(
                 text = title.ifBlank { "Find My iPhone Alert" },
                 color = Color.White,
-                fontSize = (17f * scale).sp,
+                fontSize = 17.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = (-0.3).sp,
                 maxLines = 1,
@@ -1312,7 +1278,7 @@ internal fun MovedToIPhoneContent(
                 Text(
                     text = title.ifBlank { "Moved to iPhone" },
                     color = Color(0xFFA4A4A9),
-                    fontSize = (16f * scale).sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.2).sp,
                     maxLines = 1,

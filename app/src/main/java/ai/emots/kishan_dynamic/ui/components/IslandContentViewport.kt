@@ -26,7 +26,8 @@ internal fun IslandContentViewport(
 ) {
     val scrollState = rememberScrollState()
     Layout(content = {
-        Box(modifier = if (compact) Modifier else Modifier.verticalScroll(scrollState)) { content() }
+        Box(modifier = if (compact) Modifier else Modifier.verticalScroll(scrollState),
+            contentAlignment = if (compact) androidx.compose.ui.Alignment.Center else androidx.compose.ui.Alignment.TopStart) { content() }
     }) { measurables, constraints ->
         val width = targetWidth.roundToPx().coerceAtLeast(1)
         val heightLimit = if (compact) compactHeight.roundToPx() else maxExpandedHeight.roundToPx()
@@ -38,7 +39,8 @@ internal fun IslandContentViewport(
         if (!compact) onContentHeight(child.height.toDp())
         layout(constraints.maxWidth, constraints.maxHeight) {
             // Place at the final width throughout the morph: text never rewraps per frame.
-            child.placeRelative((constraints.maxWidth - width) / 2, 0)
+            child.placeRelative((constraints.maxWidth - width) / 2,
+                ((constraints.maxHeight - child.height) / 2).coerceAtLeast(0))
         }
     }
 }

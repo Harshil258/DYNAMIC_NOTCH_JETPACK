@@ -1,0 +1,61 @@
+EnumState,FamilyGeometryReference,SlotCompositionAndGravity,Classification,BaselineBranch
+Idle,127×36 R18,empty surface; align to measured cutout,MEASURED,codex/task-05-layered-mini-islands
+Minimal,108×32 R15.9018,no content; owner red #DC0917 at 0.60,OWNER,codex/task-05-layered-mini-islands
+MusicCompact,190×36.67 R18.335,"L artwork 22, T waveform 17; no fabricated title crowding",IMPLEMENTATION,codex/task-05-layered-mini-islands
+MusicExpanded,367×177 R42,L art 53×53 at x24; C aligned track/artist; T waveform; B scrubber+transport,MEASURED,codex/task-05-layered-mini-islands
+CallCompact,152×36.67 R18.335,L phone/active glyph; T stable time; controls only if space,IMPLEMENTATION,codex/task-05-layered-mini-islands
+CallExpanded,367×166 R42,"L avatar 44; C caller+medium; B 5 capability-gated controls, pitch64",MEASURED,codex/task-05-layered-mini-islands
+CallSummaryExpanded,367×112 R42,L call icon; C identity+duration; optional valid callback CTA,IMPLEMENTATION,codex/task-05-layered-mini-islands
+FaceTimeCallExpanded,367×168 R42,L avatar; C video-call identity; B available video/call actions,IMPLEMENTATION,codex/task-05-layered-mini-islands
+SharedMediaCallExpanded,367×172.64 R42,L call identity; C active shared-media label; B valid controls,IMPLEMENTATION,codex/task-05-layered-mini-islands
+OngoingCallBanner,367×86 R43,L call status; C caller+elapsed; T action when supported,IMPLEMENTATION,codex/task-05-layered-mini-islands
+NotificationCompact,intrinsic 120–250×36.67 R18.335,L app glyph; C short label; T numeric count; no 3-line message,IMPLEMENTATION,codex/task-05-layered-mini-islands
+NotificationStacked,main 120–250×36.67 R18.335; expanded stack uses MINI,compact main is a count cue; children ONLY under expanded main,IMPLEMENTATION,codex/task-05-layered-mini-islands
+NotificationWithMusicCompact,"190×36.67 R18.335 + 36.7 bubble, gap11",L media; T alert count; preserve media identity,IMPLEMENTATION,codex/task-05-layered-mini-islands
+NotificationExpanded,367×86–162 R43 (86); R42 (142+),L app icon; C sender+message; B actual actions/reply; pager fixed header,MIXED,codex/task-05-layered-mini-islands
+SilentModeCompact,152×36.67 R18.335,L bell-slash; T silent status,IMPLEMENTATION,codex/task-05-layered-mini-islands
+SilentModeExpanded,367×86 R43,L glyph; C Silent mode/On; T 79×34 Unmute if supported,MEASURED,codex/task-05-layered-mini-islands
+RingerModeExpanded,367×86 R43,L ringer glyph; C mode/level; T real control,IMPLEMENTATION,codex/task-05-layered-mini-islands
+VibrateModeCompact,172×36.67 R18.335,L vibrate glyph; T mode,IMPLEMENTATION,codex/task-05-layered-mini-islands
+NormalModeCompact,172×36.67 R18.335,L sound glyph; T active mode,IMPLEMENTATION,codex/task-05-layered-mini-islands
+RingerVolumeCompact,172×36.67 R18.335,L sound glyph; T level with fixed-width numerals,IMPLEMENTATION,codex/task-05-layered-mini-islands
+MediaVolumeCompact,172×36.67 R18.335,L media sound; T level with fixed-width numerals,IMPLEMENTATION,codex/task-05-layered-mini-islands
+BluetoothConnected,196×36.67 R18.335; contextual 366×95 R46,compact L device/T state; contextual L thumb/C name/T ring,MIXED,codex/task-05-layered-mini-islands
+BluetoothConnecting,196×36.67 R18.335,"L BT glyph; T spinner/progress, no fake cancel",IMPLEMENTATION,codex/task-05-layered-mini-islands
+ActionControlExpanded,"367×210 R42, dynamic height","real capabilities only; grid aligns L/C/T, target48 each",IMPLEMENTATION,codex/task-05-layered-mini-islands
+PremiumExpiryExpanded,367×112 R42 (proposal),L entitlement glyph; C expiry; B real settings action; low priority,PROPOSED,codex/task-05-layered-mini-islands
+ChargingCompact,132×36.67 R18.335,L charging bolt; T percentage fixed-width,IMPLEMENTATION,codex/task-05-layered-mini-islands
+ChargingExpanded,367×86 R43,L battery icon; C charge label/ETA; T percent,IMPLEMENTATION,codex/task-05-layered-mini-islands
+LowBatteryCompact,132×36.67 R18.335,L battery; T percent/status,IMPLEMENTATION,codex/task-05-layered-mini-islands
+LowBatteryExpanded,367×86 R43,L warning/battery; C actionable message; T if valid CTA,IMPLEMENTATION,codex/task-05-layered-mini-islands
+TimerCompact,222×36.67 R18.335,L timer ring; T tabular countdown fixed width,IMPLEMENTATION,codex/task-05-layered-mini-islands
+TimerExpanded,367×85.73 R43,L pause + cancel as real actions; T Timer label + countdown,MEASURED,codex/task-05-layered-mini-islands
+DeliveryCompact,160×36.67 R18.335,L package; T meaningful milestone,IMPLEMENTATION,codex/task-05-layered-mini-islands
+DeliveryExpanded,367×144 R42,L package/status; C milestone/ETA; B supported Track action,IMPLEMENTATION,codex/task-05-layered-mini-islands
+FlightCompact,160×36.67 R18.335,L flight glyph; T code/time,IMPLEMENTATION,codex/task-05-layered-mini-islands
+FlightExpanded,367×144 R42,L flight identity; C route/gate/status; B real source action,IMPLEMENTATION,codex/task-05-layered-mini-islands
+SportsCompact,156×36.67 R18.335,L team/sport glyph; T score/time; no cricket fixture,IMPLEMENTATION,codex/task-05-layered-mini-islands
+SportsExpanded,367×144 R42,L teams; C score/state; B supported Open source,IMPLEMENTATION,codex/task-05-layered-mini-islands
+NavigationCompact,156×36.67 R18.335; optional 408×96 R44,L maneuver; T metric; large variant two-line only if justified,MIXED,codex/task-05-layered-mini-islands
+VoiceMemoExpanded,367×86 R43,L red waveform; T elapsed/real Stop action if app-owned,MEASURED,codex/task-05-layered-mini-islands
+ScreenRecordingExpanded,367×86 R43,L red record dot; C Recording/elapsed; T real stop action,MEASURED,codex/task-05-layered-mini-islands
+ShortcutExpanded,367×85.08 R43,L shortcut glyph; C result/progress; T completion status,MEASURED,codex/task-05-layered-mini-islands
+FocusModeExpanded,367×86 R43,L focus glyph; C state; T settings/capability-backed CTA,IMPLEMENTATION,codex/task-05-layered-mini-islands
+AirPodsConnected,367×86 R43 (atlas) / 366×95 R46 (community),L earbuds/device; C name + Connected; T battery ring,MEASURED,codex/task-05-layered-mini-islands
+SatelliteConnected,367×86 R43,L satellite ring; C connected/status; T real action or none,MEASURED,codex/task-05-layered-mini-islands
+FindMyAlert,367×86 R43,L concentric ring; C single line alert; no forced trailing,MEASURED,codex/task-05-layered-mini-islands
+MovedToIPhone,367×86 R43,L device glyph; C handoff status; T Undo 70×34 if valid,MEASURED,codex/task-05-layered-mini-islands
+VideoRemoteExpanded,367×177 R42,L video thumb; C playing text; B scrub ±15s and real output controls,MEASURED,codex/task-05-layered-mini-islands
+AirDropActivity,367×86 R43,L rings + thumbnail; C transfer/from sender; T progress ring,MEASURED,codex/task-05-layered-mini-islands
+TimerImage,367×86 R43 (contextual); small compact only if separate variant,L timer image; C timer identity; T stable time,IMPLEMENTATION,codex/task-05-layered-mini-islands
+NotificationImage,367×86–126 R43/R44 by content,L thumbnail if safe; C sender/body; T count; no clipping,MIXED,codex/task-05-layered-mini-islands
+CallAvatars,367×86 R43; expandable to 166 R42 if real actions,L multi-avatar; C group/caller; T real controls,IMPLEMENTATION,codex/task-05-layered-mini-islands
+TransportActivity,367×148 R42,L vehicle/route; C ETA/status; B real supported action,IMPLEMENTATION,codex/task-05-layered-mini-islands
+FlightTrackerExpanded,367×144–162 R42,L route glyph; C departure/arrival; B status and source CTA,IMPLEMENTATION,codex/task-05-layered-mini-islands
+SubscriptionPricing,367×162 R42,L app promo; C price/benefit; B honest optional CTA; never intrusive,IMPLEMENTATION,codex/task-05-layered-mini-islands
+MovieCard,367×142 R42,L poster; C film/session; B actual ticket action or none,IMPLEMENTATION,codex/task-05-layered-mini-islands
+ColorOptions,367×185.3 R42,swatches in intentional rows; Playground-only fixture,IMPLEMENTATION,codex/task-05-layered-mini-islands
+AirplaneAlert,367×148 R42,L airplane glyph; C status explanation; B settings CTA only,MEASURED,codex/task-05-layered-mini-islands
+ScreenMirroringAlert,367×144 R42,L screen icon; C mirroring status; T supported stop CTA,MEASURED,codex/task-05-layered-mini-islands
+MobileDataAlert,367×162 R42,L network glyph; C message; B two real CTA pills,MEASURED,codex/task-05-layered-mini-islands
+TransitRouteAlert,367×142 R42,L train; C route/station; B validated End Route CTA,MEASURED,codex/task-05-layered-mini-islands

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.648Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+  <properties/>
+  <testcase name="liveWorkAndCallsCannotBeReplaced" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <testcase name="ordinaryNotificationCannotReplaceVisibleCriticalAlert" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <testcase name="transientConfirmationFinishesBeforeNotificationAppears" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <testcase name="expandedNotificationUpdatesWithoutChangingUserSurface" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <testcase name="expandedMusicDefersNotification" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <testcase name="quickControlsRemainVisible" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <testcase name="compactMusicCanBecomeNotificationMusicSplit" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <testcase name="authoritativeAlarmCanInterruptControlsButNotACall" classname="ai.emots.kishan_dynamic.data.notification.NotificationInterruptionPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -21,7 +21,9 @@ References are visual evidence, not Android hardware measurements.
 
 ## Compact / minimal
 
-- Visual body height: 36.67dp. Interactive layout target: at least 48dp, including
+- Visual status body height: 36.67dp. The owner Minimal specimen is a separate
+  108×32dp R15.9018 surface (#DC0917 at60%, no content), never Idle or a companion.
+  Interactive layout target: at least 48dp, including
   the compact body/companion. Transparent vertical hit clearance is intentional;
   it is not content padding. Hidden windows remain invisible and non-touchable.
 - Notification width = 12dp leading + 20dp icon + 8dp gap + measured label width
@@ -37,7 +39,9 @@ References are visual evidence, not Android hardware measurements.
 
 ## Expanded / actions
 
-- Outer width: at most current window width minus 22dp, capped at 408dp.
+- Outer width follows the V4.3 family canvas: Atlas367@393, Presentation408@430,
+  Community366@430. Remove actual safe insets once; never use a global430 scale.
+  Content may grow beyond preferred reference heights and remains viewport-bounded.
 - Standard content padding: 16dp; region gap: 12dp; inline gap: 8dp; text gap: 4dp.
   The access card uses a 32dp icon and 24dp card corners.
 - Put descriptive content above action groups. Do not place multiple text buttons

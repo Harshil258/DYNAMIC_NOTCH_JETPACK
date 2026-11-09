@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.653Z" hostname="Vekariyas-Mac-mini.local" time="0.003">
+  <properties/>
+  <testcase name="silentPostAddsNotificationWithoutChangingExpandedSelection" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="removalRestoresTheNextNotification" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.001"/>
+  <testcase name="lateGroupSummaryIsIgnoredWhenChildrenAlreadyExist" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="queuePagingNextAndPreviousCycles" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="ongoingSilentUpdateUpdatesInPlaceWithoutOverridingActiveNotification" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="sameSenderWithDifferentAndroidKeysRemainsTwoSources" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="removingAnotherNotificationPreservesExpandedSelection" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="deterministicTieBreakingForEqualTimestamps" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="repostReplacesTheSameNotification" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="removingSelectedNotificationChoosesNearestSurvivor" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.001"/>
+  <testcase name="dismissActiveRemovesActiveAndAdvancesToNext" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="presentationExpiryDoesNotEvictActiveNotificationFromQueue" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="childNotificationReplacesGroupSummaryWithoutDuplication" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="exactUpdateRemovesActionsNoLongerExposedBySource" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <testcase name="queueCapPreservesSelectedPageAndOngoingWork" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.001"/>
+  <testcase name="newestFirstDeterminesQueueOrderRegardlessOfPriority" classname="ai.emots.kishan_dynamic.data.notification.NotificationReducerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

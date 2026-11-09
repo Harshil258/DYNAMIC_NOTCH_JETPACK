@@ -62,14 +62,15 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
     val systemMotionDisabled = android.os.Build.VERSION.SDK_INT >= 26 && !android.animation.ValueAnimator.areAnimatorsEnabled()
     val reduced = o.reducedMotion || systemMotionDisabled || (o.motionOverride && !o.motion.enabled)
     CompositionLocalProvider(LocalAppIsland provides tokens, LocalIslandRenderSettings provides settings,
-        LocalIslandGeometryObserver provides observer, LocalReducedMotion provides reduced) {
+        LocalIslandGeometryObserver provides observer, LocalReducedMotion provides reduced,
+        LocalIslandReplyDraftStore provides controller.replyDrafts) {
         // Same renderer, mapping, controls and motion code as the real overlay.
         val source = snapshot.state
         val notifications = when (source) {
             is IslandState.Notification -> source.notifications
             is IslandState.NotificationWithMusic -> source.notifications
             else -> emptyList()
-        }
+        }.map { ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicy.notification(it, snapshot.layeredRedaction, true) }
         val activity = (source as? IslandState.LiveActivity)?.activity
         val count = if (snapshot.selected == PlaygroundCase.Minimal) 1 else notifications.size.coerceAtLeast(1)
         val duration = if (o.motionOverride) o.motion.effectiveDuration else 180
@@ -83,6 +84,8 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
                     onPromote = { key, token -> controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.TapChild(key, token)) }) {
                 DynamicIslandPill(
                     state = resolveOverlayDemoState(source, count),
+                    readablePresentationToken = snapshot.behavior.activeToken.takeIf { snapshot.behavior.ownership == ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.TRANSIENT_PREVIEW },
+                    onPresentationReadable = { controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PreviewReadable(it)) },
                     onTap = { controller.interaction() }, onLongPress = { controller.interaction(longPress = true) },
                     onCompanionTap = { controller.interaction(companion = true) },
                     onCompanionLongPress = { controller.interaction(longPress = true) },
@@ -90,7 +93,12 @@ fun PlaygroundIsland(snapshot: PlaygroundSnapshot, controller: PlaygroundControl
                     notifications = notifications, unseenNotificationCount = count,
                     notificationActiveIndex = (source as? IslandState.Notification)?.activeIndex ?: 0,
                     onNotificationSelect = controller::selectNotification,
-                    onNotificationAction = { _, action -> if (action.id == "mock-retry") controller.select(PlaygroundCase.Success) else controller.message("Mock action: ${action.label} · no external action") },
+                    replyingNotificationId = snapshot.replyingNotificationId.takeIf { snapshot.behavior.targetPresentation == ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.REPLY },
+                    replyAction = snapshot.replyAction,
+                    onSendReply = { controller.finishReply(simulatedSend = true) },
+                    onCancelReply = { controller.finishReply(simulatedSend = false) },
+                    onNotificationAction = { notification, action -> if (action.isReply) controller.startReply(notification.id, action)
+                        else if (action.id == "mock-retry") controller.select(PlaygroundCase.Success) else controller.message("Mock action: ${action.label} · no external action") },
                     onNotificationDismiss = { id -> controller.dismissNotification(id) },
                     musicTrack = (source as? IslandState.Music)?.track ?: (source as? IslandState.NotificationWithMusic)?.track,
                     musicIsPlaying = (source as? IslandState.Music)?.isPlaying ?: true,
@@ -144,7 +152,7 @@ fun PlaygroundPhonePreview(snapshot: PlaygroundSnapshot, controller: PlaygroundC
         snapshot.state.presentationMode == IslandPresentationMode.EXPANDED, (28 * o.density).toInt(),
         (11 * o.density).toInt(), (o.cameraClearance * o.density).toInt(),
         if (cameraWidth > 0) listOf(hole) else emptyList())
-    val height = 240.dp
+    val height = maxOf(240.dp, (islandSize.height / o.density + placement.top / o.density).dp + AppTheme.spacing.xxxl)
     Box(Modifier.fillMaxWidth().testTag("playground_preview")
         .onGloballyPositioned { viewportBounds = it.boundsInRoot() }) {
         ScaledPhone((o.width * o.density).toInt()) {

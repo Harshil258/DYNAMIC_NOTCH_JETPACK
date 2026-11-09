@@ -93,7 +93,7 @@ fun NavigationIslandExpanded(
                     Column {
                         Text(
                             text = statusText,
-                            fontSize = (10f * scale).sp,
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = IslandColors.Green,
                             letterSpacing = 0.5.sp
@@ -101,7 +101,7 @@ fun NavigationIslandExpanded(
                         Text(
                             text = distance,
                             color = Color.White,
-                            fontSize = (21f * scale).sp,
+                            fontSize = 21.sp,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = (-0.5).sp
                         )
@@ -161,7 +161,7 @@ fun NavigationIslandExpanded(
                     Text(
                         text = roadName,
                         color = Color.White,
-                        fontSize = (14.5f * scale).sp,
+                        fontSize = 14.5.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.2).sp,
                         maxLines = 1,
@@ -170,7 +170,7 @@ fun NavigationIslandExpanded(
                     Text(
                         text = destination,
                         color = Color(0xFFA4A4A9),
-                        fontSize = (11.5f * scale).sp,
+                        fontSize = 11.5.sp,
                         fontWeight = FontWeight.Normal,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis

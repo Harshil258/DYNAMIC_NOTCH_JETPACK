@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.265Z" hostname="Vekariyas-Mac-mini.local" time="0.005">
+  <properties/>
+  <testcase name="unlockedOtpAndFinanceRespectSensitivePreviewPreference" classname="ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest" time="0.004"/>
+  <testcase name="sensitiveOtpIsRedactedOnLockAndDuringProtectedUnlockedPreview" classname="ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest" time="0.0"/>
+  <testcase name="explicitlyPublicNotificationCanRemainVisible" classname="ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest" time="0.0"/>
+  <testcase name="callIdentityIsMaskedWhileLocked" classname="ai.emots.kishan_dynamic.data.model.LockScreenPrivacyPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

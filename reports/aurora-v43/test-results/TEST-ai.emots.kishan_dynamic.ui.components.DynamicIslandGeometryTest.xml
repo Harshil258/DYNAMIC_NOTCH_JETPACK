@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:41.319Z" hostname="Vekariyas-Mac-mini.local" time="0.017">
+  <properties/>
+  <testcase name="allCollapsedStatesUseTheSharedCompactClassification" classname="ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest" time="0.013"/>
+  <testcase name="timerUsesTheReferenceExportHeight" classname="ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest" time="0.002"/>
+  <testcase name="multipleNotificationsUseTheStackedPresentationUntilExpanded" classname="ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest" time="0.002"/>
+  <testcase name="minimalServiceStateUsesTheSplitPresentation" classname="ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest" time="0.0"/>
+  <testcase name="everyCollapsedStateResolvesToExactlyOneHeightToken" classname="ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest" time="0.0"/>
+  <testcase name="onePriorityNotificationUsesTheReferenceSplitPresentation" classname="ai.emots.kishan_dynamic.ui.components.DynamicIslandGeometryTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

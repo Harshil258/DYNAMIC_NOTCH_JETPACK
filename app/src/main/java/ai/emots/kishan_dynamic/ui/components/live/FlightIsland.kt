@@ -100,7 +100,7 @@ fun FlightIslandExpanded(
                     Column {
                         Text(
                             text = flightTitle,
-                            fontSize = (14f * scale).sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             maxLines = 1,
@@ -108,7 +108,7 @@ fun FlightIslandExpanded(
                         )
                         Text(
                             text = routeDesc,
-                            fontSize = (11f * scale).sp,
+                            fontSize = 11.sp,
                             color = IslandColors.Gray,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -121,11 +121,12 @@ fun FlightIslandExpanded(
                 IslandStatusBadge(
                     text = statusText,
                     tint = if (progress >= 1f) IslandColors.Green else IslandColors.CapsuleCyan,
-                    fontSize = (9f * scale).sp
+                    fontSize = 11.sp
                 )
             }
 
             // MIDDLE SECTION: Airport codes with route track and moving airplane marker
+            androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -133,7 +134,7 @@ fun FlightIslandExpanded(
             ) {
                 Text(
                     text = originCode,
-                    fontSize = (19f * scale).sp,
+                    fontSize = 19.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
@@ -186,10 +187,12 @@ fun FlightIslandExpanded(
 
                 Text(
                     text = destCode,
-                    fontSize = (19f * scale).sp,
+                    fontSize = 19.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
+            }
+
             }
 
             // BOTTOM ROW: Terminal, Gate & Estimated time remaining
@@ -200,14 +203,14 @@ fun FlightIslandExpanded(
             ) {
                 Text(
                     text = gateInfo,
-                    fontSize = (11f * scale).sp,
+                    fontSize = 11.sp,
                     color = IslandColors.Gray,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = timeRemaining,
-                    fontSize = (11.5f * scale).sp,
+                    fontSize = 11.5.sp,
                     color = IslandColors.CapsuleCyan,
                     fontWeight = FontWeight.SemiBold
                 )

@@ -139,7 +139,7 @@ class PlaygroundControllerTest {
         controller.scenarioCallRestore()
         assertEquals(ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.INTERRUPTED, controller.engineState.ownership)
         controller.scenarioCallEndRestore()
-        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.SYSTEM_IDLE, controller.engineState.ownership)
+        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.PAGER_ACTIVE, controller.engineState.ownership)
     }
     @Test fun layoutObservationCannotReplaceAnotherSelectedFixture() = runBlocking {
         val controller = PlaygroundController(this)
@@ -280,5 +280,35 @@ class PlaygroundControllerTest {
         val s50 = controller.snapshot.value.state as IslandState.Notification
         assertEquals(50, s50.notifications.size)
         assertTrue(s50.isExpanded)
+    }
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test fun readablePreviewEffectUsesOneSandboxScheduler() = kotlinx.coroutines.test.runTest {
+        val controller = PlaygroundController(this)
+        val source = mockNotification(PlaygroundOptions())
+        controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.IngestNotification(source))
+        val token = controller.engineState.activeToken
+        testScheduler.advanceTimeBy(10_000); testScheduler.runCurrent()
+        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandInteractionOwnership.TRANSIENT_PREVIEW, controller.engineState.ownership)
+        controller.dispatchEngineEvent(ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PreviewReadable(token))
+        testScheduler.advanceTimeBy(3501); testScheduler.runCurrent()
+        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.COMPACT, controller.engineState.targetPresentation)
+        controller.stopClock()
+    }
+    @Test fun sandboxReplyAndCallUseCanonicalOwnershipAndRetainOnlyValidDraft() = runBlocking {
+        val controller = PlaygroundController(this)
+        controller.select(PlaygroundCase.Expanded)
+        val source = controller.engineState.queue.notifications.single()
+        val action = source.actions.first { it.isReply }
+        controller.startReply(source.id, action)
+        controller.replyDrafts.write(source.id, action.id, "Unsent fixture draft")
+        controller.scenarioCallRestore()
+        assertEquals(source.id, controller.snapshot.value.replyingNotificationId)
+        controller.scenarioCallEndRestore()
+        assertEquals(ai.emots.kishan_dynamic.data.notification.IslandPresentationTarget.REPLY, controller.engineState.targetPresentation)
+        assertEquals("Unsent fixture draft", controller.replyDrafts.read(source.id, action.id))
+        controller.removeSourceNotification(source.id)
+        assertEquals("", controller.replyDrafts.read(source.id, action.id))
+        assertEquals(null, controller.snapshot.value.replyingNotificationId)
+        controller.stopClock()
     }
 }

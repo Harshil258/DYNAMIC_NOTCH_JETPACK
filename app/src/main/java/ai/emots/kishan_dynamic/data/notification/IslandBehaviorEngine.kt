@@ -109,6 +109,7 @@ sealed interface IslandEngineEvent {
     data class TapCloseButton(val key: String? = null) : IslandEngineEvent
     data object SwipeUp : IslandEngineEvent
     data object OutsideTap : IslandEngineEvent
+    data class PreviewReadable(val token: Long) : IslandEngineEvent
     data class PreviewTimeout(val token: Long) : IslandEngineEvent
     data class ChildTimeout(val childKey: String, val token: Long) : IslandEngineEvent
     data class SelectPage(val notificationId: String) : IslandEngineEvent
@@ -156,6 +157,8 @@ data class IslandBehaviorState(
     val visibleChildLimit: Int = 2,
     val tombstones: Map<String, IslandTombstone> = emptyMap(),
     val activeToken: Long = 0L,
+    val readablePreviewToken: Long? = null,
+    val pendingPreviewDurationMs: Long = 3500L,
     val nextChildToken: Long = 1L,
     val previousOwnership: IslandInteractionOwnership = IslandInteractionOwnership.SYSTEM_IDLE,
     val suspendedBeforeCall: IslandBehaviorState? = null
@@ -241,13 +244,19 @@ class IslandBehaviorEngine(
             is IslandEngineEvent.TapCloseButton -> handleCloseButton(state, event.key, nowMonotonic, settings)
             is IslandEngineEvent.SwipeUp -> handleSwipeUp(state)
             is IslandEngineEvent.OutsideTap -> handleOutsideTap(state)
+            is IslandEngineEvent.PreviewReadable -> {
+                if (event.token != state.activeToken || state.ownership != IslandInteractionOwnership.TRANSIENT_PREVIEW || state.readablePreviewToken == event.token)
+                    IslandBehaviorDecision(state, IslandDomainAction.None, reason = "stale_or_duplicate_readable_ack")
+                else IslandBehaviorDecision(state.copy(readablePreviewToken = event.token), IslandDomainAction.None,
+                    effects = listOf(IslandSideEffect.StartPreviewTimer(event.token, state.pendingPreviewDurationMs)))
+            }
             is IslandEngineEvent.PreviewTimeout -> handlePreviewTimeout(state, event.token)
             is IslandEngineEvent.ChildTimeout -> handleChildTimeout(state, event.childKey, event.token)
             is IslandEngineEvent.SelectPage -> handleSelectPage(state, event.notificationId)
             is IslandEngineEvent.NextPage -> handleNextPage(state)
             is IslandEngineEvent.PreviousPage -> handlePreviousPage(state)
             is IslandEngineEvent.IncomingCallPreempt -> handleIncomingCall(state)
-            is IslandEngineEvent.CallEnded -> handleCallEnded(state)
+            is IslandEngineEvent.CallEnded -> handleCallEnded(state, nowMonotonic)
             is IslandEngineEvent.StartReply -> handleStartReply(state)
             is IslandEngineEvent.ExitReply -> handleExitReply(state)
             is IslandEngineEvent.DoubleTapCompact -> handleDoubleTapCompact(state)
@@ -462,10 +471,12 @@ class IslandBehaviorEngine(
                 ownership = nextOwnership,
                 targetPresentation = nextPresentation,
                 activeToken = nextToken,
+                readablePreviewToken = null,
+                pendingPreviewDurationMs = duration,
                 tombstones = updatedTombstones
             ),
             action = action,
-            effects = listOf(IslandSideEffect.StartPreviewTimer(nextToken, duration)),
+            effects = emptyList(),
             reason = if (isMilestoneResurfacing) "milestone_resurfaced_transient" else "new_notification_auto_preview"
         )
     }
@@ -1037,9 +1048,15 @@ class IslandBehaviorEngine(
         )
     }
 
-    private fun handleCallEnded(state: IslandBehaviorState): IslandBehaviorDecision {
+    private fun handleCallEnded(state: IslandBehaviorState, nowMonotonic: Long): IslandBehaviorDecision {
         val restore = state.suspendedBeforeCall
 
+        val sourceExists = restore?.selectedKey?.let { key -> state.queue.notifications.any { it.id == key } } == true
+        val canRestoreReader = restore != null && sourceExists && !state.childPrivacy.deviceLocked &&
+            restore.ownership in setOf(IslandInteractionOwnership.USER_EXPANDED, IslandInteractionOwnership.PAGER_ACTIVE, IslandInteractionOwnership.REPLY_ACTIVE)
+        val children = if (canRestoreReader) restore!!.childNotices.filter { child ->
+            state.queue.notifications.any { it.id == child.key } && (child.isPaused || child.expiresAtMonotonic > nowMonotonic)
+        } else emptyList()
         return if (restore != null && state.queue.notifications.isNotEmpty()) {
             IslandBehaviorDecision(
                 state = restore.copy(
@@ -1047,11 +1064,15 @@ class IslandBehaviorEngine(
                     queue = state.queue,
                     childPrivacy = state.childPrivacy,
                     selectedKey = restore.selectedKey?.takeIf { key -> state.queue.notifications.any { it.id == key } } ?: state.queue.activeNotificationId,
-                    childNotices = emptyList(),
-                    ownership = IslandInteractionOwnership.SYSTEM_IDLE,
-                    targetPresentation = IslandPresentationTarget.COMPACT
+                    childNotices = children,
+                    childLifecycles = restore.childLifecycles.filterKeys { key -> children.any { it.key == key } },
+                    ownership = if (canRestoreReader) restore.ownership else IslandInteractionOwnership.SYSTEM_IDLE,
+                    targetPresentation = if (canRestoreReader) restore.targetPresentation else IslandPresentationTarget.COMPACT
                 ),
-                action = IslandDomainAction.CollapseToCompact,
+                action = if (canRestoreReader) IslandDomainAction.KeepSelectedKey else IslandDomainAction.CollapseToCompact,
+                effects = children.filter { it.hasSettled && !it.isPaused }.map {
+                    IslandSideEffect.StartChildTimer(it.key, it.token, (it.expiresAtMonotonic - nowMonotonic).coerceAtLeast(1L))
+                },
                 reason = "call_ended_restore_suspended_state"
             )
         } else {

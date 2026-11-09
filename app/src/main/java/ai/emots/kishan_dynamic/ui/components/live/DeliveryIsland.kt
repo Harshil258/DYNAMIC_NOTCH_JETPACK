@@ -97,7 +97,7 @@ fun DeliveryIslandExpanded(
                         Text(
                             text = restaurant,
                             color = Color.White,
-                            fontSize = (14.5f * scale).sp,
+                            fontSize = 14.5.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -105,7 +105,7 @@ fun DeliveryIslandExpanded(
                         Text(
                             text = orderSubtitle,
                             color = IslandColors.Gray,
-                            fontSize = (11.5f * scale).sp,
+                            fontSize = 11.5.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -117,7 +117,7 @@ fun DeliveryIslandExpanded(
                 IslandStatusBadge(
                     text = statusText,
                     tint = if (progress >= 1f) IslandColors.Green else IslandColors.Orange,
-                    fontSize = (9f * scale).sp
+                    fontSize = 11.sp
                 )
             }
 
@@ -135,12 +135,12 @@ fun DeliveryIslandExpanded(
                 ) {
                     Text(
                         text = if (progress >= 1f) "Completed" else "Picked up",
-                        fontSize = (10.5f * scale).sp,
+                        fontSize = 11.sp,
                         color = IslandColors.Gray
                     )
                     Text(
                         text = etaText,
-                        fontSize = (10.5f * scale).sp,
+                        fontSize = 11.sp,
                         color = if (progress >= 1f) IslandColors.Green else IslandColors.Orange,
                         fontWeight = FontWeight.Bold
                     )
@@ -159,7 +159,7 @@ fun DeliveryIslandExpanded(
                 ) {
                     Text(
                         text = driverInfo,
-                        fontSize = (11.5f * scale).sp,
+                        fontSize = 11.5.sp,
                         color = Color.White.copy(alpha = 0.92f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis

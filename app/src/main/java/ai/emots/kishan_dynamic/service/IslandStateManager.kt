@@ -112,6 +112,13 @@ object IslandStateManager {
             val settings = ai.emots.kishan_dynamic.data.notification.IslandBehaviorSettings(
                 previewDurationMs = (notificationDisplaySeconds * 1000L).coerceAtLeast(1000L)
             )
+            val drafts = ai.emots.kishan_dynamic.data.notification.ReplyDraftMemory.store
+            when (event) {
+                is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.PrivacyChanged -> drafts.privacyRestricted(event.policy.deviceLocked)
+                is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.RemoveNotification -> drafts.clear(event.notificationId)
+                is ai.emots.kishan_dynamic.data.notification.IslandEngineEvent.ReconcileSources -> drafts.retainSources(event.activeKeys)
+                else -> Unit
+            }
             val decision = behaviorEngine.reduce(behaviorState, event, nowMonotonic, settings)
             behaviorState = decision.state
             notificationQueue = decision.state.queue

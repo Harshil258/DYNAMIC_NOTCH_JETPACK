@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.703Z" hostname="Vekariyas-Mac-mini.local" time="0.006">
+  <properties/>
+  <testcase name="interstitialFrequencyRequiresMinimumNinetySecondsCooldown" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="consentPolicyAllowsAdsOnlyWhenStatusReadyAndCanRequestAdsTrue" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="appOpenPolicyBlocksColdLaunchAndFullscreenCollisions" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="consentPolicyAccuratelyReflectsPrivacyOptionsRequirement" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="interstitialFrequencyRequiresMinimumFourScreensAndRespectsStartFromScreen" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="adsSuppressedWhenConsentMissingOrAdUnitEmpty" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="freeUsersReceiveInAppBannerAndNativeAds" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="revenueTrackerAttachesGranularPlacementDimensions" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="paidProSubscribersSuppressAllInAppAdsOneHundredPercent" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.003"/>
+  <testcase name="appOpenPolicyEnforcesFourHourFreshnessLimit" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="decoderFallsBackGracefullyOnMalformedPayload" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="decoderParsesCompleteReferenceCurrentRemoteConfigPayload" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.002"/>
+  <testcase name="trialAndRewardedUsersReceiveInAppBannerAndNativeAds" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <testcase name="fullscreenAdCoordinatorPreventsConcurrentFullscreenAds" classname="ai.emots.kishan_dynamic.data.premium.Sprint10AdMobAndRemoteConfigTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -32,7 +32,7 @@ fun DynamicIslandPlayground(
     var measurements by remember { mutableStateOf("Waiting for layout") }
     val geometry = remember { PlaygroundGeometry() }
     val o = snapshot.options
-    val sections = listOf("Live Preview", "States", "Animations", "Geometry", "Stress Tests", "Test Results", "Mini-Islands")
+    val sections = listOf("Live Preview", "States", "Animations", "Geometry", "Stress Tests", "Test Results", "Mini-Islands", "60-state Gallery")
     AppScreen(scrollable = false, topBar = {
         AppTopBar(title = "Dynamic Island Lab", subtitle = "Debug only · isolated mock data", onBack = onBack)
     }, bottomAction = {
@@ -55,6 +55,10 @@ fun DynamicIslandPlayground(
             Column(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
                 .padding(vertical = AppTheme.spacing.md), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
                 when (section) {
+                    7 -> {
+                        val context = LocalContext.current
+                        AppButton("Open all 60 source states", { context.startActivity(android.content.Intent(context, DynamicIslandPlaygroundActivity::class.java).putExtra("gallery_state", "Idle")) })
+                    }
                     6 -> {
                         val behavior = snapshot.behavior
                         AppSectionTitle("Layered Mini-Islands Lab")
@@ -62,6 +66,12 @@ fun DynamicIslandPlayground(
                         listOf(1, 2, 3, 10, 25).forEach { n ->
                             AppButton("Main + $n arrivals", { controller.layeredScenario(n) }, style = AppButtonStyle.Secondary)
                         }
+                        AppButton("Reply / keyboard scenario", {
+                            controller.select(PlaygroundCase.Expanded)
+                            controller.engineState.queue.notifications.firstOrNull()?.let { source ->
+                                source.actions.firstOrNull { it.isReply }?.let { controller.startReply(source.id, it) }
+                            }
+                        }, style = AppButtonStyle.Secondary)
                         AppButton("New arrival", controller::addLayeredArrival, style = AppButtonStyle.Secondary)
                         AppButton("50 queued messages", { controller.loadNotificationScenario(50) }, style = AppButtonStyle.Secondary)
                         AppButton("Run 500+ frame benchmark", { controller.runLayeredAnimationBenchmark(12) }, style = AppButtonStyle.Tonal)

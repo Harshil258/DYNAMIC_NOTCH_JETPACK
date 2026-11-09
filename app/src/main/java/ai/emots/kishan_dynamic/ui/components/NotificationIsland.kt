@@ -54,6 +54,11 @@ import kotlinx.coroutines.isActive
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.rememberUpdatedState
 
+/** Injection seam keeps debug/editor fixtures out of the production in-memory draft store. */
+val LocalIslandReplyDraftStore = androidx.compose.runtime.staticCompositionLocalOf {
+    ai.emots.kishan_dynamic.data.notification.ReplyDraftMemory.store
+}
+
 /**
  * Compact stacked notification main pill
  */
@@ -105,10 +110,14 @@ fun InlineReplyBox(
     replyAction: NotificationActionInfo,
     onSendReply: (String) -> Unit,
     onCancelReply: () -> Unit,
+    notificationKey: String? = null,
     scale: Float = 1f,
     modifier: Modifier = Modifier
 ) {
-    var replyText by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf("") }
+    val draftStore = LocalIslandReplyDraftStore.current
+    var replyText by remember(notificationKey, replyAction.id) {
+        mutableStateOf(notificationKey?.let { draftStore.read(it, replyAction.id) }.orEmpty())
+    }
     val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(Unit) {
@@ -129,7 +138,7 @@ fun InlineReplyBox(
         ) {
             BasicTextField(
                 value = replyText,
-                onValueChange = { replyText = it },
+                onValueChange = { replyText = it; notificationKey?.let { key -> draftStore.write(key, replyAction.id, it) } },
                 modifier = Modifier
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
@@ -181,7 +190,7 @@ fun InlineReplyBox(
                 modifier = Modifier
                     .clip(RoundedCornerShape(percent = 50))
                     .background(if (canSend) Color(0xFF007AFF) else Color(0xFF007AFF).copy(alpha = 0.35f))
-                    .clickable(enabled = canSend) {
+                    .clickable(enabled = canSend, role = androidx.compose.ui.semantics.Role.Button) {
                         onSendReply(replyText.trim())
                     }
                     .padding(horizontal = 16.dp * scale, vertical = 6.dp * scale),
@@ -207,6 +216,7 @@ fun InlineReplyBox(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NotificationIslandExpanded(
+    notificationKey: String? = null,
     appName: String = "WhatsApp",
     appPackageName: String? = null,
     imagePath: String? = null,
@@ -316,6 +326,7 @@ fun NotificationIslandExpanded(
                 }
 
                 InlineReplyBox(
+                    notificationKey = notificationKey,
                     replyAction = replyAction,
                     onSendReply = onSendReply,
                     onCancelReply = onCancelReply,
@@ -1195,6 +1206,7 @@ fun NotificationPictureCard(
                 }
 
                 InlineReplyBox(
+                    notificationKey = notification.id,
                     replyAction = replyAction,
                     onSendReply = onSendReply,
                     onCancelReply = onCancelReply,
@@ -1534,6 +1546,7 @@ fun NotificationIslandExpandedPager(
                 }
                 NotificationTemplateType.TIMER -> {
                     NotificationIslandExpanded(
+                        notificationKey = item.id,
                         appName = item.appName,
                         appPackageName = item.packageName,
                         imagePath = item.imagePath,
@@ -1559,6 +1572,7 @@ fun NotificationIslandExpandedPager(
                 }
                 NotificationTemplateType.STANDARD -> {
                     NotificationIslandExpanded(
+                        notificationKey = item.id,
                         appName = item.appName,
                         appPackageName = item.packageName,
                         imagePath = item.imagePath,
@@ -1699,6 +1713,7 @@ fun NotificationIslandExpandedPager(
                 }
                 NotificationTemplateType.TIMER -> {
                     NotificationIslandExpanded(
+                        notificationKey = item.id,
                         appName = item.appName,
                         appPackageName = item.packageName,
                         imagePath = item.imagePath,
@@ -1724,6 +1739,7 @@ fun NotificationIslandExpandedPager(
                 }
                 NotificationTemplateType.STANDARD -> {
                     NotificationIslandExpanded(
+                        notificationKey = item.id,
                         appName = item.appName,
                         appPackageName = item.packageName,
                         imagePath = item.imagePath,

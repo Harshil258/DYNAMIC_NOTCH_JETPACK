@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.premium.TrialManagerTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.710Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+  <properties/>
+  <testcase name="activeTrialCalculatesRemainingDaysAndHoursCorrectly" classname="ai.emots.kishan_dynamic.data.premium.TrialManagerTest" time="0.0"/>
+  <testcase name="expiredTrialSetsActiveFalseAndExpiredTrue" classname="ai.emots.kishan_dynamic.data.premium.TrialManagerTest" time="0.0"/>
+  <testcase name="uninitializedTrialReturnsInactiveSnapshot" classname="ai.emots.kishan_dynamic.data.premium.TrialManagerTest" time="0.0"/>
+  <testcase name="clockRollbackSetsTamperedTrueAndActiveFalse" classname="ai.emots.kishan_dynamic.data.premium.TrialManagerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

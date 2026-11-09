@@ -485,6 +485,8 @@ class IslandRuntimeIntegrationTest {
         assertTrue("Initial state must be expanded preview", before.isExpanded)
         assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
 
+        IslandStateManager.dispatchBehaviorEvent(IslandEngineEvent.PreviewReadable(IslandStateManager.behaviorState.activeToken))
+
         // Advance virtual time past the 3-second preview duration
         testScheduler.advanceTimeBy(3500L)
         testScheduler.runCurrent()
@@ -515,6 +517,8 @@ class IslandRuntimeIntegrationTest {
         assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
         val initialToken = IslandStateManager.behaviorState.activeToken
         assertTrue("Active token must be assigned", initialToken > 0L)
+
+        IslandStateManager.dispatchBehaviorEvent(IslandEngineEvent.PreviewReadable(IslandStateManager.behaviorState.activeToken))
 
         // 2. Advance time by 3500ms past the 3s preview duration
         testScheduler.advanceTimeBy(3500L)
@@ -650,6 +654,8 @@ class IslandRuntimeIntegrationTest {
         assertEquals(1, IslandStateManager.behaviorState.childNotices.size)
         assertEquals("second-notif", IslandStateManager.behaviorState.childNotices.first().key)
         assertEquals(IslandInteractionOwnership.TRANSIENT_PREVIEW, IslandStateManager.behaviorState.ownership)
+
+        IslandStateManager.dispatchBehaviorEvent(IslandEngineEvent.PreviewReadable(IslandStateManager.behaviorState.activeToken))
 
         // Advance time past the main preview duration
         testScheduler.advanceTimeBy(3500L)

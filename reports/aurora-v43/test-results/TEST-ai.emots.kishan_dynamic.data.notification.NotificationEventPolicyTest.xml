@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.643Z" hostname="Vekariyas-Mac-mini.local" time="0.003">
+  <properties/>
+  <testcase name="genuineNavigationTimersTransfersAndMediaCanRemainCompact" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.001"/>
+  <testcase name="restartDoesNotReplayOldOrdinaryNotifications" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.0"/>
+  <testcase name="launcherZeroProgressMetadataDoesNotQualifyAsActivity" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.0"/>
+  <testcase name="blockedSourcesCannotBecomeActivitiesAndNewAlarmsRemainRelevant" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.0"/>
+  <testcase name="expiredUnchangedPreviewCannotReplayButNewContentAndRepostsCan" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.001"/>
+  <testcase name="freshMessagesPaymentsMailAndUnknownSourcesAreTransient" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.001"/>
+  <testcase name="suspendedWorkCannotResurrectRemovedReplacedOrDisconnectedSources" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.0"/>
+  <testcase name="silentSystemNoiseIsIgnoredWithoutCancelingSource" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.0"/>
+  <testcase name="repeatedCallbacksNeverExtendPresentationDeadline" classname="ai.emots.kishan_dynamic.data.notification.NotificationEventPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

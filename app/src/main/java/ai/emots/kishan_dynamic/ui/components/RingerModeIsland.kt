@@ -151,6 +151,11 @@ fun RingerModeIslandExpanded(
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
         val hPad = (24.dp * scale)
         val vPad = (16.dp * scale)
+        val actionLabel = if (mode == RingerModeType.NORMAL) "Mute" else "Unmute"
+        val actionMeasurer = androidx.compose.ui.text.rememberTextMeasurer()
+        val actionWidth = with(androidx.compose.ui.platform.LocalDensity.current) {
+            actionMeasurer.measure(actionLabel, AppTheme.typography.button).size.width.toDp()
+        } + AppTheme.spacing.md * 2
 
         Row(
             modifier = Modifier
@@ -160,6 +165,7 @@ fun RingerModeIslandExpanded(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
+                modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 RingerModeGlyph(
@@ -171,12 +177,13 @@ fun RingerModeIslandExpanded(
                 Spacer(modifier = Modifier.width(16.dp * scale))
 
                     Column(
+                    modifier = Modifier.weight(1f),
                     verticalArrangement = Arrangement.Center
                 ) {
                     AppText(
                         text = modeLabel,
                         style = AppTheme.typography.caption,
-                        fontSize = (12f * scale).sp,
+                        fontSize = 12.sp,
                         color = Color(0xFFA4A4A9),
                         fontWeight = FontWeight.Medium
                     )
@@ -188,30 +195,15 @@ fun RingerModeIslandExpanded(
                             RingerModeType.NORMAL -> "Active"
                         },
                         style = AppTheme.typography.islandTitle,
-                        fontSize = (17.5f * scale).sp,
+                        fontSize = 17.5.sp,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
 
-            // RIGHT: Dark pill badge (79dp x 34dp, rx=17dp, #2C2C2D) with Unmute button text
-            Box(
-                modifier = Modifier
-                    .width(79.dp * scale)
-                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-                    .clip(RoundedCornerShape(17.dp * scale))
-                    .background(Color(0xFF2C2C2D))
-                    .clickable(onClick = onToggle),
-                contentAlignment = Alignment.Center
-            ) {
-                    Text(
-                        text = if (mode == RingerModeType.NORMAL) "Mute" else "Unmute",
-                    color = Color.White,
-                    fontSize = (14f * scale).sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            if (canRenderIslandControl(IslandControlAction.SilentToggle)) IslandPillAction(actionLabel, onToggle,
+                Modifier.width(maxOf(79.dp, actionWidth)), visualHeight = 34.dp)
         }
     }
 }

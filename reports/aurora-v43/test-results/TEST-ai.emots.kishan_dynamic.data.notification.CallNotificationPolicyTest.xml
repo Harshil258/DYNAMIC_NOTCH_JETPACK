@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.300Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+  <properties/>
+  <testcase name="connectedCallCopyIsNotDialing" classname="ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest" time="0.0"/>
+  <testcase name="ordinaryNotificationIsIgnored" classname="ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest" time="0.0"/>
+  <testcase name="recognizesDialingCallCopy" classname="ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest" time="0.0"/>
+  <testcase name="callStyleNotificationExposesVoipHangUpAction" classname="ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest" time="0.0"/>
+  <testcase name="callStyleNotificationExposesAnswerAndDeclineActionIds" classname="ai.emots.kishan_dynamic.data.notification.CallNotificationPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

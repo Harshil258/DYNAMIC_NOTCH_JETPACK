@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.542Z" hostname="Vekariyas-Mac-mini.local" time="0.1">
+  <properties/>
+  <testcase name="publicOtpAndPaymentCopyStillReceivePrivacyProtection" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.001"/>
+  <testcase name="multilingualEmptyAndDuplicateFixturesRemainIndependent" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.001"/>
+  <testcase name="replyEditorClosesOnRemovalRevocationOrActionReplacement" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.0"/>
+  <testcase name="updateToAnotherConversationKeepsSelection" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.0"/>
+  <testcase name="groupNamesCannotMergeDifferentApplications" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.001"/>
+  <testcase name="newestArrivalBecomesActiveRegardlessOfImportance" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.0"/>
+  <testcase name="sourceCanRemovePrivateCopyAndArtworkOnUpdate" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.0"/>
+  <testcase name="classificationUsesCapabilitiesNotBrandOrMessageProse" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.001"/>
+  <testcase name="actionDispatchDoesNotClaimDeliveryAndFailsSafely" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.001"/>
+  <testcase name="largeOngoingBurstRemainsBoundedAndRetainsSelection" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.094"/>
+  <testcase name="settledPagerIdentitySurvivesInsertionAndRejectsRemovedPage" classname="ai.emots.kishan_dynamic.data.notification.NotificationEngineeringRegressionTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

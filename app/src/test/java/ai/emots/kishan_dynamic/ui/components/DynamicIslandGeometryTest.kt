@@ -21,13 +21,13 @@ class DynamicIslandGeometryTest {
         assertTrue(IslandDemoState.MusicCompact.isCompactPresentation())
         assertTrue(IslandDemoState.NotificationWithMusicCompact.isCompactPresentation())
         assertTrue(IslandDemoState.NotificationStacked.isCompactPresentation())
-        assertTrue(IslandDemoState.MusicCompact.usesCompanionBubble())
-        assertTrue(IslandDemoState.CallCompact.usesCompanionBubble())
-        assertTrue(IslandDemoState.ChargingCompact.usesCompanionBubble())
-        assertTrue(IslandDemoState.LowBatteryCompact.usesCompanionBubble())
-        assertTrue(IslandDemoState.SilentModeCompact.usesCompanionBubble())
-        assertTrue(IslandDemoState.VibrateModeCompact.usesCompanionBubble())
-        assertTrue(IslandDemoState.NormalModeCompact.usesCompanionBubble())
+        assertTrue(!IslandDemoState.MusicCompact.usesCompanionBubble())
+        assertTrue(!IslandDemoState.CallCompact.usesCompanionBubble())
+        assertTrue(!IslandDemoState.ChargingCompact.usesCompanionBubble())
+        assertTrue(!IslandDemoState.LowBatteryCompact.usesCompanionBubble())
+        assertTrue(!IslandDemoState.SilentModeCompact.usesCompanionBubble())
+        assertTrue(!IslandDemoState.VibrateModeCompact.usesCompanionBubble())
+        assertTrue(!IslandDemoState.NormalModeCompact.usesCompanionBubble())
         assertTrue(IslandDemoState.NotificationWithMusicCompact.usesCompanionBubble())
         assertTrue(!IslandDemoState.NotificationStacked.usesCompanionBubble())
         assertTrue(IslandDemoState.BluetoothConnected.isCompactPresentation())
@@ -39,7 +39,7 @@ class DynamicIslandGeometryTest {
         IslandDemoState.entries
             .filter { it.isCompactPresentation() }
             .forEach { state ->
-                assertEquals(tokens.compactHeight, state.resolvedHeight(tokens))
+                assertEquals(if (state == IslandDemoState.Minimal) tokens.minimalCapsuleHeight else tokens.compactHeight, state.resolvedHeight(tokens))
             }
     }
 

@@ -242,72 +242,15 @@ internal fun IslandDemoState.isCompactPresentation(): Boolean = when (this) {
 }
 
 /** States whose compact presentation owns a detached companion bubble. */
-internal fun IslandDemoState.usesCompanionBubble(): Boolean = this == IslandDemoState.Minimal ||
-    this == IslandDemoState.MusicCompact ||
-    this == IslandDemoState.CallCompact ||
-    this == IslandDemoState.ChargingCompact ||
-    this == IslandDemoState.LowBatteryCompact ||
-    this == IslandDemoState.SilentModeCompact ||
-    this == IslandDemoState.VibrateModeCompact ||
-    this == IslandDemoState.NormalModeCompact ||
+internal fun IslandDemoState.usesCompanionBubble(): Boolean =
     this == IslandDemoState.NotificationWithMusicCompact
 
 /** One geometry resolver keeps state heights identical across every surface. */
-internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp {
-    if (isCompactPresentation()) return tokens.compactHeight
-
-    return when (this) {
-        IslandDemoState.TimerExpanded -> 85.73.dp
-
-        IslandDemoState.ActionControlExpanded -> 210.dp
-        IslandDemoState.PremiumExpiryExpanded -> 112.dp
-
-        IslandDemoState.SilentModeExpanded,
-        IslandDemoState.ChargingExpanded,
-        IslandDemoState.LowBatteryExpanded -> tokens.alertHeight
-
-        IslandDemoState.NotificationExpanded,
-        IslandDemoState.RingerModeExpanded,
-        IslandDemoState.NotificationImage,
-        IslandDemoState.CallAvatars,
-        IslandDemoState.OngoingCallBanner,
-        IslandDemoState.VoiceMemoExpanded,
-        IslandDemoState.ScreenRecordingExpanded,
-        IslandDemoState.FocusModeExpanded,
-        IslandDemoState.AirDropActivity,
-        IslandDemoState.AirPodsConnected,
-        IslandDemoState.SatelliteConnected,
-        IslandDemoState.FindMyAlert,
-        IslandDemoState.MovedToIPhone -> tokens.standardExpandedHeight
-
-        IslandDemoState.CallSummaryExpanded -> 112.dp
-
-        IslandDemoState.ShortcutExpanded -> 85.08.dp
-
-        IslandDemoState.TransitRouteAlert,
-        IslandDemoState.MovieCard -> 142.dp
-
-        IslandDemoState.ScreenMirroringAlert,
-        IslandDemoState.FlightTrackerExpanded,
-        IslandDemoState.DeliveryExpanded,
-        IslandDemoState.FlightExpanded,
-        IslandDemoState.SportsExpanded -> 144.dp
-
-        IslandDemoState.AirplaneAlert,
-        IslandDemoState.TransportActivity -> 148.dp
-
-        IslandDemoState.MobileDataAlert,
-        IslandDemoState.SubscriptionPricing -> 162.dp
-
-        IslandDemoState.CallExpanded -> tokens.callExpandedHeight
-        IslandDemoState.FaceTimeCallExpanded -> 168.dp
-        IslandDemoState.SharedMediaCallExpanded -> 172.64.dp
-        IslandDemoState.MusicExpanded,
-        IslandDemoState.VideoRemoteExpanded -> tokens.musicExpandedHeight
-        IslandDemoState.ColorOptions -> tokens.navigationExpandedHeight
-        else -> tokens.standardExpandedHeight
+internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp =
+    when (this) {
+        IslandDemoState.Minimal -> tokens.minimalCapsuleHeight
+        else -> if (isCompactPresentation()) tokens.compactHeight else IslandFamilyGeometry.target(this).height.dp
     }
-}
 
 /**
  * Authentic Apple iOS Dynamic Island Components
@@ -406,6 +349,7 @@ fun DynamicIslandPill(
     onNotificationSelect: (String) -> Unit = {},
     onNotificationDismiss: (String) -> Unit = {},
     callContact: ContactInfo? = null,
+    callParticipants: List<ContactInfo> = emptyList(),
     callSummary: CallRecord? = null,
     callDurationSeconds: Long = 0L,
     showCallDuration: Boolean = true,
@@ -450,7 +394,10 @@ fun DynamicIslandPill(
     backgroundArgb: Int = 0xFF000000.toInt(),
     foregroundArgb: Int = 0xFFFFFFFF.toInt(),
     cameraCutoutMode: Boolean = false,
-    cutoutSizePx: Int = 80
+    cutoutSizePx: Int = 80,
+    readablePresentationToken: Long? = null,
+    onPresentationReadable: (Long) -> Unit = {},
+    availableControlActions: Set<IslandControlAction>? = null
 ) {
     val renderSettings = LocalIslandRenderSettings.current
     val motionOverride = renderSettings.motion
@@ -489,7 +436,11 @@ fun DynamicIslandPill(
     // -------------------------------------------------------------------------
     val islandTokens = ai.emots.kishan_dynamic.ui.theme.AppTheme.island
     val screenWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp.dp
-    val maxExpanded = islandTokens.expandedWidth(screenWidth)
+    val maxExpanded = IslandFamilyGeometry.resolve(IslandDemoState.MusicExpanded, screenWidth.value).width.dp
+    val shellExpandedInset = if (!liveActivitySourceBacked && state in setOf(
+        IslandDemoState.DeliveryExpanded, IslandDemoState.FlightExpanded,
+        IslandDemoState.SportsExpanded, IslandDemoState.FlightTrackerExpanded
+    )) islandTokens.expandedContentInset else 0.dp
     val isSplit = state.usesCompanionBubble()
     val isCompact = state.isCompactPresentation()
     val safeHorizontalScale = horizontalScale.coerceIn(0.8f, 1.2f)
@@ -505,34 +456,9 @@ fun DynamicIslandPill(
     }
     val notificationWidth = islandTokens.compactHorizontalInset * 2 + islandTokens.compactIconSize +
         islandTokens.compactContentGap + compactLabelWidth
-    val baseWidth: Dp = when (state) {
-        IslandDemoState.Idle -> islandTokens.compactWidth
-        IslandDemoState.Minimal -> islandTokens.minimalCapsuleWidth
-        IslandDemoState.MusicCompact -> 156.dp
-        IslandDemoState.CallCompact -> 118.dp
-        IslandDemoState.ChargingCompact -> 106.dp
-        IslandDemoState.LowBatteryCompact -> 106.dp
-        IslandDemoState.SilentModeCompact -> 114.dp
-        IslandDemoState.NotificationCompact,
-        IslandDemoState.NotificationStacked -> notificationWidth
-        IslandDemoState.NotificationWithMusicCompact -> 156.dp
-        IslandDemoState.VibrateModeCompact,
-        IslandDemoState.NormalModeCompact,
-        IslandDemoState.RingerVolumeCompact,
-        IslandDemoState.MediaVolumeCompact -> 126.dp
-        IslandDemoState.BluetoothConnected,
-        IslandDemoState.BluetoothConnecting -> 132.dp
-        IslandDemoState.TimerCompact -> 128.dp
-        IslandDemoState.DeliveryCompact -> 136.dp
-        IslandDemoState.FlightCompact -> 136.dp
-        IslandDemoState.SportsCompact -> 136.dp
-        IslandDemoState.NavigationCompact -> 136.dp
-        IslandDemoState.TimerImage -> 136.dp
-        IslandDemoState.NotificationImage -> 136.dp
-        IslandDemoState.CallAvatars -> maxExpanded
-        // Expanded sheets: the device width minus iOS side margins, capped.
-        else -> maxExpanded
-    }
+    val familyGeometry = IslandFamilyGeometry.resolve(state, screenWidth.value)
+    val baseWidth = if (state == IslandDemoState.NotificationCompact || state == IslandDemoState.NotificationStacked)
+        notificationWidth else familyGeometry.width.dp
     val isCutoutDot = cameraCutoutMode && (state == IslandDemoState.Minimal || state == IslandDemoState.Idle)
     val density = androidx.compose.ui.platform.LocalDensity.current
     val cutoutDotSizeDp = with(density) { (cutoutSizePx.toFloat() / density.density).dp }
@@ -588,7 +514,7 @@ fun DynamicIslandPill(
     val naturalTargetHeight = if (isCutoutDot) {
         cutoutDotSizeDp.coerceIn(24.dp, 56.dp)
     } else if (!isCompact) {
-        (measuredHeights[state] ?: state.resolvedHeight(islandTokens))
+        maxOf(measuredHeights[state] ?: 0.dp, state.resolvedHeight(islandTokens))
             .coerceIn(islandTokens.expandedMinHeight, maxContentHeight)
     } else {
         state.resolvedHeight(islandTokens)
@@ -600,60 +526,8 @@ fun DynamicIslandPill(
     // - Compact / Split states: half of compact height (36.67 / 2 = 18.33dp) for full pill capsule
     // - 86dp Alert states: 43dp (86 / 2) for standard iOS alert capsule
     // - Expanded Activity Sheets (140-240dp): 42dp Apple continuous squircle
-    val targetCornerRadiusDp: Dp = if (isCutoutDot) {
-        cutoutDotSizeDp.coerceIn(24.dp, 56.dp) / 2
-    } else when (state) {
-        IslandDemoState.Minimal -> islandTokens.minimalCapsuleCorner
-        IslandDemoState.Idle,
-        IslandDemoState.MusicCompact,
-        IslandDemoState.CallCompact,
-        IslandDemoState.ChargingCompact,
-        IslandDemoState.LowBatteryCompact,
-        IslandDemoState.SilentModeCompact,
-        IslandDemoState.NotificationCompact,
-        IslandDemoState.NotificationStacked,
-        IslandDemoState.NotificationWithMusicCompact,
-        IslandDemoState.TimerCompact,
-        IslandDemoState.VibrateModeCompact,
-        IslandDemoState.NormalModeCompact,
-        IslandDemoState.RingerVolumeCompact,
-        IslandDemoState.MediaVolumeCompact,
-        IslandDemoState.BluetoothConnected,
-        IslandDemoState.BluetoothConnecting,
-        IslandDemoState.DeliveryCompact,
-        IslandDemoState.FlightCompact,
-        IslandDemoState.SportsCompact,
-        IslandDemoState.NavigationCompact -> islandTokens.compactHeight / 2
-
-        IslandDemoState.PremiumExpiryExpanded -> islandTokens.expandedCardCorner
-        IslandDemoState.NotificationExpanded -> islandTokens.expandedCorner
-        IslandDemoState.SilentModeExpanded,
-        IslandDemoState.ChargingExpanded,
-        IslandDemoState.LowBatteryExpanded -> islandTokens.alertHeight / 2
-
-        IslandDemoState.TimerExpanded -> islandTokens.standardExpandedCorner
-        IslandDemoState.CallExpanded,
-        IslandDemoState.FaceTimeCallExpanded,
-        IslandDemoState.SharedMediaCallExpanded,
-        IslandDemoState.MusicExpanded,
-        IslandDemoState.VideoRemoteExpanded,
-        IslandDemoState.ColorOptions -> islandTokens.expandedCorner
-
-        IslandDemoState.NotificationImage,
-        IslandDemoState.CallAvatars,
-        IslandDemoState.OngoingCallBanner,
-        IslandDemoState.VoiceMemoExpanded,
-        IslandDemoState.ScreenRecordingExpanded,
-        IslandDemoState.FocusModeExpanded,
-        IslandDemoState.ShortcutExpanded,
-        IslandDemoState.AirDropActivity,
-        IslandDemoState.AirPodsConnected,
-        IslandDemoState.SatelliteConnected,
-        IslandDemoState.FindMyAlert,
-        IslandDemoState.MovedToIPhone -> islandTokens.standardExpandedCorner
-
-        else -> islandTokens.expandedCorner
-    }
+    val targetCornerRadiusDp = if (isCutoutDot) cutoutDotSizeDp.coerceIn(24.dp, 56.dp) / 2
+        else IslandFamilyGeometry.resolve(state, screenWidth.value, contentHeight = targetHeight.value).radius.dp
 
     val animatedCornerRadiusDp by animateDpAsState(
         targetValue = renderSettings.corner ?: targetCornerRadiusDp,
@@ -687,6 +561,21 @@ fun DynamicIslandPill(
             else motionOverride?.spec() ?: spring(dampingRatio = 0.82f, stiffness = islandStiffness),
         label = "island_height"
     )
+
+    // Acknowledge real settled frames; lifetime scheduling remains exclusively in the engine.
+    LaunchedEffect(readablePresentationToken, targetWidth, targetHeight) {
+        val token = readablePresentationToken ?: return@LaunchedEffect
+        androidx.compose.runtime.snapshotFlow {
+            kotlin.math.abs(animatedWidth.value - targetWidth.value) < 0.5f &&
+                kotlin.math.abs(animatedHeight.value - targetHeight.value) < 0.5f
+        }.collect { settled ->
+            if (settled) {
+                androidx.compose.runtime.withFrameNanos { }
+                androidx.compose.runtime.withFrameNanos { }
+                onPresentationReadable(token)
+            }
+        }
+    }
 
     // Dynamic Island Split Companion Bubble Springs (Blob separation & liquid merge)
     val targetGap = if (isSplit) islandTokens.splitGap else 0.dp
@@ -845,7 +734,7 @@ fun DynamicIslandPill(
             verticalAlignment = Alignment.Top
         ) {
             // Main Island Pill Body
-            val pillBgColor = Color(backgroundArgb)
+            val pillBgColor = if (state == IslandDemoState.Minimal) Color(0xFFDC0917).copy(alpha = 0.60f) else Color(backgroundArgb)
             Box(
                 modifier = Modifier
                     .islandInspectableRegion("Shell")
@@ -896,105 +785,17 @@ fun DynamicIslandPill(
                         }
                     ) else Modifier)
                     .background(pillBgColor)
-                    .border(
-                        width = 0.75.dp,
-                        brush = Brush.verticalGradient(
-                            listOf(Color(0x38FFFFFF), Color(0x06FFFFFF))
-                        ),
-                        shape = cornerRadius
-                    )
                     .padding(
-                        horizontal = when (state) {
-                            IslandDemoState.MusicExpanded,
-                            IslandDemoState.VideoRemoteExpanded,
-                            IslandDemoState.CallExpanded,
-                            IslandDemoState.FaceTimeCallExpanded,
-                            IslandDemoState.SharedMediaCallExpanded,
-                            IslandDemoState.OngoingCallBanner,
-                            IslandDemoState.CallAvatars,
-                            IslandDemoState.NotificationExpanded,
-                            IslandDemoState.SilentModeExpanded,
-                            IslandDemoState.ActionControlExpanded,
-                            IslandDemoState.PremiumExpiryExpanded,
-                            IslandDemoState.TimerExpanded,
-                            IslandDemoState.ChargingExpanded,
-                            IslandDemoState.LowBatteryExpanded,
-                            IslandDemoState.VoiceMemoExpanded,
-                            IslandDemoState.ScreenRecordingExpanded,
-                            IslandDemoState.ShortcutExpanded,
-                            IslandDemoState.FocusModeExpanded,
-                            IslandDemoState.AirDropActivity,
-                            IslandDemoState.AirPodsConnected,
-                            IslandDemoState.SatelliteConnected,
-                            IslandDemoState.FindMyAlert,
-                            IslandDemoState.MovedToIPhone,
-                            IslandDemoState.AirplaneAlert,
-                            IslandDemoState.ScreenMirroringAlert,
-                            IslandDemoState.MobileDataAlert,
-                            IslandDemoState.TransitRouteAlert,
-                            IslandDemoState.ColorOptions -> 0.dp
-                            IslandDemoState.DeliveryExpanded,
-                            IslandDemoState.FlightExpanded,
-                            IslandDemoState.SportsExpanded,
-                            IslandDemoState.TransportActivity,
-                            IslandDemoState.FlightTrackerExpanded,
-                            IslandDemoState.SubscriptionPricing,
-                            IslandDemoState.MovieCard -> islandTokens.expandedContentInset
-                            else -> islandTokens.compactHorizontalInset
-                        },
-                        vertical = when (state) {
-                            IslandDemoState.MusicExpanded,
-                            IslandDemoState.VideoRemoteExpanded,
-                            IslandDemoState.CallExpanded,
-                            IslandDemoState.FaceTimeCallExpanded,
-                            IslandDemoState.SharedMediaCallExpanded,
-                            IslandDemoState.OngoingCallBanner,
-                            IslandDemoState.CallAvatars,
-                            IslandDemoState.NotificationExpanded,
-                            IslandDemoState.SilentModeExpanded,
-                            IslandDemoState.ActionControlExpanded,
-                            IslandDemoState.PremiumExpiryExpanded,
-                            IslandDemoState.TimerExpanded,
-                            IslandDemoState.ChargingExpanded,
-                            IslandDemoState.LowBatteryExpanded,
-                            IslandDemoState.VoiceMemoExpanded,
-                            IslandDemoState.ScreenRecordingExpanded,
-                            IslandDemoState.ShortcutExpanded,
-                            IslandDemoState.FocusModeExpanded,
-                            IslandDemoState.AirDropActivity,
-                            IslandDemoState.AirPodsConnected,
-                            IslandDemoState.SatelliteConnected,
-                            IslandDemoState.FindMyAlert,
-                            IslandDemoState.MovedToIPhone,
-                            IslandDemoState.AirplaneAlert,
-                            IslandDemoState.ScreenMirroringAlert,
-                            IslandDemoState.MobileDataAlert,
-                            IslandDemoState.TransitRouteAlert,
-                            IslandDemoState.ColorOptions -> 0.dp
-                            IslandDemoState.DeliveryExpanded,
-                            IslandDemoState.FlightExpanded,
-                            IslandDemoState.SportsExpanded,
-                            IslandDemoState.TransportActivity,
-                            IslandDemoState.FlightTrackerExpanded,
-                            IslandDemoState.SubscriptionPricing,
-                            IslandDemoState.MovieCard -> islandTokens.expandedContentInset
-                            else -> 0.dp
-                        }
+                        horizontal = if (isCompact) islandTokens.compactHorizontalInset else shellExpandedInset,
+                        vertical = if (isCompact) 0.dp else shellExpandedInset
                     ),
                 contentAlignment = when (state) {
                     IslandDemoState.ActionControlExpanded -> Alignment.TopCenter
                     else -> Alignment.Center
                 }
             ) {
-                CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb)) {
-                    val shellHorizontalInset = when {
-                        isCompact -> islandTokens.compactHorizontalInset
-                        state in setOf(IslandDemoState.DeliveryExpanded, IslandDemoState.FlightExpanded,
-                            IslandDemoState.SportsExpanded, IslandDemoState.TransportActivity,
-                            IslandDemoState.FlightTrackerExpanded, IslandDemoState.SubscriptionPricing,
-                            IslandDemoState.MovieCard) -> islandTokens.expandedContentInset
-                        else -> 0.dp
-                    }
+                CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb), LocalIslandAvailableControls provides availableControlActions) {
+                    val shellHorizontalInset = if (isCompact) islandTokens.compactHorizontalInset else shellExpandedInset
                     IslandContentViewport(
                         targetWidth = (targetWidth - shellHorizontalInset * 2).coerceAtLeast(1.dp),
                         compact = isCompact,
@@ -1139,7 +940,7 @@ fun DynamicIslandPill(
                         IslandDemoState.BluetoothConnecting -> BluetoothConnectedContent(
                             deviceName = bluetoothDeviceName,
                             batteryPercent = bluetoothBatteryPercent,
-                            isConnecting = bluetoothIsConnecting
+                            isConnecting = bluetoothIsConnecting || targetState == IslandDemoState.BluetoothConnecting
                         )
                         IslandDemoState.ActionControlExpanded -> ActionControlExpandedContent(
                             systemTiles = actionSystemTiles,
@@ -1167,12 +968,12 @@ fun DynamicIslandPill(
                             percentage = batteryPercent,
                             isLowBattery = false
                         )
-                        IslandDemoState.ChargingExpanded -> ChargingExpandedContent()
+                        IslandDemoState.ChargingExpanded -> ChargingExpandedContent(batteryPercent)
                         IslandDemoState.LowBatteryCompact -> ChargingIslandMain(
                             percentage = batteryPercent,
                             isLowBattery = true
                         )
-                        IslandDemoState.LowBatteryExpanded -> LowBatteryExpandedContent()
+                        IslandDemoState.LowBatteryExpanded -> LowBatteryExpandedContent(batteryPercent)
                         IslandDemoState.TimerCompact -> TimerCompactContent(timerLabel, timerProgress)
                         IslandDemoState.TimerExpanded -> TimerExpandedContent(timerLabel, timerRunning, onControlAction)
                         IslandDemoState.VoiceMemoExpanded -> VoiceMemoExpandedContent(onControlAction)
@@ -1215,30 +1016,30 @@ fun DynamicIslandPill(
                             info = liveActivityInfo
                         )
                         IslandDemoState.NavigationCompact -> ai.emots.kishan_dynamic.ui.components.live.NavigationIslandCompact(liveActivityInfo)
-                        IslandDemoState.TimerImage -> TimerWithImageCompactContent()
-                        IslandDemoState.NotificationImage -> NotificationImageCompactContent()
-                        IslandDemoState.CallAvatars -> CallExpandedContent(
+                        IslandDemoState.TimerImage -> TimerImageReferenceContent(timerLabel)
+                        IslandDemoState.NotificationImage -> NotificationImageReferenceContent()
+                        IslandDemoState.CallAvatars -> if (callParticipants.size > 1) GroupCallReferenceContent(callParticipants) else CallExpandedContent(
                             onControlAction = onControlAction,
                             contact = callContact,
                             canDecline = callCanDecline
                         )
-                        IslandDemoState.TransportActivity,
+                        IslandDemoState.TransportActivity -> TransportReferenceContent()
                         IslandDemoState.AirplaneAlert -> AirplaneAlertContent(onControlAction)
-                        IslandDemoState.FlightTrackerExpanded,
+                        IslandDemoState.FlightTrackerExpanded -> FlightTrackerReferenceContent(liveActivityInfo, liveActivityProgress)
                         IslandDemoState.ScreenMirroringAlert -> ScreenMirroringContent(
                             title = liveActivityTitle,
                             subtitle = liveActivitySubtitle,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.SubscriptionPricing,
+                        IslandDemoState.SubscriptionPricing -> SubscriptionReferenceContent()
                         IslandDemoState.MobileDataAlert -> MobileDataContent(onControlAction)
-                        IslandDemoState.MovieCard,
+                        IslandDemoState.MovieCard -> MovieReferenceContent()
                         IslandDemoState.TransitRouteAlert -> TransitRouteContent(
                             title = liveActivityTitle,
                             subtitle = liveActivitySubtitle,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.ColorOptions -> ai.emots.kishan_dynamic.ui.components.live.NavigationIslandExpanded(
+                        IslandDemoState.ColorOptions -> if (liveActivityInfo == null) ColorOptionsReferenceContent() else ai.emots.kishan_dynamic.ui.components.live.NavigationIslandExpanded(
                             info = liveActivityInfo,
                             onControlAction = onControlAction
                         )
@@ -1304,7 +1105,7 @@ fun DynamicIslandPill(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb)) {
+                    CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb), LocalIslandAvailableControls provides availableControlActions) {
                         AnimatedContent(
                         targetState = state,
                         transitionSpec = {
@@ -1578,26 +1379,10 @@ private fun IdleCutoutContent() {
 
 @Composable
 private fun MinimalPillContent() {
-    // Figma Minimal.svg uses the shared 36.67pt compact height.
-    // Not a split pill - just a breathing status dot
-    val pulseState = ai.emots.kishan_dynamic.ui.motion.rememberBreathing(
-        min = 0.85f,
-        max = 1f,
-        durationMillis = 2200
-    )
-
-    Box(
-        modifier = Modifier
-            .size(12.dp)
-            .graphicsLayer { alpha = pulseState.value }
-            .clip(CircleShape)
-            .background(IslandColors.Green)
-    )
+    // Owner specimen is an empty red capsule: no glyph, status dot or companion.
+    Box(Modifier.fillMaxSize())
 }
 
-// -----------------------------------------------------------------------------
-// 1. MUSIC (APPLE MUSIC / SPOTIFY) - MATCHING Compact.svg EXACTLY!
-// -----------------------------------------------------------------------------
 @Composable
 private fun MusicCompactContent(track: MusicTrack?, isPlaying: Boolean) {
     // Compact.svg shows: Album art + Track title + Equalizer all in compact
@@ -2369,6 +2154,15 @@ private fun BluetoothConnectedContent(
     batteryPercent: Int?,
     isConnecting: Boolean
 ) {
+    if (androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f) {
+        CompactIslandLayout(
+            leading = { AppleIcon(AppleGlyph.Bluetooth, tint = IslandColors.CapsuleCyan,
+                size = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.compactIconSize) },
+            trailing = { Text(if (isConnecting) "Connecting…" else "Connected", maxLines = 1,
+                color = Color.White, style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.caption) }
+        )
+        return
+    }
     CompactIslandLayout(
         leading = {
             Box(
@@ -2431,50 +2225,8 @@ private fun ChargingCompactContent() {
 }
 
 @Composable
-private fun ChargingExpandedContent() {
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (24.dp * scale)
-        val vPad = (16.dp * scale)
-        val iconBoxSize = (48.dp * scale)
-        val iconSize = (26.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = hPad, vertical = vPad),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(iconBoxSize)
-                        .clip(CircleShape)
-                        .background(IslandColors.Green.copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.Green, size = iconSize)
-                }
-
-                Spacer(modifier = Modifier.width(14.dp * scale))
-
-                Column(verticalArrangement = Arrangement.Center) {
-                    Text(text = "Fast Warp Charging", color = Color.White, fontSize = (15f * scale).sp, fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.height(2.dp * scale))
-                    Text(text = "65W • 14 min until full", color = IslandColors.Green, fontSize = (12f * scale).sp)
-                }
-            }
-
-            Text(
-                text = "85%",
-                fontSize = (28f * scale).sp,
-                fontWeight = FontWeight.Bold,
-                color = IslandColors.Green,
-                fontFamily = FontFamily.Monospace
-            )
-        }
-    }
+private fun ChargingExpandedContent(percentage: Int) {
+    PowerStatusExpanded(percentage, low = false)
 }
 
 // -----------------------------------------------------------------------------
@@ -2499,61 +2251,8 @@ private fun LowBatteryCompactContent() {
 }
 
 @Composable
-private fun LowBatteryExpandedContent() {
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (20.dp * scale)
-        val vPad = (12.dp * scale)
-        val iconBoxSize = (36.dp * scale)
-        val iconSize = (20.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = hPad, vertical = vPad),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(iconBoxSize)
-                        .clip(CircleShape)
-                        .background(IslandColors.CapsuleRed.copy(alpha = 0.2f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.CapsuleRed, size = iconSize)
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column(verticalArrangement = Arrangement.Center) {
-                    Text(
-                        text = "Low Battery",
-                        color = Color.White,
-                        fontSize = (14.5f * scale).sp,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1
-                    )
-                    Spacer(modifier = Modifier.height(2.dp * scale))
-                    Text(
-                        text = "20% Remaining",
-                        color = IslandColors.CapsuleRed,
-                        fontSize = (12f * scale).sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
-
-            Text(
-                text = "20%",
-                fontSize = (22f * scale).sp,
-                fontWeight = FontWeight.Bold,
-                color = IslandColors.CapsuleRed,
-                fontFamily = FontFamily.Monospace
-            )
-        }
-    }
+private fun LowBatteryExpandedContent(percentage: Int) {
+    PowerStatusExpanded(percentage, low = true)
 }
 
 // -----------------------------------------------------------------------------
@@ -2605,8 +2304,8 @@ private fun DeliveryExpandedContent() {
                     }
                     Spacer(modifier = Modifier.width(12.dp * scale))
                     Column {
-                        Text(text = "Chipotle Mexican Grill", color = Color.White, fontSize = (15f * scale).sp, fontWeight = FontWeight.Bold)
-                        Text(text = "Order #8492 • 2 items", color = IslandColors.Gray, fontSize = (12f * scale).sp)
+                        Text(text = "Chipotle Mexican Grill", color = Color.White, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "Order #8492 • 2 items", color = IslandColors.Gray, fontSize = 12.sp)
                     }
                 }
 
@@ -2617,7 +2316,7 @@ private fun DeliveryExpandedContent() {
                         .border(1.dp, IslandColors.Orange.copy(alpha = 0.4f), RoundedCornerShape(percent = 50))
                         .padding(horizontal = 8.dp * scale, vertical = 4.dp * scale)
                 ) {
-                    Text(text = "ON THE WAY", fontSize = (9f * scale).sp, fontWeight = FontWeight.Bold, color = IslandColors.Orange)
+                    Text(text = "ON THE WAY", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = IslandColors.Orange)
                 }
             }
 
@@ -2642,8 +2341,8 @@ private fun DeliveryExpandedContent() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Picked up", fontSize = (10f * scale).sp, color = IslandColors.Gray)
-                    Text(text = "Arriving in 12 mins", fontSize = (10f * scale).sp, color = IslandColors.Orange, fontWeight = FontWeight.Bold)
+                    Text(text = "Picked up", fontSize = 11.sp, color = IslandColors.Gray)
+                    Text(text = "Arriving in 12 mins", fontSize = 11.sp, color = IslandColors.Orange, fontWeight = FontWeight.Bold)
                 }
             }
 
@@ -2653,7 +2352,7 @@ private fun DeliveryExpandedContent() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Marco • Vespa Sprint • 4.9", fontSize = (12f * scale).sp, color = Color.White)
+                    Text(text = "Marco • Vespa Sprint • 4.9", fontSize = 12.sp, color = Color.White)
                     Spacer(modifier = Modifier.width(3.dp * scale))
                     AppleIcon(glyph = AppleGlyph.Star, tint = IslandColors.Yellow, size = 11.dp * scale)
                 }
@@ -2714,7 +2413,7 @@ private fun FlightExpandedContent(
                 Column {
                     Text(
                         text = title.ifBlank { "Delta Air Lines • DL 492" },
-                        fontSize = (14f * scale).sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         maxLines = 1,
@@ -2724,13 +2423,13 @@ private fun FlightExpandedContent(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
                     ) {
-                        Text(text = subtitle.ifBlank { "San Francisco" }, fontSize = (11.5f * scale).sp, color = IslandColors.Gray, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(text = subtitle.ifBlank { "San Francisco" }, fontSize = 11.5.sp, color = IslandColors.Gray, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         AppleIcon(
                             glyph = AppleGlyph.NavigationRight,
                             tint = IslandColors.Gray,
                             size = 10.dp * scale
                         )
-                        Text(text = "New York", fontSize = (11.5f * scale).sp, color = IslandColors.Gray)
+                        Text(text = "New York", fontSize = 11.5.sp, color = IslandColors.Gray)
                     }
                 }
                 Box(
@@ -2740,7 +2439,7 @@ private fun FlightExpandedContent(
                         .border(1.dp, IslandColors.Green.copy(alpha = 0.4f), RoundedCornerShape(percent = 50))
                         .padding(horizontal = 8.dp * scale, vertical = 4.dp * scale)
                 ) {
-                    Text(text = "ON TIME", fontSize = (9f * scale).sp, fontWeight = FontWeight.Bold, color = IslandColors.Green)
+                    Text(text = "ON TIME", fontSize = 11.sp, fontWeight = FontWeight.Bold, color = IslandColors.Green)
                 }
             }
 
@@ -2749,7 +2448,7 @@ private fun FlightExpandedContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "SFO", fontSize = (18f * scale).sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Text(text = "SFO", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -2764,15 +2463,15 @@ private fun FlightExpandedContent(
                             .background(IslandColors.CapsuleCyan)
                     )
                 }
-                Text(text = "JFK", fontSize = (18f * scale).sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Text(text = "JFK", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White)
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Gate B14 • Terminal 2", fontSize = (11f * scale).sp, color = IslandColors.Gray)
-                Text(text = "Alt: 36,000 ft • 2h 15m left", fontSize = (11f * scale).sp, color = IslandColors.CapsuleCyan, fontWeight = FontWeight.SemiBold)
+                Text(text = "Gate B14 • Terminal 2", fontSize = 11.sp, color = IslandColors.Gray)
+                Text(text = "Alt: 36,000 ft • 2h 15m left", fontSize = 11.sp, color = IslandColors.CapsuleCyan, fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -2811,10 +2510,10 @@ private fun SportsExpandedContent(title: String = "", subtitle: String = "") {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = title.ifBlank { "UEFA Champions League" }, fontSize = (13.5f * scale).sp, fontWeight = FontWeight.Bold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(text = title.ifBlank { "UEFA Champions League" }, fontSize = 13.5.sp, fontWeight = FontWeight.Bold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp * scale)) {
                     Box(modifier = Modifier.size(6.dp * scale).clip(CircleShape).background(IslandColors.Green))
-                    Text(text = subtitle.ifBlank { "78' LIVE" }, fontSize = (11f * scale).sp, fontWeight = FontWeight.Bold, color = IslandColors.Green, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(text = subtitle.ifBlank { "78' LIVE" }, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = IslandColors.Green, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
             }
 
@@ -2824,21 +2523,21 @@ private fun SportsExpandedContent(title: String = "", subtitle: String = "") {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.Start) {
-                    Text(text = "Real Madrid", fontSize = (15f * scale).sp, fontWeight = FontWeight.Bold, color = Color.White)
-                    Text(text = "Vini Jr 34', Jude 67'", fontSize = (10f * scale).sp, color = IslandColors.Gray)
+                    Text(text = "Real Madrid", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = "Vini Jr 34', Jude 67'", fontSize = 11.sp, color = IslandColors.Gray)
                 }
 
                 Text(
                     text = "2  -  1",
-                    fontSize = (24f * scale).sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = IslandColors.Yellow,
                     fontFamily = FontFamily.Monospace
                 )
 
                 Column(horizontalAlignment = Alignment.End) {
-                    Text(text = "Man City", fontSize = (15f * scale).sp, fontWeight = FontWeight.Bold, color = Color.White)
-                    Text(text = "De Bruyne 51'", fontSize = (10f * scale).sp, color = IslandColors.Gray)
+                    Text(text = "Man City", fontSize = 15.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                    Text(text = "De Bruyne 51'", fontSize = 11.sp, color = IslandColors.Gray)
                 }
             }
 
@@ -2850,7 +2549,7 @@ private fun SportsExpandedContent(title: String = "", subtitle: String = "") {
                     .padding(vertical = 4.dp * scale),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Quarter-Final • 2nd Leg (Agg: 4 - 4)", fontSize = (10.5f * scale).sp, color = IslandColors.Gray)
+                Text(text = "Quarter-Final • 2nd Leg (Agg: 4 - 4)", fontSize = 11.sp, color = IslandColors.Gray)
             }
         }
     }

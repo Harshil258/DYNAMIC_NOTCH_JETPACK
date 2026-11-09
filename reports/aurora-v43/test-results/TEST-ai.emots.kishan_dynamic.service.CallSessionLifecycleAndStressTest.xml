@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" tests="23" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:40.692Z" hostname="Vekariyas-Mac-mini.local" time="0.158">
+  <properties/>
+  <testcase name="shortCallUnderTwoSecondsTrackedAccurately" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.069"/>
+  <testcase name="callActionLauncherOpenCallRejectsInvalidInput" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.01"/>
+  <testcase name="freeUsersCanOptOutOfCallSummary" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.0"/>
+  <testcase name="whatsAppNumberFormattingNormalizesVariousInputs" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="duplicateOffhookBroadcastsDeduplicated" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.009"/>
+  <testcase name="unknownCallerFallbackWhenNumberIsNull" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="outgoingCallStartedAndEndedTracksDuration" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="monotonicTimeImmunityToWallClockJump" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.006"/>
+  <testcase name="subSecondCallFloorsToZeroSeconds" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.002"/>
+  <testcase name="callDurationAccuracyReliableForStandardCall" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="incomingCallAnsweredAndEndedTracksDurationAndDirection" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="notificationPriorityPolicyElevatesMissedCalls" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.0"/>
+  <testcase name="duplicateIdleBroadcastsIgnored" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.03"/>
+  <testcase name="callActionLauncherOpenSmsRejectsInvalidInput" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.0"/>
+  <testcase name="deviceRebootDuringCallFallsBackToWallClock" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.002"/>
+  <testcase name="incomingCallRejectedRecordsMissedWithZeroDuration" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="incomingCallMissedRingsAndStopsWithoutAnswer" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="longCallOverOneHourTrackedAccurately" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.001"/>
+  <testcase name="concurrencyStressTest" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.004"/>
+  <testcase name="receiverRecreationSimulatesAndroidBehavior" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.009"/>
+  <testcase name="rapidConsecutiveCallsHandledCleanly" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.004"/>
+  <testcase name="processDeathRecoveryRestoresActiveSessionOnIdle" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.002"/>
+  <testcase name="duplicateRingingBroadcastsDeduplicated" classname="ai.emots.kishan_dynamic.service.CallSessionLifecycleAndStressTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

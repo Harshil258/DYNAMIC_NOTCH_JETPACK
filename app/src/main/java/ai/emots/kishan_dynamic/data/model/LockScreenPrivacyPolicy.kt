@@ -1,6 +1,6 @@
 package ai.emots.kishan_dynamic.data.model
 
-/** Pure redaction rules used only for lock-screen presentation. */
+/** Pure presentation redaction: lock screen and classified sensitive unlocked previews. */
 object LockScreenPrivacyPolicy {
 
     fun notification(
@@ -8,12 +8,13 @@ object LockScreenPrivacyPolicy {
         deviceLocked: Boolean,
         hideSensitiveContent: Boolean
     ): NotificationInfo {
-        if (!deviceLocked) return source
+        val classifiedSensitive = ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy.isFinancialOrOtp(source)
+        if (!deviceLocked && !(hideSensitiveContent && classifiedSensitive)) return source
 
         // PII & Financial Safety Contract (AUR-P2-016):
         // Financial balances, transaction amounts, and account numbers must NEVER
         // be displayed on the ambient lock screen to bystanders.
-        if (ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy.isFinancialTransaction(source)) {
+        if (deviceLocked && ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy.isFinancialTransaction(source)) {
             return source.copy(
                 title = source.appName.ifBlank { "Transaction Alert" },
                 text = "Payment received",
@@ -27,11 +28,11 @@ object LockScreenPrivacyPolicy {
             )
         }
 
-        if (!hideSensitiveContent || !source.isSensitive) return source
+        if (!hideSensitiveContent || (!source.isSensitive && !classifiedSensitive)) return source
         return source.copy(
             title = source.appName,
             text = "New notification",
-            expandedText = "Unlock to view",
+            expandedText = if (deviceLocked) "Unlock to view" else "Content hidden by privacy settings",
             subText = null,
             inboxLines = emptyList(),
             imagePath = null,

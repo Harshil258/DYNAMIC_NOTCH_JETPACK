@@ -7,7 +7,7 @@ import org.junit.Test
 class LockScreenPrivacyPolicyTest {
 
     @Test
-    fun sensitiveNotificationIsRedactedOnlyWhileLocked() {
+    fun sensitiveOtpIsRedactedOnLockAndDuringProtectedUnlockedPreview() {
         val source = NotificationInfo(
             id = "otp",
             packageName = "test.bank",
@@ -25,7 +25,8 @@ class LockScreenPrivacyPolicyTest {
         assertEquals("Unlock to view", redacted.expandedText)
         assertNull(redacted.imagePath)
         assertEquals(emptyList<NotificationActionInfo>(), redacted.actions)
-        assertEquals(source, LockScreenPrivacyPolicy.notification(source, false, true))
+        assertEquals("New notification", LockScreenPrivacyPolicy.notification(source, false, true).text)
+        assertEquals(source, LockScreenPrivacyPolicy.notification(source, false, false))
     }
 
     @Test
@@ -48,5 +49,14 @@ class LockScreenPrivacyPolicyTest {
         assertEquals("Incoming call", redacted?.name)
         assertEquals("", redacted?.phoneNumber)
         assertNull(redacted?.avatarUri)
+    }
+    @org.junit.Test fun unlockedOtpAndFinanceRespectSensitivePreviewPreference() {
+        val otp = NotificationInfo(id = "otp-fixture", packageName = "demo.messages", appName = "Messages", title = "Security code", text = "Your verification code is 123456")
+        val safe = LockScreenPrivacyPolicy.notification(otp, false, true)
+        org.junit.Assert.assertEquals("New notification", safe.text)
+        org.junit.Assert.assertFalse(safe.expandedText.contains("123456"))
+        org.junit.Assert.assertEquals(otp, LockScreenPrivacyPolicy.notification(otp, false, false))
+        val finance = otp.copy(packageName = "com.google.android.apps.nbu.paisa.user", title = "Transaction", text = "Payment received")
+        org.junit.Assert.assertEquals("New notification", LockScreenPrivacyPolicy.notification(finance, false, true).text)
     }
 }

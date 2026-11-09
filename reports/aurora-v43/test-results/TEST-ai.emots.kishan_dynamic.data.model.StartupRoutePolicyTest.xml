@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.277Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+  <properties/>
+  <testcase name="selectedLanguageMovesToOnboarding" classname="ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest" time="0.0"/>
+  <testcase name="completedOnboardingDoesNotReplayFirstRunLanguage" classname="ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest" time="0.0"/>
+  <testcase name="freshInstallStartsWithLanguageBeforeOnboarding" classname="ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest" time="0.0"/>
+  <testcase name="editorDeepLinkTargetsEditorOnlyFromMainHub" classname="ai.emots.kishan_dynamic.data.model.StartupRoutePolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

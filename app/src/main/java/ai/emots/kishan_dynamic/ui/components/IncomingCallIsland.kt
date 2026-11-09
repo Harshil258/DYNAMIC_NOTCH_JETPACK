@@ -121,7 +121,7 @@ fun IncomingCallIsland(
                     Text(
                         text = label,
                         color = Color(0xFFA4A4A9),
-                        fontSize = (12f * scale).sp,
+                        fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
                         letterSpacing = (-0.1).sp
                     )
@@ -129,7 +129,7 @@ fun IncomingCallIsland(
                     Text(
                         text = name,
                         color = Color.White,
-                        fontSize = (15f * scale).sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.2).sp,
                         maxLines = 1,
@@ -146,7 +146,7 @@ fun IncomingCallIsland(
                 horizontalArrangement = Arrangement.spacedBy(10.dp * scale)
             ) {
                 // Red Decline Button
-                if (canDecline) {
+                if (canDecline && canRenderIslandControl(IslandControlAction.CallDecline)) {
                     Box(
                         modifier = Modifier
                             .size(buttonTouchSize)
@@ -175,7 +175,7 @@ fun IncomingCallIsland(
                 }
 
                 // Green Accept Button
-                Box(
+                if (canRenderIslandControl(IslandControlAction.CallAccept)) Box(
                     modifier = Modifier
                         .size(buttonTouchSize)
                         .clickable(

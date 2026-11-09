@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.280Z" hostname="Vekariyas-Mac-mini.local" time="0.002">
+  <properties/>
+  <testcase name="wiFiActiveWithCellularDisabledDoesNotShowMobileDataAlert" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.001"/>
+  <testcase name="coldStartWithNoPreviousStateDoesNotShowSpuriousAlert" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.0"/>
+  <testcase name="exitingAirplaneModeDismissesAlert" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.0"/>
+  <testcase name="onlineToCompletelyOfflineTransitionShowsOfflineAlert" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.0"/>
+  <testcase name="setupOrPermissionsPhaseSuppressesAllNetworkAlerts" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.0"/>
+  <testcase name="networkRecoveryDismissesAlert" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.0"/>
+  <testcase name="grantsOfPhonePermissionDuringWifiConnectedDoesNotTriggerAlert" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.0"/>
+  <testcase name="transitioningToAirplaneModeShowsAirplaneAlert" classname="ai.emots.kishan_dynamic.data.network.NetworkConnectivityPolicyTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

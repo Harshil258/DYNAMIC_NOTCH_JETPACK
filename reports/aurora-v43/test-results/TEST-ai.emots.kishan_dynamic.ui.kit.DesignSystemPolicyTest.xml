@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.ui.kit.DesignSystemPolicyTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:41.340Z" hostname="Vekariyas-Mac-mini.local" time="0.009">
+  <properties/>
+  <testcase name="spacingTokensMaintainRationalScale" classname="ai.emots.kishan_dynamic.ui.kit.DesignSystemPolicyTest" time="0.009"/>
+  <testcase name="optionsGreaterThanFourMustNotUseFixedSegmentedLayout" classname="ai.emots.kishan_dynamic.ui.kit.DesignSystemPolicyTest" time="0.0"/>
+  <testcase name="simulatedExperiencesAreExplicitlyDistinguishedFromHardwareSupported" classname="ai.emots.kishan_dynamic.ui.kit.DesignSystemPolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

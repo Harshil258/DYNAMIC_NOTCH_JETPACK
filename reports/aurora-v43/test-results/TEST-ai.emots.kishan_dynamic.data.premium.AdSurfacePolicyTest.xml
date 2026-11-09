@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.665Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+  <properties/>
+  <testcase name="paidProSubscribersSuppressAllAds" classname="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" time="0.0"/>
+  <testcase name="trialAndRewardedPassUsersStillSeeInAppAds" classname="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" time="0.0"/>
+  <testcase name="paidAdFreeUserNeverSeesBanner" classname="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" time="0.0"/>
+  <testcase name="consentPolicyFailsClosedForUnknownOrFailedState" classname="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" time="0.001"/>
+  <testcase name="consentMustBeReadyBeforeBannerIsRequested" classname="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" time="0.0"/>
+  <testcase name="freeConfiguredUserCanSeeBanner" classname="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" time="0.0"/>
+  <testcase name="missingConfigurationKeepsBannerHidden" classname="ai.emots.kishan_dynamic.data.premium.AdSurfacePolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

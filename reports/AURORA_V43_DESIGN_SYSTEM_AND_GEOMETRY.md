@@ -22,4 +22,4 @@ are confirmed in the source SVG. Pixel-perfect font matching is not claimed.
 First on-device Gallery music surface:366.88×177.01dp (Δ−0.12/+0.01 at393dp canvas).
 This is one state only, not blanket60-state evidence.
 
-Evidence currency: recorded measurements and PNGs are INTERIM and precede the final corrections. The final source passes compilation/JVM checks; fresh device geometry verification is pending reconnection.
+Evidence currency: measurements and120PNGs are refreshed from the final Figma-correction source.1200synthetic configurations passed. The new189dp compact-notification rule and natural three-action audio-call height intentionally supersede earlier targets; see AURORA_FIGMA_VISUAL_RULES.md.

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.713Z" hostname="Vekariyas-Mac-mini.local" time="0.035">
+<testsuite name="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:53.494Z" hostname="Vekariyas-Mac-mini.local" time="0.042">
   <properties/>
-  <testcase name="decoderPreservesAppOpenControls" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.0"/>
+  <testcase name="decoderPreservesAppOpenControls" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
   <testcase name="analyticsSinkPreservesStructuredProviderEvents" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
   <testcase name="decoderAcceptsRemoteCamelCaseAndSnakeCaseFields" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
   <testcase name="decoderPreservesBannerAdUnitId" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.0"/>
-  <testcase name="offlinePromptRequiresConfiguredEndpointAndRefreshError" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
-  <testcase name="analyticsJsonEscapesEventValues" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.004"/>
-  <testcase name="testDecodingReferenceProjectAdsDetailsNewPayload" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
-  <testcase name="localConfigDefaultsToSafeOfflineValues" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.022"/>
+  <testcase name="offlinePromptRequiresConfiguredEndpointAndRefreshError" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.0"/>
+  <testcase name="analyticsJsonEscapesEventValues" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.002"/>
+  <testcase name="testDecodingReferenceProjectAdsDetailsNewPayload" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.0"/>
+  <testcase name="localConfigDefaultsToSafeOfflineValues" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.031"/>
   <testcase name="remoteProviderKeepsLastGoodSnapshotWhenRefreshFails" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.003"/>
-  <testcase name="decoderPreservesInterstitialFrequencyControls" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.0"/>
-  <testcase name="blankEndpointDoesNotInvokeTransport" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
-  <testcase name="decoderPreservesNativeAdUnitId" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
+  <testcase name="decoderPreservesInterstitialFrequencyControls" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.001"/>
+  <testcase name="blankEndpointDoesNotInvokeTransport" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.002"/>
+  <testcase name="decoderPreservesNativeAdUnitId" classname="ai.emots.kishan_dynamic.data.release.ReleaseProviderContractTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:41.105Z" hostname="Vekariyas-Mac-mini.local" time="0.017">
+<testsuite name="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:06:01.846Z" hostname="Vekariyas-Mac-mini.local" time="0.019">
   <properties/>
-  <testcase name="notificationReducerQueueScaling1_5_20_AndCapping" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.002"/>
+  <testcase name="notificationReducerQueueScaling1_5_20_AndCapping" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.001"/>
   <testcase name="notificationReducerPrioritizesFinancialAndOtpAtTopOfQueue" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
-  <testcase name="mediaAudioFirstAndVideoStreamingClassification" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.013"/>
+  <testcase name="mediaAudioFirstAndVideoStreamingClassification" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.017"/>
   <testcase name="notificationReducerRapidDismissalSafety" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
   <testcase name="mediaPauseAutoCollapseDelayConstant" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
   <testcase name="financialAndOtpDisplayDurationEnforcesEightSecondMinimum" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.001"/>
   <testcase name="olderHighPriorityOtpAndNewerOrdinaryMessageCoexistence" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
   <testcase name="lockScreenPrivacyMasksFinancialNotificationsToPaymentReceived" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
   <testcase name="perAppNotificationMutingPolicy" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
-  <testcase name="otpVerificationCodesClassifiedCorrectly" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.001"/>
+  <testcase name="otpVerificationCodesClassifiedCorrectly" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
   <testcase name="upiAndBankingTransactionsClassifiedAsFinancial" classname="ai.emots.kishan_dynamic.service.NotificationAndMediaRealWorldScenarioTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

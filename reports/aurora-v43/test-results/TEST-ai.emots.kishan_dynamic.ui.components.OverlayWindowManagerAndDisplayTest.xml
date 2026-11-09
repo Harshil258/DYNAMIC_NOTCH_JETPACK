@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:41.339Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+<testsuite name="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:06:01.986Z" hostname="Vekariyas-Mac-mini.local" time="0.0">
   <properties/>
   <testcase name="windowFlagsWhenVisibleExcludeNotTouchable" classname="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" time="0.0"/>
   <testcase name="windowFlagsWhenHiddenIncludeNotTouchable" classname="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" time="0.0"/>
   <testcase name="cutoutDotSizingCoercionWithinSafeHardwareBounds" classname="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" time="0.0"/>
   <testcase name="alwaysOnTopDisabledSuppressesIdlePillFromInterceptingTouches" classname="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" time="0.0"/>
   <testcase name="quickControlsGatingEnforcesPreference" classname="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" time="0.0"/>
-  <testcase name="idleAutoHideSuppressesPillRendering" classname="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" time="0.001"/>
+  <testcase name="idleAutoHideSuppressesPillRendering" classname="ai.emots.kishan_dynamic.ui.components.OverlayWindowManagerAndDisplayTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

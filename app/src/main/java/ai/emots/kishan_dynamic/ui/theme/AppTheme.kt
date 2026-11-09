@@ -332,6 +332,11 @@ data class AppIslandTokens(
     /** True iOS idle capsule width — never stretch this to the screen. */
     val compactWidth: Dp = 126.dp,
     val compactMaxWidth: Dp = 250.dp,
+    /** Figma27:1021 compact notification: icon and count occupy opposite ends. */
+    val notificationCompactWidth: Dp = 189.dp,
+    val audioCallTopInset: Dp = 24.dp,
+    val audioCallBottomInset: Dp = 20.dp,
+    val audioCallControlGap: Dp = 24.dp,
     /** Android does not expose exact status-icon bounds; preserve a central budget. */
     val compactStatusSideReserve: Dp = 72.dp,
     val compactIconSize: Dp = 18.dp,

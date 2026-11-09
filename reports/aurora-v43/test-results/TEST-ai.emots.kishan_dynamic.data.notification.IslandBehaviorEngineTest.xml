@@ -1,41 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" tests="35" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.310Z" hostname="Vekariyas-Mac-mini.local" time="0.117">
+<testsuite name="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" tests="35" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:52.542Z" hostname="Vekariyas-Mac-mini.local" time="0.346">
   <properties/>
-  <testcase name="test_U01_swipeUpExpandedNotification_collapseOnly_osShadeAndQueueUnchanged" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_A19_userClicksCloseButton_osDismissChosen_nonClearable_fallbackIslandOnly" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.002"/>
-  <testcase name="test_A08_userExpandedPagerPageFive_newNormalMessage_selectedKeyPinned_childEmerges" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.002"/>
-  <testcase name="test_A24_sameDelivery_arrivingNow_meaningfulResurfacing" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.002"/>
+  <testcase name="test_U01_swipeUpExpandedNotification_collapseOnly_osShadeAndQueueUnchanged" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.012"/>
+  <testcase name="test_A19_userClicksCloseButton_osDismissChosen_nonClearable_fallbackIslandOnly" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.006"/>
+  <testcase name="test_A08_userExpandedPagerPageFive_newNormalMessage_selectedKeyPinned_childEmerges" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.013"/>
+  <testcase name="test_A24_sameDelivery_arrivingNow_meaningfulResurfacing" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.007"/>
   <testcase name="test_A27_sameKeyMessagingReply_newTimestampAndBody_resurfacesOnlyOnGenuinelyNewContent" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_negativeInvariants_selectedKeyStabilityOnOrderShifts" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_stateManagerNonDestructiveCollapse_forAllStates" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.066"/>
-  <testcase name="test_A36_newChildEntersWhileOldChildNearTimeout_independentTimerNotRestarted" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
+  <testcase name="test_negativeInvariants_selectedKeyStabilityOnOrderShifts" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.002"/>
+  <testcase name="test_stateManagerNonDestructiveCollapse_forAllStates" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.205"/>
+  <testcase name="test_A36_newChildEntersWhileOldChildNearTimeout_independentTimerNotRestarted" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
   <testcase name="test_A01_idleZeroActiveItemsTap_opensQuickControls" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_U04_compactNotificationRapidlyDoubleTapped_onlyIntendedSingleAction" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_C05_ongoingMusicAndNormalMessage_preservesMusicAndShowsPreview" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_P05_listenerRestartsWithActiveNotifications_reconcileKeysWithoutDuplicates" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
+  <testcase name="test_U04_compactNotificationRapidlyDoubleTapped_onlyIntendedSingleAction" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.007"/>
+  <testcase name="test_C05_ongoingMusicAndNormalMessage_preservesMusicAndShowsPreview" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
+  <testcase name="test_P05_listenerRestartsWithActiveNotifications_reconcileKeysWithoutDuplicates" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
   <testcase name="test_A20_userRemovesLastIslandEntryViaCloseButton_directlyIdleCompact" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_A28_sourceRemovesKey_laterRepostsGenuinelyNewKey_treatedAsNewNotification" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_milestoneResurfacing_comprehensiveSuite" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
+  <testcase name="test_A28_sourceRemovesKey_laterRepostsGenuinelyNewKey_treatedAsNewNotification" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.002"/>
+  <testcase name="test_milestoneResurfacing_comprehensiveSuite" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
   <testcase name="test_A05_compactOneMessage_autoPreviewCompletes_compactBadgeRetained_noOsCancellation" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_childNoticeTouchPausesTimer_releaseResetsTimer_andBlocksAutoExpand" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
+  <testcase name="test_childNoticeTouchPausesTimer_releaseResetsTimer_andBlocksAutoExpand" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.002"/>
   <testcase name="test_A16_sourceRemovesFinalEligibleItem_noActivity_idleCompact_tapQuickControls" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
   <testcase name="test_A11_userExpandedPager_sameKeyMinorUpdate_inPlaceUpdate_noNewPageOrChild" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
   <testcase name="test_A22_userIslandDismissesDelivery_firstTwoStopsAway_resurfacesOnce" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_A15_sourceRemovesNonSelectedItem_selectedKeyUnchanged_countDecrements" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
+  <testcase name="test_A15_sourceRemovesNonSelectedItem_selectedKeyUnchanged_countDecrements" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
   <testcase name="test_A14_sourceRemovesCurrentlySelectedFinalPagerItem_previousNeighborSelected" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_A23_sameDelivery_subsequentStopDecrement_notRepeatedlyResurrected" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_A35_childExpiresUntouched_visuallyMerges_queueUnchanged" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_A13_sourceRemovesCurrentlySelectedMiddlePagerItem_nextNeighborSelected_remainsExpanded" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
+  <testcase name="test_A23_sameDelivery_subsequentStopDecrement_notRepeatedlyResurrected" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
+  <testcase name="test_A35_childExpiresUntouched_visuallyMerges_queueUnchanged" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
+  <testcase name="test_A13_sourceRemovesCurrentlySelectedMiddlePagerItem_nextNeighborSelected_remainsExpanded" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
   <testcase name="test_A02_compactOneMessageTap_expandsNotification_osUntouched" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
-  <testcase name="test_A10_userExpandedPager_rankingReorder_selectedStableKeyUnchanged" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.002"/>
-  <testcase name="test_A04_compactFiftyMixedMessages_pagerHandlesAllWithoutDuplicates" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.021"/>
-  <testcase name="test_A40_burstOfTwentyFiveNotifications_queueBoundedAndSafe" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.004"/>
+  <testcase name="test_A10_userExpandedPager_rankingReorder_selectedStableKeyUnchanged" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.003"/>
+  <testcase name="test_A04_compactFiftyMixedMessages_pagerHandlesAllWithoutDuplicates" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.053"/>
+  <testcase name="test_A40_burstOfTwentyFiveNotifications_queueBoundedAndSafe" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.014"/>
   <testcase name="test_A06_transientPreviewReading_secondArrives_childEmerges_mainPreviewStays" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
   <testcase name="test_stalePreviewTokenRejection_doesNotCollapseNewerPreview" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_negativeInvariants_zeroUnintendedOsCancellations" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_A03_compactTwelveMessagesTap_opensHorizontalPager_newestFirst" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_A21_userIslandDismissesSameKey_progressSixtyToSeventy_suppressed" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
-  <testcase name="test_A17_userClicksCloseButton_defaultSetting_islandOnlyDismiss_noOsCancel" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
+  <testcase name="test_negativeInvariants_zeroUnintendedOsCancellations" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.003"/>
+  <testcase name="test_A03_compactTwelveMessagesTap_opensHorizontalPager_newestFirst" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.004"/>
+  <testcase name="test_A21_userIslandDismissesSameKey_progressSixtyToSeventy_suppressed" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.0"/>
+  <testcase name="test_A17_userClicksCloseButton_defaultSetting_islandOnlyDismiss_noOsCancel" classname="ai.emots.kishan_dynamic.data.notification.IslandBehaviorEngineTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

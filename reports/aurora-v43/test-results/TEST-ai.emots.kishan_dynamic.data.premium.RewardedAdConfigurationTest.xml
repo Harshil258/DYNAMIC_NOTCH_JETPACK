@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.685Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+<testsuite name="ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:53.450Z" hostname="Vekariyas-Mac-mini.local" time="0.003">
   <properties/>
   <testcase name="releaseConfigurationIsOptIn" classname="ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest" time="0.001"/>
   <testcase name="debugConfigurationUsesGoogleTestPlacements" classname="ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest" time="0.0"/>
-  <testcase name="runtimeConfigCanEnableAConfiguredProductionPlacement" classname="ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest" time="0.0"/>
+  <testcase name="runtimeConfigCanEnableAConfiguredProductionPlacement" classname="ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest" time="0.002"/>
   <testcase name="runtimeConfigStaysDisabledUntilConsentAllowsRequests" classname="ai.emots.kishan_dynamic.data.premium.RewardedAdConfigurationTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

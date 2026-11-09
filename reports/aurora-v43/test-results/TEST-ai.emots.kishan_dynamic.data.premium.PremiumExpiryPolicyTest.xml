@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.682Z" hostname="Vekariyas-Mac-mini.local" time="0.0">
+<testsuite name="ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:53.434Z" hostname="Vekariyas-Mac-mini.local" time="0.006">
   <properties/>
-  <testcase name="onlyPassesWithinTheTwentyFourHourWarningWindow" classname="ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicyTest" time="0.0"/>
+  <testcase name="onlyPassesWithinTheTwentyFourHourWarningWindow" classname="ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicyTest" time="0.005"/>
   <testcase name="expiredEntitlementsDoNotReappearAsAWarning" classname="ai.emots.kishan_dynamic.data.premium.PremiumExpiryPolicyTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

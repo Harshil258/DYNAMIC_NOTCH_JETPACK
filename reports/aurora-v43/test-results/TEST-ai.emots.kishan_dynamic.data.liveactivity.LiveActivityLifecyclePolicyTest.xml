@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.204Z" hostname="Vekariyas-Mac-mini.local" time="0.003">
+<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:50.622Z" hostname="Vekariyas-Mac-mini.local" time="0.184">
   <properties/>
-  <testcase name="presentationModesAreExplicitlyReflected" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.002"/>
+  <testcase name="presentationModesAreExplicitlyReflected" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.145"/>
   <testcase name="ongoingActivityStateReporting" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.001"/>
-  <testcase name="ongoingActivitiesVersusTransientAlertsClassification" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.0"/>
-  <testcase name="transientAlertsAreNotStickyUnderOwnershipPolicy" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.0"/>
-  <testcase name="defaultTransientDurationsAreCalibrated" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.0"/>
+  <testcase name="ongoingActivitiesVersusTransientAlertsClassification" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.001"/>
+  <testcase name="transientAlertsAreNotStickyUnderOwnershipPolicy" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.034"/>
+  <testcase name="defaultTransientDurationsAreCalibrated" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivityLifecyclePolicyTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

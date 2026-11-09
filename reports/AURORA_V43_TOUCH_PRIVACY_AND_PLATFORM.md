@@ -15,4 +15,4 @@ ADB/Compose instead. Device was unlocked. Only synthetic fixture content is capt
 Existing privacy policy/analytics boundaries retained. Gallery actions are local no-ops.
 Real call, external RemoteInput, keyguard, TalkBack and external media acceptance NOT RUN.
 
-Latest check: phone disconnected; ADB devices empty, known Wi-Fi reconnect refused. Diagnosis self-heal restarted ADB but found no device/AVD. Final APK installation and device rerun are BLOCKED pending reconnection.
+Latest Figma-correction check: Realme is reconnected via USB X4Y9QSOZ4DEADEDM (Wi-Fi address is the same device). Final APK installed;1200shared-renderer configurations and15distinct device checks validated. dumpsys accessibility still reports no bound/enabled services. Synthetic visual checks do not resolve production overlay touch acceptance.

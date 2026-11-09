@@ -4,6 +4,8 @@ Mandatory for shell, compact content, expanded cards, overlay positioning, previ
 and tests. This contract supersedes reference-only fixed heights, single-line-only
 expanded copy, 44dp controls, and a universal 126dp minimum in older SVG guidance.
 References are visual evidence, not Android hardware measurements.
+For the owner-requested Figma comparison correction, follow
+[AURORA_FIGMA_VISUAL_RULES.md](AURORA_FIGMA_VISUAL_RULES.md).
 
 ## One owner per dimension
 
@@ -26,16 +28,17 @@ References are visual evidence, not Android hardware measurements.
   Interactive layout target: at least 48dp, including
   the compact body/companion. Transparent vertical hit clearance is intentional;
   it is not content padding. Hidden windows remain invisible and non-touchable.
-- Notification width = 12dp leading + 20dp icon + 8dp gap + measured label width
-  + 12dp trailing, bounded by the current status-side budget. Both ends match.
-  Never preserve a 152dp reference width around a 60dp icon/count group.
+- Notification compact width follows the measured Figma notification specimen27:1021:
+  preferred189dp, bounded by the current status-side budget. Icon and numeric count
+  occupy opposite ends with matching12dp insets. Do not shrink to an icon/count badge.
+  This owner-requested visual correction supersedes the earlier intrinsic-width rule.
 - Compact notifications show only bounded unseen count (`0`…`99+`) or genuine
   ongoing progress. No message body, sender, or permanent notification title.
 - Compact content uses the same 12dp shell insets and 8dp content gap. Components
   must not add another inset inside the shell. The space between distinct active
   regions must express real content; no fake companion for idle notifications.
-- Width calibration must not introduce dead space in the icon/count notification
-  pill. It still applies to the idle notch and other calibrated presentations.
+- Distinguish the compact notification capsule from the38dp minimal companion and
+  from the owner108×32 empty Minimal specimen. Do not map their widths interchangeably.
 
 ## Expanded / actions
 
@@ -76,7 +79,7 @@ References are visual evidence, not Android hardware measurements.
   geometry springs and press scaling. Do not animate private notification copy.
 - Pure tests cover count/progress and cutout placement (left/center/pill/rotation).
 - Compose tests must check 320/360/393/430dp, 100%/200% fonts, LTR/RTL, action reachability,
-  no action overlap, no giant compact remainder, and multiple expanded families.
+  no action overlap, a correctly proportioned compact notification capsule, and multiple expanded families.
 - Before/after screenshots must distinguish actual overlay from synthetic Compose
   fixtures. Compilation does not establish visual or device compatibility.
 

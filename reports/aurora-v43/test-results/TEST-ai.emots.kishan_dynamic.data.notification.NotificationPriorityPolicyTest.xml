@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.651Z" hostname="Vekariyas-Mac-mini.local" time="0.0">
+<testsuite name="ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:53.259Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
   <properties/>
-  <testcase name="keepsRegularDismissibleNotificationOutOfSplitPresentation" classname="ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicyTest" time="0.0"/>
+  <testcase name="keepsRegularDismissibleNotificationOutOfSplitPresentation" classname="ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicyTest" time="0.001"/>
   <testcase name="classifiesReferenceLiveActivityCategories" classname="ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicyTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

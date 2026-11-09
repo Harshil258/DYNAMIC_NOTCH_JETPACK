@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,6 +38,7 @@ import ai.emots.kishan_dynamic.ui.theme.IslandColors
 /**
  * Pixel-perfect Flight Island Expanded state (resolves Screenshot B defects).
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FlightIslandExpanded(
     info: LiveActivityInfo? = null,
@@ -195,11 +199,11 @@ fun FlightIslandExpanded(
 
             }
 
-            // BOTTOM ROW: Terminal, Gate & Estimated time remaining
-            Row(
+            // Wrap the independent gate and ETA regions at large text sizes.
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md, Alignment.Start),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)
             ) {
                 Text(
                     text = gateInfo,

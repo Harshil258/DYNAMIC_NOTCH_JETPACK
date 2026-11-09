@@ -1,0 +1,684 @@
+[
+  {
+    "id": "19:968",
+    "name": "Dynamic Island / Expanded",
+    "bounds": {
+      "x": 3080.0,
+      "y": 665.0,
+      "width": 367.0,
+      "height": 177.0
+    },
+    "file": "figma-19-968.png"
+  },
+  {
+    "id": "19:979",
+    "name": "Dynamic Island / Compact",
+    "bounds": {
+      "x": 4797.0,
+      "y": 646.0,
+      "width": 190.0,
+      "height": 38.0
+    },
+    "file": "figma-19-979.png"
+  },
+  {
+    "id": "19:991",
+    "name": "Dynamic Island / Compact",
+    "bounds": {
+      "x": 6295.0,
+      "y": 646.0,
+      "width": 155.0,
+      "height": 38.0
+    },
+    "file": "figma-19-991.png"
+  },
+  {
+    "id": "19:992",
+    "name": "Dynamic Island / Minimal",
+    "bounds": {
+      "x": 6456.0,
+      "y": 646.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-992.png"
+  },
+  {
+    "id": "19:995",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6696.0,
+      "y": 649.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-995.png"
+  },
+  {
+    "id": "19:996",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6782.0,
+      "y": 649.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-996.png"
+  },
+  {
+    "id": "19:997",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6868.0,
+      "y": 649.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-997.png"
+  },
+  {
+    "id": "19:998",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6954.0,
+      "y": 649.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-998.png"
+  },
+  {
+    "id": "19:999",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7040.0,
+      "y": 649.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-999.png"
+  },
+  {
+    "id": "19:1000",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7126.0,
+      "y": 649.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1000.png"
+  },
+  {
+    "id": "19:1001",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6696.0,
+      "y": 735.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1001.png"
+  },
+  {
+    "id": "19:1002",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6782.0,
+      "y": 735.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1002.png"
+  },
+  {
+    "id": "19:1003",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6868.0,
+      "y": 735.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1003.png"
+  },
+  {
+    "id": "19:1004",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6954.0,
+      "y": 735.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1004.png"
+  },
+  {
+    "id": "19:1005",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7040.0,
+      "y": 735.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1005.png"
+  },
+  {
+    "id": "19:1006",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7126.0,
+      "y": 735.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1006.png"
+  },
+  {
+    "id": "19:1007",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6696.0,
+      "y": 821.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1007.png"
+  },
+  {
+    "id": "19:1008",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6782.0,
+      "y": 821.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1008.png"
+  },
+  {
+    "id": "19:1009",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6868.0,
+      "y": 821.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1009.png"
+  },
+  {
+    "id": "19:1010",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6954.0,
+      "y": 821.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1010.png"
+  },
+  {
+    "id": "19:1011",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7040.0,
+      "y": 821.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1011.png"
+  },
+  {
+    "id": "19:1012",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7126.0,
+      "y": 821.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1012.png"
+  },
+  {
+    "id": "19:1013",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6696.0,
+      "y": 907.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1013.png"
+  },
+  {
+    "id": "19:1014",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6782.0,
+      "y": 907.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1014.png"
+  },
+  {
+    "id": "19:1015",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6868.0,
+      "y": 907.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1015.png"
+  },
+  {
+    "id": "19:1016",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6954.0,
+      "y": 907.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1016.png"
+  },
+  {
+    "id": "19:1017",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7040.0,
+      "y": 907.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1017.png"
+  },
+  {
+    "id": "19:1018",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 7126.0,
+      "y": 907.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1018.png"
+  },
+  {
+    "id": "19:1019",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 6696.0,
+      "y": 993.0,
+      "width": 38.0,
+      "height": 38.0
+    },
+    "file": "figma-19-1019.png"
+  },
+  {
+    "id": "19:1021",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5192.0,
+      "y": 636.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1021.png"
+  },
+  {
+    "id": "19:1022",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5607.0,
+      "y": 636.2732543945312,
+      "width": 367.0,
+      "height": 85.72676086425781
+    },
+    "file": "figma-19-1022.png"
+  },
+  {
+    "id": "19:1023",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5192.0,
+      "y": 770.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1023.png"
+  },
+  {
+    "id": "19:1024",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5607.0,
+      "y": 770.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1024.png"
+  },
+  {
+    "id": "19:1025",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5192.0,
+      "y": 904.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1025.png"
+  },
+  {
+    "id": "19:1026",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5607.0,
+      "y": 904.9202880859375,
+      "width": 367.0,
+      "height": 85.07974243164062
+    },
+    "file": "figma-19-1026.png"
+  },
+  {
+    "id": "19:1027",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5192.0,
+      "y": 1038.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1027.png"
+  },
+  {
+    "id": "19:1028",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5607.0,
+      "y": 1038.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1028.png"
+  },
+  {
+    "id": "19:1029",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5192.0,
+      "y": 1172.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1029.png"
+  },
+  {
+    "id": "19:1030",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5607.0,
+      "y": 1172.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1030.png"
+  },
+  {
+    "id": "19:1031",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 5192.0,
+      "y": 1306.0,
+      "width": 367.0,
+      "height": 86.0
+    },
+    "file": "figma-19-1031.png"
+  },
+  {
+    "id": "19:1033",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 3585.0,
+      "y": 663.3605346679688,
+      "width": 367.0,
+      "height": 177.0
+    },
+    "file": "figma-19-1033.png"
+  },
+  {
+    "id": "19:1034",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 4000.0,
+      "y": 655.0,
+      "width": 367.0,
+      "height": 185.36053466796875
+    },
+    "file": "figma-19-1034.png"
+  },
+  {
+    "id": "19:1035",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 3585.0,
+      "y": 888.3605346679688,
+      "width": 367.0,
+      "height": 168.0
+    },
+    "file": "figma-19-1035.png"
+  },
+  {
+    "id": "19:1036",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 4000.0,
+      "y": 890.3605346679688,
+      "width": 367.0,
+      "height": 165.99998474121094
+    },
+    "file": "figma-19-1036.png"
+  },
+  {
+    "id": "19:1037",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 3585.0,
+      "y": 1108.720947265625,
+      "width": 367.0,
+      "height": 172.63958740234375
+    },
+    "file": "figma-19-1037.png"
+  },
+  {
+    "id": "19:1038",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 4000.0,
+      "y": 1104.360595703125,
+      "width": 367.0,
+      "height": 177.0
+    },
+    "file": "figma-19-1038.png"
+  },
+  {
+    "id": "19:1039",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 3585.0,
+      "y": 1329.360595703125,
+      "width": 367.0,
+      "height": 148.0
+    },
+    "file": "figma-19-1039.png"
+  },
+  {
+    "id": "19:1040",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 4000.0,
+      "y": 1333.360595703125,
+      "width": 367.0,
+      "height": 144.0
+    },
+    "file": "figma-19-1040.png"
+  },
+  {
+    "id": "19:1041",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 3585.0,
+      "y": 1525.360595703125,
+      "width": 367.0,
+      "height": 162.0
+    },
+    "file": "figma-19-1041.png"
+  },
+  {
+    "id": "19:1042",
+    "name": "Dynamic Island",
+    "bounds": {
+      "x": 4000.0,
+      "y": 1545.360595703125,
+      "width": 367.0,
+      "height": 142.0
+    },
+    "file": "figma-19-1042.png"
+  },
+  {
+    "id": "27:682",
+    "name": "Connected Device",
+    "bounds": {
+      "x": 7771.0,
+      "y": 1607.6904296875,
+      "width": 189.0,
+      "height": 36.0
+    },
+    "file": "figma-27-682.png"
+  },
+  {
+    "id": "27:707",
+    "name": "Connected Device",
+    "bounds": {
+      "x": 7682.0,
+      "y": 1691.6904296875,
+      "width": 366.0,
+      "height": 95.0
+    },
+    "file": "figma-27-707.png"
+  },
+  {
+    "id": "27:732",
+    "name": "Connected Device",
+    "bounds": {
+      "x": 7802.0,
+      "y": 1523.6904296875,
+      "width": 127.0,
+      "height": 36.0
+    },
+    "file": "figma-27-732.png"
+  },
+  {
+    "id": "27:873",
+    "name": "Music Player",
+    "bounds": {
+      "x": 7771.4931640625,
+      "y": 116.0,
+      "width": 189.0,
+      "height": 36.0
+    },
+    "file": "figma-27-873.png"
+  },
+  {
+    "id": "27:912",
+    "name": "Music Player",
+    "bounds": {
+      "x": 7682.4931640625,
+      "y": 200.0,
+      "width": 366.0,
+      "height": 208.0
+    },
+    "file": "figma-27-912.png"
+  },
+  {
+    "id": "27:951",
+    "name": "Music Player",
+    "bounds": {
+      "x": 7802.4931640625,
+      "y": 32.0,
+      "width": 127.0,
+      "height": 36.0
+    },
+    "file": "figma-27-951.png"
+  },
+  {
+    "id": "27:992",
+    "name": "Figma Comment",
+    "bounds": {
+      "x": 8250.0,
+      "y": 949.6904296875,
+      "width": 366.0,
+      "height": 126.0
+    },
+    "file": "figma-27-992.png"
+  },
+  {
+    "id": "27:1021",
+    "name": "Figma Comment",
+    "bounds": {
+      "x": 8338.0,
+      "y": 865.6904296875,
+      "width": 189.0,
+      "height": 36.0
+    },
+    "file": "figma-27-1021.png"
+  },
+  {
+    "id": "27:1050",
+    "name": "Figma Comment",
+    "bounds": {
+      "x": 8370.0,
+      "y": 781.6904296875,
+      "width": 127.0,
+      "height": 36.0
+    },
+    "file": "figma-27-1050.png"
+  },
+  {
+    "id": "27:1080",
+    "name": "Lyft",
+    "bounds": {
+      "x": 7789.0,
+      "y": 862.0,
+      "width": 155.0,
+      "height": 36.0
+    },
+    "file": "figma-27-1080.png"
+  },
+  {
+    "id": "27:1101",
+    "name": "Lyft",
+    "bounds": {
+      "x": 7762.0,
+      "y": 946.0,
+      "width": 209.0,
+      "height": 36.0
+    },
+    "file": "figma-27-1101.png"
+  },
+  {
+    "id": "27:1122",
+    "name": "Lyft",
+    "bounds": {
+      "x": 7806.0,
+      "y": 778.0,
+      "width": 120.0,
+      "height": 36.0
+    },
+    "file": "figma-27-1122.png"
+  }
+]

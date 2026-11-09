@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.690Z" hostname="Vekariyas-Mac-mini.local" time="0.008">
+<testsuite name="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:53.459Z" hostname="Vekariyas-Mac-mini.local" time="0.018">
   <properties/>
   <testcase name="expiredTrialMarksActiveFalseAndExpiredTrue" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
   <testcase name="adSurfacePolicySuppressesAdsOnlyForPaidAdFreeUsers" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
   <testcase name="essentialCoreFeaturesAreNeverGated" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
   <testcase name="singleRewardAdGrantsTwentyFourHoursCredit" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
-  <testcase name="remoteConfigDecoderParsesAlternativeSchemaKeys" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.007"/>
-  <testcase name="trialSnapshotAccuratelyReflectsActiveDays" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
+  <testcase name="remoteConfigDecoderParsesAlternativeSchemaKeys" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.016"/>
+  <testcase name="trialSnapshotAccuratelyReflectsActiveDays" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.001"/>
   <testcase name="trialAndRewardedPassUsersAreProButNOTAdFree" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
   <testcase name="lifetimePurchaseIsNonConsumableWithNoExpiry" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
   <testcase name="rewardedAccessStacksSeamlesslyBeyondSevenDays" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
@@ -14,8 +14,8 @@
   <testcase name="fifteenSecondCooldownTimerEnforcesWaitingPeriod" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
   <testcase name="allUsersCanFreelyDisableSoundAndCallFeaturesWithoutSilentRestart" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
   <testcase name="expiredEntitlementPermitsShowingExpiryIsland" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
-  <testcase name="trialSnapshotDefaultsToSevenDaysWhenUninitialized" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.001"/>
-  <testcase name="paidSubscriptionsTakePrecedenceOverTemporaryPasses" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
+  <testcase name="trialSnapshotDefaultsToSevenDaysWhenUninitialized" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.0"/>
+  <testcase name="paidSubscriptionsTakePrecedenceOverTemporaryPasses" classname="ai.emots.kishan_dynamic.data.premium.Sprint09TrialAndRewardTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -115,7 +115,12 @@ class LayeredMiniIslandsInstrumentedTest {
         shot("narrow-large-text-rtl")
         compose.runOnIdle { event(IslandEngineEvent.PrivacyChanged(ChildPrivacyPolicy(true, true))) }
         compose.onNodeWithTag("child_child-3").assertExists()
-        compose.onAllNodesWithText("New notification", useUnmergedTree = true).onFirst().assertExists()
+        compose.onAllNodesWithText("Unlock to view", useUnmergedTree = true).onFirst().assertExists()
+        compose.onAllNodesWithText("A deliberately long sender name", substring = true,
+            useUnmergedTree = true).assertCountEquals(0)
+        compose.onAllNodesWithText("A multiline synthetic message preview", substring = true,
+            useUnmergedTree = true).assertCountEquals(0)
+        compose.onAllNodesWithText("Alex · main", useUnmergedTree = true).assertCountEquals(0)
         shot("narrow-large-text-redaction")
     }
     @Test fun promotionCannotSelectReusedSourceIdentity() {

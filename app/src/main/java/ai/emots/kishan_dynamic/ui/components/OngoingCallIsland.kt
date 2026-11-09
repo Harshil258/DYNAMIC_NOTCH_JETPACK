@@ -226,8 +226,8 @@ fun OngoingCallIslandExpanded(
         val buttonTouchSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlSize
         val iconGlyphSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlGlyph
         val hPad = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callContentInset
-        val topPad = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callTopInset
-        val bottomPad = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callBottomInset
+        val topPad = if (variant == OngoingCallVariant.Standard) AppTheme.island.audioCallTopInset else AppTheme.island.callTopInset
+        val bottomPad = if (variant == OngoingCallVariant.Standard) AppTheme.island.audioCallBottomInset else AppTheme.island.callBottomInset
         val avatarSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callAvatarSize
 
         Column(
@@ -319,8 +319,10 @@ fun OngoingCallIslandExpanded(
             // ROW 2: Balanced circular call action controls
             androidx.compose.foundation.layout.FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.md)
+                horizontalArrangement = if (variant == OngoingCallVariant.Standard)
+                    Arrangement.spacedBy(AppTheme.island.audioCallControlGap, Alignment.CenterHorizontally)
+                    else Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
             ) {
                 // 1. Speaker Button (Audio route: Inactive #2C2C2E / Active White)
                 if (canRenderIslandControl(IslandControlAction.CallToggleSpeaker)) Box(

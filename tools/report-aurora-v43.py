@@ -8,6 +8,7 @@ report=root/'reports'
 folder=report/'aurora-v43'
 rows=list(csv.DictReader((root/'AURORA_V4_3_CODEX_IMPLEMENTATION_PACKAGE/AURORA_60_STATE_GEOMETRY_TARGETS.csv').open()))
 observations=list(csv.DictReader((folder/'measurements.csv').open())) if (folder/'measurements.csv').exists() else []
+fresh_capture=(report/'aurora-figma/final-capture.json').exists()
 geometry_source=(root/'app/src/main/java/ai/emots/kishan_dynamic/ui/components/IslandFamilyGeometry.kt').read_text()
 families=dict(re.findall(r'IslandDemoState\.(\w+) to IslandGeometryTarget\(IslandGeometryFamily\.(\w+)',geometry_source))
 measured={r['state']:r for r in observations if r['viewport']=='393' and r['font_scale']=='1.0'}
@@ -18,11 +19,13 @@ with (report/'AURORA_V43_STATE_AUDIT.csv').open('w') as f:
  for r in rows:
   n=r['EnumState'];o=measured.get(n,{})
   image=folder/f'{n}-baseline.png'
-  exists=image.exists();status='INTERIM capture — predates final corrections; recapture pending' if exists else 'NOT RUN'
+  exists=image.exists();status=('CAPTURED — current shared renderer; synthetic fixture' if fresh_capture else 'INTERIM capture — predates final corrections; recapture pending') if exists else 'NOT RUN'
   shot=f'aurora-v43/{n}-baseline.png' if exists else ''
   writer.writerow([n,r['FamilyGeometryReference'],o.get('width',''),o.get('height',''),o.get('radius',''),float(o['width'])-float(o['target_width']) if o else '',float(o['height'])-float(o['target_height']) if o else '',families.get(n,''),'app/src/main/java/ai/emots/kishan_dynamic/ui/components/DynamicIslandPill.kt','synthetic demo','no external dispatch','AuroraV43GalleryTest.captureEveryStateAndResponsiveBounds',shot,status])
   obs=f"{float(o['width']):.2f} × {float(o['height']):.2f}" if o else 'NOT RUN'
   gallery+=f"| {n} | {r['FamilyGeometryReference']} | {obs} | {'[PNG]('+shot+')' if exists else 'pending'} | {status} |\n"
+if fresh_capture:
+ gallery=gallery.replace('INTERIM EVIDENCE: these captures predate the final visual corrections. Final recapture is blocked by the disconnected phone.', 'Fresh device capture:1200 configurations,60 states. Figma comparison corrections are recorded in../docs/AURORA_FIGMA_VISUAL_RULES.md.')
 (report/'AURORA_V43_60_STATE_VISUAL_GALLERY.md').write_text(gallery)
 (folder/'state-order.json').write_text(__import__('json').dumps([r['EnumState'] for r in rows]))
 print(f'{len(rows)} states indexed; {len(measured)} measured baseline states')
@@ -40,6 +43,9 @@ except ImportError:print('Pillow unavailable; PNG index remains usable')
 
 import html
 (folder/'gallery.html').write_text('<!doctype html><meta charset="utf-8"><title>Aurora V4.3 gallery</title><style>body{background:#121826;color:white;font:16px system-ui;padding:24px}main{display:grid;grid-template-columns:repeat(auto-fit,minmax(370px,1fr));gap:20px}article{background:#080b12;padding:16px;border-radius:16px}img{max-width:100%;height:auto}small{color:#bfc8d8}</style><h1>Aurora V4.3 · 60 source states</h1><p>INTERIM captures before final corrections · recapture pending phone connection · synthetic fixtures · not production-overlay proof.</p><details><summary>Original expanded reference atlas</summary><img src="../../docs/reference_design/rendered/Expanded.svg.png"></details><details><summary>Baseline Playground</summary><img src="before-playground.png"></details><main>'+''.join('<article><h2>'+html.escape(r['EnumState'])+'</h2><small>'+html.escape(r['FamilyGeometryReference'])+'</small><p><img src="'+r['EnumState']+'-baseline.png" alt="'+r['EnumState']+' baseline"></p><details><summary>200% RTL</summary><img src="'+r['EnumState']+'-large-rtl.png"></details></article>' for r in rows)+'</main>')
+
+if fresh_capture:
+ p=folder/'gallery.html';p.write_text(p.read_text().replace('INTERIM captures before final corrections · recapture pending phone connection', 'Fresh1200-configuration device capture · Figma comparison corrections'))
 
 # Related unit evidence is kept separate from full scenario acceptance.
 import xml.etree.ElementTree as ET

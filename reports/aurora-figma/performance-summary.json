@@ -1,0 +1,14 @@
+{
+  "scope": "hardware ActivityScenario synthetic layered-island transitions; not production accessibility overlay",
+  "frame_stat_samples": 118,
+  "end_to_end_p50_ms": 39.840547,
+  "end_to_end_p90_ms": 44.809708,
+  "end_to_end_p99_ms": 85.879908,
+  "memory": "Post-suite meminfo returned no process; no memory or delta claimed",
+  "total_frames": 2056,
+  "janky_frames": 647,
+  "janky_percent": 31.47,
+  "gfxinfo_p50_ms": 28,
+  "gfxinfo_p90_ms": 57,
+  "gfxinfo_p99_ms": 101
+}

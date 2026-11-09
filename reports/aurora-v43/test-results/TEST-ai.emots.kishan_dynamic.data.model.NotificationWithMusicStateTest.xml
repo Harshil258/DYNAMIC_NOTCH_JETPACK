@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.model.NotificationWithMusicStateTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.271Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+<testsuite name="ai.emots.kishan_dynamic.data.model.NotificationWithMusicStateTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:52.083Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
   <properties/>
-  <testcase name="splitStateRetainsTheWholePendingNotificationQueue" classname="ai.emots.kishan_dynamic.data.model.NotificationWithMusicStateTest" time="0.001"/>
+  <testcase name="splitStateRetainsTheWholePendingNotificationQueue" classname="ai.emots.kishan_dynamic.data.model.NotificationWithMusicStateTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

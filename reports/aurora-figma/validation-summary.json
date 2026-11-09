@@ -1,0 +1,73 @@
+{
+  "jvm": {
+    "tests": 502,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "device_unique_tests": {
+    "ai.emots.kishan_dynamic.AuroraV43GalleryTest.mediaPlaybackStatusWaitsForSourceAcknowledgement": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    },
+    "ai.emots.kishan_dynamic.AuroraV43GalleryTest.captureEveryStateAndResponsiveBounds": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    },
+    "ai.emots.kishan_dynamic.AuroraV43GalleryTest.replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    },
+    "ai.emots.kishan_dynamic.AuroraV43GalleryTest.unsupportedMediaAndCallActionsHaveNoTapTargets": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    },
+    "ai.emots.kishan_dynamic.IslandLayoutInstrumentedTest.expiryAndCountFitAllWidthsAndFontSizesWithWorkingActions": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.captureActualEmergenceAndMergeFrames": {
+      "passed": true,
+      "log": "device-layered-rerun.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.burstOverflowCountsOnlyNewArrivals": {
+      "passed": true,
+      "log": "device-layered-rerun.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.promotionCannotSelectReusedSourceIdentity": {
+      "passed": true,
+      "log": "device-layered-rerun.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.narrowLargeTextRedactionAndReducedMotion": {
+      "passed": true,
+      "log": "device-layered-rerun.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.newestInsertionIsBelowMainAndMaintainsIdentity": {
+      "passed": true,
+      "log": "device-layered-rerun.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.horizontalPagerRemainsInteractiveWithChildren": {
+      "passed": true,
+      "log": "device-layered-rerun.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.promotionTapAndExpiryKeepCanonicalPagerQueue": {
+      "passed": true,
+      "log": "device-layered-rerun.log"
+    },
+    "ai.emots.kishan_dynamic.NotificationPagerIndicatorInstrumentedTest.singleNotificationPager_doesNotShowIndicatorLabel": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    },
+    "ai.emots.kishan_dynamic.NotificationPagerIndicatorInstrumentedTest.multiNotificationPager_showsIndicatorLabel_withoutExtraGesture": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    },
+    "ai.emots.kishan_dynamic.LayeredMiniIslandsAnimationBenchmarkTest.benchmarkAnimationPerformanceUnderRepeatedTransitions": {
+      "passed": true,
+      "log": "device-suite-initial.log"
+    }
+  },
+  "device_pass_count": 15,
+  "gallery_configurations": 1200,
+  "scope": "synthetic shared-renderer Android fixtures; not production accessibility-overlay or real carrier-call acceptance"
+}

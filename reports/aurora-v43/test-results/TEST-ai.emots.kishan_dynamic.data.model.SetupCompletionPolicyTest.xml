@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.274Z" hostname="Vekariyas-Mac-mini.local" time="0.0">
+<testsuite name="ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:52.104Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
   <properties/>
-  <testcase name="optionalPermissionsDoNotChangeTheMilestone" classname="ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest" time="0.0"/>
+  <testcase name="optionalPermissionsDoNotChangeTheMilestone" classname="ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest" time="0.001"/>
   <testcase name="requiredPermissionsMustAllBeGranted" classname="ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest" time="0.0"/>
   <testcase name="emptyRequiredSetIsNotASetupCompletionSignal" classname="ai.emots.kishan_dynamic.data.model.SetupCompletionPolicyTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>

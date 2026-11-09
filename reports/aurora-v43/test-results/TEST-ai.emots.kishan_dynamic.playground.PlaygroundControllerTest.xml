@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.754Z" hostname="Vekariyas-Mac-mini.local" time="7.847">
+<testsuite name="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" tests="15" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:53.555Z" hostname="Vekariyas-Mac-mini.local" time="7.866">
   <properties/>
-  <testcase name="edgeCaseOptionsRefreshOnlySyntheticContentAndPreserveExpansion" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.007"/>
-  <testcase name="notificationScenariosLoadCorrectCapacityAndPresentation" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.014"/>
-  <testcase name="realInteractionPolicyExpandsAndMockControlsNeverCallExternalHandlers" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.029"/>
-  <testcase name="motionSpeedsChangeTheActualFiniteAnimationSpecAndReachStableEndpoints" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.019"/>
-  <testcase name="playgroundInteractiveScenariosOperateDeterministically" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.019"/>
-  <testcase name="rapidEventsRemainBoundedAndFinishAtTheLastSource" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="7.025"/>
-  <testcase name="everyFixtureUsesARealStateAndPresentationMapping" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.107"/>
-  <testcase name="readablePreviewEffectUsesOneSandboxScheduler" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.089"/>
-  <testcase name="sandboxReplyAndCallUseCanonicalOwnershipAndRetainOnlyValidDraft" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.012"/>
-  <testcase name="replayTraversesRealStatesRatherThanRecreatingACopyOfTheAnimation" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.416"/>
-  <testcase name="playgroundDismissCallbackPreservesRemainingQueueAndSelection" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.015"/>
-  <testcase name="openNotificationsTruthfullyPreservesQueueAcross0_1_12_and_50_Items" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.028"/>
-  <testcase name="playgroundOpenNotificationsCallbackPreservesExistingQueue" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.019"/>
-  <testcase name="layoutObservationCannotReplaceAnotherSelectedFixture" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.024"/>
-  <testcase name="playgroundChildPromotionAndSwipeUpCollapseUseSharedEngine" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.02"/>
+  <testcase name="edgeCaseOptionsRefreshOnlySyntheticContentAndPreserveExpansion" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.054"/>
+  <testcase name="notificationScenariosLoadCorrectCapacityAndPresentation" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.04"/>
+  <testcase name="realInteractionPolicyExpandsAndMockControlsNeverCallExternalHandlers" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.055"/>
+  <testcase name="motionSpeedsChangeTheActualFiniteAnimationSpecAndReachStableEndpoints" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.026"/>
+  <testcase name="playgroundInteractiveScenariosOperateDeterministically" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.016"/>
+  <testcase name="rapidEventsRemainBoundedAndFinishAtTheLastSource" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="6.995"/>
+  <testcase name="everyFixtureUsesARealStateAndPresentationMapping" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.049"/>
+  <testcase name="readablePreviewEffectUsesOneSandboxScheduler" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.104"/>
+  <testcase name="sandboxReplyAndCallUseCanonicalOwnershipAndRetainOnlyValidDraft" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.002"/>
+  <testcase name="replayTraversesRealStatesRatherThanRecreatingACopyOfTheAnimation" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.417"/>
+  <testcase name="playgroundDismissCallbackPreservesRemainingQueueAndSelection" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.024"/>
+  <testcase name="openNotificationsTruthfullyPreservesQueueAcross0_1_12_and_50_Items" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.024"/>
+  <testcase name="playgroundOpenNotificationsCallbackPreservesExistingQueue" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.021"/>
+  <testcase name="layoutObservationCannotReplaceAnotherSelectedFixture" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.023"/>
+  <testcase name="playgroundChildPromotionAndSwipeUpCollapseUseSharedEngine" classname="ai.emots.kishan_dynamic.playground.PlaygroundControllerTest" time="0.011"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

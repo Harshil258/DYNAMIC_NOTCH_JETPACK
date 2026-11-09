@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.SatelliteSurfacePolicyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.224Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.SatelliteSurfacePolicyTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:50.997Z" hostname="Vekariyas-Mac-mini.local" time="0.038">
   <properties/>
-  <testcase name="disabledSatelliteClearsTheActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.SatelliteSurfacePolicyTest" time="0.001"/>
+  <testcase name="disabledSatelliteClearsTheActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.SatelliteSurfacePolicyTest" time="0.038"/>
   <testcase name="enabledSatelliteProducesAnAppOwnedActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.SatelliteSurfacePolicyTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

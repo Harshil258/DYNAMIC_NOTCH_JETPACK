@@ -1,0 +1,10 @@
+{
+  "gallery_configurations": 1200,
+  "states": 60,
+  "device": "Realme RMX3085 Android13",
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "fixture": "shared production Compose renderer; synthetic local data",
+  "apk_sha256": "ff8bd44ac659b5b5350c00e5678ab593fc69161e6ca699d181472b82f3012d4c",
+  "date": "2026-11-09",
+  "status": "PASS:1200gallery configurations and15distinct device tests across initial suite+corrected layered rerun"
+}

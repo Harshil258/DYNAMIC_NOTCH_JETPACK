@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" tests="20" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:40.867Z" hostname="Vekariyas-Mac-mini.local" time="0.236">
+<testsuite name="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" tests="20" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:06:01.629Z" hostname="Vekariyas-Mac-mini.local" time="0.215">
   <properties/>
-  <testcase name="test_07_fiftyNotifications_noSilentLoss_duplicateIdentity_orSelectionCorruption" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.019"/>
-  <testcase name="test_01_newNotification_transientPreview_timeout_compact_nextNotification" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.001"/>
-  <testcase name="test_08_playgroundAndProductionEquivalentEvents_equivalentDecisionsAndQueue" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.027"/>
-  <testcase name="test_12_childTimerCleanup_and_overflowAccounting" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.02"/>
-  <testcase name="test_14_productionEntryPoint_fullPreviewLifecycle_singleAuthoritativeScheduler" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.025"/>
-  <testcase name="test_06_updateArtwork_nextEvent_artworkAndQueueRemainConsistent" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.018"/>
-  <testcase name="test_13_deterministic_previewTimeout_collapsesBothEngineAndPresentationWithoutManualCalls" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.012"/>
-  <testcase name="test_17_callInterruption_cancelsPreviewTimer_and_restoresStateAfterCall" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.023"/>
-  <testcase name="test_16_userExpansion_cancelsPreviewTimer_preservesUserExpandedState" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.01"/>
-  <testcase name="test_20_olderHighPriorityOtp_and_newerOrdinaryMessage_pagerOpensOnNewerMessage" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.002"/>
-  <testcase name="test_03_dismissOneNotification_minorUpdateSuppressed_majorMilestoneResurfaces" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.003"/>
-  <testcase name="test_15_explicitCollapse_cancelsPreviewTimer_and_doesNotDuplicateTimeout" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.029"/>
+  <testcase name="test_07_fiftyNotifications_noSilentLoss_duplicateIdentity_orSelectionCorruption" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.007"/>
+  <testcase name="test_01_newNotification_transientPreview_timeout_compact_nextNotification" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.0"/>
+  <testcase name="test_08_playgroundAndProductionEquivalentEvents_equivalentDecisionsAndQueue" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.008"/>
+  <testcase name="test_12_childTimerCleanup_and_overflowAccounting" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.019"/>
+  <testcase name="test_14_productionEntryPoint_fullPreviewLifecycle_singleAuthoritativeScheduler" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.051"/>
+  <testcase name="test_06_updateArtwork_nextEvent_artworkAndQueueRemainConsistent" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.024"/>
+  <testcase name="test_13_deterministic_previewTimeout_collapsesBothEngineAndPresentationWithoutManualCalls" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.007"/>
+  <testcase name="test_17_callInterruption_cancelsPreviewTimer_and_restoresStateAfterCall" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.015"/>
+  <testcase name="test_16_userExpansion_cancelsPreviewTimer_preservesUserExpandedState" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.022"/>
+  <testcase name="test_20_olderHighPriorityOtp_and_newerOrdinaryMessage_pagerOpensOnNewerMessage" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.0"/>
+  <testcase name="test_03_dismissOneNotification_minorUpdateSuppressed_majorMilestoneResurfaces" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.0"/>
+  <testcase name="test_15_explicitCollapse_cancelsPreviewTimer_and_doesNotDuplicateTimeout" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.021"/>
   <testcase name="test_10_repeatedSourceRemovalAndUserDismissalEvents_remainIdempotent" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.001"/>
   <testcase name="test_11_previewEligibility_autoExpandFalse_staysCompactAndOwnershipSystemIdle" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.001"/>
   <testcase name="test_19_staleTimerCallback_ignored_dueToTokenValidation" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.0"/>
-  <testcase name="test_18_secondIncomingNotification_spawnsChildNotice_mainPreviewTimerCompletes" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.021"/>
+  <testcase name="test_18_secondIncomingNotification_spawnsChildNotice_mainPreviewTimerCompletes" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.022"/>
   <testcase name="test_09_outsideTapAndSwipeUpCollapseNonDestructively_engineStateNotStale" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.001"/>
-  <testcase name="test_02_twelveNotifications_tap_expandedPager_selectPage5_newMessage_page5RemainsSelected" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.002"/>
+  <testcase name="test_02_twelveNotifications_tap_expandedPager_selectPage5_newMessage_page5RemainsSelected" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.001"/>
   <testcase name="test_05_activeCallInterruptsNotification_callEnds_correctPresentationRestored" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.001"/>
-  <testcase name="test_04_childTouch_release_oldTimeoutFires_refreshedChildRemains" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.02"/>
+  <testcase name="test_04_childTouch_release_oldTimeoutFires_refreshedChildRemains" classname="ai.emots.kishan_dynamic.service.IslandRuntimeIntegrationTest" time="0.014"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

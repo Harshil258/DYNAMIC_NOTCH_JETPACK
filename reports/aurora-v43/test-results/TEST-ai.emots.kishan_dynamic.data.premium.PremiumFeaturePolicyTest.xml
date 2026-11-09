@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.683Z" hostname="Vekariyas-Mac-mini.local" time="0.0">
+<testsuite name="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:53.443Z" hostname="Vekariyas-Mac-mini.local" time="0.003">
   <properties/>
   <testcase name="freeUsersCanFreelyOptOutOfCallSummaries" classname="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" time="0.0"/>
   <testcase name="compactMusicControlsRequireActivePro" classname="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" time="0.0"/>
   <testcase name="referenceFeatureIdsAreLockedOnlyForFreeUsers" classname="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" time="0.0"/>
   <testcase name="freeUsersRetainSafeDefaultsForPersistedPremiumSettings" classname="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" time="0.0"/>
-  <testcase name="callSummaryCustomizationRequiresActivePro" classname="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" time="0.0"/>
+  <testcase name="callSummaryCustomizationRequiresActivePro" classname="ai.emots.kishan_dynamic.data.premium.PremiumFeaturePolicyTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

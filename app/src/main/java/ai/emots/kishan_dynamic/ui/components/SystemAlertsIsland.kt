@@ -73,8 +73,6 @@ internal fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 20.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(4.dp * scale))
                     Text(
@@ -82,8 +80,6 @@ internal fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit
                         color = Color(0xFFA4A4A9),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -136,8 +132,6 @@ internal fun ScreenMirroringContent(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 20.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(4.dp * scale))
                     Text(
@@ -145,8 +139,6 @@ internal fun ScreenMirroringContent(
                         color = Color(0xFF818383),
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
                 }
                 AppleIcon(
@@ -210,8 +202,6 @@ internal fun MobileDataContent(onControlAction: (IslandControlAction) -> Unit = 
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         lineHeight = 20.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
                     Spacer(modifier = Modifier.height(6.dp * scale))
                     Text(
@@ -220,8 +210,6 @@ internal fun MobileDataContent(onControlAction: (IslandControlAction) -> Unit = 
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Normal,
                         lineHeight = 16.5.sp,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
@@ -262,16 +250,12 @@ internal fun TransitRouteContent(
                         color = Color.White,
                         fontSize = 16.5.sp,
                         fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
                     if (subtitle.isNotBlank()) {
                         Text(
                             text = subtitle,
                             color = IslandColors.TextSecondary,
                             fontSize = 12.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }

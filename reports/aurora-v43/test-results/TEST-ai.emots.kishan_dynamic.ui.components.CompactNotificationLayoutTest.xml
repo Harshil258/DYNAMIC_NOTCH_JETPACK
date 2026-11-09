@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.ui.components.CompactNotificationLayoutTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:41.279Z" hostname="Vekariyas-Mac-mini.local" time="0.019">
+<testsuite name="ai.emots.kishan_dynamic.ui.components.CompactNotificationLayoutTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:06:01.923Z" hostname="Vekariyas-Mac-mini.local" time="0.025">
   <properties/>
-  <testcase name="collapsedStateUsesOnlyBoundedCountRatherThanPrivateCopy" classname="ai.emots.kishan_dynamic.ui.components.CompactNotificationLayoutTest" time="0.018"/>
+  <testcase name="collapsedStateUsesOnlyBoundedCountRatherThanPrivateCopy" classname="ai.emots.kishan_dynamic.ui.components.CompactNotificationLayoutTest" time="0.025"/>
   <testcase name="genuineProgressReplacesCountWithoutDuplicatingBadges" classname="ai.emots.kishan_dynamic.ui.components.CompactNotificationLayoutTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

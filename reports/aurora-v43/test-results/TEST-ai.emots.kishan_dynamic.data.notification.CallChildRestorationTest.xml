@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.notification.CallChildRestorationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.283Z" hostname="Vekariyas-Mac-mini.local" time="0.015">
+<testsuite name="ai.emots.kishan_dynamic.data.notification.CallChildRestorationTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:52.233Z" hostname="Vekariyas-Mac-mini.local" time="0.269">
   <properties/>
-  <testcase name="callRestoresSelectedReaderWithoutExtendingChildDeadline" classname="ai.emots.kishan_dynamic.data.notification.CallChildRestorationTest" time="0.015"/>
+  <testcase name="callRestoresSelectedReaderWithoutExtendingChildDeadline" classname="ai.emots.kishan_dynamic.data.notification.CallChildRestorationTest" time="0.269"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:41.350Z" hostname="Vekariyas-Mac-mini.local" time="0.004">
+<testsuite name="ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:06:01.989Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
   <properties/>
-  <testcase name="translatesCoreHindiCopy" classname="ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest" time="0.004"/>
+  <testcase name="translatesCoreHindiCopy" classname="ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest" time="0.001"/>
   <testcase name="unknownCopyAndUntranslatedLocalesFallBackToSource" classname="ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest" time="0.0"/>
   <testcase name="coversTheReferenceLocaleSet" classname="ai.emots.kishan_dynamic.ui.localization.AppLocalizationTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>

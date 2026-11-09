@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.218Z" hostname="Vekariyas-Mac-mini.local" time="0.005">
+<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:50.977Z" hostname="Vekariyas-Mac-mini.local" time="0.003">
   <properties/>
   <testcase name="mapsOngoingNavigationNotificationToNavigationActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <testcase name="mapsOngoingScreenRecordingNotification" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
@@ -7,13 +7,13 @@
   <testcase name="mapsKnownTransitNotificationToTransitActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <testcase name="mapsKnownVoiceRecorderNotificationOnlyForRecorderPackages" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <testcase name="mapsKnownSportsNotificationToSportsActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
-  <testcase name="mapsDeliveryNotificationToDeliveryActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.001"/>
+  <testcase name="mapsDeliveryNotificationToDeliveryActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <testcase name="mapsStrictOptionalSystemSurfacesFromKnownNotificationSources" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
-  <testcase name="mapsAuthoritativeClockTimerAndPreservesChronometer" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.001"/>
+  <testcase name="mapsAuthoritativeClockTimerAndPreservesChronometer" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <testcase name="ignoresOrdinaryOrCompletedNotifications" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <testcase name="mapsKnownFlightNotificationToFlightActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <testcase name="doesNotPromoteOptionalSurfaceCopyFromUnknownPackage" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
-  <testcase name="mapsExplicitQuickShareNotificationToAirDropActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.001"/>
+  <testcase name="mapsExplicitQuickShareNotificationToAirDropActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapperTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

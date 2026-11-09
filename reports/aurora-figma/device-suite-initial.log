@@ -1,0 +1,256 @@
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+ai.emots.kishan_dynamic.AuroraV43GalleryTest:
+INSTRUMENTATION_STATUS: test=mediaPlaybackStatusWaitsForSourceAcknowledgement
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=1
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=mediaPlaybackStatusWaitsForSourceAcknowledgement
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=captureEveryStateAndResponsiveBounds
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=2
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=captureEveryStateAndResponsiveBounds
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=3
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=replyDraftSurvivesComposerRemovalAndNeverCrossesSourceIdentity
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=unsupportedMediaAndCallActionsHaveNoTapTargets
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.AuroraV43GalleryTest
+INSTRUMENTATION_STATUS: current=4
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=unsupportedMediaAndCallActionsHaveNoTapTargets
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.IslandLayoutInstrumentedTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+ai.emots.kishan_dynamic.IslandLayoutInstrumentedTest:
+INSTRUMENTATION_STATUS: test=expiryAndCountFitAllWidthsAndFontSizesWithWorkingActions
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.IslandLayoutInstrumentedTest
+INSTRUMENTATION_STATUS: current=5
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=expiryAndCountFitAllWidthsAndFontSizesWithWorkingActions
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest:
+INSTRUMENTATION_STATUS: test=captureActualEmergenceAndMergeFrames
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=6
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=captureActualEmergenceAndMergeFrames
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=burstOverflowCountsOnlyNewArrivals
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=7
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=burstOverflowCountsOnlyNewArrivals
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=promotionCannotSelectReusedSourceIdentity
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=8
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=promotionCannotSelectReusedSourceIdentity
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=narrowLargeTextRedactionAndReducedMotion
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=9
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'New notification' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.narrowLargeTextRedactionAndReducedMotion(LayeredMiniIslandsInstrumentedTest.kt:118)
+
+INSTRUMENTATION_STATUS: stream=
+Error in narrowLargeTextRedactionAndReducedMotion(ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest):
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'New notification' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.narrowLargeTextRedactionAndReducedMotion(LayeredMiniIslandsInstrumentedTest.kt:118)
+
+INSTRUMENTATION_STATUS: test=narrowLargeTextRedactionAndReducedMotion
+INSTRUMENTATION_STATUS_CODE: -2
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=newestInsertionIsBelowMainAndMaintainsIdentity
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=10
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=newestInsertionIsBelowMainAndMaintainsIdentity
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=horizontalPagerRemainsInteractiveWithChildren
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=11
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=horizontalPagerRemainsInteractiveWithChildren
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=promotionTapAndExpiryKeepCanonicalPagerQueue
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest
+INSTRUMENTATION_STATUS: current=12
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=promotionTapAndExpiryKeepCanonicalPagerQueue
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.NotificationPagerIndicatorInstrumentedTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+ai.emots.kishan_dynamic.NotificationPagerIndicatorInstrumentedTest:
+INSTRUMENTATION_STATUS: test=singleNotificationPager_doesNotShowIndicatorLabel
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.NotificationPagerIndicatorInstrumentedTest
+INSTRUMENTATION_STATUS: current=13
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=singleNotificationPager_doesNotShowIndicatorLabel
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.NotificationPagerIndicatorInstrumentedTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+INSTRUMENTATION_STATUS: test=multiNotificationPager_showsIndicatorLabel_withoutExtraGesture
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.NotificationPagerIndicatorInstrumentedTest
+INSTRUMENTATION_STATUS: current=14
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=multiNotificationPager_showsIndicatorLabel_withoutExtraGesture
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsAnimationBenchmarkTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=
+ai.emots.kishan_dynamic.LayeredMiniIslandsAnimationBenchmarkTest:
+INSTRUMENTATION_STATUS: test=benchmarkAnimationPerformanceUnderRepeatedTransitions
+INSTRUMENTATION_STATUS_CODE: 1
+INSTRUMENTATION_STATUS: class=ai.emots.kishan_dynamic.LayeredMiniIslandsAnimationBenchmarkTest
+INSTRUMENTATION_STATUS: current=15
+INSTRUMENTATION_STATUS: id=AndroidJUnitRunner
+INSTRUMENTATION_STATUS: numtests=15
+INSTRUMENTATION_STATUS: stream=.
+INSTRUMENTATION_STATUS: test=benchmarkAnimationPerformanceUnderRepeatedTransitions
+INSTRUMENTATION_STATUS_CODE: 0
+INSTRUMENTATION_RESULT: stream=
+
+Time: 187.264
+There was 1 failure:
+1) narrowLargeTextRedactionAndReducedMotion(ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest)
+java.lang.AssertionError: Failed: assertExists.
+Can't retrieve node at index '0' of 'Text + EditableText contains 'New notification' (ignoreCase: false)'
+There are no existing nodes for that selector.
+
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow(SemanticsNodeInteraction.kt:175)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.fetchOneOrThrow$default(SemanticsNodeInteraction.kt:150)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists(SemanticsNodeInteraction.kt:125)
+	at androidx.compose.ui.test.SemanticsNodeInteraction.assertExists$default(SemanticsNodeInteraction.kt:124)
+	at ai.emots.kishan_dynamic.LayeredMiniIslandsInstrumentedTest.narrowLargeTextRedactionAndReducedMotion(LayeredMiniIslandsInstrumentedTest.kt:118)
+
+FAILURES!!!
+Tests run: 15,  Failures: 1
+
+
+INSTRUMENTATION_CODE: -1

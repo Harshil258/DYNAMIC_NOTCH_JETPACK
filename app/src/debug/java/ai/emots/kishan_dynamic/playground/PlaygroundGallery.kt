@@ -65,7 +65,7 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
             }
         }
         AppText(measured, style = AppTheme.typography.caption)
-        if (compare) Text("Reference ${target.width} × ${target.height} R${target.radius} · ${target.family}", style = AppTheme.typography.caption)
+        if (compare) AppText("Reference ${target.width} × ${target.height} R${target.radius} · ${target.family}", style = AppTheme.typography.caption)
         IslandDemoState.entries.forEach { state ->
             AppButton("${state.ordinal + 1}. ${state.name}", { selected = state }, style = if (selected == state) AppButtonStyle.Tonal else AppButtonStyle.Secondary)
         }

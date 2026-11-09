@@ -427,12 +427,9 @@ fun DynamicIslandPill(
     val coroutineScope = rememberCoroutineScope()
 
     // -------------------------------------------------------------------------
-    // TRUE iOS GEOMETRY
-    //
-    // Measured against the iPhone 15 Pro reference (393pt wide). The compact
-    // presentations sit between the idle 126pt pill and ~160pt — they are
-    // deliberately NOT screen-width banners. Only genuinely expanded sheets
-    // reach the 371pt maximum.
+    // Family-specific Figma geometry on the393dp reference canvas.
+    // Compact notification capsules prefer189dp with separate edge regions;
+    // expanded sheets follow their family canvas and measured content height.
     // -------------------------------------------------------------------------
     val islandTokens = ai.emots.kishan_dynamic.ui.theme.AppTheme.island
     val screenWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp.dp
@@ -458,7 +455,7 @@ fun DynamicIslandPill(
         islandTokens.compactContentGap + compactLabelWidth
     val familyGeometry = IslandFamilyGeometry.resolve(state, screenWidth.value)
     val baseWidth = if (state == IslandDemoState.NotificationCompact || state == IslandDemoState.NotificationStacked)
-        notificationWidth else familyGeometry.width.dp
+        maxOf(notificationWidth, islandTokens.notificationCompactWidth) else familyGeometry.width.dp
     val isCutoutDot = cameraCutoutMode && (state == IslandDemoState.Minimal || state == IslandDemoState.Idle)
     val density = androidx.compose.ui.platform.LocalDensity.current
     val cutoutDotSizeDp = with(density) { (cutoutSizePx.toFloat() / density.density).dp }
@@ -514,7 +511,9 @@ fun DynamicIslandPill(
     val naturalTargetHeight = if (isCutoutDot) {
         cutoutDotSizeDp.coerceIn(24.dp, 56.dp)
     } else if (!isCompact) {
-        maxOf(measuredHeights[state] ?: 0.dp, state.resolvedHeight(islandTokens))
+        (if (state in setOf(IslandDemoState.NotificationExpanded, IslandDemoState.CallExpanded))
+            measuredHeights[state] ?: state.resolvedHeight(islandTokens)
+        else maxOf(measuredHeights[state] ?: 0.dp, state.resolvedHeight(islandTokens)))
             .coerceIn(islandTokens.expandedMinHeight, maxContentHeight)
     } else {
         state.resolvedHeight(islandTokens)
@@ -1573,7 +1572,7 @@ private fun NotificationCompactContent(notification: NotificationInfo?, unseenCo
     Row(
         modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(tokens.compactContentGap, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         PackageIcon(
             packageName = notification?.packageName,

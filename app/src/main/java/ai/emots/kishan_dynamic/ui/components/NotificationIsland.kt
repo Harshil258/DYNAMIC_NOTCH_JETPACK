@@ -39,6 +39,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
@@ -334,203 +336,60 @@ fun NotificationIslandExpanded(
                 )
             }
         } else {
-            // UNIFIED CONTENT-DRIVEN EXPANDED CARD (Zero wasted space, authentic Apple visual balance)
+            // One identity block: no duplicated app icon/header row above the same message.
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .onSizeChanged { size ->
-                        with(density) {
-                            onHeightChange?.invoke(size.height.toDp())
-                        }
-                    }
-                    .padding(horizontal = hPad, vertical = vPad),
-                verticalArrangement = Arrangement.spacedBy(8.dp * scale)
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    .onSizeChanged { size -> with(density) { onHeightChange?.invoke(size.height.toDp()) } }
+                    .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
             ) {
-                // 1. TOP HEADER ROW (App Icon, App Name, Pager count badge, Dismiss)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(7.dp * scale),
-                        modifier = Modifier.weight(1f, fill = false)
-                    ) {
-                        NotificationArtwork(
-                            imagePath = imagePath,
-                            packageName = appPackageName,
-                            modifier = Modifier
-                                .size(18.dp * scale)
-                                .clip(RoundedCornerShape(4.dp * scale)),
-                            contentDescription = "$appName icon"
-                        )
-                        AppText(
-                            text = appName,
-                            style = AppTheme.typography.caption,
-                            fontSize = (12f * scale).sp,
-                            color = Color(0xFFA4A4A9),
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(7.dp * scale)
-                    ) {
-                        if (pagerLabel != null) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(10.dp * scale))
-                                    .background(Color(0xFF2C2C2E))
-                                    .border(0.5.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(10.dp * scale))
-                                    .padding(horizontal = 7.dp * scale, vertical = 2.dp * scale),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = pagerLabel,
-                                    fontSize = (10f * scale).sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFFDDDDDD)
-                                )
-                            }
-                        }
-
-                        if (onDismiss != null) {
-                            Box(
-                                modifier = Modifier
-                                    .size((44.dp * scale).coerceAtLeast(44.dp))
-                                    .clickable(onClick = onDismiss),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(24.dp * scale)
-                                        .clip(CircleShape)
-                                        .background(Color(0xFF2C2C2E))
-                                        .border(0.5.dp, Color.White.copy(alpha = 0.15f), CircleShape),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    AppleIcon(
-                                        glyph = AppleGlyph.Close,
-                                        tint = Color(0xFFA4A4A9),
-                                        size = 9.dp * scale
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // 2. MIDDLE MESSAGE BODY ROW (Avatar on left, Sender & full readable text)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp * scale)
-                ) {
-                    NotificationArtwork(
-                        imagePath = imagePath,
-                        packageName = appPackageName,
-                        modifier = Modifier
-                            .size(36.dp * scale)
-                            .clip(CircleShape),
-                        contentDescription = "$appName avatar"
-                    )
-
-                    Column(
-                        modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(2.dp * scale)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            AppText(
-                                text = sender,
-                                style = AppTheme.typography.islandTitle,
-                                fontSize = (14.5f * scale).sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold,
-                                maxLines = 1,
-                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                            )
-                            if (showChronometer && chronometerBaseElapsedRealtime > 0L) {
-                                NotificationChronometerText(
-                                    baseElapsedRealtime = chronometerBaseElapsedRealtime,
-                                    countDown = chronometerCountDown,
-                                    fontSize = (11f * scale).sp
-                                )
-                            }
-                        }
-
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                    NotificationArtwork(imagePath = imagePath, packageName = appPackageName,
+                        modifier = Modifier.size(40.dp).clip(CircleShape), contentDescription = "$appName icon")
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+                        AppText(text = if (pagerLabel == null) appName else "$appName · $pagerLabel",
+                            style = AppTheme.typography.caption, color = IslandColors.Gray,
+                            maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        AppText(text = sender, style = AppTheme.typography.islandTitle,
+                            color = Color.White, fontWeight = FontWeight.SemiBold)
                         val fullMessageText = when {
                             inboxLines.isNotEmpty() -> inboxLines.joinToString("\n")
                             !expandedText.isNullOrBlank() -> expandedText
-                            message.isNotBlank() -> message
-                            else -> ""
+                            else -> message
                         }
-                        if (fullMessageText.isNotBlank()) {
-                            AppText(
-                                text = fullMessageText,
-                                style = AppTheme.typography.caption,
-                                fontSize = (12.5f * scale).sp,
-                                lineHeight = (17f * scale).sp,
-                                color = Color(0xFFDDDDDD),
-                                maxLines = if (isCardExpanded) 5 else 2,
-                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                            )
+                        if (fullMessageText.isNotBlank()) AppText(text = fullMessageText,
+                            style = AppTheme.typography.caption, color = IslandColors.TextSecondary)
+                        if (showChronometer && chronometerBaseElapsedRealtime > 0L) {
+                            NotificationChronometerText(baseElapsedRealtime = chronometerBaseElapsedRealtime,
+                                countDown = chronometerCountDown)
                         }
-
                         if (progress != null || isProgressIndeterminate) {
-                            Spacer(modifier = Modifier.height(4.dp * scale))
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(3.dp * scale)
-                                    .clip(RoundedCornerShape(percent = 50))
-                                    .background(Color(0x553A3A3C))
-                            ) {
-                                if (progress != null) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth(progress.coerceIn(0f, 1f))
-                                            .fillMaxSize()
-                                            .background(Color.White)
-                                    )
-                                }
-                            }
+                            if (progress != null) androidx.compose.material3.LinearProgressIndicator(
+                                progress = { progress.coerceIn(0f, 1f) },
+                                modifier = Modifier.fillMaxWidth(), color = Color.White)
+                            else androidx.compose.material3.LinearProgressIndicator(
+                                modifier = Modifier.fillMaxWidth(), color = Color.White)
                         }
                     }
-                }
-
-                // 3. BOTTOM ACTIONS ROW (Dedicated horizontal row with 32dp action chips)
-                if (actions.isNotEmpty() || actionLabel.isNotBlank()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .horizontalScroll(rememberScrollState()),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp * scale),
-                        verticalAlignment = Alignment.CenterVertically
+                    if (onDismiss != null) Box(
+                        modifier = Modifier.size(AppTheme.island.minimumActionTarget)
+                            .clickable(role = Role.Button, onClick = onDismiss)
+                            .semantics { contentDescription = "Dismiss notification" },
+                        contentAlignment = Alignment.Center
                     ) {
-                        if (actions.isNotEmpty()) {
-                            actions.forEach { action ->
-                                NotificationActionButton(
-                                    label = action.label,
-                                    scale = scale,
-                                    onClick = { onActionSelected(action) }
-                                )
-                            }
-                        } else if (actionLabel.isNotBlank()) {
-                            NotificationActionButton(
-                                label = actionLabel,
-                                scale = scale,
-                                onClick = onAction
-                            )
-                        }
+                        AppleIcon(glyph = AppleGlyph.Close, tint = IslandColors.TextSecondary,
+                            size = 16.dp)
+                    }
+                }
+                if (actions.isNotEmpty() || actionLabel.isNotBlank()) {
+                    FlowRow(Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+                        if (actions.isNotEmpty()) actions.forEach { action ->
+                            NotificationActionButton(label = action.label, scale = 1f,
+                                onClick = { onActionSelected(action) })
+                        } else NotificationActionButton(label = actionLabel, scale = 1f, onClick = onAction)
                     }
                 }
             }
@@ -611,7 +470,7 @@ fun IslandActionChip(
 
     Box(
         modifier = modifier
-            .heightIn(min = 44.dp)
+            .heightIn(min = 48.dp)
             .clickable(
                 interactionSource = interaction,
                 indication = null,

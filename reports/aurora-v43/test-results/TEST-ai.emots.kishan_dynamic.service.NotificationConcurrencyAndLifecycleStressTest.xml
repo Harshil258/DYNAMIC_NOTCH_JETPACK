@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:41.125Z" hostname="Vekariyas-Mac-mini.local" time="0.151">
+<testsuite name="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:06:01.867Z" hostname="Vekariyas-Mac-mini.local" time="0.055">
   <properties/>
-  <testcase name="viewedNotificationsStayActiveAndOnlyExplicitPagerViewingClearsUnseenCount" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.001"/>
+  <testcase name="viewedNotificationsStayActiveAndOnlyExplicitPagerViewingClearsUnseenCount" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.0"/>
   <testcase name="scenarioC_lateImageResultDiscardedAfterNotificationRemoval" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.001"/>
-  <testcase name="scenarioA_burstProcessingTwentyFiveNotificationsRemainsBoundedAndSafe" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.047"/>
-  <testcase name="scenarioH_mediaRestorationUponNotificationExpiryOrDismissal" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.002"/>
-  <testcase name="scenarioG_sourceReconciliationPrunesDismissedPlatformNotifications" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.005"/>
-  <testcase name="scenarioB_concurrentMultiThreadedStateMutationsDoNotThrowOrCorruptState" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.082"/>
+  <testcase name="scenarioA_burstProcessingTwentyFiveNotificationsRemainsBoundedAndSafe" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.008"/>
+  <testcase name="scenarioH_mediaRestorationUponNotificationExpiryOrDismissal" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.0"/>
+  <testcase name="scenarioG_sourceReconciliationPrunesDismissedPlatformNotifications" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.001"/>
+  <testcase name="scenarioB_concurrentMultiThreadedStateMutationsDoNotThrowOrCorruptState" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.04"/>
   <testcase name="scenarioI_resourcePressureAndBoundedArtworkCache" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.0"/>
-  <testcase name="scenarioD_notificationUpdateReplacesInPlaceWithoutReorderingOrLosingSelection" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.002"/>
-  <testcase name="scenarioJ_rapidUserInteractionsDoNotDeadlockOrThrow" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.002"/>
-  <testcase name="scenarioE_callInterruptionAndRestorationOfBaseState" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.006"/>
+  <testcase name="scenarioD_notificationUpdateReplacesInPlaceWithoutReorderingOrLosingSelection" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.001"/>
+  <testcase name="scenarioJ_rapidUserInteractionsDoNotDeadlockOrThrow" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.0"/>
+  <testcase name="scenarioE_callInterruptionAndRestorationOfBaseState" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.003"/>
   <testcase name="scenarioF_processLifecycleAndStateResetForTesting" classname="ai.emots.kishan_dynamic.service.NotificationConcurrencyAndLifecycleStressTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

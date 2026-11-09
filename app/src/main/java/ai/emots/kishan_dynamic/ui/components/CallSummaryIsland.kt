@@ -2,6 +2,12 @@ package ai.emots.kishan_dynamic.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.platform.LocalDensity
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +41,7 @@ import ai.emots.kishan_dynamic.ui.theme.IslandColors
  * - WhatsApp direct chat via wa.me normalization
  * - Dismiss / done action
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun CallSummaryExpandedContent(
     record: CallRecord?,
@@ -58,7 +65,7 @@ internal fun CallSummaryExpandedContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 18.dp, vertical = 13.dp),
+            .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Row(
@@ -100,34 +107,38 @@ internal fun CallSummaryExpandedContent(
             }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            CallSummaryActionButton(
-                glyph = AppleGlyph.Phone,
-                label = if (isMissed) "Call back" else "Redial",
-                onClick = { onControlAction(IslandControlAction.CallSummaryRedial) },
-                modifier = Modifier.weight(1f)
-            )
-            CallSummaryActionButton(
-                glyph = AppleGlyph.Chat,
-                label = "SMS",
-                onClick = { onControlAction(IslandControlAction.CallSummaryMessage) },
-                modifier = Modifier.weight(1f)
-            )
-            CallSummaryActionButton(
-                glyph = AppleGlyph.Chat,
-                label = "WhatsApp",
-                onClick = { onControlAction(IslandControlAction.CallSummaryWhatsApp) },
-                modifier = Modifier.weight(1f)
-            )
-            CallSummaryActionButton(
-                glyph = AppleGlyph.Close,
-                label = "Done",
-                onClick = { onControlAction(IslandControlAction.CallSummaryDismiss) },
-                modifier = Modifier.weight(1f)
-            )
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            val columns = if (LocalDensity.current.fontScale > 1.3f || maxWidth < 320.dp) 2 else 4
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(), maxItemsInEachRow = columns,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
+                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+            ) {
+                CallSummaryActionButton(
+                    glyph = AppleGlyph.Phone,
+                    label = if (isMissed) "Call back" else "Redial",
+                    onClick = { onControlAction(IslandControlAction.CallSummaryRedial) },
+                    modifier = Modifier.weight(1f)
+                )
+                CallSummaryActionButton(
+                    glyph = AppleGlyph.Chat,
+                    label = "SMS",
+                    onClick = { onControlAction(IslandControlAction.CallSummaryMessage) },
+                    modifier = Modifier.weight(1f)
+                )
+                CallSummaryActionButton(
+                    glyph = AppleGlyph.Chat,
+                    label = "WhatsApp",
+                    onClick = { onControlAction(IslandControlAction.CallSummaryWhatsApp) },
+                    modifier = Modifier.weight(1f)
+                )
+                CallSummaryActionButton(
+                    glyph = AppleGlyph.Close,
+                    label = "Done",
+                    onClick = { onControlAction(IslandControlAction.CallSummaryDismiss) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
@@ -141,16 +152,17 @@ internal fun CallSummaryActionButton(
 ) {
     Row(
         modifier = modifier
-            .clip(RoundedCornerShape(15.dp))
+            .heightIn(min = AppTheme.island.minimumActionTarget)
+            .clip(RoundedCornerShape(24.dp))
             .background(IslandColors.Gray6)
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
+            .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onClick)
+            .padding(horizontal = AppTheme.spacing.xs, vertical = AppTheme.spacing.sm),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
         AppleIcon(glyph = glyph, tint = IslandColors.CapsuleCyan, size = 14.dp)
         Spacer(modifier = Modifier.width(5.dp))
-        Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+        Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
     }
 }
 

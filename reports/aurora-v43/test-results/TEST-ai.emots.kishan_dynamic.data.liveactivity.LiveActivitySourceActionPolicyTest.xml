@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.213Z" hostname="Vekariyas-Mac-mini.local" time="0.001">
+<testsuite name="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:50.888Z" hostname="Vekariyas-Mac-mini.local" time="0.026">
   <properties/>
-  <testcase name="doesNotInventSourceAction" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.0"/>
-  <testcase name="usesContentIntentWhenNoSemanticActionExists" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.001"/>
-  <testcase name="prefersUndoOrContinuationActionOverNotificationOpen" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.0"/>
-  <testcase name="exposesRealStopActionForRecordingActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.0"/>
+  <testcase name="doesNotInventSourceAction" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.001"/>
+  <testcase name="usesContentIntentWhenNoSemanticActionExists" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.0"/>
+  <testcase name="prefersUndoOrContinuationActionOverNotificationOpen" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.022"/>
+  <testcase name="exposesRealStopActionForRecordingActivity" classname="ai.emots.kishan_dynamic.data.liveactivity.LiveActivitySourceActionPolicyTest" time="0.002"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

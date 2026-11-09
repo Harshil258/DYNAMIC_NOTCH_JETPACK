@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-11-09T00:12:32.136Z" hostname="Vekariyas-Mac-mini.local" time="0.042">
+<testsuite name="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-11-09T05:05:50.278Z" hostname="Vekariyas-Mac-mini.local" time="0.158">
   <properties/>
-  <testcase name="testAdMobRevenueTrackerProducesStandardIlarEvent" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
-  <testcase name="testScreenDeduplicatorTabSwitchingTransitions" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
-  <testcase name="testZeroPiiWhitelistedExceptionsPermitted" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
-  <testcase name="testNonPurchasedStateDoesNotTriggerPurchaseConversion" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
-  <testcase name="testTypedAnalyticsEventHierarchyLogging" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
+  <testcase name="testAdMobRevenueTrackerProducesStandardIlarEvent" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.011"/>
+  <testcase name="testScreenDeduplicatorTabSwitchingTransitions" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
+  <testcase name="testZeroPiiWhitelistedExceptionsPermitted" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
+  <testcase name="testNonPurchasedStateDoesNotTriggerPurchaseConversion" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
+  <testcase name="testTypedAnalyticsEventHierarchyLogging" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.037"/>
   <testcase name="testBillingConnectionRestoredResetsEpisode" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
-  <testcase name="testUserPropertiesForPaidSubscriber" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.025"/>
-  <testcase name="testScreenDeduplicatorRecompositionGuard" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
-  <testcase name="testZeroPiiSanitizerThrowsInStrictTestMode" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.008"/>
-  <testcase name="testPrepopulatedPersistentTransactionIdsPreventConversionDuplicateAcrossRestarts" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
-  <testcase name="testUserPropertiesForInstallTrialUser" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.002"/>
+  <testcase name="testUserPropertiesForPaidSubscriber" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.083"/>
+  <testcase name="testScreenDeduplicatorRecompositionGuard" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
+  <testcase name="testZeroPiiSanitizerThrowsInStrictTestMode" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.009"/>
+  <testcase name="testPrepopulatedPersistentTransactionIdsPreventConversionDuplicateAcrossRestarts" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
+  <testcase name="testUserPropertiesForInstallTrialUser" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.005"/>
   <testcase name="testZeroPiiSanitizerDropsDisallowedSensitiveKeys" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
-  <testcase name="testBillingConnectionLostLogsAnalyticsDiagnostic" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
-  <testcase name="testUserPropertiesForFreeUser" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
-  <testcase name="testPurchasedStateTriggersConversionAndIsIdempotent" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
+  <testcase name="testBillingConnectionLostLogsAnalyticsDiagnostic" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.0"/>
+  <testcase name="testUserPropertiesForFreeUser" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
+  <testcase name="testPurchasedStateTriggersConversionAndIsIdempotent" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.006"/>
   <testcase name="testValidEventParametersPassValidation" classname="ai.emots.kishan_dynamic.data.analytics.Sprint11AnalyticsAndCrashlyticsTest" time="0.001"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

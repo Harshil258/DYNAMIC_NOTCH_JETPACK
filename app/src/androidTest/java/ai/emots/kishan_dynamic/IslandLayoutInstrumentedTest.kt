@@ -113,7 +113,7 @@ class IslandLayoutInstrumentedTest {
             compose.runOnIdle { scenario.value = Scenario(width, font, IslandDemoState.NotificationStacked, rtl) }
             compose.waitForIdle()
             val compact = compose.onNodeWithTag("island_surface", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
-            assertTrue("compact count must not retain a 152dp reference width", compact.width < 100f)
+            assertTrue("compact notification must retain the Figma capsule width", compact.width >= 175f && compact.width <= 190f)
             assertTrue("count remains inside compact shell", compose.onNodeWithText("8").fetchSemanticsNode().boundsInRoot.right <= compact.right)
             if (!rtl && font == 1f && width == 393) save("compact_count_393")
         }

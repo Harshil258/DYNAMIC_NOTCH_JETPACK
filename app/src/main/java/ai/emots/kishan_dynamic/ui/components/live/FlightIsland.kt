@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -44,8 +45,7 @@ fun FlightIslandExpanded(
     info: LiveActivityInfo? = null,
     progressOverride: Float? = null
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.72f, 1.15f)
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
 
         val flightTitle = info?.entityName?.ifBlank { null }
             ?: info?.title?.takeIf { it != "Flight in progress" && it.isNotBlank() }
@@ -73,61 +73,26 @@ fun FlightIslandExpanded(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 4.dp * scale, vertical = 2.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
+                .padding(AppTheme.spacing.xl),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
             // TOP ROW: Airline, flight number, route & status badge
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f, fill = false),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(36.dp * scale)
-                            .clip(RoundedCornerShape(9.dp * scale))
-                            .background(IslandColors.CapsuleCyan.copy(alpha = 0.22f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.Airplane,
-                            tint = IslandColors.CapsuleCyan,
-                            size = 18.dp * scale
-                        )
+            IslandAdaptiveHeader(identity = {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                    Box(Modifier.size(38.dp).clip(RoundedCornerShape(10.dp))
+                        .background(IslandColors.CapsuleCyan.copy(alpha = .22f)), contentAlignment = Alignment.Center) {
+                        AppleIcon(AppleGlyph.Airplane, tint = IslandColors.CapsuleCyan, size = 19.dp)
                     }
-                    Spacer(modifier = Modifier.width(10.dp * scale))
-                    Column {
-                        Text(
-                            text = flightTitle,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = routeDesc,
-                            fontSize = 11.sp,
-                            color = IslandColors.Gray,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                    Column(Modifier.weight(1f)) {
+                        Text(flightTitle, color = Color.White, style = AppTheme.typography.body.copy(fontWeight = FontWeight.SemiBold))
+                        Text(routeDesc, color = IslandColors.Gray, style = AppTheme.typography.bodySmall)
                     }
                 }
-
-                Spacer(modifier = Modifier.width(8.dp * scale))
-
-                IslandStatusBadge(
-                    text = statusText,
-                    tint = if (progress >= 1f) IslandColors.Green else IslandColors.CapsuleCyan,
-                    fontSize = 11.sp
-                )
-            }
+            }, status = {
+                IslandStatusBadge(text = statusText, tint = if (progress >= 1f) IslandColors.Green else IslandColors.CapsuleCyan, fontSize = 11.sp)
+            })
 
             // MIDDLE SECTION: Airport codes with route track and moving airplane marker
             androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalLayoutDirection provides androidx.compose.ui.unit.LayoutDirection.Ltr) {
@@ -147,15 +112,15 @@ fun FlightIslandExpanded(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(horizontal = 14.dp * scale)
-                        .height(20.dp * scale),
+                        .padding(horizontal = 14.dp)
+                        .height(20.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     // Background track
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(3.dp * scale)
+                            .height(3.dp)
                             .clip(CircleShape)
                             .background(IslandColors.Gray4)
                     )
@@ -163,7 +128,7 @@ fun FlightIslandExpanded(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(progress.coerceIn(0.04f, 1f))
-                            .height(3.dp * scale)
+                            .height(3.dp)
                             .clip(CircleShape)
                             .background(IslandColors.CapsuleCyan)
                     )
@@ -175,7 +140,7 @@ fun FlightIslandExpanded(
                     ) {
                         Box(
                             modifier = Modifier
-                                .size(16.dp * scale)
+                                .size(16.dp)
                                 .clip(CircleShape)
                                 .background(IslandColors.CapsuleCyan),
                             contentAlignment = Alignment.Center
@@ -183,7 +148,7 @@ fun FlightIslandExpanded(
                             AppleIcon(
                                 glyph = AppleGlyph.Airplane,
                                 tint = Color.Black,
-                                size = 10.dp * scale
+                                size = 10.dp
                             )
                         }
                     }
@@ -209,8 +174,6 @@ fun FlightIslandExpanded(
                     text = gateInfo,
                     fontSize = 11.sp,
                     color = IslandColors.Gray,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = timeRemaining,

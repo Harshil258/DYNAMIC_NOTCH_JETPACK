@@ -717,9 +717,10 @@ fun AppStage(
     content: @Composable BoxScope.() -> Unit
 ) {
     val effectiveTargetHeight = minHeight ?: targetHeight
+    val reducedMotion = ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion.current
     val animatedStageHeight by animateDpAsState(
         targetValue = effectiveTargetHeight,
-        animationSpec = spring(
+        animationSpec = if (reducedMotion) androidx.compose.animation.core.snap() else spring(
             dampingRatio = 0.82f,
             stiffness = 380f
         ),
@@ -826,7 +827,7 @@ fun AppStage(
             // Authentic Apple iOS Status Bar framing the island (fades out when expanded)
             val statusBarAlpha by animateFloatAsState(
                 targetValue = if (showStatusBar) 1f else 0f,
-                animationSpec = tween(180),
+                animationSpec = if (reducedMotion) androidx.compose.animation.core.snap() else tween(180),
                 label = "status_bar_alpha"
             )
             if (statusBarAlpha > 0.01f) {
@@ -840,13 +841,18 @@ fun AppStage(
             }
 
             // The island sits 11dp below the top edge of the display, exactly as on iPhone
-            Box(
+            androidx.compose.foundation.layout.BoxWithConstraints(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 11.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                content()
+                val settings = ai.emots.kishan_dynamic.ui.components.LocalIslandRenderSettings.current
+                androidx.compose.runtime.CompositionLocalProvider(
+                    ai.emots.kishan_dynamic.ui.components.LocalIslandRenderSettings provides settings.copy(
+                        maximumHeight = minOf(settings.maximumHeight ?: maxHeight, maxHeight)
+                    )
+                ) { content() }
             }
         }
 

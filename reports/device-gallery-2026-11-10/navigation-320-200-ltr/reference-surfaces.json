@@ -1,0 +1,24 @@
+{
+  "19:1034": {
+    "source": "/Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/reports/aurora-figma/figma-19-1034.png",
+    "surfaceBounds": {
+      "x": 4000.0,
+      "y": 655.0,
+      "width": 367.0,
+      "height": 185.36053466796875
+    },
+    "renderBounds": {
+      "x": 3984.0,
+      "y": 647.0,
+      "width": 399.0,
+      "height": 217.36053466796875
+    },
+    "pixelCrop": [
+      32,
+      16,
+      766,
+      387
+    ],
+    "exportScale": 2.0
+  }
+}

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.model.LiveActivityInfo
 import ai.emots.kishan_dynamic.ui.components.CompactIslandLayout
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 /**
  * Pixel-perfect Football/Sports Island Expanded state (resolves Screenshot C defects).
@@ -39,9 +42,10 @@ fun SportsIslandExpanded(
     info: LiveActivityInfo? = null,
     minuteOverride: Int? = null
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.72f, 1.15f)
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
 
+        val teamBadgeSize = 32.dp * LocalDensity.current.fontScale.coerceAtLeast(1f)
+        val stackedScore = LocalDensity.current.fontScale > 1.3f
         val competition = info?.entityName?.ifBlank { null }
             ?: info?.title?.takeIf { it != "Live match" && it.isNotBlank() }
             ?: "UEFA Champions League"
@@ -65,58 +69,41 @@ fun SportsIslandExpanded(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 4.dp * scale, vertical = 2.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
+                .padding(AppTheme.spacing.xl),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
             // TOP ROW: Competition headline & animated live indicator
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = competition,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
-                ) {
-                    if (isLive) {
-                        IslandLivePulseIndicator(color = IslandColors.Green, size = 6.dp * scale)
-                    }
-                    Text(
-                        text = statusLabel,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (isLive) IslandColors.Green else IslandColors.Gray,
-                        fontFamily = FontFamily.Monospace,
-                        letterSpacing = 0.3.sp
-                    )
+            IslandAdaptiveHeader(identity = {
+                Text(competition, style = AppTheme.typography.body.copy(fontWeight = FontWeight.SemiBold), color = Color.White)
+            }, status = {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+                    if (isLive) IslandLivePulseIndicator(color = IslandColors.Green)
+                    Text(statusLabel, style = AppTheme.typography.bodySmall, color = if (isLive) IslandColors.Green else IslandColors.Gray)
                 }
-            }
+            })
 
             // MIDDLE SECTION: Scoreboard with team identity & prominent score
+            if (stackedScore) Text(
+                text = "$homeScore  -  $awayScore", fontSize = 23.sp,
+                fontWeight = FontWeight.Bold, color = IslandColors.Yellow,
+                fontFamily = FontFamily.Monospace, textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.Top
             ) {
                 // Home Team
                 Column(
                     modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.Start
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
                         Box(
                             modifier = Modifier
-                                .size(24.dp * scale)
+                                .size(teamBadgeSize)
                                 .clip(CircleShape)
                                 .background(Color(0xFF263238)),
                             contentAlignment = Alignment.Center
@@ -128,28 +115,24 @@ fun SportsIslandExpanded(
                                 color = Color.White
                             )
                         }
-                        Spacer(modifier = Modifier.width(6.dp * scale))
                         Text(
                             text = homeName,
+                            textAlign = TextAlign.Center,
                             fontSize = 14.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
                         )
                     }
                     Text(
                         text = homeScorers,
                         fontSize = 11.sp,
                         color = IslandColors.Gray,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 2.dp * scale)
+                        modifier = Modifier.padding(top = 2.dp)
                     )
                 }
 
                 // Centered Monospace Score
-                Text(
+                if (!stackedScore) Text(
                     text = "$homeScore  -  $awayScore",
                     fontSize = 23.sp,
                     fontWeight = FontWeight.Bold,
@@ -157,30 +140,19 @@ fun SportsIslandExpanded(
                     fontFamily = FontFamily.Monospace,
                     letterSpacing = 0.5.sp,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(horizontal = 10.dp * scale)
+                    modifier = Modifier.align(Alignment.CenterVertically).padding(horizontal = 10.dp)
                 )
 
                 // Away Team
                 Column(
                     modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.End
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        Text(
-                            text = awayName,
-                            fontSize = 14.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Spacer(modifier = Modifier.width(6.dp * scale))
+                    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
                         Box(
                             modifier = Modifier
-                                .size(24.dp * scale)
+                                .size(teamBadgeSize)
                                 .clip(CircleShape)
                                 .background(Color(0xFF1E88E5)),
                             contentAlignment = Alignment.Center
@@ -192,14 +164,19 @@ fun SportsIslandExpanded(
                                 color = Color.White
                             )
                         }
+                        Text(
+                            text = awayName,
+                            textAlign = TextAlign.Center,
+                            fontSize = 14.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                        )
                     }
                     Text(
                         text = awayScorers,
                         fontSize = 11.sp,
                         color = IslandColors.Gray,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.padding(top = 2.dp * scale)
+                        modifier = Modifier.padding(top = 2.dp)
                     )
                 }
             }
@@ -208,9 +185,9 @@ fun SportsIslandExpanded(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(7.dp * scale))
+                    .clip(RoundedCornerShape(7.dp))
                     .background(IslandColors.Gray6)
-                    .padding(vertical = 4.dp * scale),
+                    .padding(vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -233,6 +210,7 @@ fun SportsIslandCompact(
     minuteOverride: Int? = null
 ) {
     val minute = minuteOverride ?: 78
+    val largeText = LocalDensity.current.fontScale > 1.3f
 
     CompactIslandLayout(
         leading = {
@@ -258,6 +236,7 @@ fun SportsIslandCompact(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (!largeText) {
                 Box(
                     modifier = Modifier
                         .size(4.dp)
@@ -270,6 +249,7 @@ fun SportsIslandCompact(
                     fontWeight = FontWeight.Bold,
                     color = IslandColors.Green
                 )
+                }
             }
         }
     )

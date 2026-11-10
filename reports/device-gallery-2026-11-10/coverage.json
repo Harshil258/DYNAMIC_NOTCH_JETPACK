@@ -1,0 +1,50 @@
+{
+  "profiles": [
+    {
+      "folder": "active-360-100-ltr",
+      "states": 60,
+      "bottomEndpoints": 2,
+      "profile": {
+        "width": 360,
+        "fontPercent": 100,
+        "rtl": false
+      }
+    },
+    {
+      "folder": "active-320-200-ltr",
+      "states": 60,
+      "bottomEndpoints": 20,
+      "profile": {
+        "width": 320,
+        "fontPercent": 200,
+        "rtl": false
+      }
+    },
+    {
+      "folder": "active-430-100-rtl",
+      "states": 60,
+      "bottomEndpoints": 0,
+      "profile": {
+        "width": 430,
+        "fontPercent": 100,
+        "rtl": true
+      }
+    }
+  ],
+  "visualAcceptance": "pending",
+  "jvm": {
+    "tests": 504,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "command": "./gradlew :app:testDebugUnitTest -Photswan.dispatchRewriteEnabled=false"
+  },
+  "laterRevision": {
+    "adaptiveLargeTextStates": 6,
+    "overlappingScrollFrames": 5,
+    "rtlCorrectedStates": 2,
+    "receipt": "../aurora-hotswan-2026-11-10/adaptive-delivery.json",
+    "sportsBadgeAlignment": "additional correction pending device verification",
+    "jvmScope": "504 passing tests predate this later layout batch; compile and live visual checks passed for delivered batch"
+  }
+}

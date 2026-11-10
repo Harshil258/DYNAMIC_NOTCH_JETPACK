@@ -1,0 +1,2103 @@
+{
+  "nodeCount": 109,
+  "nodes": [
+    {
+      "id": 144,
+      "parentId": -1,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 145,
+      "parentId": 144,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 147,
+      "parentId": 145,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 324,
+      "parentId": 147,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        410,
+        1020,
+        1097
+      ],
+      "actions": []
+    },
+    {
+      "id": 326,
+      "parentId": 324,
+      "text": "",
+      "contentDescription": "Previous state",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        60,
+        410,
+        204,
+        554
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 329,
+      "parentId": 324,
+      "text": "59 / 60 \u00b7 MobileDataAlert",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        312,
+        436,
+        768,
+        483
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 331,
+      "parentId": 324,
+      "text": "367\u00d7162dp (r=42dp) \u00b7 ActivityExpanded",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        246,
+        489,
+        835,
+        528
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 332,
+      "parentId": 324,
+      "text": "",
+      "contentDescription": "Next state",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        876,
+        410,
+        1020,
+        554
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 335,
+      "parentId": 324,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        566,
+        1020,
+        1046
+      ],
+      "actions": []
+    },
+    {
+      "id": 336,
+      "parentId": 335,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        524,
+        593,
+        557,
+        626
+      ],
+      "actions": []
+    },
+    {
+      "id": 372,
+      "parentId": 335,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        92,
+        566,
+        988,
+        962
+      ],
+      "actions": []
+    },
+    {
+      "id": 374,
+      "parentId": 335,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "island_surface",
+      "role": "",
+      "bounds": [
+        92,
+        566,
+        988,
+        962
+      ],
+      "actions": []
+    },
+    {
+      "id": 376,
+      "parentId": 374,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        92,
+        566,
+        988,
+        947
+      ],
+      "actions": [
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 3573,
+      "parentId": 376,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        92,
+        566,
+        988,
+        947
+      ],
+      "actions": []
+    },
+    {
+      "id": 3582,
+      "parentId": 3573,
+      "text": "Mobile Data is Turned Off",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        317,
+        634,
+        790,
+        683
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 3584,
+      "parentId": 3573,
+      "text": "Turn on mobile data or use Wi-Fi\nto access data.",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        317,
+        698,
+        921,
+        786
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 3586,
+      "parentId": 3573,
+      "text": "OK",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        131,
+        786,
+        525,
+        903
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 3589,
+      "parentId": 3573,
+      "text": "Settings",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        554,
+        786,
+        949,
+        903
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 340,
+      "parentId": 324,
+      "text": "Actual: 366.8 \u00d7 144.1dp \u00b7 \u0394 -0.2 / -17.9dp",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        1058,
+        672,
+        1097
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 345,
+      "parentId": 147,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        45,
+        1142,
+        510,
+        1268
+      ],
+      "actions": []
+    },
+    {
+      "id": 409,
+      "parentId": 345,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        278,
+        1142,
+        394,
+        1268
+      ],
+      "actions": []
+    },
+    {
+      "id": 411,
+      "parentId": 345,
+      "text": "320",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        45,
+        1142,
+        162,
+        1268
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 413,
+      "parentId": 345,
+      "text": "360",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        162,
+        1142,
+        278,
+        1268
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 415,
+      "parentId": 345,
+      "text": "393",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        278,
+        1142,
+        394,
+        1268
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 417,
+      "parentId": 345,
+      "text": "430",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        394,
+        1142,
+        510,
+        1268
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 346,
+      "parentId": 147,
+      "text": "100%",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        531,
+        1151,
+        717,
+        1259
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 348,
+      "parentId": 147,
+      "text": "LTR",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        729,
+        1151,
+        888,
+        1259
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 350,
+      "parentId": 147,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        900,
+        1133,
+        1044,
+        1277
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 352,
+      "parentId": 147,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1283,
+        1044,
+        1451
+      ],
+      "actions": [
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 353,
+      "parentId": 352,
+      "text": "All (60)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        36,
+        1295,
+        254,
+        1439
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 355,
+      "parentId": 352,
+      "text": "Calls (7)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        278,
+        1295,
+        511,
+        1439
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 357,
+      "parentId": 352,
+      "text": "Alerts & Msgs (5)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        535,
+        1295,
+        919,
+        1439
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 359,
+      "parentId": 352,
+      "text": "Music & Audio (4)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        943,
+        1295,
+        1044,
+        1439
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 361,
+      "parentId": 352,
+      "text": "System Alerts (14)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 363,
+      "parentId": 352,
+      "text": "Activities (12)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 365,
+      "parentId": 352,
+      "text": "Device & Battery (12)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 367,
+      "parentId": 352,
+      "text": "Controls & Cards (6)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 369,
+      "parentId": 147,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1457,
+        1044,
+        1951
+      ],
+      "actions": [
+        "ScrollBy",
+        "GetScrollViewportLength",
+        "ScrollToIndex"
+      ]
+    },
+    {
+      "id": 420,
+      "parentId": 369,
+      "text": "1 Idle 127\u00d736 \u00b7 Idle",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1469,
+        534,
+        1625
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 428,
+      "parentId": 369,
+      "text": "2 Minimal 108\u00d732 \u00b7 OwnerMini",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        546,
+        1469,
+        1044,
+        1625
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 436,
+      "parentId": 369,
+      "text": "3 MusicCompact 190\u00d738 \u00b7 StatusCom",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1637,
+        534,
+        1793
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 444,
+      "parentId": 369,
+      "text": "4 MusicExpanded 367\u00d7177 \u00b7 ActivityE",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        546,
+        1637,
+        1044,
+        1793
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 3592,
+      "parentId": 369,
+      "text": "5 CallCompact 152\u00d736 \u00b7 StatusCom",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1805,
+        534,
+        1951
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 3599,
+      "parentId": 369,
+      "text": "6 CallExpanded 367\u00d7166 \u00b7 ActivityE",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        546,
+        1805,
+        1044,
+        1951
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 151,
+      "parentId": 147,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        386
+      ],
+      "actions": []
+    },
+    {
+      "id": 311,
+      "parentId": 151,
+      "text": "",
+      "contentDescription": "Back",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        36,
+        194,
+        180,
+        338
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 315,
+      "parentId": 151,
+      "text": "60-state Gallery",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        216,
+        211,
+        593,
+        275
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 317,
+      "parentId": 151,
+      "text": "Shared production renderer \u00b7 synthetic demonstration",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        216,
+        281,
+        1022,
+        321
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 167,
+      "parentId": 147,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        1999,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 168,
+      "parentId": 167,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        1999,
+        1080,
+        2001
+      ],
+      "actions": []
+    },
+    {
+      "id": 319,
+      "parentId": 167,
+      "text": "\u25c0  #58 ScreenMirror",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        72,
+        2047,
+        528,
+        2220
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 321,
+      "parentId": 167,
+      "text": "#60 TransitRoute  \u25b6",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        552,
+        2051,
+        1008,
+        2217
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 1,
+      "parentId": -1,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 2,
+      "parentId": 1,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 4,
+      "parentId": 2,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 35,
+      "parentId": 4,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        410,
+        1020,
+        1120
+      ],
+      "actions": []
+    },
+    {
+      "id": 36,
+      "parentId": 35,
+      "text": "Simulation \u00b7 360dp \u00b7 3.0\u00d7 density \u00b7 100% type",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        410,
+        660,
+        445
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 38,
+      "parentId": 35,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "playground_preview",
+      "role": "",
+      "bounds": [
+        60,
+        445,
+        1020,
+        1085
+      ],
+      "actions": []
+    },
+    {
+      "id": 291,
+      "parentId": 38,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": []
+    },
+    {
+      "id": 293,
+      "parentId": 291,
+      "text": "12:00",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 294,
+      "parentId": 291,
+      "text": "Wi-Fi   100%",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 295,
+      "parentId": 291,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": []
+    },
+    {
+      "id": 297,
+      "parentId": 291,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": []
+    },
+    {
+      "id": 301,
+      "parentId": 297,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": []
+    },
+    {
+      "id": 303,
+      "parentId": 297,
+      "text": "",
+      "contentDescription": "Dynamic Island",
+      "testTag": "island_surface",
+      "role": "Button",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick",
+        "OnLongClick"
+      ]
+    },
+    {
+      "id": 60,
+      "parentId": 35,
+      "text": "Idle capsule \u00b7 127 \u00d7 36dp",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        1085,
+        394,
+        1120
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 62,
+      "parentId": 4,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "playground_sections",
+      "role": "",
+      "bounds": [
+        36,
+        1168,
+        1044,
+        1336
+      ],
+      "actions": [
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 63,
+      "parentId": 62,
+      "text": "Live Preview",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        36,
+        1180,
+        343,
+        1324
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 65,
+      "parentId": 62,
+      "text": "States",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        367,
+        1180,
+        568,
+        1324
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 67,
+      "parentId": 62,
+      "text": "Animations",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        592,
+        1180,
+        877,
+        1324
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 69,
+      "parentId": 62,
+      "text": "Geometry",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        901,
+        1180,
+        1044,
+        1324
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 71,
+      "parentId": 62,
+      "text": "Stress Tests",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 73,
+      "parentId": 62,
+      "text": "Test Results",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 75,
+      "parentId": 62,
+      "text": "Mini-Islands",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 77,
+      "parentId": 62,
+      "text": "60-state Gallery",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 79,
+      "parentId": 4,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1336,
+        1044,
+        1963
+      ],
+      "actions": [
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 80,
+      "parentId": 79,
+      "text": "PHONE SIMULATION",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        48,
+        1372,
+        384,
+        1407
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 81,
+      "parentId": 79,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1467,
+        1044,
+        1635
+      ],
+      "actions": [
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 82,
+      "parentId": 81,
+      "text": "Small \u00b7 320dp",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        36,
+        1479,
+        257,
+        1623
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 84,
+      "parentId": 81,
+      "text": "Normal \u00b7 360dp",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        281,
+        1479,
+        633,
+        1623
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 86,
+      "parentId": 81,
+      "text": "393dp \u00b7 centered",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        657,
+        1479,
+        1032,
+        1623
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 88,
+      "parentId": 81,
+      "text": "Large \u00b7 430dp",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 90,
+      "parentId": 81,
+      "text": "Landscape \u00b7 640dp",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 92,
+      "parentId": 79,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        45,
+        1680,
+        1035,
+        1806
+      ],
+      "actions": []
+    },
+    {
+      "id": 134,
+      "parentId": 92,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": []
+    },
+    {
+      "id": 136,
+      "parentId": 92,
+      "text": "None",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        45,
+        1680,
+        292,
+        1724
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 138,
+      "parentId": 92,
+      "text": "Left",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        292,
+        1680,
+        539,
+        1724
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 140,
+      "parentId": 92,
+      "text": "Center",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        539,
+        1680,
+        787,
+        1724
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 142,
+      "parentId": 92,
+      "text": "Pill",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        787,
+        1680,
+        1035,
+        1724
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 93,
+      "parentId": 79,
+      "text": "Simulated density 3.0\u00d7",
+      "contentDescription": "Simulated density",
+      "testTag": "lab_slider_Simulated density",
+      "role": "",
+      "bounds": [
+        36,
+        1851,
+        1044,
+        1963
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "SetProgress",
+        "GetTextLayoutResult",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 103,
+      "parentId": 79,
+      "text": "Font scale 1.0\u00d7",
+      "contentDescription": "Font scale",
+      "testTag": "lab_slider_Font scale",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "SetProgress",
+        "GetTextLayoutResult",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 115,
+      "parentId": 79,
+      "text": "RTL layout",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 116,
+      "parentId": 79,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Switch",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 120,
+      "parentId": 79,
+      "text": "Reduced motion",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 121,
+      "parentId": 79,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Switch",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 125,
+      "parentId": 79,
+      "text": "Bounds and camera-safe guides",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 126,
+      "parentId": 79,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Switch",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 128,
+      "parentId": 79,
+      "text": "PHYSICAL ANDROID DEVICE",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 129,
+      "parentId": 79,
+      "text": "Physical overlay not running",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 130,
+      "parentId": 79,
+      "text": "Uses a real application-overlay window, this device\u2019s density, font scale and cutout bounds. Mock actions stay isolated. Automatically stops after 3 minutes.",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 131,
+      "parentId": 79,
+      "text": "Start physical overlay",
+      "contentDescription": "",
+      "testTag": "start_physical_overlay",
+      "role": "Button",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 8,
+      "parentId": 4,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        386
+      ],
+      "actions": []
+    },
+    {
+      "id": 11,
+      "parentId": 8,
+      "text": "",
+      "contentDescription": "Back",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        36,
+        194,
+        180,
+        338
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 15,
+      "parentId": 8,
+      "text": "Dynamic Island Lab",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        216,
+        211,
+        683,
+        275
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 17,
+      "parentId": 8,
+      "text": "Debug only \u00b7 isolated mock data",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        216,
+        281,
+        696,
+        321
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 24,
+      "parentId": 4,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        2011,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 25,
+      "parentId": 24,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        2011,
+        1080,
+        2013
+      ],
+      "actions": []
+    },
+    {
+      "id": 27,
+      "parentId": 24,
+      "text": "Mock data \u00b7 production renderer",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        2047,
+        469,
+        2082
+      ],
+      "actions": [
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution",
+        "SetTextSubstitution"
+      ]
+    },
+    {
+      "id": 28,
+      "parentId": 24,
+      "text": "Replay transition",
+      "contentDescription": "",
+      "testTag": "playground_primary",
+      "role": "Button",
+      "bounds": [
+        36,
+        2082,
+        1044,
+        2232
+      ],
+      "actions": [
+        "RequestFocus",
+        "ClearTextSubstitution",
+        "ShowTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "SetTextSubstitution"
+      ]
+    }
+  ],
+  "timestamp": 1794278000778,
+  "available": true,
+  "target": "android"
+}

@@ -23,14 +23,14 @@ For the owner-requested Figma comparison correction, follow
 
 ## Compact / minimal
 
-- Visual status body height: 36.67dp. The owner Minimal specimen is a separate
+- Visual status body height:36.67dp by default; measured recipes override music to38dp and notification/Idle to36dp. The owner Minimal specimen is a separate
   108×32dp R15.9018 surface (#DC0917 at60%, no content), never Idle or a companion.
   Interactive layout target: at least 48dp, including
   the compact body/companion. Transparent vertical hit clearance is intentional;
   it is not content padding. Hidden windows remain invisible and non-touchable.
 - Notification compact width follows the measured Figma notification specimen27:1021:
   preferred189dp, bounded by the current status-side budget. Icon and numeric count
-  occupy opposite ends with matching12dp insets. Do not shrink to an icon/count badge.
+  occupy opposite ends with matching8dp visual insets. Do not shrink to an icon/count badge.
   This owner-requested visual correction supersedes the earlier intrinsic-width rule.
 - Compact notifications show only bounded unseen count (`0`…`99+`) or genuine
   ongoing progress. No message body, sender, or permanent notification title.

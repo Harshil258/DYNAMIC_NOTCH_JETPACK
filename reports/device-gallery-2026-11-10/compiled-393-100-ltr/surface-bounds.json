@@ -1,0 +1,849 @@
+[
+  {
+    "state": "Idle",
+    "ordinal": 1,
+    "file": "01-Idle.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312687.922997,
+    "bounds": [
+      385,
+      566,
+      695,
+      654
+    ],
+    "designWidthDp": 126.906
+  },
+  {
+    "state": "Minimal",
+    "ordinal": 2,
+    "file": "02-Minimal.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312690.4134421,
+    "bounds": [
+      408,
+      566,
+      672,
+      644
+    ],
+    "designWidthDp": 108.075
+  },
+  {
+    "state": "MusicCompact",
+    "ordinal": 3,
+    "file": "03-MusicCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312693.22768,
+    "bounds": [
+      308,
+      566,
+      772,
+      659
+    ],
+    "designWidthDp": 189.95
+  },
+  {
+    "state": "MusicExpanded",
+    "ordinal": 4,
+    "file": "04-MusicExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312696.060383,
+    "bounds": [
+      92,
+      566,
+      988,
+      998
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "CallCompact",
+    "ordinal": 5,
+    "file": "05-CallCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312699.462183,
+    "bounds": [
+      355,
+      566,
+      726,
+      656
+    ],
+    "designWidthDp": 151.878
+  },
+  {
+    "state": "CallExpanded",
+    "ordinal": 6,
+    "file": "06-CallExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312702.273727,
+    "bounds": [
+      92,
+      566,
+      988,
+      971
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "CallSummaryExpanded",
+    "ordinal": 7,
+    "file": "07-CallSummaryExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312706.0295522,
+    "bounds": [
+      92,
+      566,
+      988,
+      863
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "FaceTimeCallExpanded",
+    "ordinal": 8,
+    "file": "08-FaceTimeCallExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312709.667586,
+    "bounds": [
+      92,
+      566,
+      988,
+      976
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "SharedMediaCallExpanded",
+    "ordinal": 9,
+    "file": "09-SharedMediaCallExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312713.167165,
+    "bounds": [
+      92,
+      566,
+      988,
+      988
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "OngoingCallBanner",
+    "ordinal": 10,
+    "file": "10-OngoingCallBanner.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312720.1167989,
+    "bounds": [
+      92,
+      566,
+      988,
+      777
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "NotificationCompact",
+    "ordinal": 11,
+    "file": "11-NotificationCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312723.4475899,
+    "bounds": [
+      309,
+      566,
+      771,
+      654
+    ],
+    "designWidthDp": 189.131
+  },
+  {
+    "state": "NotificationStacked",
+    "ordinal": 12,
+    "file": "12-NotificationStacked.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312726.049201,
+    "bounds": [
+      309,
+      566,
+      771,
+      654
+    ],
+    "designWidthDp": 189.131
+  },
+  {
+    "state": "NotificationWithMusicCompact",
+    "ordinal": 13,
+    "file": "13-NotificationWithMusicCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312728.6527302,
+    "bounds": [
+      250,
+      566,
+      831,
+      656
+    ],
+    "designWidthDp": 237.847
+  },
+  {
+    "state": "NotificationExpanded",
+    "ordinal": 14,
+    "file": "14-NotificationExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312731.7671318,
+    "bounds": [
+      92,
+      566,
+      988,
+      874
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "SilentModeCompact",
+    "ordinal": 15,
+    "file": "15-SilentModeCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312735.591418,
+    "bounds": [
+      355,
+      566,
+      726,
+      656
+    ],
+    "designWidthDp": 151.878
+  },
+  {
+    "state": "SilentModeExpanded",
+    "ordinal": 16,
+    "file": "16-SilentModeExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312739.030903,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "RingerModeExpanded",
+    "ordinal": 17,
+    "file": "17-RingerModeExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312742.26896,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "VibrateModeCompact",
+    "ordinal": 18,
+    "file": "18-VibrateModeCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312745.395246,
+    "bounds": [
+      330,
+      566,
+      750,
+      656
+    ],
+    "designWidthDp": 171.938
+  },
+  {
+    "state": "NormalModeCompact",
+    "ordinal": 19,
+    "file": "19-NormalModeCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312747.6447449,
+    "bounds": [
+      330,
+      566,
+      750,
+      656
+    ],
+    "designWidthDp": 171.938
+  },
+  {
+    "state": "RingerVolumeCompact",
+    "ordinal": 20,
+    "file": "20-RingerVolumeCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312750.059794,
+    "bounds": [
+      330,
+      566,
+      750,
+      656
+    ],
+    "designWidthDp": 171.938
+  },
+  {
+    "state": "MediaVolumeCompact",
+    "ordinal": 21,
+    "file": "21-MediaVolumeCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312752.275655,
+    "bounds": [
+      330,
+      566,
+      750,
+      656
+    ],
+    "designWidthDp": 171.938
+  },
+  {
+    "state": "BluetoothConnected",
+    "ordinal": 22,
+    "file": "22-BluetoothConnected.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312754.611719,
+    "bounds": [
+      301,
+      566,
+      780,
+      656
+    ],
+    "designWidthDp": 196.091
+  },
+  {
+    "state": "BluetoothConnecting",
+    "ordinal": 23,
+    "file": "23-BluetoothConnecting.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312756.835733,
+    "bounds": [
+      301,
+      566,
+      780,
+      656
+    ],
+    "designWidthDp": 196.091
+  },
+  {
+    "state": "ActionControlExpanded",
+    "ordinal": 24,
+    "file": "24-ActionControlExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312759.545919,
+    "scrollFiles": [
+      "24-ActionControlExpanded-scroll-01.png"
+    ],
+    "bottomFile": "24-ActionControlExpanded-scroll-01.png",
+    "scrollMethod": "semantics",
+    "scrollTarget": "outer content viewport",
+    "scrollOverlapPercent": 30,
+    "bounds": [
+      92,
+      566,
+      988,
+      1226
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "PremiumExpiryExpanded",
+    "ordinal": 25,
+    "file": "25-PremiumExpiryExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312764.274615,
+    "bounds": [
+      92,
+      566,
+      988,
+      864
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "ChargingCompact",
+    "ordinal": 26,
+    "file": "26-ChargingCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312767.5472908,
+    "bounds": [
+      379,
+      566,
+      701,
+      656
+    ],
+    "designWidthDp": 131.819
+  },
+  {
+    "state": "ChargingExpanded",
+    "ordinal": 27,
+    "file": "27-ChargingExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312769.98876,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "LowBatteryCompact",
+    "ordinal": 28,
+    "file": "28-LowBatteryCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312773.280858,
+    "bounds": [
+      379,
+      566,
+      701,
+      656
+    ],
+    "designWidthDp": 131.819
+  },
+  {
+    "state": "LowBatteryExpanded",
+    "ordinal": 29,
+    "file": "29-LowBatteryExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312775.937124,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "TimerCompact",
+    "ordinal": 30,
+    "file": "30-TimerCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312779.466706,
+    "bounds": [
+      269,
+      566,
+      811,
+      656
+    ],
+    "designWidthDp": 221.881
+  },
+  {
+    "state": "TimerExpanded",
+    "ordinal": 31,
+    "file": "31-TimerExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312781.912596,
+    "bounds": [
+      92,
+      566,
+      988,
+      777
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "DeliveryCompact",
+    "ordinal": 32,
+    "file": "32-DeliveryCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312785.01266,
+    "bounds": [
+      345,
+      566,
+      736,
+      656
+    ],
+    "designWidthDp": 160.066
+  },
+  {
+    "state": "DeliveryExpanded",
+    "ordinal": 33,
+    "file": "33-DeliveryExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312787.583484,
+    "bounds": [
+      92,
+      566,
+      988,
+      1120
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "FlightCompact",
+    "ordinal": 34,
+    "file": "34-FlightCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312791.3653681,
+    "bounds": [
+      345,
+      566,
+      736,
+      656
+    ],
+    "designWidthDp": 160.066
+  },
+  {
+    "state": "FlightExpanded",
+    "ordinal": 35,
+    "file": "35-FlightExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312794.329759,
+    "bounds": [
+      92,
+      566,
+      988,
+      1039
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "SportsCompact",
+    "ordinal": 36,
+    "file": "36-SportsCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312797.445565,
+    "bounds": [
+      350,
+      566,
+      731,
+      656
+    ],
+    "designWidthDp": 155.972
+  },
+  {
+    "state": "SportsExpanded",
+    "ordinal": 37,
+    "file": "37-SportsExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312799.958904,
+    "bounds": [
+      92,
+      566,
+      988,
+      1134
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "NavigationCompact",
+    "ordinal": 38,
+    "file": "38-NavigationCompact.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312803.328599,
+    "bounds": [
+      350,
+      566,
+      731,
+      656
+    ],
+    "designWidthDp": 155.972
+  },
+  {
+    "state": "VoiceMemoExpanded",
+    "ordinal": 39,
+    "file": "39-VoiceMemoExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312805.8031292,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "ScreenRecordingExpanded",
+    "ordinal": 40,
+    "file": "40-ScreenRecordingExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312808.899709,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "ShortcutExpanded",
+    "ordinal": 41,
+    "file": "41-ShortcutExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312812.1389482,
+    "bounds": [
+      92,
+      566,
+      988,
+      774
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "FocusModeExpanded",
+    "ordinal": 42,
+    "file": "42-FocusModeExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312815.359676,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "AirPodsConnected",
+    "ordinal": 43,
+    "file": "43-AirPodsConnected.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312818.590722,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "SatelliteConnected",
+    "ordinal": 44,
+    "file": "44-SatelliteConnected.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312822.228889,
+    "bounds": [
+      92,
+      566,
+      988,
+      777
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "FindMyAlert",
+    "ordinal": 45,
+    "file": "45-FindMyAlert.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312825.276879,
+    "bounds": [
+      92,
+      566,
+      988,
+      777
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "MovedToIPhone",
+    "ordinal": 46,
+    "file": "46-MovedToIPhone.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312828.493242,
+    "bounds": [
+      92,
+      566,
+      988,
+      776
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "VideoRemoteExpanded",
+    "ordinal": 47,
+    "file": "47-VideoRemoteExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312831.75018,
+    "bounds": [
+      92,
+      566,
+      988,
+      998
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "AirDropActivity",
+    "ordinal": 48,
+    "file": "48-AirDropActivity.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312835.1258152,
+    "bounds": [
+      92,
+      566,
+      988,
+      777
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "TimerImage",
+    "ordinal": 49,
+    "file": "49-TimerImage.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312838.785686,
+    "bounds": [
+      92,
+      566,
+      988,
+      742
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "NotificationImage",
+    "ordinal": 50,
+    "file": "50-NotificationImage.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312842.492306,
+    "bounds": [
+      92,
+      566,
+      988,
+      874
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "CallAvatars",
+    "ordinal": 51,
+    "file": "51-CallAvatars.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312846.189093,
+    "bounds": [
+      92,
+      566,
+      988,
+      777
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "TransportActivity",
+    "ordinal": 52,
+    "file": "52-TransportActivity.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312849.488538,
+    "bounds": [
+      92,
+      566,
+      988,
+      824
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "FlightTrackerExpanded",
+    "ordinal": 53,
+    "file": "53-FlightTrackerExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312853.2570188,
+    "bounds": [
+      92,
+      566,
+      988,
+      1093
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "SubscriptionPricing",
+    "ordinal": 54,
+    "file": "54-SubscriptionPricing.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312856.56918,
+    "bounds": [
+      92,
+      566,
+      988,
+      848
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "MovieCard",
+    "ordinal": 55,
+    "file": "55-MovieCard.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312860.282604,
+    "bounds": [
+      92,
+      566,
+      988,
+      879
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "ColorOptions",
+    "ordinal": 56,
+    "file": "56-ColorOptions.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312670.302312,
+    "bounds": [
+      92,
+      566,
+      988,
+      1025
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "AirplaneAlert",
+    "ordinal": 57,
+    "file": "57-AirplaneAlert.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312674.242614,
+    "bounds": [
+      92,
+      566,
+      988,
+      928
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "ScreenMirroringAlert",
+    "ordinal": 58,
+    "file": "58-ScreenMirroringAlert.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312677.704483,
+    "bounds": [
+      92,
+      566,
+      988,
+      918
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "MobileDataAlert",
+    "ordinal": 59,
+    "file": "59-MobileDataAlert.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312681.192607,
+    "bounds": [
+      92,
+      566,
+      988,
+      962
+    ],
+    "designWidthDp": 366.8
+  },
+  {
+    "state": "TransitRouteAlert",
+    "ordinal": 60,
+    "file": "60-TransitRouteAlert.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794312684.6176682,
+    "bounds": [
+      92,
+      566,
+      988,
+      913
+    ],
+    "designWidthDp": 366.8
+  }
+]

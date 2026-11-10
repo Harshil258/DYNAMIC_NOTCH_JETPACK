@@ -39,8 +39,9 @@ internal fun IslandContentViewport(
         if (!compact) onContentHeight(child.height.toDp())
         layout(constraints.maxWidth, constraints.maxHeight) {
             // Place at the final width throughout the morph: text never rewraps per frame.
-            child.placeRelative((constraints.maxWidth - width) / 2,
-                ((constraints.maxHeight - child.height) / 2).coerceAtLeast(0))
+            // Expanded content manages its own content insets; never center vertically in tall shells.
+            val yOffset = if (compact) ((constraints.maxHeight - child.height) / 2).coerceAtLeast(0) else 0
+            child.placeRelative((constraints.maxWidth - width) / 2, yOffset)
         }
     }
 }

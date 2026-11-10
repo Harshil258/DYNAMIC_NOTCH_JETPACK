@@ -1,0 +1,32 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": true,
+  "requestedProfile": {
+    "width": 320,
+    "fontPercent": 200,
+    "rtl": false
+  },
+  "captures": [
+    {
+      "state": "ColorOptions",
+      "ordinal": 56,
+      "file": "56-ColorOptions.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794310927.927524,
+      "scrollFiles": [
+        "56-ColorOptions-scroll-01.png"
+      ],
+      "bottomFile": "56-ColorOptions-scroll-01.png",
+      "scrollMethod": "semantics",
+      "scrollTarget": "outer content viewport",
+      "scrollOverlapPercent": 30
+    }
+  ],
+  "deviceDensityDpi": 480,
+  "requestedStates": [
+    "ColorOptions"
+  ]
+}

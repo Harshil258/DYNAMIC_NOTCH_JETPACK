@@ -1,0 +1,5988 @@
+{
+  "Idle": {
+    "node": "27:1050",
+    "layers": [
+      {
+        "id": "27:1050",
+        "name": "Figma Comment",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 127.0,
+          "height": 36.0
+        },
+        "cornerRadius": 44.0,
+        "style": {}
+      },
+      {
+        "id": "27:1051",
+        "name": "Camera",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 91.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1052",
+        "name": "Lens 1",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 91.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1053",
+        "name": "Lens",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 95.5947265625,
+          "y": 12.5704345703125,
+          "width": 10.731709480285645,
+          "height": 10.93581771850586
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1054",
+        "name": "Line",
+        "type": "LINE",
+        "text": null,
+        "bounds": {
+          "x": 100.513671875,
+          "y": 12.5704345703125,
+          "width": 0.0,
+          "height": 10.93581771850586
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1055",
+        "name": "Group 44192",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 17.013671875,
+          "y": 9.0,
+          "width": 65.98603057861328,
+          "height": 18.365127563476562
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1056",
+        "name": "Screen Shot 2022-09-14 at 6.43 1",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 17.013671875,
+          "y": 9.0,
+          "width": 21.99544334411621,
+          "height": 18.365127563476562
+        },
+        "cornerRadius": 5.125151634216309,
+        "style": {}
+      },
+      {
+        "id": "27:1057",
+        "name": "Song Details",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 42.42578125,
+          "y": 10.28131103515625,
+          "width": 29.256074905395508,
+          "height": 15.80255126953125
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1058",
+        "name": "Mamad",
+        "type": "TEXT",
+        "text": "Mamad",
+        "bounds": {
+          "x": 42.42578125,
+          "y": 10.28131103515625,
+          "width": 12.0,
+          "height": 4.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 3.4167678356170654,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 4.077432155609131
+        }
+      },
+      {
+        "id": "27:1059",
+        "name": "Haji ina chie zadi to baz dahane mano servis kardi",
+        "type": "TEXT",
+        "text": "Haji ina chie zadi \nto baz dahane mano \nservis kardi",
+        "bounds": {
+          "x": 42.42578125,
+          "y": 15.135498046875,
+          "width": 30.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 300,
+          "fontSize": 3.4167678356170654,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 3.6303157806396484
+        }
+      },
+      {
+        "id": "27:1060",
+        "name": "Group 19",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 82.1455078125,
+          "y": 19.25030517578125,
+          "width": 0.8541919589042664,
+          "height": 5.979343414306641
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1061",
+        "name": "Ellipse 3",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 82.1455078125,
+          "y": 21.8128662109375,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1062",
+        "name": "Ellipse 4",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 82.1455078125,
+          "y": 19.25030517578125,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1063",
+        "name": "Ellipse 5",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 82.1455078125,
+          "y": 24.37542724609375,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1064",
+        "name": "Rectangle 8",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": -28.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": 100.0,
+        "style": {}
+      },
+      {
+        "id": "27:1065",
+        "name": "messages#ui,message,chat,comment,answer,interface,speak,talk,speaking,bubble,reply,bubbles,forum,dialog",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 127.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1066",
+        "name": "Stroke 462",
+        "type": "VECTOR",
+        "text": null,
+        "bounds": {
+          "x": 129.5,
+          "y": 10.50103759765625,
+          "width": 15.0,
+          "height": 14.997980117797852
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1067",
+        "name": "3",
+        "type": "TEXT",
+        "text": "3",
+        "bounds": {
+          "x": 133.73046875,
+          "y": 12.0,
+          "width": 7.023685455322266,
+          "height": 12.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 10.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 11.93359375
+        }
+      }
+    ]
+  },
+  "MusicCompact": {
+    "node": "19:979",
+    "layers": [
+      {
+        "id": "19:979",
+        "name": "Dynamic Island / Compact",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 190.0,
+          "height": 38.0
+        },
+        "cornerRadius": 22.0,
+        "style": {}
+      },
+      {
+        "id": "I19:979;1:987",
+        "name": "Metadata",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 12.0,
+          "y": 7.0,
+          "width": 166.0,
+          "height": 24.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:979;70:2613",
+        "name": "Frame 41",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 12.0,
+          "y": 7.0,
+          "width": 133.0,
+          "height": 24.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:979;1:988",
+        "name": "Leading",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 12.0,
+          "y": 7.0,
+          "width": 24.0,
+          "height": 24.0
+        },
+        "cornerRadius": 4.226415157318115,
+        "style": {}
+      },
+      {
+        "id": "I19:979;70:1628",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 157.0,
+          "y": 10.0,
+          "width": 21.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:979;1:993",
+        "name": "trailing",
+        "type": "TEXT",
+        "text": "\udbc1\ude6b",
+        "bounds": {
+          "x": 157.0,
+          "y": 10.0,
+          "width": 21.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      }
+    ]
+  },
+  "MusicExpanded": {
+    "node": "19:1033",
+    "layers": [
+      {
+        "id": "19:1033",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 177.0
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1011",
+        "name": "Metadata",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 32.0,
+          "width": 351.0,
+          "height": 53.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1012",
+        "name": "Artwork",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 32.0,
+          "width": 53.0,
+          "height": 53.0
+        },
+        "cornerRadius": 8.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1013",
+        "name": "Content",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 89.0,
+          "y": 39.5,
+          "width": 254.0,
+          "height": 38.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1014",
+        "name": "Headline",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 191.0,
+          "height": 38.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:2064",
+        "name": "You Make Me Feel Like It\u2019s Halloween",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 191.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:2065",
+        "name": "Heat Waves \udbc0\udc9d",
+        "type": "TEXT",
+        "text": "Heat Waves \udbc0\udc9d",
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 272.7165222167969,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 16.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1016",
+        "name": "Subheadline",
+        "type": "TEXT",
+        "text": "Grass Animals",
+        "bounds": {
+          "x": 97.0,
+          "y": 59.5,
+          "width": 94.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 14.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1032",
+        "name": "audio",
+        "type": "TEXT",
+        "text": "\udbc1\ude6b",
+        "bounds": {
+          "x": 309.0,
+          "y": 49.5,
+          "width": 26.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1018",
+        "name": "Progress",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 94.0,
+          "width": 351.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1019",
+        "name": "Current",
+        "type": "TEXT",
+        "text": "0:50",
+        "bounds": {
+          "x": 24.0,
+          "y": 94.0,
+          "width": 26.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 12.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1020",
+        "name": "Frame 22",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 59.0,
+          "y": 95.75,
+          "width": 248.0,
+          "height": 14.5
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1021",
+        "name": "Line",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 63.0,
+          "y": 99.75,
+          "width": 240.0,
+          "height": 6.5
+        },
+        "cornerRadius": 8.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1022",
+        "name": "Line",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 63.0,
+          "y": 99.75,
+          "width": 79.85713958740234,
+          "height": 6.5
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1023",
+        "name": "LeftAmount",
+        "type": "TEXT",
+        "text": "-3:11",
+        "bounds": {
+          "x": 316.0,
+          "y": 94.0,
+          "width": 27.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 12.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1024",
+        "name": "Controls",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 121.0,
+          "width": 351.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1025",
+        "name": "LeftIcon",
+        "type": "TEXT",
+        "text": "\udbc0\ude8c",
+        "bounds": {
+          "x": 40.0,
+          "y": 121.0,
+          "width": 38.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 24.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1026",
+        "name": "Play Controls",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 107.5,
+          "y": 121.0,
+          "width": 166.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1033;1:1027",
+        "name": "backwards",
+        "type": "TEXT",
+        "text": "\udbc0\ude8a",
+        "bounds": {
+          "x": 107.5,
+          "y": 121.0,
+          "width": 32.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 20.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1028",
+        "name": "play",
+        "type": "TEXT",
+        "text": "\udbc0\ude84",
+        "bounds": {
+          "x": 175.5,
+          "y": 121.0,
+          "width": 30.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 32.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1029",
+        "name": "forwards",
+        "type": "TEXT",
+        "text": "\udbc0\ude8c",
+        "bounds": {
+          "x": 241.5,
+          "y": 121.0,
+          "width": 32.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 20.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1033;1:1030",
+        "name": "RightIcon",
+        "type": "TEXT",
+        "text": "\udbc1\udc62",
+        "bounds": {
+          "x": 303.0,
+          "y": 121.0,
+          "width": 24.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 20.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      }
+    ]
+  },
+  "CallExpanded": {
+    "node": "19:1036",
+    "layers": [
+      {
+        "id": "19:1036",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 165.99998474121094
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:762",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 17.0,
+          "y": 10.0,
+          "width": 333.0,
+          "height": 139.99998474121094
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:763",
+        "name": "Headline",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 34.0,
+          "width": 309.0,
+          "height": 44.27324295043945
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:764",
+        "name": "Ellipse 29",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 34.0,
+          "width": 44.27324295043945,
+          "height": 44.27324295043945
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:793",
+        "name": "Frame 31",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 41.9326171875,
+          "width": 256.72674560546875,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:765",
+        "name": "Frame 24",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 41.9326171875,
+          "width": 102.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:767",
+        "name": "Tamia Castillo",
+        "type": "TEXT",
+        "text": "Tamia Castillo",
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 41.9326171875,
+          "width": 102.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1036;43:766",
+        "name": "FaceTime Audio",
+        "type": "TEXT",
+        "text": "FaceTime Audio",
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 59.340576171875,
+          "width": 101.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 14.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1036;43:792",
+        "name": "\udbc0\udd74",
+        "type": "TEXT",
+        "text": "\udbc0\udd74",
+        "bounds": {
+          "x": 316.0,
+          "y": 50.6365966796875,
+          "width": 22.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1036;43:778",
+        "name": "Buttons",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 92.27325439453125,
+          "width": 309.0,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:779",
+        "name": "Volume",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:769",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:772",
+        "name": "\udbc0\udea8",
+        "type": "TEXT",
+        "text": "\udbc0\udea8",
+        "bounds": {
+          "x": 35.898681640625,
+          "y": 111.18341064453125,
+          "width": 37.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.412052154541016,
+          "letterSpacing": -0.28575366735458374,
+          "lineHeightPx": 12.606780052185059
+        }
+      },
+      {
+        "id": "I19:1036;43:783",
+        "name": "Mic",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 93.818359375,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:784",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 93.818359375,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:785",
+        "name": "\udbc0\udeb1",
+        "type": "TEXT",
+        "text": "\udbc0\udeb1",
+        "bounds": {
+          "x": 107.9306640625,
+          "y": 111.18341064453125,
+          "width": 23.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.412052154541016,
+          "letterSpacing": -0.28575366735458374,
+          "lineHeightPx": 12.606780052185059
+        }
+      },
+      {
+        "id": "I19:1036;43:786",
+        "name": "Camera",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 158.63671875,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:787",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 158.63671875,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:788",
+        "name": "\udbc0\udf4a",
+        "type": "TEXT",
+        "text": "\udbc0\udf4a",
+        "bounds": {
+          "x": 167.93994140625,
+          "y": 111.18341064453125,
+          "width": 32.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.412052154541016,
+          "letterSpacing": -0.28575366735458374,
+          "lineHeightPx": 12.606780052185059
+        }
+      },
+      {
+        "id": "I19:1036;43:789",
+        "name": "Screen Share",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 223.455078125,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:790",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 223.455078125,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:791",
+        "name": "\udbc4\udd40",
+        "type": "TEXT",
+        "text": "\udbc4\udd40",
+        "bounds": {
+          "x": 232.75830078125,
+          "y": 111.18341064453125,
+          "width": 32.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.412052154541016,
+          "letterSpacing": -0.28575366735458374,
+          "lineHeightPx": 12.606780052185059
+        }
+      },
+      {
+        "id": "I19:1036;43:780",
+        "name": "Cancel",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 288.2734375,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:781",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 288.2734375,
+          "y": 92.27325439453125,
+          "width": 49.726741790771484,
+          "height": 49.726741790771484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1036;43:782",
+        "name": "\udbc0\udf47",
+        "type": "TEXT",
+        "text": "\udbc0\udf47",
+        "bounds": {
+          "x": 298.77880859375,
+          "y": 111.18341064453125,
+          "width": 30.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.412052154541016,
+          "letterSpacing": -0.28575366735458374,
+          "lineHeightPx": 12.606780052185059
+        }
+      }
+    ]
+  },
+  "FaceTimeCallExpanded": {
+    "node": "19:1035",
+    "layers": [
+      {
+        "id": "19:1035",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 168.0
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:805",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 17.0,
+          "y": 10.0,
+          "width": 333.0,
+          "height": 142.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:806",
+        "name": "Headline",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 34.0,
+          "width": 309.0,
+          "height": 44.27324295043945
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:807",
+        "name": "Ellipse 29",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 34.0,
+          "width": 44.27324295043945,
+          "height": 44.27324295043945
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:808",
+        "name": "Frame 31",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 41.9326171875,
+          "width": 256.72674560546875,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:809",
+        "name": "Frame 24",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 41.9326171875,
+          "width": 102.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:810",
+        "name": "Tamia Castillo",
+        "type": "TEXT",
+        "text": "Tamia Castillo",
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 41.9326171875,
+          "width": 102.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1035;73:811",
+        "name": "FaceTime Audio",
+        "type": "TEXT",
+        "text": "FaceTime Audio",
+        "bounds": {
+          "x": 81.273193359375,
+          "y": 59.340576171875,
+          "width": 101.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 14.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1035;73:812",
+        "name": "\udbc0\udd74",
+        "type": "TEXT",
+        "text": "\udbc0\udd74",
+        "bounds": {
+          "x": 316.0,
+          "y": 50.6365966796875,
+          "width": 22.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1035;73:813",
+        "name": "Buttons",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 92.27325439453125,
+          "width": 309.0,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:814",
+        "name": "Volume",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:815",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 29.0,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:816",
+        "name": "\udbc2\udeb7",
+        "type": "TEXT",
+        "text": "\udbc2\udeb7",
+        "bounds": {
+          "x": 35.17626953125,
+          "y": 111.9439697265625,
+          "width": 38.0,
+          "height": 14.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 23.31346893310547,
+          "letterSpacing": -0.2972467243671417,
+          "lineHeightPx": 13.113826751708984
+        }
+      },
+      {
+        "id": "I19:1035;73:817",
+        "name": "Mic",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 93.318359375,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:818",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 93.318359375,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:819",
+        "name": "\udbc0\udeb1",
+        "type": "TEXT",
+        "text": "\udbc0\udeb1",
+        "bounds": {
+          "x": 106.998291015625,
+          "y": 111.9439697265625,
+          "width": 24.0,
+          "height": 14.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 23.31346893310547,
+          "letterSpacing": -0.2972467243671417,
+          "lineHeightPx": 13.113826751708984
+        }
+      },
+      {
+        "id": "I19:1035;73:820",
+        "name": "Camera",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 157.63671875,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:821",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 157.63671875,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:822",
+        "name": "\udbc0\udf4a",
+        "type": "TEXT",
+        "text": "\udbc0\udf4a",
+        "bounds": {
+          "x": 166.314208984375,
+          "y": 111.9439697265625,
+          "width": 34.0,
+          "height": 14.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 23.31346893310547,
+          "letterSpacing": -0.2972467243671417,
+          "lineHeightPx": 13.113826751708984
+        }
+      },
+      {
+        "id": "I19:1035;73:823",
+        "name": "Screen Share",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 221.954833984375,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:824",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 221.954833984375,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:825",
+        "name": "\udbc4\udd40",
+        "type": "TEXT",
+        "text": "\udbc4\udd40",
+        "bounds": {
+          "x": 231.632080078125,
+          "y": 111.9439697265625,
+          "width": 33.0,
+          "height": 14.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 23.31346893310547,
+          "letterSpacing": -0.2972467243671417,
+          "lineHeightPx": 13.113826751708984
+        }
+      },
+      {
+        "id": "I19:1035;73:826",
+        "name": "Cancel",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 286.273193359375,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:827",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 286.273193359375,
+          "y": 92.27325439453125,
+          "width": 51.72675704956055,
+          "height": 51.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1035;73:828",
+        "name": "\udbc0\udf47",
+        "type": "TEXT",
+        "text": "\udbc0\udf47",
+        "bounds": {
+          "x": 297.201416015625,
+          "y": 111.9439697265625,
+          "width": 31.0,
+          "height": 14.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 23.31346893310547,
+          "letterSpacing": -0.2972467243671417,
+          "lineHeightPx": 13.113826751708984
+        }
+      }
+    ]
+  },
+  "SharedMediaCallExpanded": {
+    "node": "19:1037",
+    "layers": [
+      {
+        "id": "19:1037",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 172.63958740234375
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:817",
+        "name": "Metadata",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 32.0,
+          "width": 319.0,
+          "height": 57.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:818",
+        "name": "Artwork",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 32.0,
+          "width": 53.0,
+          "height": 53.0
+        },
+        "cornerRadius": 160.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:819",
+        "name": "Content",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 89.0,
+          "y": 39.5,
+          "width": 254.0,
+          "height": 38.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:820",
+        "name": "Headline",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 238.0,
+          "height": 38.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:821",
+        "name": "You Make Me Feel Like It\u2019s Halloween",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 238.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:822",
+        "name": "Asia Wild Nature",
+        "type": "TEXT",
+        "text": "Asia Wild Nature",
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 339.82476806640625,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 16.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1037;93:823",
+        "name": "Subheadline",
+        "type": "TEXT",
+        "text": "For me \udbc0\udd8a",
+        "bounds": {
+          "x": 97.0,
+          "y": 59.5,
+          "width": 65.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 15.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1037;93:843",
+        "name": "Buttons",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 98.0,
+          "width": 319.0,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:844",
+        "name": "Volume",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:845",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:846",
+        "name": "\udbc0\udea8",
+        "type": "TEXT",
+        "text": "\udbc0\udea8",
+        "bounds": {
+          "x": 31.025390625,
+          "y": 117.25732421875,
+          "width": 37.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.823482513427734,
+          "letterSpacing": -0.2909993827342987,
+          "lineHeightPx": 12.83820915222168
+        }
+      },
+      {
+        "id": "I19:1037;93:847",
+        "name": "Mic",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 91.090087890625,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:848",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 91.090087890625,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:849",
+        "name": "\udbc0\udeb1",
+        "type": "TEXT",
+        "text": "\udbc0\udeb1",
+        "bounds": {
+          "x": 105.461669921875,
+          "y": 117.25732421875,
+          "width": 23.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.823482513427734,
+          "letterSpacing": -0.2909993827342987,
+          "lineHeightPx": 12.83820915222168
+        }
+      },
+      {
+        "id": "I19:1037;93:850",
+        "name": "Camera",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 158.18017578125,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:851",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 158.18017578125,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:852",
+        "name": "\udbc0\udf4a",
+        "type": "TEXT",
+        "text": "\udbc0\udf4a",
+        "bounds": {
+          "x": 167.654052734375,
+          "y": 117.25732421875,
+          "width": 33.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.823482513427734,
+          "letterSpacing": -0.2909993827342987,
+          "lineHeightPx": 12.83820915222168
+        }
+      },
+      {
+        "id": "I19:1037;93:853",
+        "name": "Screen Share",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 225.270263671875,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:854",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 225.270263671875,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:855",
+        "name": "\udbc4\udcd1",
+        "type": "TEXT",
+        "text": "\udbc4\udcd1",
+        "bounds": {
+          "x": 231.744140625,
+          "y": 116.25732421875,
+          "width": 38.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.823482513427734,
+          "letterSpacing": -0.2909993827342987,
+          "lineHeightPx": 12.83820915222168
+        }
+      },
+      {
+        "id": "I19:1037;93:856",
+        "name": "Cancel",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 292.3603515625,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:857",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 292.3603515625,
+          "y": 98.0,
+          "width": 50.63959503173828,
+          "height": 50.63959503173828
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1037;93:858",
+        "name": "\udbc0\udd84",
+        "type": "TEXT",
+        "text": "\udbc0\udd84",
+        "bounds": {
+          "x": 306.05859375,
+          "y": 117.25732421875,
+          "width": 24.0,
+          "height": 13.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 22.823482513427734,
+          "letterSpacing": -0.2909993827342987,
+          "lineHeightPx": 12.83820915222168
+        }
+      }
+    ]
+  },
+  "NotificationCompact": {
+    "node": "27:1021",
+    "layers": [
+      {
+        "id": "27:1021",
+        "name": "Figma Comment",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 189.0,
+          "height": 36.0
+        },
+        "cornerRadius": 44.0,
+        "style": {}
+      },
+      {
+        "id": "27:1022",
+        "name": "Camera",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 121.015625,
+          "y": 25.607177734375,
+          "width": 17.805404663085938,
+          "height": 17.264419555664062
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1023",
+        "name": "Lens 1",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 121.015625,
+          "y": 25.607177734375,
+          "width": 17.805404663085938,
+          "height": 17.264419555664062
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1024",
+        "name": "Lens",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 125.1064453125,
+          "y": 29.552490234375,
+          "width": 9.554121017456055,
+          "height": 9.440027236938477
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1025",
+        "name": "Line",
+        "type": "LINE",
+        "text": null,
+        "bounds": {
+          "x": 129.4853515625,
+          "y": 29.552490234375,
+          "width": 0.0,
+          "height": 9.440027236938477
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1026",
+        "name": "Group 44192",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 49.013671875,
+          "y": 9.0,
+          "width": 65.98603057861328,
+          "height": 18.365127563476562
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1027",
+        "name": "Screen Shot 2022-09-14 at 6.43 1",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 49.013671875,
+          "y": 9.0,
+          "width": 21.99544334411621,
+          "height": 18.365127563476562
+        },
+        "cornerRadius": 5.125151634216309,
+        "style": {}
+      },
+      {
+        "id": "27:1028",
+        "name": "Song Details",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 74.42578125,
+          "y": 10.28131103515625,
+          "width": 29.256074905395508,
+          "height": 15.80255126953125
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1029",
+        "name": "Mamad",
+        "type": "TEXT",
+        "text": "Mamad",
+        "bounds": {
+          "x": 74.42578125,
+          "y": 10.28131103515625,
+          "width": 12.0,
+          "height": 4.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 3.4167678356170654,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 4.077432155609131
+        }
+      },
+      {
+        "id": "27:1030",
+        "name": "Haji ina chie zadi to baz dahane mano servis kardi",
+        "type": "TEXT",
+        "text": "Haji ina chie zadi \nto baz dahane mano \nservis kardi",
+        "bounds": {
+          "x": 74.42578125,
+          "y": 15.135498046875,
+          "width": 30.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 300,
+          "fontSize": 3.4167678356170654,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 3.6303157806396484
+        }
+      },
+      {
+        "id": "27:1031",
+        "name": "Group 19",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 19.25030517578125,
+          "width": 0.8541919589042664,
+          "height": 5.979343414306641
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1032",
+        "name": "Ellipse 3",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 21.8128662109375,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1033",
+        "name": "Ellipse 4",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 19.25030517578125,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1034",
+        "name": "Ellipse 5",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 24.37542724609375,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1035",
+        "name": "Rectangle 8",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": 100.0,
+        "style": {}
+      },
+      {
+        "id": "27:1036",
+        "name": "messages#ui,message,chat,comment,answer,interface,speak,talk,speaking,bubble,reply,bubbles,forum,dialog",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 161.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1037",
+        "name": "Stroke 462",
+        "type": "VECTOR",
+        "text": null,
+        "bounds": {
+          "x": 163.5,
+          "y": 10.50103759765625,
+          "width": 15.0,
+          "height": 14.997980117797852
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1038",
+        "name": "3",
+        "type": "TEXT",
+        "text": "3",
+        "bounds": {
+          "x": 167.73046875,
+          "y": 12.0,
+          "width": 7.023685455322266,
+          "height": 12.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 10.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 11.93359375
+        }
+      }
+    ]
+  },
+  "NotificationStacked": {
+    "node": "27:1021",
+    "layers": [
+      {
+        "id": "27:1021",
+        "name": "Figma Comment",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 189.0,
+          "height": 36.0
+        },
+        "cornerRadius": 44.0,
+        "style": {}
+      },
+      {
+        "id": "27:1022",
+        "name": "Camera",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 121.015625,
+          "y": 25.607177734375,
+          "width": 17.805404663085938,
+          "height": 17.264419555664062
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1023",
+        "name": "Lens 1",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 121.015625,
+          "y": 25.607177734375,
+          "width": 17.805404663085938,
+          "height": 17.264419555664062
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1024",
+        "name": "Lens",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 125.1064453125,
+          "y": 29.552490234375,
+          "width": 9.554121017456055,
+          "height": 9.440027236938477
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1025",
+        "name": "Line",
+        "type": "LINE",
+        "text": null,
+        "bounds": {
+          "x": 129.4853515625,
+          "y": 29.552490234375,
+          "width": 0.0,
+          "height": 9.440027236938477
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1026",
+        "name": "Group 44192",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 49.013671875,
+          "y": 9.0,
+          "width": 65.98603057861328,
+          "height": 18.365127563476562
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1027",
+        "name": "Screen Shot 2022-09-14 at 6.43 1",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 49.013671875,
+          "y": 9.0,
+          "width": 21.99544334411621,
+          "height": 18.365127563476562
+        },
+        "cornerRadius": 5.125151634216309,
+        "style": {}
+      },
+      {
+        "id": "27:1028",
+        "name": "Song Details",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 74.42578125,
+          "y": 10.28131103515625,
+          "width": 29.256074905395508,
+          "height": 15.80255126953125
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1029",
+        "name": "Mamad",
+        "type": "TEXT",
+        "text": "Mamad",
+        "bounds": {
+          "x": 74.42578125,
+          "y": 10.28131103515625,
+          "width": 12.0,
+          "height": 4.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 3.4167678356170654,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 4.077432155609131
+        }
+      },
+      {
+        "id": "27:1030",
+        "name": "Haji ina chie zadi to baz dahane mano servis kardi",
+        "type": "TEXT",
+        "text": "Haji ina chie zadi \nto baz dahane mano \nservis kardi",
+        "bounds": {
+          "x": 74.42578125,
+          "y": 15.135498046875,
+          "width": 30.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 300,
+          "fontSize": 3.4167678356170654,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 3.6303157806396484
+        }
+      },
+      {
+        "id": "27:1031",
+        "name": "Group 19",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 19.25030517578125,
+          "width": 0.8541919589042664,
+          "height": 5.979343414306641
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1032",
+        "name": "Ellipse 3",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 21.8128662109375,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1033",
+        "name": "Ellipse 4",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 19.25030517578125,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1034",
+        "name": "Ellipse 5",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 114.1455078125,
+          "y": 24.37542724609375,
+          "width": 0.8541919589042664,
+          "height": 0.8541919589042664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1035",
+        "name": "Rectangle 8",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": 100.0,
+        "style": {}
+      },
+      {
+        "id": "27:1036",
+        "name": "messages#ui,message,chat,comment,answer,interface,speak,talk,speaking,bubble,reply,bubbles,forum,dialog",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 161.0,
+          "y": 8.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1037",
+        "name": "Stroke 462",
+        "type": "VECTOR",
+        "text": null,
+        "bounds": {
+          "x": 163.5,
+          "y": 10.50103759765625,
+          "width": 15.0,
+          "height": 14.997980117797852
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1038",
+        "name": "3",
+        "type": "TEXT",
+        "text": "3",
+        "bounds": {
+          "x": 167.73046875,
+          "y": 12.0,
+          "width": 7.023685455322266,
+          "height": 12.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 10.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 11.93359375
+        }
+      }
+    ]
+  },
+  "SilentModeExpanded": {
+    "node": "19:1030",
+    "layers": [
+      {
+        "id": "19:1030",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 22.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1030;43:1077",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1030;43:1079",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 28.7960205078125,
+          "width": 230.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1030;43:1092",
+        "name": "Icon",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 31.5,
+          "width": 52.0,
+          "height": 23.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1030;43:1094",
+        "name": "\udbc0\udede",
+        "type": "TEXT",
+        "text": "\udbc0\udede",
+        "bounds": {
+          "x": 35.0,
+          "y": 34.5,
+          "width": 28.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 24.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1030;43:1081",
+        "name": "Headlines",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 84.0,
+          "y": 28.7960205078125,
+          "width": 73.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1030;43:1082",
+        "name": "SilentMode",
+        "type": "TEXT",
+        "text": "SilentMode",
+        "bounds": {
+          "x": 84.0,
+          "y": 28.7960205078125,
+          "width": 73.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 14.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1030;43:1083",
+        "name": "On",
+        "type": "TEXT",
+        "text": "On",
+        "bounds": {
+          "x": 84.0,
+          "y": 46.2039794921875,
+          "width": 23.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1030;43:1095",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 264.0,
+          "y": 26.0,
+          "width": 79.0,
+          "height": 34.0
+        },
+        "cornerRadius": 20.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1030;43:1096",
+        "name": "Unmute",
+        "type": "TEXT",
+        "text": "Unmute",
+        "bounds": {
+          "x": 276.0,
+          "y": 34.0,
+          "width": 55.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 14.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 18.0
+        }
+      }
+    ]
+  },
+  "TimerExpanded": {
+    "node": "19:1022",
+    "layers": [
+      {
+        "id": "19:1022",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 85.72676086425781
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;43:743",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 0.0,
+          "width": 335.0,
+          "height": 85.72676086425781
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;43:745",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 16.3634033203125,
+          "width": 119.0,
+          "height": 53.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;69:1387",
+        "name": "Buttons",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 16.3634033203125,
+          "width": 119.0,
+          "height": 53.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;43:754",
+        "name": "Group 1",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 16.81396484375,
+          "y": 17.09014892578125,
+          "width": 117.73260498046875,
+          "height": 52.27325439453125
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;43:755",
+        "name": "Ellipse 27",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 16.81396484375,
+          "y": 17.09014892578125,
+          "width": 52.15779495239258,
+          "height": 52.15779495239258
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;43:756",
+        "name": "Ellipse 28",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 82.388671875,
+          "y": 17.20562744140625,
+          "width": 52.15779495239258,
+          "height": 52.15779495239258
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;43:757",
+        "name": "\udbc0\udd84",
+        "type": "TEXT",
+        "text": "\udbc0\udd84",
+        "bounds": {
+          "x": 96.26025390625,
+          "y": 36.12139892578125,
+          "width": 25.0,
+          "height": 14.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 23.507740020751953,
+          "letterSpacing": -0.29972368478775024,
+          "lineHeightPx": 13.223104476928711
+        }
+      },
+      {
+        "id": "I19:1022;43:758",
+        "name": "\udbc0\ude86",
+        "type": "TEXT",
+        "text": "\udbc0\ude86",
+        "bounds": {
+          "x": 33.20751953125,
+          "y": 36.00592041015625,
+          "width": 20.0,
+          "height": 14.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 23.507740020751953,
+          "letterSpacing": -0.29972368478775024,
+          "lineHeightPx": 13.223104476928711
+        }
+      },
+      {
+        "id": "I19:1022;43:750",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 239.0,
+          "y": 28.93170166015625,
+          "width": 112.0,
+          "height": 27.863378524780273
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1022;43:753",
+        "name": "3:35",
+        "type": "TEXT",
+        "text": "3:35",
+        "bounds": {
+          "x": 279.0,
+          "y": 32.79510498046875,
+          "width": 72.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 32.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1022;43:759",
+        "name": "Timer",
+        "type": "TEXT",
+        "text": "Timer",
+        "bounds": {
+          "x": 234.0,
+          "y": 38.79510498046875,
+          "width": 42.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 16.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      }
+    ]
+  },
+  "VoiceMemoExpanded": {
+    "node": "19:1024",
+    "layers": [
+      {
+        "id": "19:1024",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:902",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 22.0,
+          "y": 8.0,
+          "width": 323.0,
+          "height": 70.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:920",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 30.0,
+          "y": 29.5,
+          "width": 123.0,
+          "height": 27.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:918",
+        "name": "Rectangle 16",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 30.0,
+          "y": 30.5,
+          "width": 3.0,
+          "height": 25.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:919",
+        "name": "Rectangle 17",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 35.0,
+          "y": 33.0,
+          "width": 3.0,
+          "height": 20.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:921",
+        "name": "Rectangle 18",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 40.0,
+          "y": 35.0,
+          "width": 3.0,
+          "height": 16.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:922",
+        "name": "Rectangle 19",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 45.0,
+          "y": 33.0,
+          "width": 3.0,
+          "height": 20.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:923",
+        "name": "Rectangle 20",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 50.0,
+          "y": 30.5,
+          "width": 3.0,
+          "height": 25.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:924",
+        "name": "Rectangle 21",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 55.0,
+          "y": 33.0,
+          "width": 3.0,
+          "height": 20.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:925",
+        "name": "Rectangle 22",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 60.0,
+          "y": 36.0,
+          "width": 3.0,
+          "height": 14.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:926",
+        "name": "Rectangle 23",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 65.0,
+          "y": 38.0,
+          "width": 3.0,
+          "height": 10.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:927",
+        "name": "Rectangle 24",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 70.0,
+          "y": 35.0,
+          "width": 3.0,
+          "height": 16.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:928",
+        "name": "Rectangle 25",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 75.0,
+          "y": 32.0,
+          "width": 3.0,
+          "height": 22.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:929",
+        "name": "Rectangle 26",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 80.0,
+          "y": 29.5,
+          "width": 3.0,
+          "height": 27.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:930",
+        "name": "Rectangle 27",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 85.0,
+          "y": 35.5,
+          "width": 3.0,
+          "height": 15.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:931",
+        "name": "Rectangle 28",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 90.0,
+          "y": 33.5,
+          "width": 3.0,
+          "height": 19.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:932",
+        "name": "Rectangle 29",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 95.0,
+          "y": 37.0,
+          "width": 3.0,
+          "height": 12.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:933",
+        "name": "Rectangle 30",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 100.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:934",
+        "name": "Rectangle 31",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 105.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:935",
+        "name": "Rectangle 32",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 110.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:936",
+        "name": "Rectangle 33",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 115.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:937",
+        "name": "Rectangle 34",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 120.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:938",
+        "name": "Rectangle 35",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 125.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:939",
+        "name": "Rectangle 36",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 130.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:940",
+        "name": "Rectangle 37",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 135.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:941",
+        "name": "Rectangle 38",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 140.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:942",
+        "name": "Rectangle 39",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 145.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:943",
+        "name": "Rectangle 40",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 150.0,
+          "y": 41.5,
+          "width": 3.0,
+          "height": 3.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:917",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 229.0,
+          "y": 16.0,
+          "width": 116.0,
+          "height": 54.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:916",
+        "name": "00:06",
+        "type": "TEXT",
+        "text": "00:06",
+        "bounds": {
+          "x": 229.0,
+          "y": 34.0,
+          "width": 50.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1024;63:909",
+        "name": "Progress",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 291.0,
+          "y": 16.0,
+          "width": 54.0,
+          "height": 54.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:910",
+        "name": "Ellipse 35",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 291.0,
+          "y": 16.0,
+          "width": 53.0179557800293,
+          "height": 53.0179557800293
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1024;63:911",
+        "name": "Rectangle 4",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 306.0,
+          "y": 31.0,
+          "width": 24.0,
+          "height": 24.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      }
+    ]
+  },
+  "ScreenRecordingExpanded": {
+    "node": "19:1025",
+    "layers": [
+      {
+        "id": "19:1025",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1295",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 22.0,
+          "y": 8.0,
+          "width": 323.0,
+          "height": 70.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1331",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 30.0,
+          "y": 23.0,
+          "width": 145.0,
+          "height": 40.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1332",
+        "name": "Frame 40",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 30.0,
+          "y": 23.0,
+          "width": 68.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1333",
+        "name": "Ellipse 37",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 30.0,
+          "y": 26.0,
+          "width": 12.0,
+          "height": 12.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1334",
+        "name": "00:06",
+        "type": "TEXT",
+        "text": "00:06",
+        "bounds": {
+          "x": 48.0,
+          "y": 23.0,
+          "width": 50.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1025;69:1335",
+        "name": "Screen Recording",
+        "type": "TEXT",
+        "text": "Screen Recording",
+        "bounds": {
+          "x": 30.0,
+          "y": 45.0,
+          "width": 145.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1025;69:1322",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 291.0,
+          "y": 16.0,
+          "width": 54.0,
+          "height": 54.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1324",
+        "name": "Progress",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 291.0,
+          "y": 16.0,
+          "width": 54.0,
+          "height": 54.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1325",
+        "name": "Ellipse 35",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 291.0,
+          "y": 16.0,
+          "width": 53.0179557800293,
+          "height": 53.0179557800293
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1025;69:1326",
+        "name": "Rectangle 4",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 306.0,
+          "y": 31.0,
+          "width": 24.0,
+          "height": 24.0
+        },
+        "cornerRadius": 4.0,
+        "style": {}
+      }
+    ]
+  },
+  "ShortcutExpanded": {
+    "node": "19:1026",
+    "layers": [
+      {
+        "id": "19:1026",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 85.07974243164062
+        },
+        "cornerRadius": 22.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:880",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 85.07974243164062
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:881",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 16.0,
+          "width": 116.0,
+          "height": 53.07973861694336
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:894",
+        "name": "Group 9",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 16.0,
+          "width": 41.0,
+          "height": 53.07973861694336
+        },
+        "cornerRadius": 5.6360955238342285,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:895",
+        "name": "Rectangle 41",
+        "type": "VECTOR",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 28.079710381964674,
+          "width": 41.00000306419588,
+          "height": 41.00000306419565
+        },
+        "cornerRadius": 5.6360955238342285,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:896",
+        "name": "Rectangle 42",
+        "type": "VECTOR",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 16.000059503058424,
+          "width": 41.00000306419588,
+          "height": 41.00000306419565
+        },
+        "cornerRadius": 5.6360955238342285,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:883",
+        "name": "Frame 24",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 73.0,
+          "y": 28.33587646484375,
+          "width": 67.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:885",
+        "name": "Shortcut",
+        "type": "TEXT",
+        "text": "Shortcut",
+        "bounds": {
+          "x": 73.0,
+          "y": 28.33587646484375,
+          "width": 67.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1026;107:884",
+        "name": "100%",
+        "type": "TEXT",
+        "text": "100%",
+        "bounds": {
+          "x": 73.0,
+          "y": 45.74383544921875,
+          "width": 41.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 15.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1026;107:886",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 273.9580078125,
+          "y": 20.676513671875,
+          "width": 69.04225158691406,
+          "height": 43.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1026;107:889",
+        "name": "\udbc0\udc62",
+        "type": "TEXT",
+        "text": "\udbc0\udc62",
+        "bounds": {
+          "x": 291.2734375,
+          "y": 33.5399169921875,
+          "width": 57.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 48.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      }
+    ]
+  },
+  "AirPodsConnected": {
+    "node": "19:1023",
+    "layers": [
+      {
+        "id": "19:1023",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 22.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1352",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1353",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 21.0,
+          "width": 177.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1354",
+        "name": "Ellipse 29",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 21.0,
+          "width": 44.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1355",
+        "name": "Frame 24",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 76.0,
+          "y": 28.7960205078125,
+          "width": 125.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1356",
+        "name": "Connected",
+        "type": "TEXT",
+        "text": "Connected",
+        "bounds": {
+          "x": 76.0,
+          "y": 28.7960205078125,
+          "width": 71.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 14.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1023;70:1357",
+        "name": "Ladislav\u2019s Air Pods",
+        "type": "TEXT",
+        "text": "Ladislav\u2019s Air Pods",
+        "bounds": {
+          "x": 76.0,
+          "y": 46.2039794921875,
+          "width": 125.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 13.981025695800781,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1023;70:1358",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 273.9580078125,
+          "y": 21.1365966796875,
+          "width": 69.04225158691406,
+          "height": 43.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1359",
+        "name": "Ellipse 35",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 293.3740234375,
+          "y": 16.16900634765625,
+          "width": 53.0179557800293,
+          "height": 53.0179557800293
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1360",
+        "name": "Ellipse 34",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 290.5634765625,
+          "y": 13.959494493533384,
+          "width": 57.43701992156457,
+          "height": 57.437019921564456
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1023;70:1361",
+        "name": "75%",
+        "type": "TEXT",
+        "text": "75%",
+        "bounds": {
+          "x": 304.2734375,
+          "y": 34.0,
+          "width": 31.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 14.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      }
+    ]
+  },
+  "SatelliteConnected": {
+    "node": "19:1028",
+    "layers": [
+      {
+        "id": "19:1028",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 160.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:868",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 10.0,
+          "y": 15.0,
+          "width": 347.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:869",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 18.0,
+          "y": 15.0,
+          "width": 243.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:870",
+        "name": "Ellipse 29",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 18.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:871",
+        "name": "Frame 24",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 82.0,
+          "y": 28.7960205078125,
+          "width": 179.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:872",
+        "name": "Connected",
+        "type": "TEXT",
+        "text": "Connected",
+        "bounds": {
+          "x": 82.0,
+          "y": 28.7960205078125,
+          "width": 79.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 13.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1028;76:873",
+        "name": "Keep pointing at Satelite",
+        "type": "TEXT",
+        "text": "Keep pointing at Satelite",
+        "bounds": {
+          "x": 82.0,
+          "y": 46.2039794921875,
+          "width": 179.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1028;78:742",
+        "name": "Group 1",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 14.835002899169922,
+          "y": 14.06103515625,
+          "width": 61.93892288208008,
+          "height": 61.93892288208008
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;78:743",
+        "name": "Ellipse 31",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 14.83482313156128,
+          "y": 14.061076641082764,
+          "width": 61.938923358917236,
+          "height": 61.938923358917236
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;78:744",
+        "name": "Ellipse 33",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 21.340164184570312,
+          "y": 18.34033203125,
+          "width": 49.32048034667969,
+          "height": 49.32048034667969
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;78:745",
+        "name": "Ellipse 32",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 38.84623908996582,
+          "y": 35.8455810546875,
+          "width": 14.30903434753418,
+          "height": 14.30903434753418
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:893",
+        "name": "Group 11",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 32.0,
+          "y": 18.0,
+          "width": 27.49594497680664,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:894",
+        "name": "Ellipse 42",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 40.103515625,
+          "y": 18.0,
+          "width": 11.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:895",
+        "name": "Line 17",
+        "type": "LINE",
+        "text": null,
+        "bounds": {
+          "x": 52.84228515625,
+          "y": 24.541568617941493,
+          "width": 6.653838891808846,
+          "height": 0.23235716330850664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:896",
+        "name": "Line 18",
+        "type": "LINE",
+        "text": null,
+        "bounds": {
+          "x": 32.0,
+          "y": 24.5416259765625,
+          "width": 6.653838891808846,
+          "height": 0.23235716330850664
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:874",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 254.6396484375,
+          "y": 22.3197021484375,
+          "width": 94.360595703125,
+          "height": 41.36053466796875
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:875",
+        "name": "Group 1",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 308.0,
+          "y": 22.0,
+          "width": 41.360530853271484,
+          "height": 41.360530853271484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:877",
+        "name": "Ellipse 28",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 308.0,
+          "y": 22.0,
+          "width": 41.360530853271484,
+          "height": 41.360530853271484
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1028;76:878",
+        "name": "\udbc0\udf25",
+        "type": "TEXT",
+        "text": "\udbc0\udf25",
+        "bounds": {
+          "x": 317.0,
+          "y": 37.0,
+          "width": 24.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.641366958618164,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      }
+    ]
+  },
+  "FindMyAlert": {
+    "node": "19:1029",
+    "layers": [
+      {
+        "id": "19:1029",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 160.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1029;76:899",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 10.0,
+          "y": 15.0,
+          "width": 347.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1029;76:900",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 18.0,
+          "y": 15.0,
+          "width": 235.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1029;76:901",
+        "name": "Ellipse 29",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 18.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1029;76:902",
+        "name": "Headlines",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 82.0,
+          "y": 37.5,
+          "width": 171.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1029;76:904",
+        "name": "Find My iPhone Alert",
+        "type": "TEXT",
+        "text": "Find My iPhone Alert",
+        "bounds": {
+          "x": 82.0,
+          "y": 37.5,
+          "width": 171.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1029;76:924",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 311.0,
+          "y": 34.0,
+          "width": 38.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      }
+    ]
+  },
+  "MovedToIPhone": {
+    "node": "19:1031",
+    "layers": [
+      {
+        "id": "19:1031",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 22.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1031;93:753",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 69.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1031;93:754",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 17.0,
+          "y": 21.0,
+          "width": 159.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1031;93:755",
+        "name": "Ellipse 29",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 17.0,
+          "y": 21.0,
+          "width": 44.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1031;93:756",
+        "name": "Frame 24",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 69.0,
+          "y": 28.7960205078125,
+          "width": 107.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1031;93:757",
+        "name": "Connected",
+        "type": "TEXT",
+        "text": "Connected",
+        "bounds": {
+          "x": 69.0,
+          "y": 28.7960205078125,
+          "width": 67.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 13.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1031;93:758",
+        "name": "Moved to iPhone",
+        "type": "TEXT",
+        "text": "Moved to iPhone",
+        "bounds": {
+          "x": 69.0,
+          "y": 46.2039794921875,
+          "width": 107.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 14.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1031;93:759",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 280.9580078125,
+          "y": 21.0,
+          "width": 69.04225158691406,
+          "height": 43.72675704956055
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1031;93:768",
+        "name": "Button",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 276.0,
+          "y": 26.0,
+          "width": 70.0,
+          "height": 34.0
+        },
+        "cornerRadius": 20.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1031;93:769",
+        "name": "\udbc3\udc4d",
+        "type": "TEXT",
+        "text": "\udbc3\udc4d",
+        "bounds": {
+          "x": 300.0,
+          "y": 34.0,
+          "width": 22.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 18.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 18.0
+        }
+      }
+    ]
+  },
+  "VideoRemoteExpanded": {
+    "node": "19:1038",
+    "layers": [
+      {
+        "id": "19:1038",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 177.0
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:840",
+        "name": "Metadata",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 32.0,
+          "width": 351.0,
+          "height": 53.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:841",
+        "name": "Artwork",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 24.0,
+          "y": 32.0,
+          "width": 53.0,
+          "height": 53.0
+        },
+        "cornerRadius": 8.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:842",
+        "name": "Content",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 89.0,
+          "y": 39.5,
+          "width": 254.0,
+          "height": 38.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:843",
+        "name": "Headline",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 191.0,
+          "height": 38.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:844",
+        "name": "You Make Me Feel Like It\u2019s Halloween",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 191.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:845",
+        "name": "Video",
+        "type": "TEXT",
+        "text": "Video",
+        "bounds": {
+          "x": 97.0,
+          "y": 39.5,
+          "width": 272.7165222167969,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 16.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1038;78:846",
+        "name": "Subheadline",
+        "type": "TEXT",
+        "text": "\udbc1\udc61 Samsung TV",
+        "bounds": {
+          "x": 97.0,
+          "y": 59.5,
+          "width": 115.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 15.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1038;78:847",
+        "name": "audio",
+        "type": "TEXT",
+        "text": "\udbc1\ude6b",
+        "bounds": {
+          "x": 309.0,
+          "y": 49.5,
+          "width": 26.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 22.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1038;78:848",
+        "name": "Progress",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 94.0,
+          "width": 351.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:849",
+        "name": "Current",
+        "type": "TEXT",
+        "text": "0:50",
+        "bounds": {
+          "x": 24.0,
+          "y": 94.0,
+          "width": 26.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 12.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1038;78:850",
+        "name": "Frame 22",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 59.0,
+          "y": 95.75,
+          "width": 248.0,
+          "height": 14.5
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:851",
+        "name": "Line",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 63.0,
+          "y": 99.75,
+          "width": 240.0,
+          "height": 6.5
+        },
+        "cornerRadius": 8.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:852",
+        "name": "Line",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 63.0,
+          "y": 99.75,
+          "width": 79.85713958740234,
+          "height": 6.5
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:853",
+        "name": "LeftAmount",
+        "type": "TEXT",
+        "text": "-3:11",
+        "bounds": {
+          "x": 316.0,
+          "y": 94.0,
+          "width": 27.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 12.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1038;78:854",
+        "name": "Controls",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 8.0,
+          "y": 121.0,
+          "width": 351.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:855",
+        "name": "LeftIcon",
+        "type": "TEXT",
+        "text": "\udbc0\ude8c",
+        "bounds": {
+          "x": 40.0,
+          "y": 121.0,
+          "width": 38.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 24.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1038;78:856",
+        "name": "Play Controls",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 110.5,
+          "y": 121.0,
+          "width": 160.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1038;78:857",
+        "name": "backwards",
+        "type": "TEXT",
+        "text": "\udbc0\udf84",
+        "bounds": {
+          "x": 110.5,
+          "y": 121.0,
+          "width": 29.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 24.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1038;78:858",
+        "name": "play",
+        "type": "TEXT",
+        "text": "\udbc0\ude84",
+        "bounds": {
+          "x": 175.5,
+          "y": 121.0,
+          "width": 30.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 32.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1038;78:859",
+        "name": "forwards",
+        "type": "TEXT",
+        "text": "\udbc0\udf83",
+        "bounds": {
+          "x": 241.5,
+          "y": 121.0,
+          "width": 29.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 24.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      },
+      {
+        "id": "I19:1038;78:860",
+        "name": "RightIcon",
+        "type": "TEXT",
+        "text": "\udbc1\udc62",
+        "bounds": {
+          "x": 303.0,
+          "y": 121.0,
+          "width": 24.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 20.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 44.0
+        }
+      }
+    ]
+  },
+  "AirDropActivity": {
+    "node": "19:1021",
+    "layers": [
+      {
+        "id": "19:1021",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 22.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2504",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 86.0
+        },
+        "cornerRadius": 160.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2506",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 15.0,
+          "width": 279.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;844:4945",
+        "name": "Frame 42",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2521",
+        "name": "AirDrop",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2522",
+        "name": "Ellipse 30",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 39.3330078125,
+          "y": 38.33331298828125,
+          "width": 9.333333015441895,
+          "height": 9.333333015441895
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2523",
+        "name": "Ellipse 31",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 31.5556640625,
+          "y": 30.5555419921875,
+          "width": 24.88888931274414,
+          "height": 24.88888931274414
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2524",
+        "name": "Ellipse 32",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 23.77783203125,
+          "y": 22.77777099609375,
+          "width": 40.44444274902344,
+          "height": 40.44444274902344
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2525",
+        "name": "Ellipse 33",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2543",
+        "name": "Rectangle 5",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 52.0,
+          "y": 51.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": 2.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2508",
+        "name": "Frame 24",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 80.0,
+          "y": 28.7960205078125,
+          "width": 123.0,
+          "height": 28.407970428466797
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2509",
+        "name": "mobile",
+        "type": "TEXT",
+        "text": "mobile",
+        "bounds": {
+          "x": 80.0,
+          "y": 28.7960205078125,
+          "width": 32.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 10.485769271850586,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1021;1:2510",
+        "name": "AirDrop from Chi",
+        "type": "TEXT",
+        "text": "AirDrop from Chi",
+        "bounds": {
+          "x": 80.0,
+          "y": 46.2039794921875,
+          "width": 123.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 600,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1021;67:1136",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 295.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2530",
+        "name": "Trailing",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 295.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2531",
+        "name": "Ellipse 35",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 295.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2532",
+        "name": "Ellipse 34",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 295.0,
+          "y": 15.0,
+          "width": 56.0,
+          "height": 56.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1021;1:2533",
+        "name": "Rectangle 4",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 312.0,
+          "y": 32.0,
+          "width": 22.0,
+          "height": 22.0
+        },
+        "cornerRadius": 6.222222328186035,
+        "style": {}
+      }
+    ]
+  },
+  "NotificationImage": {
+    "node": "27:992",
+    "layers": [
+      {
+        "id": "27:992",
+        "name": "Figma Comment",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 366.0,
+          "height": 126.0
+        },
+        "cornerRadius": 44.0,
+        "style": {}
+      },
+      {
+        "id": "27:993",
+        "name": "Camera",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 213.5087890625,
+          "y": 25.607177734375,
+          "width": 17.805404663085938,
+          "height": 17.264419555664062
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:994",
+        "name": "Lens 1",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 213.5087890625,
+          "y": 25.607177734375,
+          "width": 17.805404663085938,
+          "height": 17.264419555664062
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:995",
+        "name": "Lens",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 217.599609375,
+          "y": 29.552490234375,
+          "width": 9.554121017456055,
+          "height": 9.440027236938477
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:996",
+        "name": "Line",
+        "type": "LINE",
+        "text": null,
+        "bounds": {
+          "x": 221.978515625,
+          "y": 29.552490234375,
+          "width": 0.0,
+          "height": 9.440027236938477
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:997",
+        "name": "Screen Shot 2022-09-14 at 6.43 1",
+        "type": "RECTANGLE",
+        "text": null,
+        "bounds": {
+          "x": 20.0,
+          "y": 20.0,
+          "width": 103.0,
+          "height": 86.0
+        },
+        "cornerRadius": 24.0,
+        "style": {}
+      },
+      {
+        "id": "27:998",
+        "name": "Song Details",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 139.0,
+          "y": 26.0,
+          "width": 137.0,
+          "height": 74.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:999",
+        "name": "Mamad",
+        "type": "TEXT",
+        "text": "Mamad",
+        "bounds": {
+          "x": 139.0,
+          "y": 26.0,
+          "width": 53.0,
+          "height": 19.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 16.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 19.09375
+        }
+      },
+      {
+        "id": "27:1000",
+        "name": "Haji ina chie zadi to baz dahane mano servis kardi",
+        "type": "TEXT",
+        "text": "Haji ina chie zadi \nto baz dahane mano \nservis kardi",
+        "bounds": {
+          "x": 139.0,
+          "y": 49.0,
+          "width": 137.0,
+          "height": 51.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 300,
+          "fontSize": 16.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 17.0
+        }
+      },
+      {
+        "id": "27:1001",
+        "name": "Group 19",
+        "type": "GROUP",
+        "text": null,
+        "bounds": {
+          "x": 325.0,
+          "y": 68.0,
+          "width": 4.0,
+          "height": 28.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1002",
+        "name": "Ellipse 3",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 325.0,
+          "y": 80.0,
+          "width": 4.0,
+          "height": 4.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1003",
+        "name": "Ellipse 4",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 325.0,
+          "y": 68.0,
+          "width": 4.0,
+          "height": 4.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1004",
+        "name": "Ellipse 5",
+        "type": "ELLIPSE",
+        "text": null,
+        "bounds": {
+          "x": 325.0,
+          "y": 92.0,
+          "width": 4.0,
+          "height": 4.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1007",
+        "name": "messages#ui,message,chat,comment,answer,interface,speak,talk,speaking,bubble,reply,bubbles,forum,dialog",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 317.0,
+          "y": 21.0,
+          "width": 20.0,
+          "height": 20.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1008",
+        "name": "Stroke 462",
+        "type": "VECTOR",
+        "text": null,
+        "bounds": {
+          "x": 319.5,
+          "y": 23.50103759765625,
+          "width": 15.0,
+          "height": 14.997980117797852
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "27:1009",
+        "name": "3",
+        "type": "TEXT",
+        "text": "3",
+        "bounds": {
+          "x": 323.73046875,
+          "y": 25.0,
+          "width": 7.023685455322266,
+          "height": 12.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Display",
+          "fontWeight": 500,
+          "fontSize": 10.0,
+          "letterSpacing": 0.0,
+          "lineHeightPx": 11.93359375
+        }
+      }
+    ]
+  },
+  "AirplaneAlert": {
+    "node": "19:1039",
+    "layers": [
+      {
+        "id": "19:1039",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 148.0
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1039;69:415",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 11.0,
+          "width": 335.0,
+          "height": 119.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1039;69:400",
+        "name": "Text",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 27.0,
+          "width": 335.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1039;69:403",
+        "name": "\udbc1\udc53",
+        "type": "TEXT",
+        "text": "\udbc1\udc53",
+        "bounds": {
+          "x": 32.0,
+          "y": 43.5,
+          "width": 35.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 28.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1039;69:406",
+        "name": "Turn Off Airplane Mode or Use \u2028Wi-Fi to Access Data",
+        "type": "TEXT",
+        "text": "Turn Off Airplane Mode or Use \u2028Wi-Fi to Access Data",
+        "bounds": {
+          "x": 83.0,
+          "y": 27.0,
+          "width": 252.0,
+          "height": 44.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 22.0
+        }
+      },
+      {
+        "id": "I19:1039;69:413",
+        "name": "Button",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 87.0,
+          "width": 335.0,
+          "height": 43.0
+        },
+        "cornerRadius": 300.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1039;69:414",
+        "name": "Open Settings",
+        "type": "TEXT",
+        "text": "Open Settings",
+        "bounds": {
+          "x": 123.0,
+          "y": 103.0,
+          "width": 121.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      }
+    ]
+  },
+  "ScreenMirroringAlert": {
+    "node": "19:1040",
+    "layers": [
+      {
+        "id": "19:1040",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 144.0
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1040;93:783",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 11.0,
+          "width": 335.0,
+          "height": 115.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1040;93:784",
+        "name": "Metadata",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 27.0,
+          "width": 335.0,
+          "height": 40.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1040;93:795",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 32.0,
+          "y": 27.0,
+          "width": 257.0,
+          "height": 40.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1040;93:785",
+        "name": "icon",
+        "type": "TEXT",
+        "text": "\udbc0\udfe7",
+        "bounds": {
+          "x": 32.0,
+          "y": 38.0,
+          "width": 43.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 700,
+          "fontSize": 28.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1040;93:794",
+        "name": "Headlines",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 91.0,
+          "y": 27.0,
+          "width": 198.0,
+          "height": 40.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1040;93:786",
+        "name": "Screen Mirroring",
+        "type": "TEXT",
+        "text": "Screen Mirroring",
+        "bounds": {
+          "x": 91.0,
+          "y": 27.0,
+          "width": 126.0,
+          "height": 22.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 22.0
+        }
+      },
+      {
+        "id": "I19:1040;93:793",
+        "name": "MacBook Pro",
+        "type": "TEXT",
+        "text": "MacBook Pro",
+        "bounds": {
+          "x": 91.0,
+          "y": 49.0,
+          "width": 198.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1040;93:796",
+        "name": "Trailing",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 305.0,
+          "y": 38.0,
+          "width": 30.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1040;93:797",
+        "name": "audio",
+        "type": "TEXT",
+        "text": "\udbc1\udfdb",
+        "bounds": {
+          "x": 305.0,
+          "y": 38.0,
+          "width": 30.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 400,
+          "fontSize": 18.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1040;93:787",
+        "name": "Button",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 83.0,
+          "width": 335.0,
+          "height": 43.0
+        },
+        "cornerRadius": 300.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1040;93:788",
+        "name": "Stop Mirroring",
+        "type": "TEXT",
+        "text": "Stop Mirroring",
+        "bounds": {
+          "x": 122.0,
+          "y": 99.0,
+          "width": 123.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      }
+    ]
+  },
+  "MobileDataAlert": {
+    "node": "19:1041",
+    "layers": [
+      {
+        "id": "19:1041",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 162.0
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:859",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 11.0,
+          "width": 335.0,
+          "height": 133.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:860",
+        "name": "Metadata",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 27.0,
+          "width": 335.0,
+          "height": 58.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:861",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 32.0,
+          "y": 27.0,
+          "width": 303.0,
+          "height": 58.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:862",
+        "name": "icon",
+        "type": "TEXT",
+        "text": "\udbc1\udd80",
+        "bounds": {
+          "x": 32.0,
+          "y": 47.0,
+          "width": 37.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 700,
+          "fontSize": 28.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1041;107:863",
+        "name": "Headlines",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 85.0,
+          "y": 27.0,
+          "width": 250.0,
+          "height": 58.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:864",
+        "name": "Mobile Data is Turned Off",
+        "type": "TEXT",
+        "text": "Mobile Data is Turned Off",
+        "bounds": {
+          "x": 85.0,
+          "y": 27.0,
+          "width": 192.0,
+          "height": 22.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 22.0
+        }
+      },
+      {
+        "id": "I19:1041;107:865",
+        "name": "Turn on mobile data or use Wi-Fi to access data.",
+        "type": "TEXT",
+        "text": "Turn on mobile data or use Wi-Fi to access data.",
+        "bounds": {
+          "x": 85.0,
+          "y": 49.0,
+          "width": 250.0,
+          "height": 36.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 16.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1041;107:877",
+        "name": "Button Group",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 101.0,
+          "width": 335.0,
+          "height": 43.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:868",
+        "name": "Button",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 101.0,
+          "width": 161.5,
+          "height": 43.0
+        },
+        "cornerRadius": 300.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:869",
+        "name": "OK",
+        "type": "TEXT",
+        "text": "OK",
+        "bounds": {
+          "x": 83.75,
+          "y": 117.0,
+          "width": 26.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      },
+      {
+        "id": "I19:1041;107:875",
+        "name": "Button",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 189.5,
+          "y": 101.0,
+          "width": 161.5,
+          "height": 43.0
+        },
+        "cornerRadius": 300.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1041;107:876",
+        "name": "Settings",
+        "type": "TEXT",
+        "text": "Settings",
+        "bounds": {
+          "x": 234.75,
+          "y": 117.0,
+          "width": 71.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      }
+    ]
+  },
+  "TransitRouteAlert": {
+    "node": "19:1042",
+    "layers": [
+      {
+        "id": "19:1042",
+        "name": "Dynamic Island",
+        "type": "INSTANCE",
+        "text": null,
+        "bounds": {
+          "x": 0.0,
+          "y": 0.0,
+          "width": 367.0,
+          "height": 142.0
+        },
+        "cornerRadius": 42.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1042;107:909",
+        "name": "Wrapper",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 11.0,
+          "width": 335.0,
+          "height": 113.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1042;107:910",
+        "name": "Metadata",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 27.0,
+          "width": 335.0,
+          "height": 38.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1042;107:911",
+        "name": "Leading",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 32.0,
+          "y": 35.0,
+          "width": 303.0,
+          "height": 22.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1042;107:912",
+        "name": "icon",
+        "type": "TEXT",
+        "text": "\udbc1\udf47",
+        "bounds": {
+          "x": 32.0,
+          "y": 37.0,
+          "width": 34.0,
+          "height": 18.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 700,
+          "fontSize": 28.0,
+          "letterSpacing": -0.40799999237060547,
+          "lineHeightPx": 18.0
+        }
+      },
+      {
+        "id": "I19:1042;107:913",
+        "name": "Headlines",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 82.0,
+          "y": 35.0,
+          "width": 253.0,
+          "height": 22.0
+        },
+        "cornerRadius": null,
+        "style": {}
+      },
+      {
+        "id": "I19:1042;107:914",
+        "name": "Prague Main Train Station",
+        "type": "TEXT",
+        "text": "Prague Main Train Station",
+        "bounds": {
+          "x": 82.0,
+          "y": 35.0,
+          "width": 243.0,
+          "height": 22.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 20.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 22.0
+        }
+      },
+      {
+        "id": "I19:1042;107:918",
+        "name": "Button",
+        "type": "FRAME",
+        "text": null,
+        "bounds": {
+          "x": 16.0,
+          "y": 81.0,
+          "width": 335.0,
+          "height": 43.0
+        },
+        "cornerRadius": 300.0,
+        "style": {}
+      },
+      {
+        "id": "I19:1042;107:919",
+        "name": "End Route",
+        "type": "TEXT",
+        "text": "End Route",
+        "bounds": {
+          "x": 140.0,
+          "y": 97.0,
+          "width": 87.0,
+          "height": 11.0
+        },
+        "cornerRadius": null,
+        "style": {
+          "fontFamily": "SF Pro Text",
+          "fontWeight": 500,
+          "fontSize": 18.0,
+          "letterSpacing": -0.2376774251461029,
+          "lineHeightPx": 10.485769271850586
+        }
+      }
+    ]
+  }
+}

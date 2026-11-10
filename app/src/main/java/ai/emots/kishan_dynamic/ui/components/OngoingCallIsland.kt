@@ -166,7 +166,7 @@ fun OngoingCallIslandBanner(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.1).sp,
-                        fontFamily = FontFamily.Monospace
+                        fontFamily = ai.emots.kishan_dynamic.ui.theme.IslandReferenceFonts.Text
                     )
                     Spacer(modifier = Modifier.height(2.dp * scale))
                     Text(
@@ -175,8 +175,6 @@ fun OngoingCallIslandBanner(
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = (-0.3).sp,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
                     )
                 }
             }
@@ -222,13 +220,17 @@ fun OngoingCallIslandExpanded(
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth().wrapContentHeight()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val buttonVisualSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlSize
-        val buttonTouchSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlSize
+        val buttonVisualSize = when (variant) {
+            OngoingCallVariant.FaceTime -> AppTheme.island.callVideoControlSize
+            OngoingCallVariant.SharedMedia -> AppTheme.island.sharedCallControlSize
+            else -> AppTheme.island.callControlSize
+        }
+        val buttonTouchSize = buttonVisualSize.coerceAtLeast(AppTheme.island.minimumActionTarget)
         val iconGlyphSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callControlGlyph
-        val hPad = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callContentInset
-        val topPad = if (variant == OngoingCallVariant.Standard) AppTheme.island.audioCallTopInset else AppTheme.island.callTopInset
-        val bottomPad = if (variant == OngoingCallVariant.Standard) AppTheme.island.audioCallBottomInset else AppTheme.island.callBottomInset
-        val avatarSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.callAvatarSize
+        val hPad = if (variant == OngoingCallVariant.SharedMedia) AppTheme.island.sharedCallContentInset else AppTheme.island.callContentInset
+        val topPad = if (variant == OngoingCallVariant.SharedMedia) AppTheme.island.sharedCallTopInset else AppTheme.island.callTopInset
+        val bottomPad = AppTheme.island.callBottomInset
+        val avatarSize = if (variant == OngoingCallVariant.SharedMedia) AppTheme.island.mediaAlbumArtSize else AppTheme.island.callAvatarSize
 
         Column(
             modifier = Modifier
@@ -239,7 +241,7 @@ fun OngoingCallIslandExpanded(
                     top = topPad,
                     bottom = bottomPad
                 ),
-            verticalArrangement = Arrangement.spacedBy(14.dp * scale)
+            verticalArrangement = Arrangement.spacedBy(if (variant == OngoingCallVariant.SharedMedia) AppTheme.island.sharedCallRegionGap else 14.dp)
         ) {
             // ROW 1: Avatar + Name + Subtitle + Info button (matches Dynamic Island-14.svg)
             Row(
@@ -251,7 +253,7 @@ fun OngoingCallIslandExpanded(
                         .size(avatarSize)
                         .clip(CircleShape)
                         .background(Color(0xFF202124))
-                        .border(0.75.dp, Color(0x33FFFFFF), CircleShape),
+                        ,
                     contentAlignment = Alignment.Center
                 ) {
                     if (variant == OngoingCallVariant.SharedMedia) {
@@ -284,21 +286,17 @@ fun OngoingCallIslandExpanded(
                     Text(
                         text = name,
                         color = Color.White,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.3).sp,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        fontSize = 16.sp, lineHeight = 18.sp,
+                        fontWeight = if (variant == OngoingCallVariant.SharedMedia) FontWeight.SemiBold else FontWeight.Normal,
+                        letterSpacing = (-0.2377).sp,
                     )
                     Spacer(modifier = Modifier.height(2.dp * scale))
                     Text(
                         text = if (variant == OngoingCallVariant.SharedMedia) label else "$label",
                         color = Color(0xFF898989),
-                        fontSize = 13.sp,
+                        fontSize = 14.sp, lineHeight = 18.sp,
                         fontWeight = FontWeight.Normal,
-                        letterSpacing = (-0.1).sp,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        letterSpacing = 0.sp,
                     )
                 }
 
@@ -319,9 +317,7 @@ fun OngoingCallIslandExpanded(
             // ROW 2: Balanced circular call action controls
             androidx.compose.foundation.layout.FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = if (variant == OngoingCallVariant.Standard)
-                    Arrangement.spacedBy(AppTheme.island.audioCallControlGap, Alignment.CenterHorizontally)
-                    else Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
             ) {
                 // 1. Speaker Button (Audio route: Inactive #2C2C2E / Active White)
@@ -343,13 +339,13 @@ fun OngoingCallIslandExpanded(
                                 if (variant == OngoingCallVariant.FaceTime) Color.White
                                 else if (isSpeaker) Color.White else IslandColors.ButtonGlass
                             )
-                            .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
+                            ,
                         contentAlignment = Alignment.Center
                     ) {
                         AppleIcon(
                             glyph = if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker,
                             tint = if (variant == OngoingCallVariant.FaceTime || isSpeaker) Color.Black else Color.White,
-                            size = iconGlyphSize
+                            size = (if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker).figmaInkSize()
                         )
                     }
                 }
@@ -370,70 +366,68 @@ fun OngoingCallIslandExpanded(
                             .size(buttonVisualSize)
                             .clip(CircleShape)
                             .background(if (isMuted) Color.White else IslandColors.ButtonGlass)
-                            .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
+                            ,
                         contentAlignment = Alignment.Center
                     ) {
                         AppleIcon(
                             glyph = AppleGlyph.Microphone,
                             tint = if (isMuted) Color.Black else Color.White,
-                            size = iconGlyphSize
+                            size = AppleGlyph.Microphone.figmaInkSize()
                         )
                     }
                 }
 
-                if (variant != OngoingCallVariant.Standard) {
-                    // 3. FaceTime Video Camera Button
-                    if (canRenderIslandControl(IslandControlAction.CallToggleVideo)) Box(
+                // 3. FaceTime Video Camera Button
+                if (canRenderIslandControl(IslandControlAction.CallToggleVideo)) Box(
+                    modifier = Modifier
+                        .size(buttonTouchSize)
+                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                            isVideoOn = !isVideoOn
+                            onControlAction(IslandControlAction.CallToggleVideo)
+                        }
+                        .semantics { contentDescription = "Toggle video camera" },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
                         modifier = Modifier
-                            .size(buttonTouchSize)
-                            .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                                isVideoOn = !isVideoOn
-                                onControlAction(IslandControlAction.CallToggleVideo)
-                            }
-                            .semantics { contentDescription = "Toggle video camera" },
+                            .size(buttonVisualSize)
+                            .clip(CircleShape)
+                            .background(if (isVideoOn) Color.White else IslandColors.ButtonGlass)
+                            ,
                         contentAlignment = Alignment.Center
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(buttonVisualSize)
-                                .clip(CircleShape)
-                                .background(if (isVideoOn) Color.White else IslandColors.ButtonGlass)
-                                .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppleIcon(
-                                glyph = AppleGlyph.FaceTimeVideo,
-                                tint = if (isVideoOn) Color.Black else Color.White,
-                                size = iconGlyphSize
-                            )
-                        }
+                        AppleIcon(
+                            glyph = AppleGlyph.FaceTimeVideo,
+                            tint = if (isVideoOn) Color.Black else Color.White,
+                            size = AppleGlyph.FaceTimeVideo.figmaInkSize()
+                        )
                     }
+                }
 
-                    // 4. SharePlay Button
-                    if (canRenderIslandControl(IslandControlAction.CallToggleSharePlay)) Box(
+                // 4. SharePlay Button
+                if (canRenderIslandControl(IslandControlAction.CallToggleSharePlay)) Box(
+                    modifier = Modifier
+                        .size(buttonTouchSize)
+                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                            isSharePlay = !isSharePlay
+                            onControlAction(IslandControlAction.CallToggleSharePlay)
+                        }
+                        .semantics { contentDescription = "Toggle SharePlay" },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Box(
                         modifier = Modifier
-                            .size(buttonTouchSize)
-                            .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                                isSharePlay = !isSharePlay
-                                onControlAction(IslandControlAction.CallToggleSharePlay)
-                            }
-                            .semantics { contentDescription = "Toggle SharePlay" },
+                            .size(buttonVisualSize)
+                            .clip(CircleShape)
+                            .background(if (isSharePlay) Color.White else IslandColors.ButtonGlass)
+                            ,
                         contentAlignment = Alignment.Center
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(buttonVisualSize)
-                                .clip(CircleShape)
-                                .background(if (isSharePlay) Color.White else IslandColors.ButtonGlass)
-                                .border(0.5.dp, Color(0x33FFFFFF), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppleIcon(
-                                glyph = AppleGlyph.SharePlay,
-                                tint = if (isSharePlay) Color.Black else Color.White,
-                                size = iconGlyphSize
-                            )
-                        }
+                        AppleIcon(
+                            glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.SharePlayScreen else AppleGlyph.SharePlay,
+                            tint = if (isSharePlay) Color.Black else Color.White,
+                            size = (if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.SharePlayScreen else AppleGlyph.SharePlay).figmaInkSize()
+                        )
                     }
                 }
 
@@ -458,7 +452,7 @@ fun OngoingCallIslandExpanded(
                         AppleIcon(
                             glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall,
                             tint = Color.White,
-                            size = iconGlyphSize
+                            size = (if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall).figmaInkSize()
                         )
                     }
                 }

@@ -1,5 +1,6 @@
 package ai.emots.kishan_dynamic.ui.components
 
+import ai.emots.kishan_dynamic.ui.icons.FigmaExactGlyphCatalog
 import ai.emots.kishan_dynamic.ui.icons.IslandIcon
 import ai.emots.kishan_dynamic.ui.icons.IslandVector
 import ai.emots.kishan_dynamic.ui.icons.IslandVectorCatalog
@@ -47,6 +48,7 @@ enum class AppleGlyph {
     Microphone,
     FaceTimeVideo,
     SharePlay,
+    SharePlayScreen,
     Info,
     Chat,
     Close,
@@ -77,6 +79,7 @@ enum class AppleGlyph {
     ScreenMirroring,
     Laptop,
     PersonalHotspot,
+    Cellular,
     TransitTrain,
     NavigationLeft,
     NavigationRight,
@@ -111,57 +114,59 @@ val AppleGlyph.vector: IslandVector
         AppleGlyph.Notch -> IslandVectorCatalog.Notch
 
         AppleGlyph.Music -> IslandVectorCatalog.MusicNote
-        AppleGlyph.Play -> IslandVectorCatalog.Play
-        AppleGlyph.Pause -> IslandVectorCatalog.Pause
-        AppleGlyph.Backward -> IslandVectorCatalog.Backward
-        AppleGlyph.Forward -> IslandVectorCatalog.Forward
-        AppleGlyph.SkipBack15 -> IslandVectorCatalog.SkipBack15
-        AppleGlyph.SkipForward15 -> IslandVectorCatalog.SkipForward15
-        AppleGlyph.AirPlay -> IslandVectorCatalog.AirplayAudio
-        AppleGlyph.Speaker -> IslandVectorCatalog.Speaker
+        AppleGlyph.Play -> FigmaExactGlyphCatalog.Play
+        AppleGlyph.Pause -> FigmaExactGlyphCatalog.Pause
+        AppleGlyph.Backward -> FigmaExactGlyphCatalog.Backward
+        AppleGlyph.Forward -> FigmaExactGlyphCatalog.Forward
+        AppleGlyph.SkipBack15 -> FigmaExactGlyphCatalog.SkipBack15
+        AppleGlyph.SkipForward15 -> FigmaExactGlyphCatalog.SkipForward15
+        AppleGlyph.AirPlay -> FigmaExactGlyphCatalog.AirPlay
+        AppleGlyph.Speaker -> FigmaExactGlyphCatalog.Speaker
         AppleGlyph.Mute -> IslandVectorCatalog.SpeakerSlash
-        AppleGlyph.AirPods -> IslandVectorCatalog.Airpods
+        AppleGlyph.AirPods -> FigmaExactGlyphCatalog.AirPods
         AppleGlyph.Equalizer -> IslandVectorCatalog.Equalizer
-        AppleGlyph.Waveform -> IslandVectorCatalog.Waveform
+        AppleGlyph.Waveform -> FigmaExactGlyphCatalog.Waveform
         AppleGlyph.WaveformRecording -> IslandVectorCatalog.WaveformRecording
 
-        AppleGlyph.Phone -> IslandVectorCatalog.Phone
-        AppleGlyph.EndCall -> IslandVectorCatalog.PhoneDown
-        AppleGlyph.Microphone -> IslandVectorCatalog.Microphone
-        AppleGlyph.FaceTimeVideo -> IslandVectorCatalog.Video
-        AppleGlyph.SharePlay -> IslandVectorCatalog.Shareplay
-        AppleGlyph.Info -> IslandVectorCatalog.Info
-        AppleGlyph.Chat -> IslandVectorCatalog.Chat
-        AppleGlyph.Close -> IslandVectorCatalog.Close
+        AppleGlyph.Phone -> FigmaExactGlyphCatalog.Phone
+        AppleGlyph.EndCall -> FigmaExactGlyphCatalog.EndCall
+        AppleGlyph.Microphone -> FigmaExactGlyphCatalog.Microphone
+        AppleGlyph.FaceTimeVideo -> FigmaExactGlyphCatalog.FaceTimeVideo
+        AppleGlyph.SharePlay -> FigmaExactGlyphCatalog.SharePlay
+        AppleGlyph.SharePlayScreen -> FigmaExactGlyphCatalog.SharePlayScreen
+        AppleGlyph.Info -> FigmaExactGlyphCatalog.Info
+        AppleGlyph.Chat -> FigmaExactGlyphCatalog.Chat
+        AppleGlyph.Close -> FigmaExactGlyphCatalog.Close
 
-        AppleGlyph.Bell -> IslandVectorCatalog.Bell
-        AppleGlyph.BellSlash -> IslandVectorCatalog.BellSlash
+        AppleGlyph.Bell -> FigmaExactGlyphCatalog.Bell
+        AppleGlyph.BellSlash -> FigmaExactGlyphCatalog.BellSlash
         AppleGlyph.Battery -> IslandVectorCatalog.Battery
         AppleGlyph.Charging -> IslandVectorCatalog.Bolt
         AppleGlyph.Timer -> IslandVectorCatalog.Timer
         AppleGlyph.Record -> IslandVectorCatalog.Record
         AppleGlyph.Stop -> IslandVectorCatalog.StopCircle
-        AppleGlyph.Lock -> IslandVectorCatalog.Lock
-        AppleGlyph.Unlock -> IslandVectorCatalog.Unlock
+        AppleGlyph.Lock -> FigmaExactGlyphCatalog.Lock
+        AppleGlyph.Unlock -> FigmaExactGlyphCatalog.Unlock
         AppleGlyph.Link -> IslandVectorCatalog.Link
-        AppleGlyph.Moon -> IslandVectorCatalog.Moon
-        AppleGlyph.Car -> IslandVectorCatalog.Car
-        AppleGlyph.FaceId -> IslandVectorCatalog.FaceId
+        AppleGlyph.Moon -> FigmaExactGlyphCatalog.Moon
+        AppleGlyph.Car -> FigmaExactGlyphCatalog.Car
+        AppleGlyph.FaceId -> FigmaExactGlyphCatalog.FaceId
         AppleGlyph.Satellite -> IslandVectorCatalog.Satellite
         AppleGlyph.AirDrop -> IslandVectorCatalog.Airdrop
         AppleGlyph.Shortcut -> IslandVectorCatalog.Shortcut
-        AppleGlyph.Undo -> IslandVectorCatalog.Undo
-        AppleGlyph.Check -> IslandVectorCatalog.Check
+        AppleGlyph.Undo -> FigmaExactGlyphCatalog.Undo
+        AppleGlyph.Check -> FigmaExactGlyphCatalog.Check
         AppleGlyph.Location -> IslandVectorCatalog.Location
 
-        AppleGlyph.Airplane -> IslandVectorCatalog.Airplane
-        AppleGlyph.ScreenMirroring -> IslandVectorCatalog.ScreenMirroring
-        AppleGlyph.Laptop -> IslandVectorCatalog.Laptop
-        AppleGlyph.PersonalHotspot -> IslandVectorCatalog.PersonalHotspot
-        AppleGlyph.TransitTrain -> IslandVectorCatalog.TransitTrain
-        AppleGlyph.NavigationLeft -> IslandVectorCatalog.NavigationLeft
-        AppleGlyph.NavigationRight -> IslandVectorCatalog.NavigationRight
-        AppleGlyph.NavigationStraight -> IslandVectorCatalog.NavigationStraight
+        AppleGlyph.Airplane -> FigmaExactGlyphCatalog.Airplane
+        AppleGlyph.ScreenMirroring -> FigmaExactGlyphCatalog.ScreenMirroring
+        AppleGlyph.Laptop -> FigmaExactGlyphCatalog.Laptop
+        AppleGlyph.PersonalHotspot -> FigmaExactGlyphCatalog.PersonalHotspot
+        AppleGlyph.Cellular -> FigmaExactGlyphCatalog.Cellular
+        AppleGlyph.TransitTrain -> FigmaExactGlyphCatalog.TransitTrain
+        AppleGlyph.NavigationLeft -> FigmaExactGlyphCatalog.NavigationLeft
+        AppleGlyph.NavigationRight -> FigmaExactGlyphCatalog.NavigationRight
+        AppleGlyph.NavigationStraight -> FigmaExactGlyphCatalog.NavigationStraight
         AppleGlyph.Maps -> IslandVectorCatalog.Maps
         AppleGlyph.ChevronLeft -> IslandVectorCatalog.ChevronLeft
         AppleGlyph.ChevronRight -> IslandVectorCatalog.ChevronRight
@@ -215,4 +220,46 @@ fun DrawScope.drawAppleGlyph(
     alpha: Float = 1f,
 ) {
     drawIslandVector(vector = glyph.vector, tint = tint, side = side, alpha = alpha)
+}
+
+/** Native visible ink size from the original Figma SVG, without a second optical inset. */
+internal fun AppleGlyph.figmaInkSize(fallback: Dp = 22.dp): Dp = when (this) {
+    AppleGlyph.Speaker -> 30.0.dp
+    AppleGlyph.Microphone -> 24.0.dp
+    AppleGlyph.FaceTimeVideo -> 27.0.dp
+    AppleGlyph.SharePlay -> 31.0.dp
+    AppleGlyph.EndCall -> 26.0.dp
+    AppleGlyph.Info -> 18.0.dp
+    AppleGlyph.AirPods -> 32.0.dp
+    AppleGlyph.Forward -> 29.0.dp
+    AppleGlyph.Backward -> 29.0.dp
+    AppleGlyph.Play -> 28.0.dp
+    AppleGlyph.AirPlay -> 21.0.dp
+    AppleGlyph.Pause -> 19.0.dp
+    AppleGlyph.Close -> 19.0.dp
+    AppleGlyph.BellSlash -> 25.0.dp
+    AppleGlyph.Undo -> 17.0.dp
+    AppleGlyph.SkipBack15 -> 27.0.dp
+    AppleGlyph.SkipForward15 -> 28.0.dp
+    AppleGlyph.Airplane -> 31.0.dp
+    AppleGlyph.Chat -> 16.0.dp
+    AppleGlyph.Bell -> 17.0.dp
+    AppleGlyph.Check -> 20.0.dp
+    AppleGlyph.Lock -> 18.0.dp
+    AppleGlyph.Unlock -> 18.0.dp
+    AppleGlyph.PersonalHotspot -> 23.0.dp
+    AppleGlyph.Moon -> 16.0.dp
+    AppleGlyph.Car -> 20.0.dp
+    AppleGlyph.ScreenMirroring -> 36.0.dp
+    AppleGlyph.Laptop -> 26.0.dp
+    AppleGlyph.Cellular -> 32.0.dp
+    AppleGlyph.TransitTrain -> 38.0.dp
+    AppleGlyph.Phone -> 22.0.dp
+    AppleGlyph.NavigationLeft -> 33.0.dp
+    AppleGlyph.NavigationRight -> 33.0.dp
+    AppleGlyph.NavigationStraight -> 34.0.dp
+    AppleGlyph.FaceId -> 20.0.dp
+    AppleGlyph.Waveform -> 23.0.dp
+    AppleGlyph.SharePlayScreen -> 33.24300000000002.dp
+    else -> fallback
 }

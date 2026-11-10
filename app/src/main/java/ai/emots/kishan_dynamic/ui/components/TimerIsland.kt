@@ -27,6 +27,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.timerVerticalInset
+import ai.emots.kishan_dynamic.ui.theme.timerControlGap
+import ai.emots.kishan_dynamic.ui.theme.timerCancelColor
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 
 /**
  * Animated sweep-gradient progress ring for timer / chronometer activities.
@@ -90,88 +98,52 @@ internal fun TimerCompactContent(label: String, progress: Float) {
             fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
             color = IslandColors.CapsuleOrange,
-            fontFamily = FontFamily.Monospace
+            fontFamily = ai.emots.kishan_dynamic.ui.theme.IslandReferenceFonts.Text
         )
     }
 }
 
 @Composable
-internal fun TimerExpandedContent(
-    label: String,
-    timerRunning: Boolean,
-    onControlAction: (IslandControlAction) -> Unit = {}
-) {
-    val isPaused = !timerRunning
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (16.dp * scale)
-        val vPad = (12.dp * scale)
-        val btnSize = (42.dp * scale).coerceAtLeast(36.dp)
-        val iconSize = (20.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = hPad, vertical = vPad),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // LEFT: Pause Button (52dp translucent orange) + Cancel Button (52dp charcoal neutral)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(13.5.dp * scale)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(btnSize)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFB8B28).copy(alpha = if (isPaused) 0.85f else 0.45f))
-                        .clickable {
-                            onControlAction(IslandControlAction.TimerToggle)
-                        },
-                    contentAlignment = Alignment.Center
+internal fun TimerExpandedContent(label: String, timerRunning: Boolean, onControlAction: (IslandControlAction) -> Unit = {}) {
+    val paused = !timerRunning
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val stacked = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || maxWidth < 290.dp
+        val controls: @Composable () -> Unit = {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.island.timerControlGap)) {
+                if (canRenderIslandControl(IslandControlAction.TimerToggle)) androidx.compose.material3.IconButton(
+                    onClick = { onControlAction(IslandControlAction.TimerToggle) },
+                    modifier = Modifier.size(52.dp).clip(CircleShape)
+                        .background(IslandColors.CapsuleOrange.copy(alpha = if (paused) .85f else .45f))
+                        .semantics { contentDescription = if (paused) "Resume timer" else "Pause timer" }
                 ) {
-                    AppleIcon(
-                        glyph = if (isPaused) AppleGlyph.Play else AppleGlyph.Pause,
-                        tint = if (isPaused) Color.White else Color(0xFFFB8B28),
-                        size = iconSize
-                    )
+                    val glyph = if (paused) AppleGlyph.Play else AppleGlyph.Pause
+                    AppleIcon(glyph, tint = if (paused) Color.White else IslandColors.CapsuleOrange, size = glyph.figmaInkSize())
                 }
-
-                Box(
-                    modifier = Modifier
-                        .size(btnSize)
-                        .clip(CircleShape)
-                        .background(Color(0xFF838388).copy(alpha = 0.7f))
-                        .clickable { onControlAction(IslandControlAction.TimerCancel) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Close,
-                        tint = Color.White,
-                        size = iconSize
-                    )
-                }
+                if (canRenderIslandControl(IslandControlAction.TimerCancel)) androidx.compose.material3.IconButton(
+                    onClick = { onControlAction(IslandControlAction.TimerCancel) },
+                    modifier = Modifier.size(52.dp).clip(CircleShape).background(IslandColors.timerCancelColor.copy(alpha = .7f))
+                        .semantics { contentDescription = "Cancel timer" }
+                ) { AppleIcon(AppleGlyph.Close, tint = Color.White, size = AppleGlyph.Close.figmaInkSize()) }
             }
-
-            // RIGHT: Label "Timer" (#FB8B28, 12sp) + Time (#FB8B28 bold 30sp)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
-            ) {
-                Text(
-                    text = "Timer",
-                    color = IslandColors.CapsuleOrange,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium
-                )
-                Text(
-                    text = if (isPaused) "Paused" else label,
-                    color = IslandColors.CapsuleOrange,
-                    fontSize = 25.sp,
-                    fontWeight = FontWeight.Bold
-                )
+        }
+        val clock: @Composable () -> Unit = {
+            if (stacked) Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+                Text(if (paused) "Paused" else "Timer", color = IslandColors.CapsuleOrange,
+                    style = AppTheme.typography.body.copy(fontSize = 16.sp, lineHeight = 18.sp))
+                Text(label, color = IslandColors.CapsuleOrange, maxLines = 1, softWrap = false,
+                    style = AppTheme.typography.islandTime.copy(fontSize = 32.sp, lineHeight = 38.sp, fontWeight = FontWeight.SemiBold))
+            } else Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+                Text(if (paused) "Paused" else "Timer", modifier = Modifier.alignByBaseline(), color = IslandColors.CapsuleOrange,
+                    style = AppTheme.typography.body.copy(fontSize = 16.sp, lineHeight = 18.sp))
+                Text(label, modifier = Modifier.alignByBaseline(), color = IslandColors.CapsuleOrange, maxLines = 1, softWrap = false,
+                    style = AppTheme.typography.islandTime.copy(fontSize = 32.sp, lineHeight = 18.sp, fontWeight = FontWeight.SemiBold))
             }
+        }
+        if (stacked) Column(Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.island.timerVerticalInset),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) { clock(); controls() }
+        else Row(Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.island.timerVerticalInset)
+            .heightIn(min = 52.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            controls(); clock()
         }
     }
 }

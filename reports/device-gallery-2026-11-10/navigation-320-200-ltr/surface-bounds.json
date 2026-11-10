@@ -1,0 +1,23 @@
+[
+  {
+    "state": "ColorOptions",
+    "ordinal": 56,
+    "file": "56-ColorOptions.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794310927.927524,
+    "scrollFiles": [
+      "56-ColorOptions-scroll-01.png"
+    ],
+    "bottomFile": "56-ColorOptions-scroll-01.png",
+    "scrollMethod": "semantics",
+    "scrollTarget": "outer content viewport",
+    "scrollOverlapPercent": 30,
+    "bounds": [
+      92,
+      566,
+      988,
+      1226
+    ],
+    "designWidthDp": 298.667
+  }
+]

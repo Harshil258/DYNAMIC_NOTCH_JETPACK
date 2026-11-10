@@ -1,0 +1,73 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": true,
+  "requestedProfile": {
+    "width": 320,
+    "fontPercent": 200,
+    "rtl": false
+  },
+  "captures": [
+    {
+      "state": "ChargingExpanded",
+      "ordinal": 27,
+      "file": "27-ChargingExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309895.5096161
+    },
+    {
+      "state": "LowBatteryExpanded",
+      "ordinal": 29,
+      "file": "29-LowBatteryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309899.9123158
+    },
+    {
+      "state": "SportsExpanded",
+      "ordinal": 37,
+      "file": "37-SportsExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309908.426624,
+      "bottomFile": "37-SportsExpanded-bottom.png",
+      "scrollMethod": "semantics",
+      "scrollTarget": "outer content viewport"
+    },
+    {
+      "state": "VideoRemoteExpanded",
+      "ordinal": 47,
+      "file": "47-VideoRemoteExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309918.769463,
+      "bottomFile": "47-VideoRemoteExpanded-bottom.png",
+      "scrollMethod": "semantics",
+      "scrollTarget": "outer content viewport"
+    },
+    {
+      "state": "TimerImage",
+      "ordinal": 49,
+      "file": "49-TimerImage.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309923.448425
+    },
+    {
+      "state": "TransportActivity",
+      "ordinal": 52,
+      "file": "52-TransportActivity.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309928.5609899,
+      "bottomFile": "52-TransportActivity-bottom.png",
+      "scrollMethod": "semantics",
+      "scrollTarget": "outer content viewport"
+    }
+  ],
+  "requestedStates": [
+    "ChargingExpanded",
+    "LowBatteryExpanded",
+    "SportsExpanded",
+    "TimerImage",
+    "TransportActivity",
+    "VideoRemoteExpanded"
+  ]
+}

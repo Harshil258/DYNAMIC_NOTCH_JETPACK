@@ -12,19 +12,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
+import ai.emots.kishan_dynamic.ui.components.live.IslandAdaptiveHeader
+import androidx.compose.ui.platform.LocalDensity
 
 /** Reference-only compositions. Production source-backed rendering takes precedence in the host. */
 @Composable
 internal fun TransportReferenceContent() {
     Column(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        IslandAdaptiveHeader(identity = { Row(verticalAlignment = Alignment.CenterVertically) {
             AppleIcon(AppleGlyph.TransitTrain, tint = IslandColors.CapsuleCyan, size = 32.dp)
             Spacer(Modifier.width(AppTheme.spacing.md))
             Column(Modifier.weight(1f)) { ReferenceTitle("Route 24 · Central"); ReferenceSubtitle("Arriving at platform 2") }
-            ReferenceMetric("3 min")
-        }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            ReferenceSubtitle("Market Street"); ReferenceSubtitle("Central Station")
+        } }, status = { ReferenceMetric("3 min") })
+        if (LocalDensity.current.fontScale > 1.3f) Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+            ReferenceSubtitle("Market Street")
+            ReferenceSubtitle("Central Station")
+        } else Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            Box(Modifier.weight(1f)) { ReferenceSubtitle("Market Street") }
+            Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) { ReferenceSubtitle("Central Station") }
         }
         Box(Modifier.fillMaxWidth().height(4.dp).background(IslandColors.Gray4, RoundedCornerShape(2.dp)))
     }
@@ -59,30 +64,23 @@ internal fun SubscriptionReferenceContent() {
 }
 
 @Composable
-internal fun NotificationImageReferenceContent() {
-    Row(Modifier.fillMaxWidth().padding(AppTheme.spacing.xl), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Box(Modifier.size(103.dp, 86.dp).background(IslandColors.Gray4, RoundedCornerShape(AppTheme.spacing.xxl)), contentAlignment = Alignment.Center) {
-            androidx.compose.foundation.Image(
-                painter = androidx.compose.ui.res.painterResource(ai.emots.kishan_dynamic.R.drawable.shared_media_art),
-                contentDescription = "Demonstration attachment",
-                modifier = Modifier.fillMaxSize(), contentScale = androidx.compose.ui.layout.ContentScale.Crop)
-        }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
-            ReferenceSubtitle("Messages · image attachment")
-            ReferenceTitle("Project review")
-            ReferenceSubtitle("The latest photo is ready for review.")
-        }
+internal fun NotificationImageReferenceContent(notifications: List<ai.emots.kishan_dynamic.data.model.NotificationInfo>, activeIndex: Int) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val sources = notifications.filter { it.picturePath != null }.ifEmpty {
+        listOf(ai.emots.kishan_dynamic.data.model.NotificationInfo("reference-image", "", "Messages", "Project review",
+            "The latest photo is ready for review.", picturePath = "android.resource://${context.packageName}/${ai.emots.kishan_dynamic.R.drawable.shared_media_art}"))
     }
+    NotificationIslandExpandedPager(sources, activeIndex = activeIndex.coerceIn(0, sources.lastIndex))
 }
 
 @Composable
 internal fun TimerImageReferenceContent(timer: String) {
-    Row(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg), verticalAlignment = Alignment.CenterVertically,
+    Box(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg)) {
+      IslandAdaptiveHeader(identity = { Row(verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
         AppleIcon(AppleGlyph.Timer, tint = IslandColors.Orange, size = 40.dp)
         Column(Modifier.weight(1f)) { ReferenceTitle("Focus session"); ReferenceSubtitle("Timer demonstration") }
-        ReferenceMetric(timer)
+      } }, status = { ReferenceMetric(timer) })
     }
 }
 

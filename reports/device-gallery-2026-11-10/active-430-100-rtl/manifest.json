@@ -1,0 +1,434 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": true,
+  "requestedProfile": {
+    "width": 430,
+    "fontPercent": 100,
+    "rtl": true
+  },
+  "captures": [
+    {
+      "state": "MobileDataAlert",
+      "ordinal": 59,
+      "file": "59-MobileDataAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308780.229473
+    },
+    {
+      "state": "TransitRouteAlert",
+      "ordinal": 60,
+      "file": "60-TransitRouteAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308783.5254452
+    },
+    {
+      "state": "Idle",
+      "ordinal": 1,
+      "file": "01-Idle.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308787.68091
+    },
+    {
+      "state": "Minimal",
+      "ordinal": 2,
+      "file": "02-Minimal.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308790.197247
+    },
+    {
+      "state": "MusicCompact",
+      "ordinal": 3,
+      "file": "03-MusicCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308792.5048199
+    },
+    {
+      "state": "MusicExpanded",
+      "ordinal": 4,
+      "file": "04-MusicExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308794.822978
+    },
+    {
+      "state": "CallCompact",
+      "ordinal": 5,
+      "file": "05-CallCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308798.714468
+    },
+    {
+      "state": "CallExpanded",
+      "ordinal": 6,
+      "file": "06-CallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308801.2740748
+    },
+    {
+      "state": "CallSummaryExpanded",
+      "ordinal": 7,
+      "file": "07-CallSummaryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308806.9007628
+    },
+    {
+      "state": "FaceTimeCallExpanded",
+      "ordinal": 8,
+      "file": "08-FaceTimeCallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308810.60756
+    },
+    {
+      "state": "SharedMediaCallExpanded",
+      "ordinal": 9,
+      "file": "09-SharedMediaCallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308814.669176
+    },
+    {
+      "state": "OngoingCallBanner",
+      "ordinal": 10,
+      "file": "10-OngoingCallBanner.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308818.336427
+    },
+    {
+      "state": "NotificationCompact",
+      "ordinal": 11,
+      "file": "11-NotificationCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308821.515924
+    },
+    {
+      "state": "NotificationStacked",
+      "ordinal": 12,
+      "file": "12-NotificationStacked.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308824.381165
+    },
+    {
+      "state": "NotificationWithMusicCompact",
+      "ordinal": 13,
+      "file": "13-NotificationWithMusicCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308826.498212
+    },
+    {
+      "state": "NotificationExpanded",
+      "ordinal": 14,
+      "file": "14-NotificationExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308829.216976
+    },
+    {
+      "state": "SilentModeCompact",
+      "ordinal": 15,
+      "file": "15-SilentModeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308832.646365
+    },
+    {
+      "state": "SilentModeExpanded",
+      "ordinal": 16,
+      "file": "16-SilentModeExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308834.9849632
+    },
+    {
+      "state": "RingerModeExpanded",
+      "ordinal": 17,
+      "file": "17-RingerModeExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308850.281675
+    },
+    {
+      "state": "VibrateModeCompact",
+      "ordinal": 18,
+      "file": "18-VibrateModeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308853.736491
+    },
+    {
+      "state": "NormalModeCompact",
+      "ordinal": 19,
+      "file": "19-NormalModeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308856.092046
+    },
+    {
+      "state": "RingerVolumeCompact",
+      "ordinal": 20,
+      "file": "20-RingerVolumeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308858.733442
+    },
+    {
+      "state": "MediaVolumeCompact",
+      "ordinal": 21,
+      "file": "21-MediaVolumeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308861.447169
+    },
+    {
+      "state": "BluetoothConnected",
+      "ordinal": 22,
+      "file": "22-BluetoothConnected.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308863.879696
+    },
+    {
+      "state": "BluetoothConnecting",
+      "ordinal": 23,
+      "file": "23-BluetoothConnecting.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308866.562391
+    },
+    {
+      "state": "ActionControlExpanded",
+      "ordinal": 24,
+      "file": "24-ActionControlExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308869.140554
+    },
+    {
+      "state": "PremiumExpiryExpanded",
+      "ordinal": 25,
+      "file": "25-PremiumExpiryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308873.947166
+    },
+    {
+      "state": "ChargingCompact",
+      "ordinal": 26,
+      "file": "26-ChargingCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308883.795742
+    },
+    {
+      "state": "ChargingExpanded",
+      "ordinal": 27,
+      "file": "27-ChargingExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308885.971246
+    },
+    {
+      "state": "LowBatteryCompact",
+      "ordinal": 28,
+      "file": "28-LowBatteryCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308890.1647942
+    },
+    {
+      "state": "LowBatteryExpanded",
+      "ordinal": 29,
+      "file": "29-LowBatteryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308893.276853
+    },
+    {
+      "state": "TimerCompact",
+      "ordinal": 30,
+      "file": "30-TimerCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308896.9889019
+    },
+    {
+      "state": "TimerExpanded",
+      "ordinal": 31,
+      "file": "31-TimerExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308899.4560692
+    },
+    {
+      "state": "DeliveryCompact",
+      "ordinal": 32,
+      "file": "32-DeliveryCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308903.05467
+    },
+    {
+      "state": "DeliveryExpanded",
+      "ordinal": 33,
+      "file": "33-DeliveryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308906.681228
+    },
+    {
+      "state": "FlightCompact",
+      "ordinal": 34,
+      "file": "34-FlightCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308910.254858
+    },
+    {
+      "state": "FlightExpanded",
+      "ordinal": 35,
+      "file": "35-FlightExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308912.661203
+    },
+    {
+      "state": "SportsCompact",
+      "ordinal": 36,
+      "file": "36-SportsCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308916.6597939
+    },
+    {
+      "state": "SportsExpanded",
+      "ordinal": 37,
+      "file": "37-SportsExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308919.892019
+    },
+    {
+      "state": "NavigationCompact",
+      "ordinal": 38,
+      "file": "38-NavigationCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308923.666045
+    },
+    {
+      "state": "VoiceMemoExpanded",
+      "ordinal": 39,
+      "file": "39-VoiceMemoExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308926.156075
+    },
+    {
+      "state": "ScreenRecordingExpanded",
+      "ordinal": 40,
+      "file": "40-ScreenRecordingExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308930.812989
+    },
+    {
+      "state": "ShortcutExpanded",
+      "ordinal": 41,
+      "file": "41-ShortcutExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308935.336434
+    },
+    {
+      "state": "FocusModeExpanded",
+      "ordinal": 42,
+      "file": "42-FocusModeExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308942.87271
+    },
+    {
+      "state": "AirPodsConnected",
+      "ordinal": 43,
+      "file": "43-AirPodsConnected.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308951.630572
+    },
+    {
+      "state": "SatelliteConnected",
+      "ordinal": 44,
+      "file": "44-SatelliteConnected.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308955.8026361
+    },
+    {
+      "state": "FindMyAlert",
+      "ordinal": 45,
+      "file": "45-FindMyAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308959.187968
+    },
+    {
+      "state": "MovedToIPhone",
+      "ordinal": 46,
+      "file": "46-MovedToIPhone.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308962.792338
+    },
+    {
+      "state": "VideoRemoteExpanded",
+      "ordinal": 47,
+      "file": "47-VideoRemoteExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308966.813746
+    },
+    {
+      "state": "AirDropActivity",
+      "ordinal": 48,
+      "file": "48-AirDropActivity.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308971.056927
+    },
+    {
+      "state": "TimerImage",
+      "ordinal": 49,
+      "file": "49-TimerImage.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308979.8782709
+    },
+    {
+      "state": "NotificationImage",
+      "ordinal": 50,
+      "file": "50-NotificationImage.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308986.342516
+    },
+    {
+      "state": "CallAvatars",
+      "ordinal": 51,
+      "file": "51-CallAvatars.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308990.328419
+    },
+    {
+      "state": "TransportActivity",
+      "ordinal": 52,
+      "file": "52-TransportActivity.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308994.978899
+    },
+    {
+      "state": "FlightTrackerExpanded",
+      "ordinal": 53,
+      "file": "53-FlightTrackerExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794308999.059684
+    },
+    {
+      "state": "SubscriptionPricing",
+      "ordinal": 54,
+      "file": "54-SubscriptionPricing.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309003.501357
+    },
+    {
+      "state": "MovieCard",
+      "ordinal": 55,
+      "file": "55-MovieCard.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309006.7869508
+    },
+    {
+      "state": "ColorOptions",
+      "ordinal": 56,
+      "file": "56-ColorOptions.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309010.9066901
+    },
+    {
+      "state": "AirplaneAlert",
+      "ordinal": 57,
+      "file": "57-AirplaneAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309014.739491
+    },
+    {
+      "state": "ScreenMirroringAlert",
+      "ordinal": 58,
+      "file": "58-ScreenMirroringAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309026.1596649
+    }
+  ]
+}

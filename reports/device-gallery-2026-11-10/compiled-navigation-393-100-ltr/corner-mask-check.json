@@ -1,0 +1,6 @@
+{
+  "region": "Top-left96x96 pixels at2px/design-dp; excludes content",
+  "beforeCircularCornerIoU": 0.9578,
+  "afterContinuousCornerIoU": 0.9782,
+  "scope": "Diagnostic corner-mask overlap only; not whole-card visual acceptance or literal typography parity"
+}

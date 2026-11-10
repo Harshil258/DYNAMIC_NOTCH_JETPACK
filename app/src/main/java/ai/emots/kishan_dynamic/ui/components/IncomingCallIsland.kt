@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.motion.rememberBreathing
 import ai.emots.kishan_dynamic.ui.motion.rememberPressScale
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.theme.contextualRadarVerticalInset
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 private val CallGreen = IslandColors.CapsuleGreen
@@ -52,155 +53,47 @@ private val CallRed = IslandColors.CapsuleRed
  */
 @Composable
 fun IncomingCallIsland(
-    name: String = "Tamia Castillo",
-    label: String = "iPhone",
-    avatarUri: String? = null,
-    onAccept: () -> Unit = {},
-    onDecline: () -> Unit = {},
-    canDecline: Boolean = true,
+    name: String = "Tamia Castillo", label: String = "iPhone", avatarUri: String? = null,
+    onAccept: () -> Unit = {}, onDecline: () -> Unit = {}, canDecline: Boolean = true,
     modifier: Modifier = Modifier
 ) {
-    val pulseState = rememberBreathing(min = 0.96f, max = 1.03f, durationMillis = 1400)
-    val declineInteraction = remember { MutableInteractionSource() }
-    val acceptInteraction = remember { MutableInteractionSource() }
-    val declineScale by rememberPressScale(declineInteraction)
-    val acceptScale by rememberPressScale(acceptInteraction)
-
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth().wrapContentHeight()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val avatarSize = 40.dp * scale
-        val buttonVisualSize = 38.dp * scale
-        val buttonTouchSize = (44.dp * scale).coerceAtLeast(44.dp)
-        val iconGlyphSize = 18.dp * scale
-        val startPad = 16.dp * scale
-        val endPad = 16.dp * scale
-        val vPad = 12.dp * scale
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = startPad, end = endPad, top = vPad, bottom = vPad),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // LEFT: 56dp Avatar + Label & Name
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(avatarSize)
-                        .graphicsLayer {
-                            scaleX = pulseState.value
-                            scaleY = pulseState.value
-                        }
-                        .clip(CircleShape)
-                        .background(
-                            Brush.linearGradient(
-                                listOf(IslandColors.Orange, IslandColors.Yellow)
-                            )
-                        )
-                        .border(0.75.dp, Color(0x33FFFFFF), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    ContactAvatar(
-                        name = name,
-                        avatarUri = avatarUri,
-                        modifier = Modifier.fillMaxSize(),
-                        contentDescription = name
-                    )
+    val pulse = rememberBreathing(min = .96f, max = 1.03f, durationMillis = 1400)
+    androidx.compose.foundation.layout.BoxWithConstraints(modifier.fillMaxWidth().wrapContentHeight()) {
+        val stacked = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || maxWidth < 300.dp
+        val identity: @Composable () -> Unit = {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                Box(Modifier.size(56.dp).graphicsLayer { scaleX = pulse.value; scaleY = pulse.value }
+                    .clip(CircleShape), contentAlignment = Alignment.Center) {
+                    ContactAvatar(name = name, avatarUri = avatarUri, modifier = Modifier.fillMaxSize(), contentDescription = name)
                 }
-
-                Spacer(modifier = Modifier.width(9.dp * scale))
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = label,
-                        color = Color(0xFFA4A4A9),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        letterSpacing = (-0.1).sp
-                    )
-                    Spacer(modifier = Modifier.height(2.dp * scale))
-                    Text(
-                        text = name,
-                        color = Color.White,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.2).sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xxs)) {
+                    Text(label, color = IslandColors.Gray, style = AppTheme.typography.bodySmall.copy(fontSize = 13.sp, lineHeight = 16.sp))
+                    Text(name, color = Color.White, style = AppTheme.typography.body.copy(fontSize = 16.sp, lineHeight = 18.sp, fontWeight = FontWeight.Medium))
                 }
             }
-
-            Spacer(modifier = Modifier.width(10.dp * scale))
-
-            // RIGHT: Decline Button + Accept Button with 44dp hit areas and 38dp visual circles
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp * scale)
-            ) {
-                // Red Decline Button
-                if (canDecline && canRenderIslandControl(IslandControlAction.CallDecline)) {
-                    Box(
-                        modifier = Modifier
-                            .size(buttonTouchSize)
-                            .clickable(
-                                interactionSource = declineInteraction,
-                                indication = null,
-                                onClick = onDecline
-                            )
-                            .semantics { contentDescription = "Decline call" },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(buttonVisualSize)
-                                .graphicsLayer {
-                                    scaleX = declineScale
-                                    scaleY = declineScale
-                                }
-                                .clip(CircleShape)
-                                .background(CallRed),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppleIcon(glyph = AppleGlyph.EndCall, tint = Color.White, size = iconGlyphSize)
-                        }
-                    }
-                }
-
-                // Green Accept Button
-                if (canRenderIslandControl(IslandControlAction.CallAccept)) Box(
-                    modifier = Modifier
-                        .size(buttonTouchSize)
-                        .clickable(
-                            interactionSource = acceptInteraction,
-                            indication = null,
-                            onClick = onAccept
-                        )
-                        .semantics { contentDescription = "Accept call" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(buttonVisualSize)
-                            .graphicsLayer {
-                                scaleX = acceptScale
-                                scaleY = acceptScale
-                            }
-                            .clip(CircleShape)
-                            .background(CallGreen),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = iconGlyphSize)
-                    }
-                }
+        }
+        val actions: @Composable () -> Unit = {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                if (canDecline && canRenderIslandControl(IslandControlAction.CallDecline)) androidx.compose.material3.IconButton(
+                    onClick = onDecline, modifier = Modifier.size(52.dp).clip(CircleShape).background(CallRed)
+                        .semantics { contentDescription = "Decline call" }
+                ) { AppleIcon(AppleGlyph.EndCall, tint = Color.White, size = AppleGlyph.EndCall.figmaInkSize()) }
+                if (canRenderIslandControl(IslandControlAction.CallAccept)) androidx.compose.material3.IconButton(
+                    onClick = onAccept, modifier = Modifier.size(52.dp).clip(CircleShape).background(CallGreen)
+                        .semantics { contentDescription = "Accept call" }
+                ) { AppleIcon(AppleGlyph.Phone, tint = Color.White, size = AppleGlyph.Phone.figmaInkSize()) }
             }
+        }
+        if (stacked) Column(Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.xxl,
+            vertical = AppTheme.island.contextualRadarVerticalInset), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+            identity()
+            Box(Modifier.align(Alignment.End)) { actions() }
+        } else Row(Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.xxl,
+            vertical = AppTheme.island.contextualRadarVerticalInset), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+            Box(Modifier.weight(1f)) { identity() }
+            actions()
         }
     }
 }

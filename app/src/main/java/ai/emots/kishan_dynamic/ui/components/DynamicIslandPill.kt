@@ -1,5 +1,12 @@
 package ai.emots.kishan_dynamic.ui.components
 
+import ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion
+import ai.emots.kishan_dynamic.ui.icons.drawIslandVector
+import ai.emots.kishan_dynamic.ui.theme.IslandReferenceFonts
+import ai.emots.kishan_dynamic.ui.theme.LocalAppTypography
+import ai.emots.kishan_dynamic.ui.theme.LocalAppFonts
+import ai.emots.kishan_dynamic.ui.theme.withIslandReferenceFonts
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -249,6 +256,7 @@ internal fun IslandDemoState.usesCompanionBubble(): Boolean =
 internal fun IslandDemoState.resolvedHeight(tokens: AppIslandTokens): Dp =
     when (this) {
         IslandDemoState.Minimal -> tokens.minimalCapsuleHeight
+        IslandDemoState.Idle, IslandDemoState.MusicCompact, IslandDemoState.NotificationCompact, IslandDemoState.NotificationStacked -> IslandFamilyGeometry.target(this).height.dp
         else -> if (isCompactPresentation()) tokens.compactHeight else IslandFamilyGeometry.target(this).height.dp
     }
 
@@ -432,6 +440,8 @@ fun DynamicIslandPill(
     // expanded sheets follow their family canvas and measured content height.
     // -------------------------------------------------------------------------
     val islandTokens = ai.emots.kishan_dynamic.ui.theme.AppTheme.island
+    val compactContentInset = if (state in setOf(IslandDemoState.NotificationCompact, IslandDemoState.NotificationStacked))
+        islandTokens.notificationCompactInset else islandTokens.compactHorizontalInset
     val screenWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp.dp
     val maxExpanded = IslandFamilyGeometry.resolve(IslandDemoState.MusicExpanded, screenWidth.value).width.dp
     val shellExpandedInset = if (!liveActivitySourceBacked && state in setOf(
@@ -454,8 +464,12 @@ fun DynamicIslandPill(
     val notificationWidth = islandTokens.compactHorizontalInset * 2 + islandTokens.compactIconSize +
         islandTokens.compactContentGap + compactLabelWidth
     val familyGeometry = IslandFamilyGeometry.resolve(state, screenWidth.value)
+    val sportsGlanceWidth = if (state == IslandDemoState.SportsCompact && androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f)
+        with(androidx.compose.ui.platform.LocalDensity.current) {
+            textMeasurer.measure("RMA 2  1 MCI", compactTextStyle.copy(fontSize = 11.5.sp, fontWeight = FontWeight.Bold), maxLines = 1).size.width.toDp()
+        } + islandTokens.compactHorizontalInset * 2 + islandTokens.compactContentGap else 0.dp
     val baseWidth = if (state == IslandDemoState.NotificationCompact || state == IslandDemoState.NotificationStacked)
-        maxOf(notificationWidth, islandTokens.notificationCompactWidth) else familyGeometry.width.dp
+        maxOf(notificationWidth, islandTokens.notificationCompactWidth) else maxOf(familyGeometry.width.dp, sportsGlanceWidth)
     val isCutoutDot = cameraCutoutMode && (state == IslandDemoState.Minimal || state == IslandDemoState.Idle)
     val density = androidx.compose.ui.platform.LocalDensity.current
     val cutoutDotSizeDp = with(density) { (cutoutSizePx.toFloat() / density.density).dp }
@@ -511,7 +525,17 @@ fun DynamicIslandPill(
     val naturalTargetHeight = if (isCutoutDot) {
         cutoutDotSizeDp.coerceIn(24.dp, 56.dp)
     } else if (!isCompact) {
-        (if (state in setOf(IslandDemoState.NotificationExpanded, IslandDemoState.CallExpanded))
+        (if (state in setOf(
+                IslandDemoState.NotificationExpanded, IslandDemoState.CallExpanded,
+                // These cards have no direct atlas specimen. Their measured content,
+                // including recipe-owned padding, determines the surface height.
+                IslandDemoState.CallSummaryExpanded, IslandDemoState.PremiumExpiryExpanded,
+                IslandDemoState.DeliveryExpanded, IslandDemoState.FlightExpanded,
+                IslandDemoState.SportsExpanded, IslandDemoState.TransportActivity,
+                IslandDemoState.FlightTrackerExpanded, IslandDemoState.SubscriptionPricing,
+                IslandDemoState.MovieCard, IslandDemoState.TimerImage,
+                IslandDemoState.ActionControlExpanded, IslandDemoState.ColorOptions
+            ))
             measuredHeights[state] ?: state.resolvedHeight(islandTokens)
         else maxOf(measuredHeights[state] ?: 0.dp, state.resolvedHeight(islandTokens)))
             .coerceIn(islandTokens.expandedMinHeight, maxContentHeight)
@@ -526,6 +550,7 @@ fun DynamicIslandPill(
     // - 86dp Alert states: 43dp (86 / 2) for standard iOS alert capsule
     // - Expanded Activity Sheets (140-240dp): 42dp Apple continuous squircle
     val targetCornerRadiusDp = if (isCutoutDot) cutoutDotSizeDp.coerceIn(24.dp, 56.dp) / 2
+        else if (state == IslandDemoState.NotificationExpanded && hasLargePicture) 44.dp
         else IslandFamilyGeometry.resolve(state, screenWidth.value, contentHeight = targetHeight.value).radius.dp
 
     val animatedCornerRadiusDp by animateDpAsState(
@@ -535,15 +560,15 @@ fun DynamicIslandPill(
         label = "island_corner_radius"
     )
 
-    val cornerRadius = if (flatTop && !isCutoutDot) {
-        RoundedCornerShape(
-            topStart = 0.dp,
-            topEnd = 0.dp,
-            bottomEnd = animatedCornerRadiusDp,
-            bottomStart = animatedCornerRadiusDp
-        )
-    } else {
-        RoundedCornerShape(animatedCornerRadiusDp)
+    val cornerRadiusPx = with(density) { animatedCornerRadiusDp.toPx() }
+    val hasFlatTop = flatTop && !isCutoutDot
+    val cornerSmoothing by animateFloatAsState(
+        targetValue = IslandFamilyGeometry.cornerSmoothing(state),
+        animationSpec = if (reduceMotion) androidx.compose.animation.core.snap() else AppMotion.cornerMorphSpring(),
+        label = "island_corner_smoothing"
+    )
+    val cornerRadius = remember(cornerRadiusPx, hasFlatTop, cornerSmoothing) {
+        continuousIslandShape(cornerRadiusPx, hasFlatTop, cornerSmoothing)
     }
 
     // Apple Liquid Morphing Springs for Dimensions
@@ -668,7 +693,9 @@ fun DynamicIslandPill(
 
         Row(
             modifier = modifier
-                .pointerInput(onSwipeDismiss, isNotificationExpanded, state) {
+                .pointerInput(onSwipeDismiss, isNotificationExpanded, state, notifications.size, isReplyingNotification) {
+                    if (state == IslandDemoState.NotificationExpanded &&
+                        (notifications.size > 1 || isReplyingNotification)) return@pointerInput
                     detectVerticalDragGestures(
                         onDragStart = { },
                         onVerticalDrag = { change, dragAmount ->
@@ -785,16 +812,17 @@ fun DynamicIslandPill(
                     ) else Modifier)
                     .background(pillBgColor)
                     .padding(
-                        horizontal = if (isCompact) islandTokens.compactHorizontalInset else shellExpandedInset,
+                        horizontal = if (isCompact) compactContentInset else shellExpandedInset,
                         vertical = if (isCompact) 0.dp else shellExpandedInset
                     ),
-                contentAlignment = when (state) {
-                    IslandDemoState.ActionControlExpanded -> Alignment.TopCenter
-                    else -> Alignment.Center
-                }
+                contentAlignment = if (isCompact) Alignment.Center else Alignment.TopCenter
             ) {
-                CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb), LocalIslandAvailableControls provides availableControlActions) {
-                    val shellHorizontalInset = if (isCompact) islandTokens.compactHorizontalInset else shellExpandedInset
+                CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb), LocalIslandAvailableControls provides availableControlActions,
+                    LocalAppTypography provides ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.withIslandReferenceFonts(),
+                    LocalAppFonts provides ai.emots.kishan_dynamic.ui.theme.AppTheme.fonts.copy(body = IslandReferenceFonts.Text, display = IslandReferenceFonts.Display, mono = IslandReferenceFonts.Text),
+                    LocalTextStyle provides LocalTextStyle.current.copy(fontFamily = IslandReferenceFonts.Text,
+                        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false))) {
+                    val shellHorizontalInset = if (isCompact) compactContentInset else shellExpandedInset
                     IslandContentViewport(
                         targetWidth = (targetWidth - shellHorizontalInset * 2).coerceAtLeast(1.dp),
                         compact = isCompact,
@@ -1016,7 +1044,7 @@ fun DynamicIslandPill(
                         )
                         IslandDemoState.NavigationCompact -> ai.emots.kishan_dynamic.ui.components.live.NavigationIslandCompact(liveActivityInfo)
                         IslandDemoState.TimerImage -> TimerImageReferenceContent(timerLabel)
-                        IslandDemoState.NotificationImage -> NotificationImageReferenceContent()
+                        IslandDemoState.NotificationImage -> NotificationImageReferenceContent(notifications, notificationActiveIndex)
                         IslandDemoState.CallAvatars -> if (callParticipants.size > 1) GroupCallReferenceContent(callParticipants) else CallExpandedContent(
                             onControlAction = onControlAction,
                             contact = callContact,
@@ -1038,7 +1066,7 @@ fun DynamicIslandPill(
                             subtitle = liveActivitySubtitle,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.ColorOptions -> if (liveActivityInfo == null) ColorOptionsReferenceContent() else ai.emots.kishan_dynamic.ui.components.live.NavigationIslandExpanded(
+                        IslandDemoState.ColorOptions -> if (liveActivityInfo == null) TurnByTurnNavigationContent(onControlAction) else ai.emots.kishan_dynamic.ui.components.live.NavigationIslandExpanded(
                             info = liveActivityInfo,
                             onControlAction = onControlAction
                         )
@@ -1104,7 +1132,11 @@ fun DynamicIslandPill(
                         ),
                     contentAlignment = Alignment.Center
                 ) {
-                    CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb), LocalIslandAvailableControls provides availableControlActions) {
+                    CompositionLocalProvider(LocalContentColor provides Color(foregroundArgb), LocalIslandAvailableControls provides availableControlActions,
+                    LocalAppTypography provides ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.withIslandReferenceFonts(),
+                    LocalAppFonts provides ai.emots.kishan_dynamic.ui.theme.AppTheme.fonts.copy(body = IslandReferenceFonts.Text, display = IslandReferenceFonts.Display, mono = IslandReferenceFonts.Text),
+                    LocalTextStyle provides LocalTextStyle.current.copy(fontFamily = IslandReferenceFonts.Text,
+                        platformStyle = androidx.compose.ui.text.PlatformTextStyle(includeFontPadding = false))) {
                         AnimatedContent(
                         targetState = state,
                         transitionSpec = {
@@ -1399,8 +1431,8 @@ private fun MusicCompactContent(track: MusicTrack?, isPlaying: Boolean) {
             // Album Art Squircle 20dp
             Box(
                 modifier = Modifier
-                    .size(20.dp)
-                    .clip(RoundedCornerShape(5.dp))
+                    .size(24.dp)
+                    .clip(RoundedCornerShape(4.226.dp))
                     .background(
                         Brush.linearGradient(
                             listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.Cyan)
@@ -1420,22 +1452,11 @@ private fun MusicCompactContent(track: MusicTrack?, isPlaying: Boolean) {
                 }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
 
-            // Track title (compact shows truncated title)
-            Text(
-                text = track?.title ?: "Now playing",
-                color = Color.White,
-                fontSize = 11.5.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.widthIn(max = 70.dp)
-            )
         }
 
         // Reference equalizer (geometry measured off Minimal.svg / DI-11)
-        LiveEqualizerMini(animated = isPlaying)
+        LiveEqualizerMini(width = 17.dp, height = 19.dp, animated = isPlaying)
     }
 }
 
@@ -1534,7 +1555,7 @@ private fun CallCompactContent(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = IslandColors.CapsuleGreen,
-                fontFamily = FontFamily.Monospace
+                fontFamily = IslandReferenceFonts.Text
             )
         }
     )
@@ -1579,11 +1600,10 @@ private fun NotificationCompactContent(notification: NotificationInfo?, unseenCo
             modifier = Modifier.size(tokens.compactIconSize).clip(CircleShape).islandInspectableRegion("Icon"),
             contentDescription = "${notification?.appName ?: "Notification"} icon"
         )
-        Text(
-            text = compactNotificationLabel(notification, unseenCount),
-            style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.caption,
-            color = Color.White, fontWeight = FontWeight.SemiBold, maxLines = 1
-        )
+        if (notification?.isOngoing == true && notification.progressMax > 0)
+            Text(compactNotificationLabel(notification, unseenCount), style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.caption,
+                color = Color.White, maxLines = 1)
+        else NotificationCountSymbol(unseenCount)
     }
 }
 
@@ -2095,8 +2115,10 @@ private fun VolumeIndicatorContent(
     pulseScale: Float,
     pulseDurationMillis: Int
 ) {
+    val largeText = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
+    val pulse = if (LocalReducedMotion.current) 1f else {
     val pulseTransition = rememberInfiniteTransition(label = "volume_pulse")
-    val pulse by pulseTransition.animateFloat(
+    val animatedPulse by pulseTransition.animateFloat(
         initialValue = 1f,
         targetValue = pulseScale.coerceIn(1f, 1.3f),
         animationSpec = infiniteRepeatable(
@@ -2105,6 +2127,8 @@ private fun VolumeIndicatorContent(
         ),
         label = "volume_pulse_scale"
     )
+        animatedPulse
+    }
     Row(
         modifier = Modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
@@ -2125,8 +2149,8 @@ private fun VolumeIndicatorContent(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
-                Text(text = "${(level * 100).toInt()}%", color = tint, fontSize = 10.sp, fontFamily = FontFamily.Monospace)
+                if (!largeText) Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+                Text(text = "${(level * 100).toInt()}%", color = tint, fontSize = 10.sp, fontFamily = IslandReferenceFonts.Text, maxLines = 1, softWrap = false)
             }
             Box(
                 modifier = Modifier
@@ -2214,7 +2238,7 @@ private fun ChargingCompactContent() {
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = IslandColors.Green,
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = IslandReferenceFonts.Text
                 )
                 Spacer(modifier = Modifier.width(3.dp))
                 AppleIcon(glyph = AppleGlyph.Charging, tint = IslandColors.Green, size = 11.dp)
@@ -2243,7 +2267,7 @@ private fun LowBatteryCompactContent() {
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 color = IslandColors.Red,
-                fontFamily = FontFamily.Monospace
+                fontFamily = IslandReferenceFonts.Text
             )
         }
     )
@@ -2531,7 +2555,7 @@ private fun SportsExpandedContent(title: String = "", subtitle: String = "") {
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = IslandColors.Yellow,
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = IslandReferenceFonts.Text
                 )
 
                 Column(horizontalAlignment = Alignment.End) {
@@ -2580,12 +2604,19 @@ internal fun LiveEqualizerMini(
     height: Dp = 18.dp,
     animated: Boolean = true,
 ) {
-    // Single source of truth: the equalizer measured off Minimal.svg / DI-11.
-    WaveformAnimation(
-        modifier = modifier.size(width = width, height = height),
-        color = color,
-        animated = animated,
-    )
+    if (!animated || LocalReducedMotion.current) {
+        androidx.compose.foundation.Canvas(modifier = modifier.size(width, height)) {
+            val side = maxOf(size.width, size.height)
+            drawIslandVector(
+                vector = ai.emots.kishan_dynamic.ui.icons.FigmaExactGlyphCatalog.Waveform,
+                tint = color ?: IslandColors.EqualizerPink, side = side,
+                brush = if (color != null) null else Brush.linearGradient(
+                    listOf(IslandColors.EqualizerPink, IslandColors.EqualizerBlue),
+                    start = androidx.compose.ui.geometry.Offset(12.0056f, 12.0916f),
+                    end = androidx.compose.ui.geometry.Offset(25.7094f, 12.0916f)))
+        }
+    } else WaveformAnimation(modifier = modifier.size(width, height), color = color, animated = true)
+
 }
 
 // =============================================================================
@@ -2662,13 +2693,13 @@ private fun TimerWithImageCompactContent() {
                     color = IslandColors.Orange,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = IslandReferenceFonts.Text
                 )
                 Text(
                     text = " — 30:00",
                     color = IslandColors.Gray,
                     fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = IslandReferenceFonts.Text
                 )
             }
         }
@@ -2894,7 +2925,7 @@ private fun TransportLiveActivityCompactContent() {
                 color = IslandColors.CapsuleCyan,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace
+                fontFamily = IslandReferenceFonts.Text
             )
         }
 
@@ -3220,7 +3251,7 @@ private fun SportsScoreCompactContent() {
                 color = IslandColors.Yellow,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace
+                fontFamily = IslandReferenceFonts.Text
             )
             Column(modifier = Modifier.weight(0.4f), horizontalAlignment = Alignment.End) {
                 Text(
@@ -3276,7 +3307,7 @@ private fun NavigationRouteCompactContent() {
                 color = IslandColors.Blue,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily.Monospace
+                fontFamily = IslandReferenceFonts.Text
             )
         }
 

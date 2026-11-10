@@ -1,0 +1,135 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": true,
+  "requestedProfile": {
+    "width": 393,
+    "fontPercent": 100,
+    "rtl": false
+  },
+  "captures": [
+    {
+      "state": "ColorOptions",
+      "ordinal": 56,
+      "file": "56-ColorOptions.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311468.718369
+    },
+    {
+      "state": "AirplaneAlert",
+      "ordinal": 57,
+      "file": "57-AirplaneAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311472.696482
+    },
+    {
+      "state": "ScreenMirroringAlert",
+      "ordinal": 58,
+      "file": "58-ScreenMirroringAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311477.098578
+    },
+    {
+      "state": "MobileDataAlert",
+      "ordinal": 59,
+      "file": "59-MobileDataAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311481.099631
+    },
+    {
+      "state": "TransitRouteAlert",
+      "ordinal": 60,
+      "file": "60-TransitRouteAlert.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311484.872163
+    },
+    {
+      "state": "Idle",
+      "ordinal": 1,
+      "file": "01-Idle.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311488.445129
+    },
+    {
+      "state": "Minimal",
+      "ordinal": 2,
+      "file": "02-Minimal.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311491.098648
+    },
+    {
+      "state": "MusicCompact",
+      "ordinal": 3,
+      "file": "03-MusicCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311493.837098
+    },
+    {
+      "state": "MusicExpanded",
+      "ordinal": 4,
+      "file": "04-MusicExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311497.065252
+    },
+    {
+      "state": "CallCompact",
+      "ordinal": 5,
+      "file": "05-CallCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311507.821831
+    },
+    {
+      "state": "CallExpanded",
+      "ordinal": 6,
+      "file": "06-CallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311510.722462
+    },
+    {
+      "state": "CallSummaryExpanded",
+      "ordinal": 7,
+      "file": "07-CallSummaryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311515.338135
+    },
+    {
+      "state": "FaceTimeCallExpanded",
+      "ordinal": 8,
+      "file": "08-FaceTimeCallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311519.147145
+    },
+    {
+      "state": "SharedMediaCallExpanded",
+      "ordinal": 9,
+      "file": "09-SharedMediaCallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311525.2310588
+    },
+    {
+      "state": "OngoingCallBanner",
+      "ordinal": 10,
+      "file": "10-OngoingCallBanner.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311529.659801
+    },
+    {
+      "state": "NotificationCompact",
+      "ordinal": 11,
+      "file": "11-NotificationCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311533.04703
+    },
+    {
+      "state": "NotificationStacked",
+      "ordinal": 12,
+      "file": "12-NotificationStacked.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311539.1288729
+    }
+  ],
+  "deviceDensityDpi": 480,
+  "requestedStates": "all60"
+}

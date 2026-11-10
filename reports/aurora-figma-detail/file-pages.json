@@ -1,0 +1,77 @@
+{
+  "document": {
+    "id": "0:0",
+    "name": "Document",
+    "type": "DOCUMENT",
+    "scrollBehavior": "SCROLLS",
+    "children": [
+      {
+        "id": "0:1",
+        "name": "01 \u00b7 Design System",
+        "type": "CANVAS",
+        "scrollBehavior": "SCROLLS",
+        "children": [],
+        "backgroundColor": {
+          "r": 0.8980392217636108,
+          "g": 0.8980392217636108,
+          "b": 0.8980392217636108,
+          "a": 1.0
+        },
+        "prototypeStartNodeID": null,
+        "flowStartingPoints": [],
+        "prototypeDevice": {
+          "type": "NONE",
+          "rotation": "NONE"
+        }
+      },
+      {
+        "id": "5:2",
+        "name": "02 \u00b7 Dynamic Island State Atlas",
+        "type": "CANVAS",
+        "scrollBehavior": "SCROLLS",
+        "children": [],
+        "backgroundColor": {
+          "r": 0.9607843160629272,
+          "g": 0.9607843160629272,
+          "b": 0.9607843160629272,
+          "a": 1.0
+        },
+        "prototypeStartNodeID": null,
+        "flowStartingPoints": [],
+        "prototypeDevice": {
+          "type": "NONE",
+          "rotation": "NONE"
+        }
+      },
+      {
+        "id": "5:3",
+        "name": "03 \u00b7 Device Screens & Motion",
+        "type": "CANVAS",
+        "scrollBehavior": "SCROLLS",
+        "children": [],
+        "backgroundColor": {
+          "r": 0.9607843160629272,
+          "g": 0.9607843160629272,
+          "b": 0.9607843160629272,
+          "a": 1.0
+        },
+        "prototypeStartNodeID": null,
+        "flowStartingPoints": [],
+        "prototypeDevice": {
+          "type": "NONE",
+          "rotation": "NONE"
+        }
+      }
+    ]
+  },
+  "components": {},
+  "componentSets": {},
+  "schemaVersion": 0,
+  "styles": {},
+  "name": "Aurora Dynamic Island \u2014 Android App & Mini-Islands UI",
+  "lastModified": "2026-11-09T04:32:27Z",
+  "version": "2419724630781621942",
+  "role": "owner",
+  "editorType": "figma",
+  "linkAccess": "view"
+}

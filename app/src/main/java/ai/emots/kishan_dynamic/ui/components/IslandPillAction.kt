@@ -13,6 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
@@ -20,13 +23,15 @@ import ai.emots.kishan_dynamic.ui.theme.IslandColors
 @Composable
 internal fun IslandPillAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier,
     background: Color = IslandColors.ButtonNeutral, textColor: Color = Color.White,
-    visualHeight: Dp = AppTheme.island.ctaHeight) {
+    visualHeight: Dp = AppTheme.island.ctaHeight, textSize: TextUnit = 18.sp,
+    textWeight: FontWeight = FontWeight.Medium) {
     Box(modifier.heightIn(min = AppTheme.island.minimumActionTarget)
         .clickable(role = Role.Button, onClick = onClick), contentAlignment = Alignment.Center) {
         Box(Modifier.fillMaxWidth().heightIn(min = visualHeight)
             .clip(RoundedCornerShape(visualHeight / 2)).background(background)
             .padding(horizontal = AppTheme.spacing.md), contentAlignment = Alignment.Center) {
             Text(text, color = textColor, style = AppTheme.typography.button,
+                fontSize = textSize, fontWeight = textWeight,
                 maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }

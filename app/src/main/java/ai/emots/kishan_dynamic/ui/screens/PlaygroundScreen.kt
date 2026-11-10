@@ -369,6 +369,11 @@ fun PlaygroundScreen(
         ) {
             DynamicIslandPill(
                 state = activeState,
+                musicTrack = ai.emots.kishan_dynamic.data.model.MusicTrack(
+                    "Heat Waves", "Grass Animals", durationMs = 241000L, positionMs = 50000L,
+                    albumArtUri = "android.resource://${context.packageName}/${ai.emots.kishan_dynamic.R.drawable.music_album_art}"
+                ),
+                callContact = ai.emots.kishan_dynamic.data.model.ContactInfo("Tamia Castillo", ""),
                 musicIsPlaying = currentItem.label != "Music (Paused)",
                 callIsDialing = currentItem.label == "Dialing call",
                 callSummary = if (currentItem.label == "Call summary") {

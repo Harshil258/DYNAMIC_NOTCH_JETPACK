@@ -1,6 +1,8 @@
 package ai.emots.kishan_dynamic
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.*
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ai.emots.kishan_dynamic.data.model.NotificationInfo
@@ -52,7 +54,9 @@ class NotificationPagerIndicatorInstrumentedTest {
         }
 
         // Pager label "1 of 2" must exist on the first page
-        compose.onNodeWithText("TestApp · 1 of 2", substring = true, useUnmergedTree = true).assertExists()
+        compose.onNodeWithTag("notification_vertical_pager").assert(
+            SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Notification 1 of 2"))
+        compose.onNodeWithTag("notification_vertical_indicator").assertExists()
     }
 
     @Test

@@ -1,0 +1,19 @@
+{
+  "phase": "baseline restored; live visual review pending unlock",
+  "baselineApkSha256": "703f0278c36815110c59f8b4feb332e45778a55b9302076a8cb75623942a6c77",
+  "baselineBuild": "BUILD SUCCESSFUL in10m32s",
+  "composeBom": "2025.10.00",
+  "hotSwanVersion": "2.2.0",
+  "deviceSerial": "X4Y9QSOZ4DEADEDM",
+  "transport": "192.168.29.20:5555",
+  "runtimePort": 8601,
+  "runtimeHealth": {
+    "available": true,
+    "caughtCount": 0,
+    "degraded": false
+  },
+  "statesAccepted": 0,
+  "statesRequired": 60,
+  "visualVerification": "pending phone unlock; black lockscreen capture is not UI evidence",
+  "unitBoundaryRegression": "authored; not run yet"
+}

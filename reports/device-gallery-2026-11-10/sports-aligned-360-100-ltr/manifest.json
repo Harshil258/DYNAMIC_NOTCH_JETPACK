@@ -1,0 +1,31 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": true,
+  "requestedProfile": {
+    "width": 360,
+    "fontPercent": 100,
+    "rtl": false
+  },
+  "captures": [
+    {
+      "state": "SportsExpanded",
+      "ordinal": 37,
+      "file": "37-SportsExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794310225.603595,
+      "scrollFiles": [
+        "37-SportsExpanded-scroll-01.png"
+      ],
+      "bottomFile": "37-SportsExpanded-scroll-01.png",
+      "scrollMethod": "semantics",
+      "scrollTarget": "outer content viewport",
+      "scrollOverlapPercent": 30
+    }
+  ],
+  "requestedStates": [
+    "SportsExpanded"
+  ]
+}

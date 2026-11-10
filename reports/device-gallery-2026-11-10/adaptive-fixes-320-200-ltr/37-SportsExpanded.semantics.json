@@ -1,0 +1,1166 @@
+{
+  "nodeCount": 61,
+  "nodes": [
+    {
+      "id": 7542,
+      "parentId": -1,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 7543,
+      "parentId": 7542,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 7545,
+      "parentId": 7543,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 7578,
+      "parentId": 7545,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        410,
+        1020,
+        1307
+      ],
+      "actions": []
+    },
+    {
+      "id": 7580,
+      "parentId": 7578,
+      "text": "",
+      "contentDescription": "Previous state",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        60,
+        410,
+        204,
+        554
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 7583,
+      "parentId": 7578,
+      "text": "37 / 60 \u00b7 SportsExpanded",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        311,
+        436,
+        769,
+        483
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7585,
+      "parentId": 7578,
+      "text": "367\u00d7144dp (r=42dp) \u00b7 ActivityExpanded",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        246,
+        489,
+        835,
+        528
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7586,
+      "parentId": 7578,
+      "text": "",
+      "contentDescription": "Next state",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        876,
+        410,
+        1020,
+        554
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 7589,
+      "parentId": 7578,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        566,
+        1020,
+        1226
+      ],
+      "actions": []
+    },
+    {
+      "id": 7590,
+      "parentId": 7589,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        524,
+        593,
+        557,
+        626
+      ],
+      "actions": []
+    },
+    {
+      "id": 7626,
+      "parentId": 7589,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        92,
+        566,
+        988,
+        1226
+      ],
+      "actions": []
+    },
+    {
+      "id": 7628,
+      "parentId": 7589,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "island_surface",
+      "role": "",
+      "bounds": [
+        92,
+        566,
+        988,
+        1226
+      ],
+      "actions": []
+    },
+    {
+      "id": 7630,
+      "parentId": 7628,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        134,
+        608,
+        946,
+        1184
+      ],
+      "actions": [
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 7866,
+      "parentId": 7630,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        134,
+        608,
+        946,
+        1184
+      ],
+      "actions": []
+    },
+    {
+      "id": 7891,
+      "parentId": 7866,
+      "text": "UEFA Champions League",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        194,
+        668,
+        886,
+        865
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7893,
+      "parentId": 7866,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        194,
+        922,
+        212,
+        940
+      ],
+      "actions": []
+    },
+    {
+      "id": 7894,
+      "parentId": 7866,
+      "text": "78' LIVE",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        224,
+        889,
+        493,
+        973
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7871,
+      "parentId": 7866,
+      "text": "2  -  1",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        194,
+        1009,
+        886,
+        1134
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7875,
+      "parentId": 7866,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        271,
+        1170,
+        463,
+        1184
+      ],
+      "actions": []
+    },
+    {
+      "id": 7876,
+      "parentId": 7875,
+      "text": "RMA",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7878,
+      "parentId": 7866,
+      "text": "Real Madrid",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7879,
+      "parentId": 7866,
+      "text": "Vini Jr 34', Jude 67'",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7882,
+      "parentId": 7866,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": []
+    },
+    {
+      "id": 7883,
+      "parentId": 7882,
+      "text": "MCI",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7884,
+      "parentId": 7866,
+      "text": "Man City",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7886,
+      "parentId": 7866,
+      "text": "De Bruyne 51'",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7887,
+      "parentId": 7866,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": []
+    },
+    {
+      "id": 7888,
+      "parentId": 7887,
+      "text": "Quarter-Final \u2022 2nd Leg (Agg: 4 - 4)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7594,
+      "parentId": 7578,
+      "text": "Actual: 298.7 \u00d7 220.0dp \u00b7 \u0394 -0.2 / 76.0dp",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        60,
+        1253,
+        661,
+        1292
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7595,
+      "parentId": 7578,
+      "text": "Collapse \u2199",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        810,
+        1238,
+        1020,
+        1307
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7599,
+      "parentId": 7545,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        45,
+        1352,
+        510,
+        1478
+      ],
+      "actions": []
+    },
+    {
+      "id": 7640,
+      "parentId": 7599,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        45,
+        1352,
+        161,
+        1478
+      ],
+      "actions": []
+    },
+    {
+      "id": 7642,
+      "parentId": 7599,
+      "text": "320",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        45,
+        1352,
+        162,
+        1478
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7644,
+      "parentId": 7599,
+      "text": "360",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        162,
+        1352,
+        278,
+        1478
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7646,
+      "parentId": 7599,
+      "text": "393",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        278,
+        1352,
+        394,
+        1478
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7648,
+      "parentId": 7599,
+      "text": "430",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        394,
+        1352,
+        510,
+        1478
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7600,
+      "parentId": 7545,
+      "text": "200%",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        531,
+        1361,
+        717,
+        1469
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7602,
+      "parentId": 7545,
+      "text": "LTR",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        729,
+        1361,
+        888,
+        1469
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7604,
+      "parentId": 7545,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        900,
+        1343,
+        1044,
+        1487
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 7606,
+      "parentId": 7545,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1493,
+        1044,
+        1661
+      ],
+      "actions": [
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 7607,
+      "parentId": 7606,
+      "text": "All (60)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        36,
+        1505,
+        254,
+        1649
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7609,
+      "parentId": 7606,
+      "text": "Calls (7)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        278,
+        1505,
+        511,
+        1649
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7611,
+      "parentId": 7606,
+      "text": "Alerts & Msgs (5)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        535,
+        1505,
+        919,
+        1649
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7613,
+      "parentId": 7606,
+      "text": "Music & Audio (4)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        943,
+        1505,
+        1044,
+        1649
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7615,
+      "parentId": 7606,
+      "text": "System Alerts (14)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7617,
+      "parentId": 7606,
+      "text": "Activities (12)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7619,
+      "parentId": 7606,
+      "text": "Device & Battery (12)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7621,
+      "parentId": 7606,
+      "text": "Controls & Cards (6)",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Tab",
+      "bounds": [
+        0,
+        110,
+        0,
+        110
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "OnClick",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7623,
+      "parentId": 7545,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1667,
+        1044,
+        1951
+      ],
+      "actions": [
+        "GetScrollViewportLength",
+        "ScrollToIndex",
+        "ScrollBy"
+      ]
+    },
+    {
+      "id": 7651,
+      "parentId": 7623,
+      "text": "1 Idle 127\u00d736 \u00b7 Idle",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1679,
+        534,
+        1835
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7659,
+      "parentId": 7623,
+      "text": "2 Minimal 108\u00d732 \u00b7 OwnerMini",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        546,
+        1679,
+        1044,
+        1835
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7667,
+      "parentId": 7623,
+      "text": "3 MusicCompact 190\u00d738 \u00b7 StatusCom",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        36,
+        1847,
+        534,
+        1951
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7675,
+      "parentId": 7623,
+      "text": "4 MusicExpanded 367\u00d7177 \u00b7 ActivityE",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        546,
+        1847,
+        1044,
+        1951
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7549,
+      "parentId": 7545,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        110,
+        1080,
+        386
+      ],
+      "actions": []
+    },
+    {
+      "id": 7552,
+      "parentId": 7549,
+      "text": "",
+      "contentDescription": "Back",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        36,
+        194,
+        180,
+        338
+      ],
+      "actions": [
+        "RequestFocus",
+        "OnClick"
+      ]
+    },
+    {
+      "id": 7556,
+      "parentId": 7549,
+      "text": "60-state Gallery",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        216,
+        211,
+        593,
+        275
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7558,
+      "parentId": 7549,
+      "text": "Shared production renderer \u00b7 synthetic demonstration",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        216,
+        281,
+        1022,
+        321
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "ClearTextSubstitution",
+        "GetTextLayoutResult",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7565,
+      "parentId": 7545,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        1999,
+        1080,
+        2268
+      ],
+      "actions": []
+    },
+    {
+      "id": 7566,
+      "parentId": 7565,
+      "text": "",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "",
+      "bounds": [
+        0,
+        1999,
+        1080,
+        2001
+      ],
+      "actions": []
+    },
+    {
+      "id": 7569,
+      "parentId": 7565,
+      "text": "\u25c0  #36 SportsCompac",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        72,
+        2047,
+        528,
+        2220
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    },
+    {
+      "id": 7571,
+      "parentId": 7565,
+      "text": "#38 NavigationCo  \u25b6",
+      "contentDescription": "",
+      "testTag": "",
+      "role": "Button",
+      "bounds": [
+        552,
+        2051,
+        1008,
+        2217
+      ],
+      "actions": [
+        "SetTextSubstitution",
+        "GetTextLayoutResult",
+        "OnClick",
+        "ClearTextSubstitution",
+        "RequestFocus",
+        "ShowTextSubstitution"
+      ]
+    }
+  ],
+  "timestamp": 1794309907174,
+  "available": true,
+  "target": "android",
+  "galleryRootId": 7542
+}

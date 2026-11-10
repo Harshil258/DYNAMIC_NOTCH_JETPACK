@@ -1,0 +1,23 @@
+{
+  "apkSha256": "8b59a8b053de8dee1c5faf618f50f4ce7039129f2854e1fac6849b5995786bb9",
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "scope": "same-content shared-renderer captures; debug fixtures; no native overlay acceptance",
+  "referenceFile": "dmQdDCYXcy910vWZLfOqqz",
+  "referencePage": "5:2",
+  "files": {
+    "NotificationCompact.png": "f1e836f389ae760ce204159af68ffbf41722df0bd79cd8b530ab61284f69e2ff",
+    "TimerExpanded.png": "b7ef6a916822f54be9ddb4d0770e644cb2dff2ef192be610454785eb75bf937e",
+    "NotificationImage.png": "c81e85b464f4c22c3fd0bf32336711da742938b62a6d7ddc04aab499bf6bd18b",
+    "CallAvatars.png": "5b888ca1e1dde7565ffc84d89ddb9438e223bffce22f5e8a50f33e8d8f982066",
+    "OngoingCallBanner.png": "06c4a258101e59387d41e5a85bade7cc78dc6af2cc0e5c4c86aa72023d5b024b",
+    "MusicExpanded.png": "2b619691db168c6b077e999e6287ee6498e1c31823c051d2ce3e75cb52e1c99c",
+    "SilentModeExpanded.png": "a6539f5021fbd2b2fe8cb1ed07861bb7fa5db7f0c32012da085cb8a202aa4b33",
+    "MusicCompact.png": "79f9bde127671de84ceb176abcebd432e849d5b642a2d8e5e3a731910523cb55",
+    "SharedMediaCallExpanded.png": "fcf0c9ef89a7d8666d35543e0f6c2c015d6f3321c97a4314502dff82ac95087c",
+    "NotificationExpanded.png": "fab667ccf512a58ede2b7072aedf3fe395504524a4216c578858a3ad932541ed",
+    "CallExpanded.png": "934dd637e16042180e3c6127f5b6004b19ee014fab917b3781fa7fec66fced1b",
+    "FaceTimeCallExpanded.png": "94193e7b5a123d7ba7cc6f5d318ec91b881bf3a5206b73ea347a1846c747b812",
+    "exact-glyphs.png": "d97a66579ab680132f28e9189169e5ae8bca206eac3aa0e40176d2d572eb11ec"
+  },
+  "focusedDeviceTests": "3/3 passed"
+}

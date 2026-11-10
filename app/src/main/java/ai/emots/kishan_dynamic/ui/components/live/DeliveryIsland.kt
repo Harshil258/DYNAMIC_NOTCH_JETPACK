@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.components.CompactIslandLayout
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
 
 /**
  * Pixel-perfect Delivery Island Expanded state (resolves Screenshot A defects).
@@ -39,8 +41,7 @@ fun DeliveryIslandExpanded(
     progressOverride: Float? = null,
     onCallAction: () -> Unit = {}
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.72f, 1.15f)
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
 
         val restaurant = info?.entityName?.ifBlank { null }
             ?: info?.title?.takeIf { it != "Delivery" && it.isNotBlank() }
@@ -65,70 +66,35 @@ fun DeliveryIslandExpanded(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 4.dp * scale, vertical = 2.dp * scale),
-            verticalArrangement = Arrangement.SpaceBetween
+                .fillMaxWidth()
+                .padding(AppTheme.spacing.xl),
+            verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
         ) {
             // TOP ROW: Restaurant identity, order details & status badge
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f, fill = false),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(38.dp * scale)
-                            .clip(RoundedCornerShape(10.dp * scale))
-                            .background(IslandColors.Orange.copy(alpha = 0.22f)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.Car,
-                            tint = IslandColors.Orange,
-                            size = 19.dp * scale
-                        )
+            IslandAdaptiveHeader(identity = {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
+                    Box(Modifier.size(38.dp).clip(RoundedCornerShape(10.dp))
+                        .background(IslandColors.Orange.copy(alpha = .22f)), contentAlignment = Alignment.Center) {
+                        AppleIcon(AppleGlyph.Car, tint = IslandColors.Orange, size = 19.dp)
                     }
-                    Spacer(modifier = Modifier.width(10.dp * scale))
-                    Column {
-                        Text(
-                            text = restaurant,
-                            color = Color.White,
-                            fontSize = 14.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                        Text(
-                            text = orderSubtitle,
-                            color = IslandColors.Gray,
-                            fontSize = 11.5.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                    Column(Modifier.weight(1f)) {
+                        Text(restaurant, color = Color.White, style = AppTheme.typography.body.copy(fontWeight = FontWeight.SemiBold))
+                        Text(orderSubtitle, color = IslandColors.Gray, style = AppTheme.typography.bodySmall)
                     }
                 }
-
-                Spacer(modifier = Modifier.width(8.dp * scale))
-
-                IslandStatusBadge(
-                    text = statusText,
-                    tint = if (progress >= 1f) IslandColors.Green else IslandColors.Orange,
-                    fontSize = 11.sp
-                )
-            }
+            }, status = {
+                IslandStatusBadge(text = statusText, tint = if (progress >= 1f) IslandColors.Green else IslandColors.Orange, fontSize = 11.sp)
+            })
 
             // MIDDLE SECTION: Progress milestone bar with live progress
             Column(modifier = Modifier.fillMaxWidth()) {
                 IslandLiveProgressBar(
                     progress = progress,
                     tint = if (progress >= 1f) IslandColors.Green else IslandColors.Orange,
-                    trackHeight = 4.dp * scale
+                    trackHeight = 4.dp
                 )
-                Spacer(modifier = Modifier.height(5.dp * scale))
+                Spacer(modifier = Modifier.height(5.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
@@ -161,14 +127,12 @@ fun DeliveryIslandExpanded(
                         text = driverInfo,
                         fontSize = 11.5.sp,
                         color = Color.White.copy(alpha = 0.92f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
-                    Spacer(modifier = Modifier.width(3.dp * scale))
+                    Spacer(modifier = Modifier.width(3.dp))
                     AppleIcon(
                         glyph = AppleGlyph.Star,
                         tint = IslandColors.Yellow,
-                        size = 11.dp * scale
+                        size = 11.dp
                     )
                 }
 
@@ -177,8 +141,8 @@ fun DeliveryIslandExpanded(
                     backgroundColor = IslandColors.Green,
                     iconTint = Color.White,
                     onClick = onCallAction,
-                    size = 28.dp * scale,
-                    iconSize = 13.dp * scale,
+                    size = 28.dp,
+                    iconSize = 13.dp,
                     contentDescription = "Call delivery driver"
                 )
             }

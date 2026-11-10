@@ -333,7 +333,26 @@ data class AppIslandTokens(
     val compactWidth: Dp = 126.dp,
     val compactMaxWidth: Dp = 250.dp,
     /** Figma27:1021 compact notification: icon and count occupy opposite ends. */
+    val recordingLeadingInset: Dp = 30.dp,
+    val recordingTrailingInset: Dp = 22.dp,
+    val recordingVerticalInset: Dp = 16.dp,
+    val recordingControlSize: Dp = 54.dp,
+    val recordingStopSize: Dp = 24.dp,
     val notificationCompactWidth: Dp = 189.dp,
+    val notificationCompactInset: Dp = 8.dp,
+    val notificationContentInset: Dp = 20.dp,
+    val notificationImageWidth: Dp = 103.dp,
+    val notificationImageHeight: Dp = 86.dp,
+    val notificationImageCorner: Dp = 24.dp,
+    val notificationImageTextGap: Dp = 16.dp,
+    val notificationRailReserve: Dp = 70.dp,
+    val notificationPagerMinHeight: Dp = 126.dp,
+    val notificationCountTop: Dp = 21.dp,
+    val notificationCountEnd: Dp = 29.dp,
+    val notificationCountSize: Dp = 20.dp,
+    val notificationCountToDotsGap: Dp = 27.dp,
+    val notificationDotGap: Dp = 8.dp,
+    val notificationDotSize: Dp = 4.dp,
     val audioCallTopInset: Dp = 24.dp,
     val audioCallBottomInset: Dp = 20.dp,
     val audioCallControlGap: Dp = 24.dp,
@@ -380,15 +399,20 @@ data class AppIslandTokens(
     val mediaTopInset: Dp = 32.dp,
     val mediaBottomInset: Dp = 10.dp,
     val mediaRegionGap: Dp = 4.dp,
-    val mediaTitleGap: Dp = 21.dp,
+    val mediaTitleGap: Dp = 20.dp,
     val mediaTransportLeadingInset: Dp = 74.dp,
     val mediaTransportSafeWidth: Dp = 293.dp,
-    val callControlSize: Dp = 50.dp,
+    val callControlSize: Dp = 49.73.dp,
+    val callVideoControlSize: Dp = 51.73.dp,
+    val sharedCallControlSize: Dp = 50.64.dp,
+    val sharedCallContentInset: Dp = 24.dp,
+    val sharedCallTopInset: Dp = 32.dp,
+    val sharedCallRegionGap: Dp = 13.dp,
     val callControlGlyph: Dp = 22.dp,
     val callContentInset: Dp = 29.dp,
     val callTopInset: Dp = 34.dp,
     val callBottomInset: Dp = 24.dp,
-    val callAvatarSize: Dp = 44.3.dp,
+    val callAvatarSize: Dp = 44.27.dp,
     /** Turn-by-turn route surface canonical height from Expanded.svg (185.3dp). */
     val navigationExpandedHeight: Dp = 185.3.dp,
     /** Music expanded height (full sheet with scrubber and controls). */
@@ -752,3 +776,31 @@ fun AppTheme(
         content = content
     )
 }
+
+/** Contextual recipe padding; computed properties keep immutable token instances compatible with hot reload. */
+val AppIslandTokens.contextualRadarLeadingInset: Dp get() = 18.dp
+val AppIslandTokens.contextualRadarVerticalInset: Dp get() = 15.dp
+val AppIslandTokens.deviceBatteryVerticalInset: Dp get() = 14.28.dp
+
+val AppIslandTokens.deviceTransferLeadingInset: Dp get() = 17.dp
+val AppIslandTokens.deviceTransferVerticalInset: Dp get() = 19.dp
+
+val AppIslandTokens.deviceBatteryTrailingInset: Dp get() = 18.4.dp
+
+val AppIslandTokens.videoRegionGap: Dp get() = 9.dp
+val AppIslandTokens.mediaControlLeadingInset: Dp get() = 30.dp
+val AppIslandTokens.mediaControlTrailingInset: Dp get() = 18.dp
+
+val AppIslandTokens.timerVerticalInset: Dp get() = 17.dp
+val AppIslandTokens.timerControlGap: Dp get() = 13.5.dp
+
+val IslandColors.timerCancelColor: Color get() = Color(0xFF838388)
+
+/** Figma19:1034 lane guidance.48dp targets retain the41.36dp specimen's visual centers. */
+val AppIslandTokens.navigationContentInset: Dp get() = 17.dp
+val AppIslandTokens.navigationLaneInset: Dp get() = navigationContentInset - (minimumActionTarget - 41.3605.dp) / 2
+val AppIslandTokens.navigationLaneTopInset: Dp get() = 42.dp - (minimumActionTarget - 41.3605.dp) / 2
+val AppIslandTokens.navigationBottomInset: Dp get() = 24.dp
+
+val IslandColors.navigationInactiveColor: Color get() = Color(0xFF838388)
+val IslandColors.navigationSubtitleColor: Color get() = Color(0xFFA4A4A9)

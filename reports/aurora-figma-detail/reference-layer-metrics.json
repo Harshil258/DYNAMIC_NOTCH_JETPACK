@@ -1,0 +1,2808 @@
+{
+  "19:979": [
+    {
+      "id": "19:979",
+      "name": "Dynamic Island / Compact",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 190.0,
+        "height": 38.0
+      },
+      "cornerRadius": 22.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:979;1:987",
+      "name": "Metadata",
+      "text": null,
+      "bounds": {
+        "x": 12.0,
+        "y": 7.0,
+        "width": 166.0,
+        "height": 24.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:979;70:2613",
+      "name": "Frame 41",
+      "text": null,
+      "bounds": {
+        "x": 12.0,
+        "y": 7.0,
+        "width": 133.0,
+        "height": 24.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:979;1:988",
+      "name": "Leading",
+      "text": null,
+      "bounds": {
+        "x": 12.0,
+        "y": 7.0,
+        "width": 24.0,
+        "height": 24.0
+      },
+      "cornerRadius": 4.226415157318115,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:979;70:1628",
+      "name": "Trailing",
+      "text": null,
+      "bounds": {
+        "x": 157.0,
+        "y": 10.0,
+        "width": 21.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:979;1:993",
+      "name": "trailing",
+      "text": "\udbc1\ude6b",
+      "bounds": {
+        "x": 157.0,
+        "y": 10.0,
+        "width": 21.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 18.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    }
+  ],
+  "19:1022": [
+    {
+      "id": "19:1022",
+      "name": "Dynamic Island",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 367.0,
+        "height": 85.72676086425781
+      },
+      "cornerRadius": 69.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;43:743",
+      "name": "Wrapper",
+      "text": null,
+      "bounds": {
+        "x": 16.0,
+        "y": 0.0,
+        "width": 335.0,
+        "height": 85.72676086425781
+      },
+      "cornerRadius": 69.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;43:745",
+      "name": "Leading",
+      "text": null,
+      "bounds": {
+        "x": 16.0,
+        "y": 16.3634033203125,
+        "width": 119.0,
+        "height": 53.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;69:1387",
+      "name": "Buttons",
+      "text": null,
+      "bounds": {
+        "x": 16.0,
+        "y": 16.3634033203125,
+        "width": 119.0,
+        "height": 53.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;43:754",
+      "name": "Group 1",
+      "text": null,
+      "bounds": {
+        "x": 16.81396484375,
+        "y": 17.09014892578125,
+        "width": 117.73260498046875,
+        "height": 52.27325439453125
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;43:755",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 16.81396484375,
+        "y": 17.09014892578125,
+        "width": 52.15779495239258,
+        "height": 52.15779495239258
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;43:756",
+      "name": "Ellipse 28",
+      "text": null,
+      "bounds": {
+        "x": 82.388671875,
+        "y": 17.20562744140625,
+        "width": 52.15779495239258,
+        "height": 52.15779495239258
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;43:757",
+      "name": "\udbc0\udd84",
+      "text": "\udbc0\udd84",
+      "bounds": {
+        "x": 96.26025390625,
+        "y": 36.12139892578125,
+        "width": 25.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.507740020751953,
+      "fontWeight": 600,
+      "lineHeightPx": 13.223104476928711,
+      "letterSpacing": -0.29972368478775024
+    },
+    {
+      "id": "I19:1022;43:758",
+      "name": "\udbc0\ude86",
+      "text": "\udbc0\ude86",
+      "bounds": {
+        "x": 33.20751953125,
+        "y": 36.00592041015625,
+        "width": 20.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.507740020751953,
+      "fontWeight": 400,
+      "lineHeightPx": 13.223104476928711,
+      "letterSpacing": -0.29972368478775024
+    },
+    {
+      "id": "I19:1022;43:750",
+      "name": "Trailing",
+      "text": null,
+      "bounds": {
+        "x": 239.0,
+        "y": 28.93170166015625,
+        "width": 112.0,
+        "height": 27.863378524780273
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1022;43:753",
+      "name": "3:35",
+      "text": "3:35",
+      "bounds": {
+        "x": 279.0,
+        "y": 32.79510498046875,
+        "width": 72.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 32.0,
+      "fontWeight": 600,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1022;43:759",
+      "name": "Timer",
+      "text": "Timer",
+      "bounds": {
+        "x": 234.0,
+        "y": 38.79510498046875,
+        "width": 42.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 16.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    }
+  ],
+  "19:1027": [
+    {
+      "id": "19:1027",
+      "name": "Dynamic Island",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 367.0,
+        "height": 86.0
+      },
+      "cornerRadius": 160.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2463",
+      "name": "Wrapper",
+      "text": null,
+      "bounds": {
+        "x": 10.0,
+        "y": 15.0,
+        "width": 347.0,
+        "height": 56.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2464",
+      "name": "Leading",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 15.0,
+        "width": 166.0,
+        "height": 56.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2459",
+      "name": "Ellipse 29",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 15.0,
+        "width": 56.0,
+        "height": 56.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2462",
+      "name": "Frame 24",
+      "text": null,
+      "bounds": {
+        "x": 88.0,
+        "y": 28.7960205078125,
+        "width": 102.0,
+        "height": 28.407970428466797
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2460",
+      "name": "Mobile",
+      "text": "Mobile",
+      "bounds": {
+        "x": 88.0,
+        "y": 28.7960205078125,
+        "width": 40.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 13.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1027;1:2461",
+      "name": "Tamia Castillo",
+      "text": "Tamia Castillo",
+      "bounds": {
+        "x": 88.0,
+        "y": 46.2039794921875,
+        "width": 102.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 16.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1027;70:743",
+      "name": "Trailing",
+      "text": null,
+      "bounds": {
+        "x": 223.0,
+        "y": 17.0,
+        "width": 120.0,
+        "height": 52.00006103515625
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2458",
+      "name": "Group 1",
+      "text": null,
+      "bounds": {
+        "x": 230.5029296875,
+        "y": 17.0,
+        "width": 111.63359069824219,
+        "height": 52.000057220458984
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2454",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 230.5029296875,
+        "y": 17.0,
+        "width": 52.000057220458984,
+        "height": 52.000057220458984
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2455",
+      "name": "Ellipse 28",
+      "text": null,
+      "bounds": {
+        "x": 290.13623046875,
+        "y": 17.0,
+        "width": 52.000057220458984,
+        "height": 52.000057220458984
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1027;1:2456",
+      "name": "\udbc0\udf3f",
+      "text": "\udbc0\udf3f",
+      "bounds": {
+        "x": 301.45166015625,
+        "y": 36.774658203125,
+        "width": 27.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.436647415161133,
+      "fontWeight": 400,
+      "lineHeightPx": 13.183114051818848,
+      "letterSpacing": -0.2988172471523285
+    },
+    {
+      "id": "I19:1027;1:2457",
+      "name": "\udbc0\udf47",
+      "text": "\udbc0\udf47",
+      "bounds": {
+        "x": 239.560546875,
+        "y": 36.774658203125,
+        "width": 32.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.436647415161133,
+      "fontWeight": 400,
+      "lineHeightPx": 13.183114051818848,
+      "letterSpacing": -0.2988172471523285
+    }
+  ],
+  "19:1033": [
+    {
+      "id": "19:1033",
+      "name": "Dynamic Island",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 367.0,
+        "height": 177.0
+      },
+      "cornerRadius": 42.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1011",
+      "name": "Metadata",
+      "text": null,
+      "bounds": {
+        "x": 8.0,
+        "y": 32.0,
+        "width": 351.0,
+        "height": 53.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1012",
+      "name": "Artwork",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 32.0,
+        "width": 53.0,
+        "height": 53.0
+      },
+      "cornerRadius": 8.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1013",
+      "name": "Content",
+      "text": null,
+      "bounds": {
+        "x": 89.0,
+        "y": 39.5,
+        "width": 254.0,
+        "height": 38.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1014",
+      "name": "Headline",
+      "text": null,
+      "bounds": {
+        "x": 97.0,
+        "y": 39.5,
+        "width": 191.0,
+        "height": 38.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:2064",
+      "name": "You Make Me Feel Like It\u2019s Halloween",
+      "text": null,
+      "bounds": {
+        "x": 97.0,
+        "y": 39.5,
+        "width": 191.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:2065",
+      "name": "Heat Waves \udbc0\udc9d",
+      "text": "Heat Waves \udbc0\udc9d",
+      "bounds": {
+        "x": 97.0,
+        "y": 39.5,
+        "width": 272.7165222167969,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 16.0,
+      "fontWeight": 600,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1016",
+      "name": "Subheadline",
+      "text": "Grass Animals",
+      "bounds": {
+        "x": 97.0,
+        "y": 59.5,
+        "width": 94.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 14.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": 0.0
+    },
+    {
+      "id": "I19:1033;1:1032",
+      "name": "audio",
+      "text": "\udbc1\ude6b",
+      "bounds": {
+        "x": 309.0,
+        "y": 49.5,
+        "width": 26.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1018",
+      "name": "Progress",
+      "text": null,
+      "bounds": {
+        "x": 8.0,
+        "y": 94.0,
+        "width": 351.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1019",
+      "name": "Current",
+      "text": "0:50",
+      "bounds": {
+        "x": 24.0,
+        "y": 94.0,
+        "width": 26.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 12.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1020",
+      "name": "Frame 22",
+      "text": null,
+      "bounds": {
+        "x": 59.0,
+        "y": 95.75,
+        "width": 248.0,
+        "height": 14.5
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1021",
+      "name": "Line",
+      "text": null,
+      "bounds": {
+        "x": 63.0,
+        "y": 99.75,
+        "width": 240.0,
+        "height": 6.5
+      },
+      "cornerRadius": 8.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1022",
+      "name": "Line",
+      "text": null,
+      "bounds": {
+        "x": 63.0,
+        "y": 99.75,
+        "width": 79.85713958740234,
+        "height": 6.5
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1023",
+      "name": "LeftAmount",
+      "text": "-3:11",
+      "bounds": {
+        "x": 316.0,
+        "y": 94.0,
+        "width": 27.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 12.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1024",
+      "name": "Controls",
+      "text": null,
+      "bounds": {
+        "x": 8.0,
+        "y": 121.0,
+        "width": 351.0,
+        "height": 44.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1025",
+      "name": "LeftIcon",
+      "text": "\udbc0\ude8c",
+      "bounds": {
+        "x": 40.0,
+        "y": 121.0,
+        "width": 38.0,
+        "height": 44.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 24.0,
+      "fontWeight": 600,
+      "lineHeightPx": 44.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1026",
+      "name": "Play Controls",
+      "text": null,
+      "bounds": {
+        "x": 107.5,
+        "y": 121.0,
+        "width": 166.0,
+        "height": 44.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1033;1:1027",
+      "name": "backwards",
+      "text": "\udbc0\ude8a",
+      "bounds": {
+        "x": 107.5,
+        "y": 121.0,
+        "width": 32.0,
+        "height": 44.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 20.0,
+      "fontWeight": 600,
+      "lineHeightPx": 44.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1028",
+      "name": "play",
+      "text": "\udbc0\ude84",
+      "bounds": {
+        "x": 175.5,
+        "y": 121.0,
+        "width": 30.0,
+        "height": 44.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 32.0,
+      "fontWeight": 600,
+      "lineHeightPx": 44.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1029",
+      "name": "forwards",
+      "text": "\udbc0\ude8c",
+      "bounds": {
+        "x": 241.5,
+        "y": 121.0,
+        "width": 32.0,
+        "height": 44.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 20.0,
+      "fontWeight": 600,
+      "lineHeightPx": 44.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1033;1:1030",
+      "name": "RightIcon",
+      "text": "\udbc1\udc62",
+      "bounds": {
+        "x": 303.0,
+        "y": 121.0,
+        "width": 24.0,
+        "height": 44.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 20.0,
+      "fontWeight": 600,
+      "lineHeightPx": 44.0,
+      "letterSpacing": -0.40799999237060547
+    }
+  ],
+  "19:1035": [
+    {
+      "id": "19:1035",
+      "name": "Dynamic Island",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 367.0,
+        "height": 168.0
+      },
+      "cornerRadius": 42.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:805",
+      "name": "Wrapper",
+      "text": null,
+      "bounds": {
+        "x": 17.0,
+        "y": 10.0,
+        "width": 333.0,
+        "height": 142.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:806",
+      "name": "Headline",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 34.0,
+        "width": 309.0,
+        "height": 44.27324295043945
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:807",
+      "name": "Ellipse 29",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 34.0,
+        "width": 44.27324295043945,
+        "height": 44.27324295043945
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:808",
+      "name": "Frame 31",
+      "text": null,
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 41.9326171875,
+        "width": 256.72674560546875,
+        "height": 28.407970428466797
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:809",
+      "name": "Frame 24",
+      "text": null,
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 41.9326171875,
+        "width": 102.0,
+        "height": 28.407970428466797
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:810",
+      "name": "Tamia Castillo",
+      "text": "Tamia Castillo",
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 41.9326171875,
+        "width": 102.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 16.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1035;73:811",
+      "name": "FaceTime Audio",
+      "text": "FaceTime Audio",
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 59.340576171875,
+        "width": 101.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 14.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1035;73:812",
+      "name": "\udbc0\udd74",
+      "text": "\udbc0\udd74",
+      "bounds": {
+        "x": 316.0,
+        "y": 50.6365966796875,
+        "width": 22.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 18.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1035;73:813",
+      "name": "Buttons",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 92.27325439453125,
+        "width": 309.0,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:814",
+      "name": "Volume",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:815",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:816",
+      "name": "\udbc2\udeb7",
+      "text": "\udbc2\udeb7",
+      "bounds": {
+        "x": 35.17626953125,
+        "y": 111.9439697265625,
+        "width": 38.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.31346893310547,
+      "fontWeight": 400,
+      "lineHeightPx": 13.113826751708984,
+      "letterSpacing": -0.2972467243671417
+    },
+    {
+      "id": "I19:1035;73:817",
+      "name": "Mic",
+      "text": null,
+      "bounds": {
+        "x": 93.318359375,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:818",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 93.318359375,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:819",
+      "name": "\udbc0\udeb1",
+      "text": "\udbc0\udeb1",
+      "bounds": {
+        "x": 106.998291015625,
+        "y": 111.9439697265625,
+        "width": 24.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.31346893310547,
+      "fontWeight": 400,
+      "lineHeightPx": 13.113826751708984,
+      "letterSpacing": -0.2972467243671417
+    },
+    {
+      "id": "I19:1035;73:820",
+      "name": "Camera",
+      "text": null,
+      "bounds": {
+        "x": 157.63671875,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:821",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 157.63671875,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:822",
+      "name": "\udbc0\udf4a",
+      "text": "\udbc0\udf4a",
+      "bounds": {
+        "x": 166.314208984375,
+        "y": 111.9439697265625,
+        "width": 34.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.31346893310547,
+      "fontWeight": 400,
+      "lineHeightPx": 13.113826751708984,
+      "letterSpacing": -0.2972467243671417
+    },
+    {
+      "id": "I19:1035;73:823",
+      "name": "Screen Share",
+      "text": null,
+      "bounds": {
+        "x": 221.954833984375,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:824",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 221.954833984375,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:825",
+      "name": "\udbc4\udd40",
+      "text": "\udbc4\udd40",
+      "bounds": {
+        "x": 231.632080078125,
+        "y": 111.9439697265625,
+        "width": 33.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.31346893310547,
+      "fontWeight": 400,
+      "lineHeightPx": 13.113826751708984,
+      "letterSpacing": -0.2972467243671417
+    },
+    {
+      "id": "I19:1035;73:826",
+      "name": "Cancel",
+      "text": null,
+      "bounds": {
+        "x": 286.273193359375,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:827",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 286.273193359375,
+        "y": 92.27325439453125,
+        "width": 51.72675704956055,
+        "height": 51.72675704956055
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1035;73:828",
+      "name": "\udbc0\udf47",
+      "text": "\udbc0\udf47",
+      "bounds": {
+        "x": 297.201416015625,
+        "y": 111.9439697265625,
+        "width": 31.0,
+        "height": 14.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 23.31346893310547,
+      "fontWeight": 400,
+      "lineHeightPx": 13.113826751708984,
+      "letterSpacing": -0.2972467243671417
+    }
+  ],
+  "19:1036": [
+    {
+      "id": "19:1036",
+      "name": "Dynamic Island",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 367.0,
+        "height": 165.99998474121094
+      },
+      "cornerRadius": 42.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:762",
+      "name": "Wrapper",
+      "text": null,
+      "bounds": {
+        "x": 17.0,
+        "y": 10.0,
+        "width": 333.0,
+        "height": 139.99998474121094
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:763",
+      "name": "Headline",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 34.0,
+        "width": 309.0,
+        "height": 44.27324295043945
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:764",
+      "name": "Ellipse 29",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 34.0,
+        "width": 44.27324295043945,
+        "height": 44.27324295043945
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:793",
+      "name": "Frame 31",
+      "text": null,
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 41.9326171875,
+        "width": 256.72674560546875,
+        "height": 28.407970428466797
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:765",
+      "name": "Frame 24",
+      "text": null,
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 41.9326171875,
+        "width": 102.0,
+        "height": 28.407970428466797
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:767",
+      "name": "Tamia Castillo",
+      "text": "Tamia Castillo",
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 41.9326171875,
+        "width": 102.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 16.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1036;43:766",
+      "name": "FaceTime Audio",
+      "text": "FaceTime Audio",
+      "bounds": {
+        "x": 81.273193359375,
+        "y": 59.340576171875,
+        "width": 101.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 14.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1036;43:792",
+      "name": "\udbc0\udd74",
+      "text": "\udbc0\udd74",
+      "bounds": {
+        "x": 316.0,
+        "y": 50.6365966796875,
+        "width": 22.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 18.0,
+      "fontWeight": 400,
+      "lineHeightPx": 10.485769271850586,
+      "letterSpacing": -0.2376774251461029
+    },
+    {
+      "id": "I19:1036;43:778",
+      "name": "Buttons",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 92.27325439453125,
+        "width": 309.0,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:779",
+      "name": "Volume",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:769",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 29.0,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:772",
+      "name": "\udbc0\udea8",
+      "text": "\udbc0\udea8",
+      "bounds": {
+        "x": 35.898681640625,
+        "y": 111.18341064453125,
+        "width": 37.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.412052154541016,
+      "fontWeight": 400,
+      "lineHeightPx": 12.606780052185059,
+      "letterSpacing": -0.28575366735458374
+    },
+    {
+      "id": "I19:1036;43:783",
+      "name": "Mic",
+      "text": null,
+      "bounds": {
+        "x": 93.818359375,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:784",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 93.818359375,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:785",
+      "name": "\udbc0\udeb1",
+      "text": "\udbc0\udeb1",
+      "bounds": {
+        "x": 107.9306640625,
+        "y": 111.18341064453125,
+        "width": 23.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.412052154541016,
+      "fontWeight": 400,
+      "lineHeightPx": 12.606780052185059,
+      "letterSpacing": -0.28575366735458374
+    },
+    {
+      "id": "I19:1036;43:786",
+      "name": "Camera",
+      "text": null,
+      "bounds": {
+        "x": 158.63671875,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:787",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 158.63671875,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:788",
+      "name": "\udbc0\udf4a",
+      "text": "\udbc0\udf4a",
+      "bounds": {
+        "x": 167.93994140625,
+        "y": 111.18341064453125,
+        "width": 32.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.412052154541016,
+      "fontWeight": 400,
+      "lineHeightPx": 12.606780052185059,
+      "letterSpacing": -0.28575366735458374
+    },
+    {
+      "id": "I19:1036;43:789",
+      "name": "Screen Share",
+      "text": null,
+      "bounds": {
+        "x": 223.455078125,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:790",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 223.455078125,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:791",
+      "name": "\udbc4\udd40",
+      "text": "\udbc4\udd40",
+      "bounds": {
+        "x": 232.75830078125,
+        "y": 111.18341064453125,
+        "width": 32.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.412052154541016,
+      "fontWeight": 400,
+      "lineHeightPx": 12.606780052185059,
+      "letterSpacing": -0.28575366735458374
+    },
+    {
+      "id": "I19:1036;43:780",
+      "name": "Cancel",
+      "text": null,
+      "bounds": {
+        "x": 288.2734375,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:781",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 288.2734375,
+        "y": 92.27325439453125,
+        "width": 49.726741790771484,
+        "height": 49.726741790771484
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1036;43:782",
+      "name": "\udbc0\udf47",
+      "text": "\udbc0\udf47",
+      "bounds": {
+        "x": 298.77880859375,
+        "y": 111.18341064453125,
+        "width": 30.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.412052154541016,
+      "fontWeight": 400,
+      "lineHeightPx": 12.606780052185059,
+      "letterSpacing": -0.28575366735458374
+    }
+  ],
+  "19:1037": [
+    {
+      "id": "19:1037",
+      "name": "Dynamic Island",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 367.0,
+        "height": 172.63958740234375
+      },
+      "cornerRadius": 42.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:817",
+      "name": "Metadata",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 32.0,
+        "width": 319.0,
+        "height": 57.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:818",
+      "name": "Artwork",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 32.0,
+        "width": 53.0,
+        "height": 53.0
+      },
+      "cornerRadius": 160.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:819",
+      "name": "Content",
+      "text": null,
+      "bounds": {
+        "x": 89.0,
+        "y": 39.5,
+        "width": 254.0,
+        "height": 38.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:820",
+      "name": "Headline",
+      "text": null,
+      "bounds": {
+        "x": 97.0,
+        "y": 39.5,
+        "width": 238.0,
+        "height": 38.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:821",
+      "name": "You Make Me Feel Like It\u2019s Halloween",
+      "text": null,
+      "bounds": {
+        "x": 97.0,
+        "y": 39.5,
+        "width": 238.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:822",
+      "name": "Asia Wild Nature",
+      "text": "Asia Wild Nature",
+      "bounds": {
+        "x": 97.0,
+        "y": 39.5,
+        "width": 339.82476806640625,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 16.0,
+      "fontWeight": 600,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1037;93:823",
+      "name": "Subheadline",
+      "text": "For me \udbc0\udd8a",
+      "bounds": {
+        "x": 97.0,
+        "y": 59.5,
+        "width": 65.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 15.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": 0.0
+    },
+    {
+      "id": "I19:1037;93:824",
+      "name": "audio",
+      "text": "\udbc1\ude6b",
+      "bounds": {
+        "x": 309.0,
+        "y": 49.5,
+        "width": 26.0,
+        "height": 18.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.0,
+      "fontWeight": 400,
+      "lineHeightPx": 18.0,
+      "letterSpacing": -0.40799999237060547
+    },
+    {
+      "id": "I19:1037;93:843",
+      "name": "Buttons",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 98.0,
+        "width": 319.0,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:844",
+      "name": "Volume",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:845",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 24.0,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:846",
+      "name": "\udbc0\udea8",
+      "text": "\udbc0\udea8",
+      "bounds": {
+        "x": 31.025390625,
+        "y": 117.25732421875,
+        "width": 37.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.823482513427734,
+      "fontWeight": 400,
+      "lineHeightPx": 12.83820915222168,
+      "letterSpacing": -0.2909993827342987
+    },
+    {
+      "id": "I19:1037;93:847",
+      "name": "Mic",
+      "text": null,
+      "bounds": {
+        "x": 91.090087890625,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:848",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 91.090087890625,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:849",
+      "name": "\udbc0\udeb1",
+      "text": "\udbc0\udeb1",
+      "bounds": {
+        "x": 105.461669921875,
+        "y": 117.25732421875,
+        "width": 23.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.823482513427734,
+      "fontWeight": 400,
+      "lineHeightPx": 12.83820915222168,
+      "letterSpacing": -0.2909993827342987
+    },
+    {
+      "id": "I19:1037;93:850",
+      "name": "Camera",
+      "text": null,
+      "bounds": {
+        "x": 158.18017578125,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:851",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 158.18017578125,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:852",
+      "name": "\udbc0\udf4a",
+      "text": "\udbc0\udf4a",
+      "bounds": {
+        "x": 167.654052734375,
+        "y": 117.25732421875,
+        "width": 33.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.823482513427734,
+      "fontWeight": 400,
+      "lineHeightPx": 12.83820915222168,
+      "letterSpacing": -0.2909993827342987
+    },
+    {
+      "id": "I19:1037;93:853",
+      "name": "Screen Share",
+      "text": null,
+      "bounds": {
+        "x": 225.270263671875,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:854",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 225.270263671875,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:855",
+      "name": "\udbc4\udcd1",
+      "text": "\udbc4\udcd1",
+      "bounds": {
+        "x": 231.744140625,
+        "y": 116.25732421875,
+        "width": 38.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.823482513427734,
+      "fontWeight": 400,
+      "lineHeightPx": 12.83820915222168,
+      "letterSpacing": -0.2909993827342987
+    },
+    {
+      "id": "I19:1037;93:856",
+      "name": "Cancel",
+      "text": null,
+      "bounds": {
+        "x": 292.3603515625,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:857",
+      "name": "Ellipse 27",
+      "text": null,
+      "bounds": {
+        "x": 292.3603515625,
+        "y": 98.0,
+        "width": 50.63959503173828,
+        "height": 50.63959503173828
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "I19:1037;93:858",
+      "name": "\udbc0\udd84",
+      "text": "\udbc0\udd84",
+      "bounds": {
+        "x": 306.05859375,
+        "y": 117.25732421875,
+        "width": 24.0,
+        "height": 13.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Text",
+      "fontSize": 22.823482513427734,
+      "fontWeight": 500,
+      "lineHeightPx": 12.83820915222168,
+      "letterSpacing": -0.2909993827342987
+    }
+  ],
+  "27:992": [
+    {
+      "id": "27:992",
+      "name": "Figma Comment",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 366.0,
+        "height": 126.0
+      },
+      "cornerRadius": 44.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:993",
+      "name": "Camera",
+      "text": null,
+      "bounds": {
+        "x": 213.5087890625,
+        "y": 25.607177734375,
+        "width": 17.805404663085938,
+        "height": 17.264419555664062
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:994",
+      "name": "Lens 1",
+      "text": null,
+      "bounds": {
+        "x": 213.5087890625,
+        "y": 25.607177734375,
+        "width": 17.805404663085938,
+        "height": 17.264419555664062
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:995",
+      "name": "Lens",
+      "text": null,
+      "bounds": {
+        "x": 217.599609375,
+        "y": 29.552490234375,
+        "width": 9.554121017456055,
+        "height": 9.440027236938477
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:996",
+      "name": "Line",
+      "text": null,
+      "bounds": {
+        "x": 221.978515625,
+        "y": 29.552490234375,
+        "width": 0.0,
+        "height": 9.440027236938477
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:997",
+      "name": "Screen Shot 2022-09-14 at 6.43 1",
+      "text": null,
+      "bounds": {
+        "x": 20.0,
+        "y": 20.0,
+        "width": 103.0,
+        "height": 86.0
+      },
+      "cornerRadius": 24.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:998",
+      "name": "Song Details",
+      "text": null,
+      "bounds": {
+        "x": 139.0,
+        "y": 26.0,
+        "width": 137.0,
+        "height": 74.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:999",
+      "name": "Mamad",
+      "text": "Mamad",
+      "bounds": {
+        "x": 139.0,
+        "y": 26.0,
+        "width": 53.0,
+        "height": 19.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Display",
+      "fontSize": 16.0,
+      "fontWeight": 500,
+      "lineHeightPx": 19.09375,
+      "letterSpacing": 0.0
+    },
+    {
+      "id": "27:1000",
+      "name": "Haji ina chie zadi to baz dahane mano servis kardi",
+      "text": "Haji ina chie zadi \nto baz dahane mano \nservis kardi",
+      "bounds": {
+        "x": 139.0,
+        "y": 49.0,
+        "width": 137.0,
+        "height": 51.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Display",
+      "fontSize": 16.0,
+      "fontWeight": 300,
+      "lineHeightPx": 17.0,
+      "letterSpacing": 0.0
+    },
+    {
+      "id": "27:1001",
+      "name": "Group 19",
+      "text": null,
+      "bounds": {
+        "x": 325.0,
+        "y": 68.0,
+        "width": 4.0,
+        "height": 28.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1002",
+      "name": "Ellipse 3",
+      "text": null,
+      "bounds": {
+        "x": 325.0,
+        "y": 80.0,
+        "width": 4.0,
+        "height": 4.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1003",
+      "name": "Ellipse 4",
+      "text": null,
+      "bounds": {
+        "x": 325.0,
+        "y": 68.0,
+        "width": 4.0,
+        "height": 4.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1004",
+      "name": "Ellipse 5",
+      "text": null,
+      "bounds": {
+        "x": 325.0,
+        "y": 92.0,
+        "width": 4.0,
+        "height": 4.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1005",
+      "name": "Frame 5",
+      "text": null,
+      "bounds": {
+        "x": 93.0,
+        "y": 29.0,
+        "width": 22.0,
+        "height": 22.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1006",
+      "name": "Rectangle 8",
+      "text": null,
+      "bounds": {
+        "x": 93.0,
+        "y": 29.0,
+        "width": 22.0,
+        "height": 22.0
+      },
+      "cornerRadius": 100.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1007",
+      "name": "messages#ui,message,chat,comment,answer,interface,speak,talk,speaking,bubble,reply,bubbles,forum,dialog",
+      "text": null,
+      "bounds": {
+        "x": 317.0,
+        "y": 21.0,
+        "width": 20.0,
+        "height": 20.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1008",
+      "name": "Stroke 462",
+      "text": null,
+      "bounds": {
+        "x": 319.5,
+        "y": 23.50103759765625,
+        "width": 15.0,
+        "height": 14.997980117797852
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1009",
+      "name": "3",
+      "text": "3",
+      "bounds": {
+        "x": 323.73046875,
+        "y": 25.0,
+        "width": 7.023685455322266,
+        "height": 12.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Display",
+      "fontSize": 10.0,
+      "fontWeight": 500,
+      "lineHeightPx": 11.93359375,
+      "letterSpacing": 0.0
+    }
+  ],
+  "27:1021": [
+    {
+      "id": "27:1021",
+      "name": "Figma Comment",
+      "text": null,
+      "bounds": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 189.0,
+        "height": 36.0
+      },
+      "cornerRadius": 44.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1022",
+      "name": "Camera",
+      "text": null,
+      "bounds": {
+        "x": 121.015625,
+        "y": 25.607177734375,
+        "width": 17.805404663085938,
+        "height": 17.264419555664062
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1023",
+      "name": "Lens 1",
+      "text": null,
+      "bounds": {
+        "x": 121.015625,
+        "y": 25.607177734375,
+        "width": 17.805404663085938,
+        "height": 17.264419555664062
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1024",
+      "name": "Lens",
+      "text": null,
+      "bounds": {
+        "x": 125.1064453125,
+        "y": 29.552490234375,
+        "width": 9.554121017456055,
+        "height": 9.440027236938477
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1025",
+      "name": "Line",
+      "text": null,
+      "bounds": {
+        "x": 129.4853515625,
+        "y": 29.552490234375,
+        "width": 0.0,
+        "height": 9.440027236938477
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1026",
+      "name": "Group 44192",
+      "text": null,
+      "bounds": {
+        "x": 49.013671875,
+        "y": 9.0,
+        "width": 65.98603057861328,
+        "height": 18.365127563476562
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1027",
+      "name": "Screen Shot 2022-09-14 at 6.43 1",
+      "text": null,
+      "bounds": {
+        "x": 49.013671875,
+        "y": 9.0,
+        "width": 21.99544334411621,
+        "height": 18.365127563476562
+      },
+      "cornerRadius": 5.125151634216309,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1028",
+      "name": "Song Details",
+      "text": null,
+      "bounds": {
+        "x": 74.42578125,
+        "y": 10.28131103515625,
+        "width": 29.256074905395508,
+        "height": 15.80255126953125
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1029",
+      "name": "Mamad",
+      "text": "Mamad",
+      "bounds": {
+        "x": 74.42578125,
+        "y": 10.28131103515625,
+        "width": 12.0,
+        "height": 4.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Display",
+      "fontSize": 3.4167678356170654,
+      "fontWeight": 500,
+      "lineHeightPx": 4.077432155609131,
+      "letterSpacing": 0.0
+    },
+    {
+      "id": "27:1030",
+      "name": "Haji ina chie zadi to baz dahane mano servis kardi",
+      "text": "Haji ina chie zadi \nto baz dahane mano \nservis kardi",
+      "bounds": {
+        "x": 74.42578125,
+        "y": 15.135498046875,
+        "width": 30.0,
+        "height": 11.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Display",
+      "fontSize": 3.4167678356170654,
+      "fontWeight": 300,
+      "lineHeightPx": 3.6303157806396484,
+      "letterSpacing": 0.0
+    },
+    {
+      "id": "27:1031",
+      "name": "Group 19",
+      "text": null,
+      "bounds": {
+        "x": 114.1455078125,
+        "y": 19.25030517578125,
+        "width": 0.8541919589042664,
+        "height": 5.979343414306641
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1032",
+      "name": "Ellipse 3",
+      "text": null,
+      "bounds": {
+        "x": 114.1455078125,
+        "y": 21.8128662109375,
+        "width": 0.8541919589042664,
+        "height": 0.8541919589042664
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1033",
+      "name": "Ellipse 4",
+      "text": null,
+      "bounds": {
+        "x": 114.1455078125,
+        "y": 19.25030517578125,
+        "width": 0.8541919589042664,
+        "height": 0.8541919589042664
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1034",
+      "name": "Ellipse 5",
+      "text": null,
+      "bounds": {
+        "x": 114.1455078125,
+        "y": 24.37542724609375,
+        "width": 0.8541919589042664,
+        "height": 0.8541919589042664
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1035",
+      "name": "Rectangle 8",
+      "text": null,
+      "bounds": {
+        "x": 8.0,
+        "y": 8.0,
+        "width": 20.0,
+        "height": 20.0
+      },
+      "cornerRadius": 100.0,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1036",
+      "name": "messages#ui,message,chat,comment,answer,interface,speak,talk,speaking,bubble,reply,bubbles,forum,dialog",
+      "text": null,
+      "bounds": {
+        "x": 161.0,
+        "y": 8.0,
+        "width": 20.0,
+        "height": 20.0
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1037",
+      "name": "Stroke 462",
+      "text": null,
+      "bounds": {
+        "x": 163.5,
+        "y": 10.50103759765625,
+        "width": 15.0,
+        "height": 14.997980117797852
+      },
+      "cornerRadius": null,
+      "fontFamily": null,
+      "fontSize": null,
+      "fontWeight": null,
+      "lineHeightPx": null,
+      "letterSpacing": null
+    },
+    {
+      "id": "27:1038",
+      "name": "3",
+      "text": "3",
+      "bounds": {
+        "x": 167.73046875,
+        "y": 12.0,
+        "width": 7.023685455322266,
+        "height": 12.0
+      },
+      "cornerRadius": null,
+      "fontFamily": "SF Pro Display",
+      "fontSize": 10.0,
+      "fontWeight": 500,
+      "lineHeightPx": 11.93359375,
+      "letterSpacing": 0.0
+    }
+  ]
+}

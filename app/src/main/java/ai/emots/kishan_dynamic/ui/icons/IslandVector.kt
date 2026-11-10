@@ -7,6 +7,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.StrokeCap
@@ -65,6 +66,7 @@ fun DrawScope.drawIslandVector(
         y = (size.height - side) / 2f,
     ),
     alpha: Float = 1f,
+    brush: Brush? = null,
 ) {
     val scale = side / IslandVectorCatalog.VIEWPORT
     withTransform({
@@ -84,6 +86,8 @@ fun DrawScope.drawIslandVector(
                         join = StrokeJoin.Round,
                     ),
                 )
+            } else if (brush != null) {
+                drawPath(path = path, brush = brush, alpha = contour.alpha * alpha, style = Fill)
             } else {
                 drawPath(
                     path = path,

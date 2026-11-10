@@ -7,6 +7,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.res.painterResource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -21,12 +23,20 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/** Isolated debug fixtures may supply original reference artwork; production defaults to PackageManager. */
+val LocalIslandFixtureIcons = staticCompositionLocalOf<Map<String, Int>> { emptyMap() }
+
 @Composable
 fun PackageIcon(
     packageName: String?,
     modifier: Modifier = Modifier,
     contentDescription: String = "App icon"
 ) {
+    LocalIslandFixtureIcons.current[packageName]?.let { resource ->
+        Image(painterResource(resource), contentDescription = contentDescription,
+            modifier = modifier, contentScale = ContentScale.Crop)
+        return
+    }
     val context = LocalContext.current
     val bitmap by produceState<Bitmap?>(initialValue = null, key1 = packageName) {
         value = if (packageName.isNullOrBlank()) null else withContext(Dispatchers.IO) {

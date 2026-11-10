@@ -1,0 +1,17 @@
+{
+  "fileKey": "dmQdDCYXcy910vWZLfOqqz",
+  "node": "I19:1034;43:1062",
+  "originalExport": "reports/aurora-figma/figma-19-1034.png",
+  "pixelCrop": [
+    66,
+    261,
+    168,
+    339
+  ],
+  "sourceFrameDp": [
+    51,
+    39
+  ],
+  "asset": "app/src/main/res/drawable-nodpi/navigation_shield.png",
+  "note": "Lossless crop of actual2x Figma render; raw original and previous asset retained."
+}

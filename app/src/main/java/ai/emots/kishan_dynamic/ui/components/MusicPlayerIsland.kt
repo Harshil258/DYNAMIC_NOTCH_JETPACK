@@ -120,10 +120,8 @@ fun MusicPlayerIsland(
                         Text(
                             text = title.ifBlank { "Now playing" },
                             color = Color.White,
-                            fontSize = 15.sp,
+                            fontSize = 16.sp, lineHeight = 18.sp,
                             fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
                         )
 
                         // Explicit metadata is not supplied by this source model; no fabricated badge.
@@ -135,10 +133,8 @@ fun MusicPlayerIsland(
                     Text(
                         text = artist.ifBlank { "Unknown Artist" },
                         color = Color(0xFF9A9A9A),
-                        fontSize = 12.5.sp,
+                        fontSize = 14.sp, lineHeight = 18.sp,
                         fontWeight = FontWeight.Normal,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
@@ -146,8 +142,8 @@ fun MusicPlayerIsland(
 
                 // Equalizer on right
                 LiveEqualizerMini(
-                    width = 18.dp * scale,
-                    height = 20.dp * scale,
+                    width = 20.dp,
+                    height = 23.dp,
                     animated = playing
                 )
             }
@@ -161,10 +157,10 @@ fun MusicPlayerIsland(
                 ) {
                     Text(
                         text = currentTime,
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         color = Color(0xFF8E8E93),
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = FontFamily.Monospace
+                        fontWeight = FontWeight.Normal,
+                        lineHeight = 18.sp
                     )
 
                     Spacer(modifier = Modifier.width(10.dp * scale))
@@ -189,10 +185,10 @@ fun MusicPlayerIsland(
 
                     Text(
                         text = remainingTime,
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         color = Color(0xFF8E8E93),
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = FontFamily.Monospace
+                        fontWeight = FontWeight.Normal,
+                        lineHeight = 18.sp
                     )
                 }
                 }
@@ -223,7 +219,7 @@ fun MusicPlayerIsland(
                     AppleIcon(
                         glyph = AppleGlyph.Backward,
                         tint = Color.White,
-                        size = 22.dp * scale
+                        size = 29.dp
                     )
                 }
 
@@ -263,7 +259,7 @@ fun MusicPlayerIsland(
                     AppleIcon(
                         glyph = AppleGlyph.Forward,
                         tint = Color.White,
-                        size = 22.dp * scale
+                        size = 29.dp
                     )
                 }
 
@@ -282,8 +278,8 @@ fun MusicPlayerIsland(
                 ) {
                     AppleIcon(
                         glyph = AppleGlyph.AirPlay,
-                        tint = Color(0xFF8E8E93),
-                        size = 19.dp * scale
+                        tint = Color.White,
+                        size = 21.dp
                     )
                 }
             }
@@ -299,7 +295,7 @@ fun AppleAudioScrubber(
     progress: Float,
     onProgressChange: (Float) -> Unit,
     onProgressChangeFinished: () -> Unit,
-    activeColor: Color = Color(0xFFFF2D55),
+    activeColor: Color = Color.White.copy(alpha = .8f),
     modifier: Modifier = Modifier
 ) {
     Canvas(
@@ -332,12 +328,12 @@ fun AppleAudioScrubber(
         val w = size.width
         val h = size.height
         val centerY = h / 2f
-        val trackHeight = 3.5.dp.toPx()
+        val trackHeight = 6.5.dp.toPx()
         val cornerRadius = CornerRadius(trackHeight / 2f, trackHeight / 2f)
 
         // 1. Inactive background track (semi-transparent white)
         drawRoundRect(
-            color = Color.White.copy(alpha = 0.25f),
+            color = Color(0xFF3F3F3F).copy(alpha = .7f),
             topLeft = Offset(0f, centerY - trackHeight / 2f),
             size = Size(w, trackHeight),
             cornerRadius = cornerRadius
@@ -354,12 +350,7 @@ fun AppleAudioScrubber(
             )
         }
 
-        // 3. Crisp Apple circle thumb (8dp)
-        val thumbRadius = 4.dp.toPx()
-        drawCircle(
-            color = Color.White,
-            radius = thumbRadius,
-            center = Offset(activeWidth, centerY)
-        )
+        // Figma uses a flat played segment with no extra circular thumb.
+
     }
 }

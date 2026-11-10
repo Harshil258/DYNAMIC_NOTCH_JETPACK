@@ -1,0 +1,373 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "requestedProfile": {
+    "width": 320,
+    "fontPercent": 200,
+    "rtl": false
+  },
+  "captures": [
+    {
+      "state": "DeliveryCompact",
+      "ordinal": 32,
+      "file": "32-DeliveryCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "DeliveryExpanded",
+      "ordinal": 33,
+      "file": "33-DeliveryExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "FlightCompact",
+      "ordinal": 34,
+      "file": "34-FlightCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "FlightExpanded",
+      "ordinal": 35,
+      "file": "35-FlightExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "SportsCompact",
+      "ordinal": 36,
+      "file": "36-SportsCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "SportsExpanded",
+      "ordinal": 37,
+      "file": "37-SportsExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "NavigationCompact",
+      "ordinal": 38,
+      "file": "38-NavigationCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "VoiceMemoExpanded",
+      "ordinal": 39,
+      "file": "39-VoiceMemoExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "ScreenRecordingExpanded",
+      "ordinal": 40,
+      "file": "40-ScreenRecordingExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "ShortcutExpanded",
+      "ordinal": 41,
+      "file": "41-ShortcutExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "FocusModeExpanded",
+      "ordinal": 42,
+      "file": "42-FocusModeExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "AirPodsConnected",
+      "ordinal": 43,
+      "file": "43-AirPodsConnected.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "SatelliteConnected",
+      "ordinal": 44,
+      "file": "44-SatelliteConnected.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "FindMyAlert",
+      "ordinal": 45,
+      "file": "45-FindMyAlert.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "MovedToIPhone",
+      "ordinal": 46,
+      "file": "46-MovedToIPhone.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "VideoRemoteExpanded",
+      "ordinal": 47,
+      "file": "47-VideoRemoteExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "AirDropActivity",
+      "ordinal": 48,
+      "file": "48-AirDropActivity.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "TimerImage",
+      "ordinal": 49,
+      "file": "49-TimerImage.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "NotificationImage",
+      "ordinal": 50,
+      "file": "50-NotificationImage.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "CallAvatars",
+      "ordinal": 51,
+      "file": "51-CallAvatars.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "TransportActivity",
+      "ordinal": 52,
+      "file": "52-TransportActivity.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "FlightTrackerExpanded",
+      "ordinal": 53,
+      "file": "53-FlightTrackerExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "SubscriptionPricing",
+      "ordinal": 54,
+      "file": "54-SubscriptionPricing.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "MovieCard",
+      "ordinal": 55,
+      "file": "55-MovieCard.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "ColorOptions",
+      "ordinal": 56,
+      "file": "56-ColorOptions.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "AirplaneAlert",
+      "ordinal": 57,
+      "file": "57-AirplaneAlert.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "ScreenMirroringAlert",
+      "ordinal": 58,
+      "file": "58-ScreenMirroringAlert.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "MobileDataAlert",
+      "ordinal": 59,
+      "file": "59-MobileDataAlert.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "TransitRouteAlert",
+      "ordinal": 60,
+      "file": "60-TransitRouteAlert.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "Idle",
+      "ordinal": 1,
+      "file": "01-Idle.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "Minimal",
+      "ordinal": 2,
+      "file": "02-Minimal.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "MusicCompact",
+      "ordinal": 3,
+      "file": "03-MusicCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "MusicExpanded",
+      "ordinal": 4,
+      "file": "04-MusicExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "CallCompact",
+      "ordinal": 5,
+      "file": "05-CallCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "CallExpanded",
+      "ordinal": 6,
+      "file": "06-CallExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "CallSummaryExpanded",
+      "ordinal": 7,
+      "file": "07-CallSummaryExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "FaceTimeCallExpanded",
+      "ordinal": 8,
+      "file": "08-FaceTimeCallExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "SharedMediaCallExpanded",
+      "ordinal": 9,
+      "file": "09-SharedMediaCallExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "OngoingCallBanner",
+      "ordinal": 10,
+      "file": "10-OngoingCallBanner.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "NotificationCompact",
+      "ordinal": 11,
+      "file": "11-NotificationCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "NotificationStacked",
+      "ordinal": 12,
+      "file": "12-NotificationStacked.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "NotificationWithMusicCompact",
+      "ordinal": 13,
+      "file": "13-NotificationWithMusicCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "NotificationExpanded",
+      "ordinal": 14,
+      "file": "14-NotificationExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "SilentModeCompact",
+      "ordinal": 15,
+      "file": "15-SilentModeCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "SilentModeExpanded",
+      "ordinal": 16,
+      "file": "16-SilentModeExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "RingerModeExpanded",
+      "ordinal": 17,
+      "file": "17-RingerModeExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "VibrateModeCompact",
+      "ordinal": 18,
+      "file": "18-VibrateModeCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "NormalModeCompact",
+      "ordinal": 19,
+      "file": "19-NormalModeCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "RingerVolumeCompact",
+      "ordinal": 20,
+      "file": "20-RingerVolumeCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "MediaVolumeCompact",
+      "ordinal": 21,
+      "file": "21-MediaVolumeCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "BluetoothConnected",
+      "ordinal": 22,
+      "file": "22-BluetoothConnected.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "BluetoothConnecting",
+      "ordinal": 23,
+      "file": "23-BluetoothConnecting.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "ActionControlExpanded",
+      "ordinal": 24,
+      "file": "24-ActionControlExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "PremiumExpiryExpanded",
+      "ordinal": 25,
+      "file": "25-PremiumExpiryExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "ChargingCompact",
+      "ordinal": 26,
+      "file": "26-ChargingCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "ChargingExpanded",
+      "ordinal": 27,
+      "file": "27-ChargingExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "LowBatteryCompact",
+      "ordinal": 28,
+      "file": "28-LowBatteryCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "LowBatteryExpanded",
+      "ordinal": 29,
+      "file": "29-LowBatteryExpanded.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "TimerCompact",
+      "ordinal": 30,
+      "file": "30-TimerCompact.png",
+      "visualReview": "pending"
+    },
+    {
+      "state": "TimerExpanded",
+      "ordinal": 31,
+      "file": "31-TimerExpanded.png",
+      "visualReview": "pending"
+    }
+  ]
+}

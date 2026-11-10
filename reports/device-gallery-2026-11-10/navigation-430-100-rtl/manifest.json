@@ -1,0 +1,25 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": true,
+  "requestedProfile": {
+    "width": 430,
+    "fontPercent": 100,
+    "rtl": true
+  },
+  "captures": [
+    {
+      "state": "ColorOptions",
+      "ordinal": 56,
+      "file": "56-ColorOptions.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794311038.533204
+    }
+  ],
+  "deviceDensityDpi": 480,
+  "requestedStates": [
+    "ColorOptions"
+  ]
+}

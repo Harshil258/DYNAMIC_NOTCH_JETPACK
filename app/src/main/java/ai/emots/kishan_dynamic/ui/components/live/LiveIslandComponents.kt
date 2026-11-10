@@ -12,6 +12,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,6 +50,9 @@ import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.components.AppleIcon
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
+import ai.emots.kishan_dynamic.ui.theme.AppTheme
+import ai.emots.kishan_dynamic.ui.motion.LocalReducedMotion
+import androidx.compose.material3.ripple
 
 /**
  * Shared status badge for Live Islands (e.g. "ON THE WAY", "ON TIME", "78' LIVE").
@@ -61,7 +66,7 @@ fun IslandStatusBadge(
     showDot: Boolean = false,
     isPulsing: Boolean = false
 ) {
-    val pulseAlpha = if (isPulsing) {
+    val pulseAlpha = if (isPulsing && !LocalReducedMotion.current) {
         val transition = rememberInfiniteTransition(label = "badge_pulse")
         val alpha by transition.animateFloat(
             initialValue = 0.5f,
@@ -157,27 +162,21 @@ fun IslandActionChip(
 ) {
     Box(
         modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(backgroundColor)
+            .size(size.coerceAtLeast(AppTheme.island.minimumActionTarget))
             .semantics {
                 role = Role.Button
-                if (contentDescription != null) {
-                    this.contentDescription = contentDescription
-                }
+                if (contentDescription != null) this.contentDescription = contentDescription
             }
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = null,
+                indication = ripple(bounded = false),
                 onClick = onClick
             ),
         contentAlignment = Alignment.Center
     ) {
-        AppleIcon(
-            glyph = glyph,
-            tint = iconTint,
-            size = iconSize
-        )
+        Box(Modifier.size(size).clip(CircleShape).background(backgroundColor), contentAlignment = Alignment.Center) {
+            AppleIcon(glyph = glyph, tint = iconTint, size = iconSize)
+        }
     }
 }
 
@@ -190,8 +189,9 @@ fun IslandLivePulseIndicator(
     size: Dp = 6.dp,
     modifier: Modifier = Modifier
 ) {
+    val scale = if (LocalReducedMotion.current) 1f else {
     val transition = rememberInfiniteTransition(label = "live_pulse")
-    val scale by transition.animateFloat(
+    val animatedScale by transition.animateFloat(
         initialValue = 0.7f,
         targetValue = 1.15f,
         animationSpec = infiniteRepeatable(
@@ -200,6 +200,8 @@ fun IslandLivePulseIndicator(
         ),
         label = "pulse_scale"
     )
+        animatedScale
+    }
 
     Box(
         modifier = modifier
@@ -211,4 +213,23 @@ fun IslandLivePulseIndicator(
             .clip(CircleShape)
             .background(color)
     )
+}
+
+/** Identity retains its width when larger type makes a trailing status unsuitable. */
+@Composable
+internal fun IslandAdaptiveHeader(identity: @Composable () -> Unit, status: @Composable () -> Unit) {
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        if (maxWidth < 300.dp || LocalDensity.current.fontScale > 1.3f) {
+            Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                identity()
+                status()
+            }
+        } else {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                Box(Modifier.weight(1f)) { identity() }
+                status()
+            }
+        }
+    }
 }

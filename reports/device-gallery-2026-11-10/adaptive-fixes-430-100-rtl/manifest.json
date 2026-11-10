@@ -1,0 +1,32 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": false,
+  "requestedProfile": {
+    "width": 430,
+    "fontPercent": 100,
+    "rtl": true
+  },
+  "captures": [
+    {
+      "state": "VoiceMemoExpanded",
+      "ordinal": 39,
+      "file": "39-VoiceMemoExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309957.835815
+    },
+    {
+      "state": "VideoRemoteExpanded",
+      "ordinal": 47,
+      "file": "47-VideoRemoteExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794309964.2317288
+    }
+  ],
+  "requestedStates": [
+    "VideoRemoteExpanded",
+    "VoiceMemoExpanded"
+  ]
+}

@@ -1,0 +1,1221 @@
+[
+  {
+    "state": "Idle",
+    "referenceNode": "27:1050",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/01-Idle.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/01-Idle.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/01-Idle.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/01-Idle.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "Minimal",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/02-Minimal.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/02-Minimal.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/02-Minimal.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/02-Minimal.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "MusicCompact",
+    "referenceNode": "19:979",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/03-MusicCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/03-MusicCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/03-MusicCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/03-MusicCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "MusicExpanded",
+    "referenceNode": "19:1033",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/04-MusicExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/04-MusicExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/04-MusicExpanded.png",
+    "latestFinding": "Latest320200 title/artist wrap fully; controls below first viewport have separate bottom screenshot.",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/04-MusicExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "CallCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/05-CallCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/05-CallCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/05-CallCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/05-CallCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "CallExpanded",
+    "referenceNode": "19:1036",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/06-CallExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/06-CallExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/06-CallExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/06-CallExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "CallSummaryExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/07-CallSummaryExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/07-CallSummaryExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/07-CallSummaryExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/07-CallSummaryExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "FaceTimeCallExpanded",
+    "referenceNode": "19:1035",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/08-FaceTimeCallExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/08-FaceTimeCallExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/08-FaceTimeCallExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/08-FaceTimeCallExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "SharedMediaCallExpanded",
+    "referenceNode": "19:1037",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/09-SharedMediaCallExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/09-SharedMediaCallExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/09-SharedMediaCallExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/09-SharedMediaCallExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "OngoingCallBanner",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/10-OngoingCallBanner.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/10-OngoingCallBanner.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/10-OngoingCallBanner.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/10-OngoingCallBanner.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "NotificationCompact",
+    "referenceNode": "27:1021",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/11-NotificationCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/11-NotificationCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/11-NotificationCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/11-NotificationCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "NotificationStacked",
+    "referenceNode": "27:1021",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/12-NotificationStacked.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/12-NotificationStacked.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/12-NotificationStacked.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/12-NotificationStacked.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "NotificationWithMusicCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/13-NotificationWithMusicCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/13-NotificationWithMusicCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/13-NotificationWithMusicCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/13-NotificationWithMusicCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "NotificationExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/14-NotificationExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/14-NotificationExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/14-NotificationExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/14-NotificationExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "SilentModeCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/15-SilentModeCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/15-SilentModeCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/15-SilentModeCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/15-SilentModeCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "SilentModeExpanded",
+    "referenceNode": "19:1030",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/16-SilentModeExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/16-SilentModeExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/16-SilentModeExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/16-SilentModeExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "RingerModeExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/17-RingerModeExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/17-RingerModeExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/17-RingerModeExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/17-RingerModeExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "VibrateModeCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/18-VibrateModeCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/18-VibrateModeCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/18-VibrateModeCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/18-VibrateModeCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "NormalModeCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/19-NormalModeCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/19-NormalModeCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/19-NormalModeCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/19-NormalModeCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "RingerVolumeCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/20-RingerVolumeCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/20-RingerVolumeCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/20-RingerVolumeCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/20-RingerVolumeCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "MediaVolumeCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/21-MediaVolumeCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/21-MediaVolumeCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/21-MediaVolumeCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/21-MediaVolumeCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "BluetoothConnected",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/22-BluetoothConnected.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/22-BluetoothConnected.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/22-BluetoothConnected.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/22-BluetoothConnected.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "BluetoothConnecting",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/23-BluetoothConnecting.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/23-BluetoothConnecting.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/23-BluetoothConnecting.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/23-BluetoothConnecting.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "ActionControlExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/24-ActionControlExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/24-ActionControlExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/24-ActionControlExpanded.png",
+    "latestFinding": "Latest320200 uses2columns; bottom screenshot required for remaining controls.",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/24-ActionControlExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "PremiumExpiryExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/25-PremiumExpiryExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/25-PremiumExpiryExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/25-PremiumExpiryExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/25-PremiumExpiryExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "ChargingCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/26-ChargingCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/26-ChargingCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/26-ChargingCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/26-ChargingCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "ChargingExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/27-ChargingExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/27-ChargingExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/27-ChargingExpanded.png",
+    "latestFinding": "Adaptive grouping verified in fresh320200 device capture; full goal acceptance still pending.",
+    "largeContactSheetInspected": true,
+    "largeTextFixVerified": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/27-ChargingExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "LowBatteryCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/28-LowBatteryCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/28-LowBatteryCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/28-LowBatteryCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/28-LowBatteryCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "LowBatteryExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/29-LowBatteryExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/29-LowBatteryExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/29-LowBatteryExpanded.png",
+    "latestFinding": "Adaptive grouping verified in fresh320200 device capture; full goal acceptance still pending.",
+    "largeContactSheetInspected": true,
+    "largeTextFixVerified": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/29-LowBatteryExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "TimerCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/30-TimerCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/30-TimerCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/30-TimerCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/30-TimerCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "TimerExpanded",
+    "referenceNode": "19:1022",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/31-TimerExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/31-TimerExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/31-TimerExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/31-TimerExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "DeliveryCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/32-DeliveryCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/32-DeliveryCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/32-DeliveryCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/32-DeliveryCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "DeliveryExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/33-DeliveryExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/33-DeliveryExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/33-DeliveryExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/33-DeliveryExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "FlightCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/34-FlightCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/34-FlightCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/34-FlightCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/34-FlightCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "FlightExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/35-FlightExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/35-FlightExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/35-FlightExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/35-FlightExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "SportsCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/36-SportsCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/36-SportsCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/36-SportsCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/36-SportsCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "SportsExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/37-SportsExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/37-SportsExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/37-SportsExpanded.png",
+    "latestFinding": "Large-text score, fullbadge codes and badge/name alignment verified in sports-final-spacing320200 overlappingcaptures.",
+    "largeContactSheetInspected": true,
+    "largeTextFixVerified": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/37-SportsExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "NavigationCompact",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/38-NavigationCompact.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/38-NavigationCompact.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/38-NavigationCompact.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/38-NavigationCompact.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "VoiceMemoExpanded",
+    "referenceNode": "19:1024",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/39-VoiceMemoExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/39-VoiceMemoExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/39-VoiceMemoExpanded.png",
+    "largeContactSheetInspected": true,
+    "rtlFixVerified": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/39-VoiceMemoExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "ScreenRecordingExpanded",
+    "referenceNode": "19:1025",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/40-ScreenRecordingExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/40-ScreenRecordingExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/40-ScreenRecordingExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/40-ScreenRecordingExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "ShortcutExpanded",
+    "referenceNode": "19:1026",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/41-ShortcutExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/41-ShortcutExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/41-ShortcutExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/41-ShortcutExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "FocusModeExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/42-FocusModeExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/42-FocusModeExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/42-FocusModeExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/42-FocusModeExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "AirPodsConnected",
+    "referenceNode": "19:1023",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/43-AirPodsConnected.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/43-AirPodsConnected.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/43-AirPodsConnected.png",
+    "latestFinding": "Latest320200 identity stacks above percentage ring; Connected and75% visible.",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/43-AirPodsConnected.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "SatelliteConnected",
+    "referenceNode": "19:1028",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/44-SatelliteConnected.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/44-SatelliteConnected.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/44-SatelliteConnected.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/44-SatelliteConnected.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "FindMyAlert",
+    "referenceNode": "19:1029",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/45-FindMyAlert.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/45-FindMyAlert.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/45-FindMyAlert.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/45-FindMyAlert.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "MovedToIPhone",
+    "referenceNode": "19:1031",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/46-MovedToIPhone.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/46-MovedToIPhone.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/46-MovedToIPhone.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/46-MovedToIPhone.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "VideoRemoteExpanded",
+    "referenceNode": "19:1038",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/47-VideoRemoteExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/47-VideoRemoteExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/47-VideoRemoteExpanded.png",
+    "largeContactSheetInspected": true,
+    "latestFinding": "Adaptive grouping verified in fresh320200 device capture; full goal acceptance still pending.",
+    "largeTextFixVerified": true,
+    "rtlFixVerified": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/47-VideoRemoteExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "AirDropActivity",
+    "referenceNode": "19:1021",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/48-AirDropActivity.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/48-AirDropActivity.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/48-AirDropActivity.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/48-AirDropActivity.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "TimerImage",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/49-TimerImage.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/49-TimerImage.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/49-TimerImage.png",
+    "largeContactSheetInspected": true,
+    "latestFinding": "Adaptive grouping verified in fresh320200 device capture; full goal acceptance still pending.",
+    "largeTextFixVerified": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/49-TimerImage.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "NotificationImage",
+    "referenceNode": "27:992",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/50-NotificationImage.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/50-NotificationImage.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/50-NotificationImage.png",
+    "latestFinding": "Latest320200 stacked picture/text; bottom endpoint captured independently of vertical message pager.",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/50-NotificationImage.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "CallAvatars",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/51-CallAvatars.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/51-CallAvatars.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/51-CallAvatars.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/51-CallAvatars.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "TransportActivity",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/52-TransportActivity.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/52-TransportActivity.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/52-TransportActivity.png",
+    "largeContactSheetInspected": true,
+    "latestFinding": "Adaptive grouping verified in fresh320200 device capture; full goal acceptance still pending.",
+    "largeTextFixVerified": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/52-TransportActivity.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "FlightTrackerExpanded",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/53-FlightTrackerExpanded.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/53-FlightTrackerExpanded.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/53-FlightTrackerExpanded.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/53-FlightTrackerExpanded.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "SubscriptionPricing",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/54-SubscriptionPricing.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/54-SubscriptionPricing.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/54-SubscriptionPricing.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/54-SubscriptionPricing.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "MovieCard",
+    "referenceNode": null,
+    "designBasis": "infer consistent Android family",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/55-MovieCard.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/55-MovieCard.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/55-MovieCard.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/55-MovieCard.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "ColorOptions",
+    "referenceNode": "19:1034",
+    "designBasis": "Figma lane-guidance recipe; legacy enum name ColorOptions",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/56-ColorOptions.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/56-ColorOptions.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/56-ColorOptions.png",
+    "largeContactSheetInspected": true,
+    "latestFinding": "Compiled navigation393100 verified correctedshield, lanes, originalglyphs andcontinuouscorners.187.9dpcontent versus185.36reference due48dp targets/Inter metrics; source/large/RTL/Home checks pending.",
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/56-ColorOptions.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "AirplaneAlert",
+    "referenceNode": "19:1039",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/57-AirplaneAlert.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/57-AirplaneAlert.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/57-AirplaneAlert.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/57-AirplaneAlert.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "ScreenMirroringAlert",
+    "referenceNode": "19:1040",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/58-ScreenMirroringAlert.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/58-ScreenMirroringAlert.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/58-ScreenMirroringAlert.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/58-ScreenMirroringAlert.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "MobileDataAlert",
+    "referenceNode": "19:1041",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/59-MobileDataAlert.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/59-MobileDataAlert.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/59-MobileDataAlert.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/59-MobileDataAlert.png",
+    "compiledNativeContactSheetInspected": true
+  },
+  {
+    "state": "TransitRouteAlert",
+    "referenceNode": "19:1042",
+    "designBasis": "Figma specimen",
+    "liveReviewed": false,
+    "status": "pending",
+    "notes": [
+      "Fresh physical-device gallery baseline inspected in 60-state contact sheets. Shared renderer, synthetic data. Black review canvas merged with capsules; subsequent debug gallery HotSwan fix applied. This baseline is not final Figma acceptance."
+    ],
+    "freshDeviceBaseline": "../device-gallery-2026-11-10/native-393-100-ltr/60-TransitRouteAlert.png",
+    "baselineContactSheetInspected": true,
+    "currentNativeCapture": "../device-gallery-2026-11-10/active-360-100-ltr/60-TransitRouteAlert.png",
+    "nativeContactSheetInspected": true,
+    "acceptanceNote": "Native360 capture and active-root contact sheet inspected; final Figma/condition acceptance remains pending.",
+    "currentLargeCapture": "../device-gallery-2026-11-10/active-320-200-ltr/60-TransitRouteAlert.png",
+    "largeContactSheetInspected": true,
+    "compiledBaselineSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+    "compiledGalleryCapture": "../device-gallery-2026-11-10/compiled-393-100-ltr/60-TransitRouteAlert.png",
+    "compiledNativeContactSheetInspected": true
+  }
+]

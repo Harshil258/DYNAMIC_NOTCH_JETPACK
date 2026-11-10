@@ -89,7 +89,7 @@ val defaultPlaygroundCatalog: List<PlaygroundStateItem> = listOf(
             PlaygroundStateItem(
                 label = "Alerts",
                 headline = "Notification Pager",
-                detail = "Horizontal swipeable cards · Maps, Uber, Chrome, Chat",
+                detail = "Vertical swipeable cards · Maps, Uber, Chrome, Chat",
                 supportsExpand = true,
                 compactState = IslandDemoState.NotificationCompact,
                 expandedState = IslandDemoState.NotificationExpanded
@@ -115,13 +115,13 @@ val defaultPlaygroundCatalog: List<PlaygroundStateItem> = listOf(
                 headline = "Action Control Center",
                 detail = "Wi-Fi, Bluetooth, Flashlight, Sliders & Shortcuts",
                 supportsExpand = true,
-                compactState = IslandDemoState.Minimal,
+                compactState = IslandDemoState.Idle,
                 expandedState = IslandDemoState.ActionControlExpanded
             ),
             PlaygroundStateItem(
                 label = "Charging",
-                headline = "Fast charging",
-                detail = "85% · 65W Warp charge",
+                headline = "Charging",
+                detail = "Battery percentage · Connected to power",
                 supportsExpand = true,
                 compactState = IslandDemoState.ChargingCompact,
                 expandedState = IslandDemoState.ChargingExpanded
@@ -185,7 +185,7 @@ val defaultPlaygroundCatalog: List<PlaygroundStateItem> = listOf(
             PlaygroundStateItem(
                 label = "Navigation",
                 headline = "Maps navigation",
-                detail = "In 500m · Turn right on Market St",
+                detail = "Lane guidance · I-280 North · San Francisco",
                 supportsExpand = true,
                 compactState = IslandDemoState.NavigationCompact,
                 expandedState = IslandDemoState.ColorOptions

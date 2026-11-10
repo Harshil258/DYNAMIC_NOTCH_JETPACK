@@ -143,7 +143,7 @@ fun RingerModeIslandExpanded(
 ) {
     val isSilent = mode == RingerModeType.SILENT
     val modeLabel = when (mode) {
-        RingerModeType.SILENT -> "Silent mode"
+        RingerModeType.SILENT -> "SilentMode"
         RingerModeType.VIBRATE -> "Vibrate mode"
         RingerModeType.NORMAL -> "Ringer on"
     }
@@ -154,7 +154,7 @@ fun RingerModeIslandExpanded(
         val actionLabel = if (mode == RingerModeType.NORMAL) "Mute" else "Unmute"
         val actionMeasurer = androidx.compose.ui.text.rememberTextMeasurer()
         val actionWidth = with(androidx.compose.ui.platform.LocalDensity.current) {
-            actionMeasurer.measure(actionLabel, AppTheme.typography.button).size.width.toDp()
+            actionMeasurer.measure(actionLabel, AppTheme.typography.button.copy(fontSize = 14.sp, fontWeight = FontWeight.SemiBold)).size.width.toDp()
         } + AppTheme.spacing.md * 2
 
         Row(
@@ -168,13 +168,10 @@ fun RingerModeIslandExpanded(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RingerModeGlyph(
-                    mode = mode,
-                    tint = Color.White,
-                    glyphSize = 26.dp * scale
-                )
-
-                Spacer(modifier = Modifier.width(16.dp * scale))
+                Box(Modifier.width(50.dp).height(48.dp), contentAlignment = Alignment.Center) {
+                    RingerModeGlyph(mode = mode, tint = Color.White, glyphSize = 25.dp)
+                }
+                Spacer(modifier = Modifier.width(10.dp))
 
                     Column(
                     modifier = Modifier.weight(1f),
@@ -183,9 +180,9 @@ fun RingerModeIslandExpanded(
                     AppText(
                         text = modeLabel,
                         style = AppTheme.typography.caption,
-                        fontSize = 12.sp,
+                        fontSize = 14.sp,
                         color = Color(0xFFA4A4A9),
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Normal
                     )
                     Spacer(modifier = Modifier.height(2.dp * scale))
                     AppText(
@@ -195,15 +192,15 @@ fun RingerModeIslandExpanded(
                             RingerModeType.NORMAL -> "Active"
                         },
                         style = AppTheme.typography.islandTitle,
-                        fontSize = 17.5.sp,
+                        fontSize = 16.sp,
                         color = Color.White,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
 
             if (canRenderIslandControl(IslandControlAction.SilentToggle)) IslandPillAction(actionLabel, onToggle,
-                Modifier.width(maxOf(79.dp, actionWidth)), visualHeight = 34.dp)
+                Modifier.width(maxOf(79.dp, actionWidth)), visualHeight = 34.dp, textSize = 14.sp, textWeight = FontWeight.SemiBold)
         }
     }
 }

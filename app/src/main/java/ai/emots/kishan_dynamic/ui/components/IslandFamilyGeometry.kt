@@ -9,7 +9,7 @@ object IslandFamilyGeometry {
     val targets: Map<IslandDemoState, IslandGeometryTarget> = mapOf(
         IslandDemoState.Idle to IslandGeometryTarget(IslandGeometryFamily.Idle, 127.0f, 36.0f, 18.0f),
         IslandDemoState.Minimal to IslandGeometryTarget(IslandGeometryFamily.OwnerMinimal, 108.0f, 32.0f, 15.9018f),
-        IslandDemoState.MusicCompact to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 190.0f, 36.67f, 18.335f),
+        IslandDemoState.MusicCompact to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 190.0f, 38f, 19f),
         IslandDemoState.MusicExpanded to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 177.0f, 42.0f),
         IslandDemoState.CallCompact to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 152.0f, 36.67f, 18.335f),
         IslandDemoState.CallExpanded to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 166.0f, 42.0f),
@@ -17,8 +17,8 @@ object IslandFamilyGeometry {
         IslandDemoState.FaceTimeCallExpanded to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 168.0f, 42.0f),
         IslandDemoState.SharedMediaCallExpanded to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 172.64f, 42.0f),
         IslandDemoState.OngoingCallBanner to IslandGeometryTarget(IslandGeometryFamily.ContextualAlert, 367.0f, 86.0f, 43.0f),
-        IslandDemoState.NotificationCompact to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 189f, 36.67f, 18.335f),
-        IslandDemoState.NotificationStacked to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 189f, 36.67f, 18.335f),
+        IslandDemoState.NotificationCompact to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 189f, 36f, 18f),
+        IslandDemoState.NotificationStacked to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 189f, 36f, 18f),
         IslandDemoState.NotificationWithMusicCompact to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 190.0f, 36.67f, 18.335f),
         IslandDemoState.NotificationExpanded to IslandGeometryTarget(IslandGeometryFamily.ContextualAlert, 367.0f, 86.0f, 43.0f),
         IslandDemoState.SilentModeCompact to IslandGeometryTarget(IslandGeometryFamily.StatusCompact, 152.0f, 36.67f, 18.335f),
@@ -56,7 +56,7 @@ object IslandFamilyGeometry {
         IslandDemoState.VideoRemoteExpanded to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 177.0f, 42.0f),
         IslandDemoState.AirDropActivity to IslandGeometryTarget(IslandGeometryFamily.ContextualAlert, 367.0f, 86.0f, 43.0f),
         IslandDemoState.TimerImage to IslandGeometryTarget(IslandGeometryFamily.ContextualAlert, 367.0f, 86.0f, 43.0f),
-        IslandDemoState.NotificationImage to IslandGeometryTarget(IslandGeometryFamily.ContextualAlert, 367.0f, 86.0f, 43.0f),
+        IslandDemoState.NotificationImage to IslandGeometryTarget(IslandGeometryFamily.ContextualAlert, 367.0f, 126.0f, 44.0f),
         IslandDemoState.CallAvatars to IslandGeometryTarget(IslandGeometryFamily.ContextualAlert, 367.0f, 86.0f, 43.0f),
         IslandDemoState.TransportActivity to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 148.0f, 42.0f),
         IslandDemoState.FlightTrackerExpanded to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 144.0f, 42.0f),
@@ -69,6 +69,20 @@ object IslandFamilyGeometry {
         IslandDemoState.TransitRouteAlert to IslandGeometryTarget(IslandGeometryFamily.ActivityExpanded, 367.0f, 142.0f, 42.0f),
     )
     fun target(state: IslandDemoState): IslandGeometryTarget = targets.getValue(state)
+
+    /** Measured corner smoothing; compact radii still clamp to circular capsule ends. */
+    fun cornerSmoothing(state: IslandDemoState): Float = when (state) {
+        IslandDemoState.Idle, IslandDemoState.Minimal,
+        IslandDemoState.NotificationCompact, IslandDemoState.NotificationStacked,
+        IslandDemoState.NotificationExpanded, IslandDemoState.NotificationImage -> 0f
+        IslandDemoState.MusicExpanded, IslandDemoState.SharedMediaCallExpanded,
+        IslandDemoState.VideoRemoteExpanded, IslandDemoState.ColorOptions -> 1f
+        IslandDemoState.MusicCompact, IslandDemoState.AirDropActivity,
+        IslandDemoState.TimerExpanded, IslandDemoState.AirPodsConnected,
+        IslandDemoState.ShortcutExpanded, IslandDemoState.SilentModeExpanded,
+        IslandDemoState.RingerModeExpanded, IslandDemoState.MovedToIPhone -> .61f
+        else -> .6f
+    }
 
     /** Insets are removed exactly once by the caller. Compact content is never canvas-scaled. */
     fun resolve(state: IslandDemoState, availableWidth: Float, fontScale: Float = 1f,

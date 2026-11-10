@@ -1,0 +1,1 @@
+Capture aborted: HotSwan auto-restarted the app and previous in-memory UI patches were lost. This folder contains baseline UI, not the claimed continuous-corner revision. Do not use for visual acceptance.

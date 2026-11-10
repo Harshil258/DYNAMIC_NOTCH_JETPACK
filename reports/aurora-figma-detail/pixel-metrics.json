@@ -1,0 +1,200 @@
+[
+  {
+    "state": "NotificationExpanded",
+    "figmaNode": "27:992",
+    "figmaDp": [
+      366.0,
+      126.0
+    ],
+    "androidDp": [
+      367.0,
+      126.0
+    ],
+    "widthDeltaDp": 1.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 6.127941049262575,
+    "foregroundMAE": 23.57365519863144,
+    "foregroundIoU": 0.8490543622885383,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "NotificationImage",
+    "figmaNode": "27:992",
+    "figmaDp": [
+      366.0,
+      126.0
+    ],
+    "androidDp": [
+      367.0,
+      126.0
+    ],
+    "widthDeltaDp": 1.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 6.128041967619624,
+    "foregroundMAE": 23.57365519863144,
+    "foregroundIoU": 0.8490543622885383,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "NotificationCompact",
+    "figmaNode": "27:1021",
+    "figmaDp": [
+      189.0,
+      36.0
+    ],
+    "androidDp": [
+      189.0,
+      36.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 4.866059180873996,
+    "foregroundMAE": 67.72855987055016,
+    "foregroundIoU": 0.758495145631068,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "MusicCompact",
+    "figmaNode": "19:979",
+    "figmaDp": [
+      190.0,
+      38.0
+    ],
+    "androidDp": [
+      190.0,
+      38.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 4.513377192982456,
+    "foregroundMAE": 35.20540133419411,
+    "foregroundIoU": 0.7782440284054228,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "MusicExpanded",
+    "figmaNode": "19:1033",
+    "figmaDp": [
+      367.0,
+      177.0
+    ],
+    "androidDp": [
+      367.0,
+      177.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 8.615762763178825,
+    "foregroundMAE": 65.66002097546286,
+    "foregroundIoU": 0.674122301485935,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "CallExpanded",
+    "figmaNode": "19:1036",
+    "figmaDp": [
+      367.0,
+      165.99998474121094
+    ],
+    "androidDp": [
+      367.0,
+      166.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 1.52587890625e-05,
+    "rgbMAE": 5.593745554424784,
+    "foregroundMAE": 26.114093393260323,
+    "foregroundIoU": 0.8759047076449115,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "FaceTimeCallExpanded",
+    "figmaNode": "19:1035",
+    "figmaDp": [
+      367.0,
+      168.0
+    ],
+    "androidDp": [
+      367.0,
+      168.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 6.029747037325375,
+    "foregroundMAE": 27.045644749494347,
+    "foregroundIoU": 0.8728538744653337,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "SharedMediaCallExpanded",
+    "figmaNode": "19:1037",
+    "figmaDp": [
+      367.0,
+      172.63958740234375
+    ],
+    "androidDp": [
+      367.0,
+      172.5
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": -0.13958740234375,
+    "rgbMAE": 5.977727757374718,
+    "foregroundMAE": 26.639228209222246,
+    "foregroundIoU": 0.8797491487601716,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "SilentModeExpanded",
+    "figmaNode": "19:1030",
+    "figmaDp": [
+      367.0,
+      86.0
+    ],
+    "androidDp": [
+      367.0,
+      86.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 7.9983762119003865,
+    "foregroundMAE": 59.34808005995679,
+    "foregroundIoU": 0.6598994841952123,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "TimerExpanded",
+    "figmaNode": "19:1022",
+    "figmaDp": [
+      367.0,
+      85.72676086425781
+    ],
+    "androidDp": [
+      367.0,
+      86.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 0.2732391357421875,
+    "rgbMAE": 4.958631687894726,
+    "foregroundMAE": 22.63420431126555,
+    "foregroundIoU": 0.8468342434225371,
+    "status": "REVIEW_REQUIRED"
+  },
+  {
+    "state": "CallAvatars",
+    "figmaNode": "19:1027",
+    "figmaDp": [
+      367.0,
+      86.0
+    ],
+    "androidDp": [
+      367.0,
+      86.0
+    ],
+    "widthDeltaDp": 0.0,
+    "heightDeltaDp": 0.0,
+    "rgbMAE": 6.840002745918087,
+    "foregroundMAE": 27.676353488372094,
+    "foregroundIoU": 0.8546976744186047,
+    "status": "REVIEW_REQUIRED"
+  }
+]

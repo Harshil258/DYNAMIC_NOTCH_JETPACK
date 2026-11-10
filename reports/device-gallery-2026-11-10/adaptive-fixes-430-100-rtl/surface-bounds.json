@@ -1,0 +1,28 @@
+[
+  {
+    "state": "VoiceMemoExpanded",
+    "ordinal": 39,
+    "file": "39-VoiceMemoExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794309957.835815,
+    "bounds": [
+      92,
+      566,
+      988,
+      759
+    ]
+  },
+  {
+    "state": "VideoRemoteExpanded",
+    "ordinal": 47,
+    "file": "47-VideoRemoteExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794309964.2317288,
+    "bounds": [
+      92,
+      566,
+      988,
+      961
+    ]
+  }
+]

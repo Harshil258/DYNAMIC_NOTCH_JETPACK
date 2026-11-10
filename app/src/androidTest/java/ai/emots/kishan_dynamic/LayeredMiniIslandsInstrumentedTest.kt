@@ -140,9 +140,9 @@ class LayeredMiniIslandsInstrumentedTest {
         compose.waitUntil(5000) { state.childLifecycles["child-1"] != ChildLifecycle.PROMOTING }
         compose.runOnIdle { assertEquals("main", state.selectedKey); assertEquals(2, state.canonicalQueueCount) }
     }
-    @Test fun horizontalPagerRemainsInteractiveWithChildren() {
+    @Test fun verticalPagerRemainsInteractiveWithChildren() {
         render(430); arrive(3)
-        compose.onNodeWithTag("fixture_main", useUnmergedTree = true).performTouchInput { swipeRight() }
+        compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeDown(durationMillis = 450) }
         compose.waitUntil(5000) { state.selectedKey != "main" }
         assertEquals(4, state.canonicalQueueCount)
         assertTrue(state.queue.notifications.any { it.id == "main" })

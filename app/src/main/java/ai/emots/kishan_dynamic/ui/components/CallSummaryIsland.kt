@@ -26,7 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextDirection
+import ai.emots.kishan_dynamic.data.model.DurationAccuracy
+import ai.emots.kishan_dynamic.ui.components.live.IslandAdaptiveHeader
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.model.CallDirection
@@ -47,7 +49,7 @@ internal fun CallSummaryExpandedContent(
     record: CallRecord?,
     onControlAction: (IslandControlAction) -> Unit
 ) {
-    val name = record?.contactName ?: "Call ended"
+    val name = record?.contactName?.ifBlank { null } ?: if (record == null) "Call ended" else "Unknown caller"
     val phoneNumber = record?.phoneNumber.orEmpty()
     val isMissed = record?.direction == CallDirection.MISSED
     val callType = when (record?.direction) {
@@ -56,56 +58,36 @@ internal fun CallSummaryExpandedContent(
         CallDirection.MISSED -> "Missed call"
         null -> "Call summary"
     }
-    val duration = when {
-        record == null -> ""
-        isMissed -> "Missed"
-        else -> formatCallDuration(record.durationSeconds)
-    }
+    val duration = callSummaryDurationLabel(record)
+    val measuredDuration = record != null && !isMissed && record.durationAccuracy != DurationAccuracy.UNKNOWN
+    val contactActionsAvailable = record == null || phoneNumber.any(Char::isDigit)
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            ContactAvatar(
-                name = name,
-                avatarUri = record?.avatarUri,
-                modifier = Modifier.size(40.dp),
-                contentDescription = name
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = name,
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = if (phoneNumber.isBlank()) callType else "$callType · $phoneNumber",
-                    color = IslandColors.TextSecondary,
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+        IslandAdaptiveHeader(identity = {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+                ContactAvatar(name = name, avatarUri = record?.avatarUri,
+                    modifier = Modifier.size(40.dp), contentDescription = name)
+                Column(Modifier.weight(1f)) {
+                    Text(name, color = Color.White, style = AppTheme.typography.body.copy(
+                        fontSize = 16.sp, lineHeight = 20.sp, fontWeight = FontWeight.Bold))
+                    Text(if (phoneNumber.isBlank()) callType else "$callType · $phoneNumber",
+                        color = IslandColors.TextSecondary,
+                        style = AppTheme.typography.bodySmall.copy(fontSize = 11.sp, lineHeight = 16.sp))
+                }
             }
-            if (duration.isNotBlank()) {
-                Text(
-                    text = duration,
-                    color = if (isMissed) IslandColors.Orange else IslandColors.CapsuleGreen,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.Monospace
-                )
-            }
-        }
+        }, status = {
+            if (duration.isNotBlank()) Text(duration,
+                color = when { isMissed -> IslandColors.Orange; measuredDuration -> IslandColors.CapsuleGreen; else -> IslandColors.TextSecondary },
+                style = AppTheme.typography.bodySmall.copy(fontSize = 14.sp, lineHeight = 18.sp,
+                    fontWeight = FontWeight.Bold, fontFamily = if (measuredDuration) FontFamily.Monospace else FontFamily.Default,
+                    textDirection = TextDirection.Ltr))
+        })
 
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val columns = if (LocalDensity.current.fontScale > 1.3f || maxWidth < 320.dp) 2 else 4
@@ -114,19 +96,19 @@ internal fun CallSummaryExpandedContent(
                 horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
             ) {
-                CallSummaryActionButton(
+                if (contactActionsAvailable && canRenderIslandControl(IslandControlAction.CallSummaryRedial)) CallSummaryActionButton(
                     glyph = AppleGlyph.Phone,
                     label = if (isMissed) "Call back" else "Redial",
                     onClick = { onControlAction(IslandControlAction.CallSummaryRedial) },
                     modifier = Modifier.weight(1f)
                 )
-                CallSummaryActionButton(
+                if (contactActionsAvailable && canRenderIslandControl(IslandControlAction.CallSummaryMessage)) CallSummaryActionButton(
                     glyph = AppleGlyph.Chat,
                     label = "SMS",
                     onClick = { onControlAction(IslandControlAction.CallSummaryMessage) },
                     modifier = Modifier.weight(1f)
                 )
-                CallSummaryActionButton(
+                if (contactActionsAvailable && canRenderIslandControl(IslandControlAction.CallSummaryWhatsApp)) CallSummaryActionButton(
                     glyph = AppleGlyph.Chat,
                     label = "WhatsApp",
                     onClick = { onControlAction(IslandControlAction.CallSummaryWhatsApp) },
@@ -162,7 +144,7 @@ internal fun CallSummaryActionButton(
     ) {
         AppleIcon(glyph = glyph, tint = IslandColors.CapsuleCyan, size = 14.dp)
         Spacer(modifier = Modifier.width(5.dp))
-        Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, maxLines = 1)
+        Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
     }
 }
 
@@ -170,4 +152,13 @@ internal fun formatCallDuration(durationSeconds: Long): String {
     val minutes = (durationSeconds / 60).coerceAtLeast(0)
     val seconds = (durationSeconds % 60).coerceAtLeast(0)
     return "%02d:%02d".format(minutes, seconds)
+}
+
+/** Unknown/estimated call durations must not become an exact zero-length call in the UI. */
+internal fun callSummaryDurationLabel(record: CallRecord?): String = when {
+    record == null -> ""
+    record.direction == CallDirection.MISSED -> "Missed"
+    record.durationAccuracy == DurationAccuracy.UNKNOWN -> "Duration unavailable"
+    record.durationAccuracy == DurationAccuracy.INFERRED_WALL_CLOCK -> "≈${formatCallDuration(record.durationSeconds)}"
+    else -> formatCallDuration(record.durationSeconds)
 }

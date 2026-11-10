@@ -35,11 +35,17 @@ class DynamicIslandGeometryTest {
     }
 
     @Test
-    fun everyCollapsedStateResolvesToExactlyOneHeightToken() {
+    fun collapsedHeightsRespectMeasuredFigmaFamilies() {
         IslandDemoState.entries
             .filter { it.isCompactPresentation() }
             .forEach { state ->
-                assertEquals(if (state == IslandDemoState.Minimal) tokens.minimalCapsuleHeight else tokens.compactHeight, state.resolvedHeight(tokens))
+                val expected = when (state) {
+                    IslandDemoState.Minimal -> tokens.minimalCapsuleHeight.value
+                    IslandDemoState.Idle, IslandDemoState.NotificationCompact, IslandDemoState.NotificationStacked -> 36f
+                    IslandDemoState.MusicCompact -> 38f
+                    else -> tokens.compactHeight.value
+                }
+                assertEquals(expected, state.resolvedHeight(tokens).value, .001f)
             }
     }
 

@@ -1,0 +1,103 @@
+[
+  {
+    "state": "ChargingExpanded",
+    "ordinal": 27,
+    "file": "27-ChargingExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794310040.5772421,
+    "bounds": [
+      92,
+      566,
+      988,
+      1113
+    ]
+  },
+  {
+    "state": "LowBatteryExpanded",
+    "ordinal": 29,
+    "file": "29-LowBatteryExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794310045.2148669,
+    "bounds": [
+      92,
+      566,
+      988,
+      1019
+    ]
+  },
+  {
+    "state": "SportsExpanded",
+    "ordinal": 37,
+    "file": "37-SportsExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794310056.069978,
+    "scrollFiles": [
+      "37-SportsExpanded-scroll-01.png",
+      "37-SportsExpanded-scroll-02.png",
+      "37-SportsExpanded-scroll-03.png"
+    ],
+    "bottomFile": "37-SportsExpanded-scroll-03.png",
+    "scrollMethod": "semantics",
+    "scrollTarget": "outer content viewport",
+    "scrollOverlapPercent": 30,
+    "bounds": [
+      92,
+      566,
+      988,
+      1226
+    ]
+  },
+  {
+    "state": "VideoRemoteExpanded",
+    "ordinal": 47,
+    "file": "47-VideoRemoteExpanded.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794310070.257429,
+    "scrollFiles": [
+      "47-VideoRemoteExpanded-scroll-01.png"
+    ],
+    "bottomFile": "47-VideoRemoteExpanded-scroll-01.png",
+    "scrollMethod": "semantics",
+    "scrollTarget": "outer content viewport",
+    "scrollOverlapPercent": 30,
+    "bounds": [
+      92,
+      566,
+      988,
+      1226
+    ]
+  },
+  {
+    "state": "TimerImage",
+    "ordinal": 49,
+    "file": "49-TimerImage.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794310075.438737,
+    "bounds": [
+      92,
+      566,
+      988,
+      1028
+    ]
+  },
+  {
+    "state": "TransportActivity",
+    "ordinal": 52,
+    "file": "52-TransportActivity.png",
+    "visualReview": "pending",
+    "capturedAtEpoch": 1794310080.451206,
+    "scrollFiles": [
+      "52-TransportActivity-scroll-01.png"
+    ],
+    "bottomFile": "52-TransportActivity-scroll-01.png",
+    "scrollMethod": "semantics",
+    "scrollTarget": "outer content viewport",
+    "scrollOverlapPercent": 30,
+    "bounds": [
+      92,
+      566,
+      988,
+      1226
+    ]
+  }
+]

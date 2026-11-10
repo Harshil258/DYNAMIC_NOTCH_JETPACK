@@ -44,7 +44,7 @@ fun ChargingIslandMain(
     isLowBattery: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val color = batteryColorFor(percentage)
+    val color = if (isLowBattery) IslandColors.Red else batteryColorFor(percentage)
     val glowState = rememberBreathing(min = 0.55f, max = 1f, durationMillis = 1800)
 
     Row(
@@ -54,7 +54,7 @@ fun ChargingIslandMain(
         horizontalArrangement = Arrangement.spacedBy(AppTheme.island.compactContentGap, Alignment.CenterHorizontally)
     ) {
         AppleIcon(
-            glyph = if (isLowBattery) AppleGlyph.Battery else AppleGlyph.Power,
+            glyph = if (isLowBattery) AppleGlyph.Battery else AppleGlyph.Charging,
             tint = color,
             size = 13.dp,
             modifier = Modifier.graphicsLayer { alpha = if (isLowBattery) 1f else glowState.value }

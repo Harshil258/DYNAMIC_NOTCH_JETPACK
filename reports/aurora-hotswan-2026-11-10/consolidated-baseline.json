@@ -1,0 +1,20 @@
+{
+  "installedAtVerificationEpoch": 1794312530.019145,
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "apk": "/Volumes/ALLPROJECTS/KishanAccount/kishan_dynamic_island/dynamic_kishan/app/build/outputs/apk/debug/app-debug.apk",
+  "sha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+  "deviceSha256": "04025189a60a70b6e9faf50da9444cca8b2292765f68b491dbe2d660f9cd98fa",
+  "pid": "24325",
+  "packageEvidence": [
+    "versionCode=1 minSdk=26 targetSdk=36",
+    "versionName=1.0",
+    "lastUpdateTime=2026-11-10 17:37:41"
+  ],
+  "tests": {
+    "count": 508,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "captureRevision": "compiled continuous corners, per-recipe smoothing, corrected shield and navigation, adaptive layouts"
+}

@@ -87,15 +87,11 @@ internal fun ActionControlExpandedContent(
                     color = Color.White,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = "Your essentials, one tap away",
                     color = IslandColors.TextSecondary,
                     fontSize = 11.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
                 )
             }
             Row(
@@ -137,7 +133,12 @@ internal fun ActionControlExpandedContent(
                 )
             }
         }
-        val tileRows = systemTiles.chunked(4)
+        val tileColumns = when {
+            androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f -> 2
+            androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp < 360 -> 3
+            else -> 4
+        }
+        val tileRows = systemTiles.chunked(tileColumns)
         for (row in tileRows) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -152,7 +153,7 @@ internal fun ActionControlExpandedContent(
                         onClick = { onSystemTileClick(tile) }
                     )
                 }
-                repeat(4 - row.size) {
+                repeat(tileColumns - row.size) {
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }
@@ -225,21 +226,13 @@ internal fun ActionControlExpandedContent(
 }
 
 @Composable
-internal fun ActionUtilityButton(
-    glyph: AppleGlyph,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .minimumInteractiveComponentSize()
-            .semantics { contentDescription = if (glyph == AppleGlyph.Bell) "Open notifications" else "Open ${glyph.name.lowercase()}" }
-            .size(24.dp)
-            .clip(CircleShape)
-            .background(Color(0xFF25262B))
-            .clickable(role = Role.Button, onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        AppleIcon(glyph = glyph, tint = Color.White, size = 12.dp)
+internal fun ActionUtilityButton(glyph: AppleGlyph, onClick: () -> Unit) {
+    Box(Modifier.size(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
+        .semantics { contentDescription = if (glyph == AppleGlyph.Bell) "Open notifications" else "Open ${glyph.name.lowercase()}" }
+        .clickable(role = Role.Button, onClick = onClick), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(24.dp).clip(CircleShape).background(Color(0xFF25262B)), contentAlignment = Alignment.Center) {
+            AppleIcon(glyph = glyph, tint = Color.White, size = 12.dp)
+        }
     }
 }
 
@@ -459,8 +452,6 @@ internal fun QuickControlChip(
             text = label,
             color = if (active) Color.White else accent,
             fontSize = 11.sp,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
         )
     }
 }

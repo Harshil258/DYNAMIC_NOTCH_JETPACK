@@ -1,0 +1,1 @@
+Physical Realme, debug Gallery NotificationImage,320dp/200%/LTR. Before/after screenshots were inspected: the complete mock message becomes visible after scrolling the outer content viewport. Verified official bridge semantic scroll(node252,down700px); restored up50000px. No notification page change or external reply/call was sent.

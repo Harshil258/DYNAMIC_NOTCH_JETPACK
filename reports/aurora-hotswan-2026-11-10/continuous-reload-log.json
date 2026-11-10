@@ -1,0 +1,1402 @@
+[
+  {
+    "timestamp": 1794311036556,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311037314,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311037673,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311038554,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311038573,
+    "message": "Agent scroll down 293px node=9613 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311038905,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311039229,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311039362,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311039380,
+    "message": "Agent scroll up 50000px node=9613 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311102027,
+    "message": "Stopping HotSwan...",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311102036,
+    "message": "HotSwan stopped.",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311410795,
+    "message": "Compose HotSwan 2.2.0 \u2014 starting (hot-reload server port 8601)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311410874,
+    "message": "Selected 1 device(s): X4Y9QSOZ4DEADEDM",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311410934,
+    "message": "Watching for changes...",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311411676,
+    "message": "Detected: IslandContinuousShape.kt, DynamicIslandPill.kt modified",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311411697,
+    "message": "literal fast path declined (reason=baseline-seeded) \u2014 using the structural reload",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311413553,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311413571,
+    "message": "hot reload \u2192 :app:hotReloadDebug",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311413617,
+    "message": "running: :app:hotReloadDebug",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311417579,
+    "message": "literal baselines primed from the last build: 224 file(s)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311434234,
+    "message": "hotReload \u2192 127.0.0.1:8601  14 class(es), 0 group key(s) [app-detected], buildId=hotswan-gradle-dev, push=1.0 MB",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311434234,
+    "message": "hotReload: delivering \u2014 14 class(es) from 2 source file(s): DynamicIslandPill.kt, IslandContinuousShape.kt [1901 class(es) already live in this app, not re-sent]",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311437532,
+    "message": "hotReload: applied \u2014 reloadedCount=14 leg=android",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311437532,
+    "message": "hotReload: device-verdict \u2014 the app itself reports 0 structural + 0 body-only @Composable key(s) changed, and 14 remember{} slot(s) re-initialised, plus 3 class(es) whose KEYLESS body changed (a composable-lambda helper or an inner lambda's invoke \u2014 Compose 1.9+ emits no @FunctionKeyMeta for those)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311442938,
+    "message": "hotReload: rendered \u2014 the app re-composed and its composition ran (it had not gone quiescent when the app stopped waiting) in 5355ms with 0 caught throwable(s)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311443364,
+    "message": "hot reload: reloaded (14 class(es))",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311465721,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311465801,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311465823,
+    "message": "Agent click node=108 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311466631,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311466731,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311466890,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311467668,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311467916,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311468856,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311468878,
+    "message": "Agent scroll down 310px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311469230,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311469466,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311469536,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311469554,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311469936,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311469956,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311470136,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311470801,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311471747,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311472077,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311473254,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311473288,
+    "message": "Agent scroll down 228px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311473629,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311473905,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311474006,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311474022,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311474328,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311474347,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311474525,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311475213,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311475938,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311476468,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311477124,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311477141,
+    "message": "Agent scroll down 228px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311477547,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311477781,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311477858,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311477874,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311478389,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311478434,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311478668,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311479011,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311479948,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311480403,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311481142,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311481167,
+    "message": "Agent scroll down 267px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311481539,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311481811,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311481935,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311481966,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311482269,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311482296,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311482487,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311482937,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311483979,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311484210,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311484903,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311484923,
+    "message": "Agent scroll down 216px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311485254,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311485486,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311485547,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311485559,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311485796,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311485812,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311485994,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311486423,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311487357,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311487584,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311488755,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311488775,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311488989,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311489277,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311490023,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311490359,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311491406,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311491424,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311491614,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311491994,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311492848,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311493082,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311494081,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311494096,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311494281,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311494729,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311495981,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311496276,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311497099,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311497119,
+    "message": "Agent scroll down 302px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311498469,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311504173,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311504388,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311504459,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311504799,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311504824,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311505022,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311505936,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311506650,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311506874,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311508071,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311508096,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311508303,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311508948,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311509892,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311510095,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311510748,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311510771,
+    "message": "Agent scroll down 284px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311511135,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311511459,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311511578,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311511605,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311511913,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311511949,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311512226,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311512805,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311514383,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311514644,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311515447,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311515504,
+    "message": "Agent scroll down 208px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311515890,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311516174,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311516280,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311516302,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311516558,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311516587,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311516788,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311517370,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311518182,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311518418,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311519240,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311519261,
+    "message": "Agent scroll down 287px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311519619,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311519901,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311520065,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311520095,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311520493,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311520530,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311520775,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311521251,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311522017,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311524347,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311525299,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311525333,
+    "message": "Agent scroll down 295px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311525665,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311526462,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311526579,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311526611,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311526918,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311526963,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311527147,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311527639,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311528486,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311528700,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311529741,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311529774,
+    "message": "Agent scroll down 148px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311530112,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311530317,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311530557,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311530575,
+    "message": "Agent scroll up 50000px node=87 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311530851,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311530884,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311531082,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311531522,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311532182,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311532383,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311533383,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311533415,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311533639,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311534128,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311535153,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311535385,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311545981,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311546102,
+    "message": "Agent click node=45 (android semantics)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311546364,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  },
+  {
+    "timestamp": 1794311555640,
+    "message": "adb forward tcp:8640 -> tcp:8601 (-s X4Y9QSOZ4DEADEDM)",
+    "isError": false,
+    "isWarning": false,
+    "isSuccess": false
+  }
+]

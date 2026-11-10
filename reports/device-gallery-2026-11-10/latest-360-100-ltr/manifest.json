@@ -1,0 +1,224 @@
+{
+  "serial": "X4Y9QSOZ4DEADEDM",
+  "surface": "physical-device debug gallery, synthetic data, shared renderer",
+  "accepted": false,
+  "geometrySampling": "settled-two-equal-frames",
+  "scrollEndpointsRequested": true,
+  "requestedProfile": {
+    "width": 360,
+    "fontPercent": 100,
+    "rtl": false
+  },
+  "captures": [
+    {
+      "state": "Idle",
+      "ordinal": 1,
+      "file": "01-Idle.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281937.759907
+    },
+    {
+      "state": "Minimal",
+      "ordinal": 2,
+      "file": "02-Minimal.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281941.455338
+    },
+    {
+      "state": "MusicCompact",
+      "ordinal": 3,
+      "file": "03-MusicCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281945.653013
+    },
+    {
+      "state": "MusicExpanded",
+      "ordinal": 4,
+      "file": "04-MusicExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281949.136021
+    },
+    {
+      "state": "CallCompact",
+      "ordinal": 5,
+      "file": "05-CallCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281952.8654878
+    },
+    {
+      "state": "CallExpanded",
+      "ordinal": 6,
+      "file": "06-CallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281956.458834
+    },
+    {
+      "state": "CallSummaryExpanded",
+      "ordinal": 7,
+      "file": "07-CallSummaryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281959.986064
+    },
+    {
+      "state": "FaceTimeCallExpanded",
+      "ordinal": 8,
+      "file": "08-FaceTimeCallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281963.500905
+    },
+    {
+      "state": "SharedMediaCallExpanded",
+      "ordinal": 9,
+      "file": "09-SharedMediaCallExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281967.0102038
+    },
+    {
+      "state": "OngoingCallBanner",
+      "ordinal": 10,
+      "file": "10-OngoingCallBanner.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281971.8257558
+    },
+    {
+      "state": "NotificationCompact",
+      "ordinal": 11,
+      "file": "11-NotificationCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281975.075914
+    },
+    {
+      "state": "NotificationStacked",
+      "ordinal": 12,
+      "file": "12-NotificationStacked.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281978.723357
+    },
+    {
+      "state": "NotificationWithMusicCompact",
+      "ordinal": 13,
+      "file": "13-NotificationWithMusicCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281982.554358
+    },
+    {
+      "state": "NotificationExpanded",
+      "ordinal": 14,
+      "file": "14-NotificationExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281985.9232519
+    },
+    {
+      "state": "SilentModeCompact",
+      "ordinal": 15,
+      "file": "15-SilentModeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281989.342958
+    },
+    {
+      "state": "SilentModeExpanded",
+      "ordinal": 16,
+      "file": "16-SilentModeExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281993.305953
+    },
+    {
+      "state": "RingerModeExpanded",
+      "ordinal": 17,
+      "file": "17-RingerModeExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281996.5342212
+    },
+    {
+      "state": "VibrateModeCompact",
+      "ordinal": 18,
+      "file": "18-VibrateModeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794281999.8087811
+    },
+    {
+      "state": "NormalModeCompact",
+      "ordinal": 19,
+      "file": "19-NormalModeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282003.326832
+    },
+    {
+      "state": "RingerVolumeCompact",
+      "ordinal": 20,
+      "file": "20-RingerVolumeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282006.671236
+    },
+    {
+      "state": "MediaVolumeCompact",
+      "ordinal": 21,
+      "file": "21-MediaVolumeCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282009.825707
+    },
+    {
+      "state": "BluetoothConnected",
+      "ordinal": 22,
+      "file": "22-BluetoothConnected.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282012.9985669
+    },
+    {
+      "state": "BluetoothConnecting",
+      "ordinal": 23,
+      "file": "23-BluetoothConnecting.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282016.115679
+    },
+    {
+      "state": "ActionControlExpanded",
+      "ordinal": 24,
+      "file": "24-ActionControlExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282019.994543
+    },
+    {
+      "state": "PremiumExpiryExpanded",
+      "ordinal": 25,
+      "file": "25-PremiumExpiryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282023.698226
+    },
+    {
+      "state": "ChargingCompact",
+      "ordinal": 26,
+      "file": "26-ChargingCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282027.186929
+    },
+    {
+      "state": "ChargingExpanded",
+      "ordinal": 27,
+      "file": "27-ChargingExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282031.474602
+    },
+    {
+      "state": "LowBatteryCompact",
+      "ordinal": 28,
+      "file": "28-LowBatteryCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282035.030365
+    },
+    {
+      "state": "LowBatteryExpanded",
+      "ordinal": 29,
+      "file": "29-LowBatteryExpanded.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282039.2737448
+    },
+    {
+      "state": "TimerCompact",
+      "ordinal": 30,
+      "file": "30-TimerCompact.png",
+      "visualReview": "pending",
+      "capturedAtEpoch": 1794282043.341676
+    }
+  ]
+}

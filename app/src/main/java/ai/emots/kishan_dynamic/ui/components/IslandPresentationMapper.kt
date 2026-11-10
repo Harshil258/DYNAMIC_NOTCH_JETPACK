@@ -45,20 +45,20 @@ private fun ai.emots.kishan_dynamic.data.model.LiveActivityInfo.toDemoState(): I
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.FLIGHT -> if (isExpanded) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.SPORTS -> if (isExpanded) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION -> if (isExpanded) IslandDemoState.ColorOptions else IslandDemoState.NavigationCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VOICE_MEMO -> if (isExpanded) IslandDemoState.VoiceMemoExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_RECORDING -> if (isExpanded) IslandDemoState.ScreenRecordingExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SHORTCUT -> if (isExpanded) IslandDemoState.ShortcutExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FOCUS_MODE -> if (isExpanded) IslandDemoState.FocusModeExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIR_DROP -> if (isExpanded) IslandDemoState.AirDropActivity else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPODS -> if (isExpanded) IslandDemoState.AirPodsConnected else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SATELLITE -> if (isExpanded) IslandDemoState.SatelliteConnected else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FIND_MY -> if (isExpanded) IslandDemoState.FindMyAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOVED_TO_IPHONE -> if (isExpanded) IslandDemoState.MovedToIPhone else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VIDEO_REMOTE -> if (isExpanded) IslandDemoState.VideoRemoteExpanded else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPLANE_ALERT -> if (isExpanded) IslandDemoState.AirplaneAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_MIRRORING_ALERT -> if (isExpanded) IslandDemoState.ScreenMirroringAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOBILE_DATA_ALERT -> if (isExpanded) IslandDemoState.MobileDataAlert else IslandDemoState.Minimal
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TRANSIT_ROUTE_ALERT -> if (isExpanded) IslandDemoState.TransitRouteAlert else IslandDemoState.Minimal
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VOICE_MEMO -> if (isExpanded) IslandDemoState.VoiceMemoExpanded else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_RECORDING -> if (isExpanded) IslandDemoState.ScreenRecordingExpanded else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SHORTCUT -> if (isExpanded) IslandDemoState.ShortcutExpanded else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FOCUS_MODE -> if (isExpanded) IslandDemoState.FocusModeExpanded else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIR_DROP -> if (isExpanded) IslandDemoState.AirDropActivity else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPODS -> if (isExpanded) IslandDemoState.AirPodsConnected else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SATELLITE -> if (isExpanded) IslandDemoState.SatelliteConnected else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FIND_MY -> if (isExpanded) IslandDemoState.FindMyAlert else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOVED_TO_IPHONE -> if (isExpanded) IslandDemoState.MovedToIPhone else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VIDEO_REMOTE -> if (isExpanded) IslandDemoState.VideoRemoteExpanded else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPLANE_ALERT -> if (isExpanded) IslandDemoState.AirplaneAlert else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_MIRRORING_ALERT -> if (isExpanded) IslandDemoState.ScreenMirroringAlert else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOBILE_DATA_ALERT -> if (isExpanded) IslandDemoState.MobileDataAlert else IslandDemoState.Idle
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TRANSIT_ROUTE_ALERT -> if (isExpanded) IslandDemoState.TransitRouteAlert else IslandDemoState.Idle
         }
     }
 

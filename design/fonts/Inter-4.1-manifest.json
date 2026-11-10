@@ -1,0 +1,66 @@
+{
+  "source": "https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip",
+  "license": "SIL Open Font License1.1",
+  "files": [
+    {
+      "file": "app/src/main/res/font/aurora_inter_text_light.ttf",
+      "weight": 300,
+      "family": "text",
+      "sha256": "164414f0aacbe98a7e64addc43f7b3bfd2e32f7b90e101feeab227f14c371bda"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_text_regular.ttf",
+      "weight": 400,
+      "family": "text",
+      "sha256": "40d692fce188e4471e2b3cba937be967878f631ad3ebbbdcd587687c7ebe0c82"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_text_medium.ttf",
+      "weight": 500,
+      "family": "text",
+      "sha256": "97ad806f526e41546d46365bb3a393145f75b7b1568913db74549ad8b8dba872"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_text_semibold.ttf",
+      "weight": 600,
+      "family": "text",
+      "sha256": "78a843fade9d4612a5567302fb595b56976eb5fcebf4fea5a5912d638bafcde3"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_text_bold.ttf",
+      "weight": 700,
+      "family": "text",
+      "sha256": "288316099b1e0a47a4716d159098005eef7c0066921f34e3200393dbdb01947f"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_display_light.ttf",
+      "weight": 300,
+      "family": "display",
+      "sha256": "1d6072bc7807fa7bf08a6d273368f04ac68e77438258f32975057a61c8772811"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_display_regular.ttf",
+      "weight": 400,
+      "family": "display",
+      "sha256": "99614bda7ff423aaf470990692dd93613a5971ab4446e4a6d5a83b3d74865074"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_display_medium.ttf",
+      "weight": 500,
+      "family": "display",
+      "sha256": "99665c256585aeaab2d06950c2d7715cca8fd7883c2d0e7a421b8b287e1f17de"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_display_semibold.ttf",
+      "weight": 600,
+      "family": "display",
+      "sha256": "0310d7a325896129730c6c8cf9a6e0f81ee258bedf77b1ff059b2a7b75f74e02"
+    },
+    {
+      "file": "app/src/main/res/font/aurora_inter_display_bold.ttf",
+      "weight": 700,
+      "family": "display",
+      "sha256": "b74c8e0dd744b3347faca4c96bc7b2e32f7d6f62300a79b1d1a99331e44a5bc4"
+    }
+  ]
+}

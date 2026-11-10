@@ -1,0 +1,263 @@
+[
+  {
+    "glyph": "Speaker",
+    "node": "I19:1036;43:772",
+    "file": "Speaker.svg",
+    "nativeWidth": 30.0,
+    "nativeHeight": 22.0
+  },
+  {
+    "glyph": "Microphone",
+    "node": "I19:1036;43:785",
+    "file": "Microphone.svg",
+    "nativeWidth": 16.0,
+    "nativeHeight": 24.0
+  },
+  {
+    "glyph": "FaceTimeVideo",
+    "node": "I19:1036;43:788",
+    "file": "FaceTimeVideo.svg",
+    "nativeWidth": 27.0,
+    "nativeHeight": 18.0
+  },
+  {
+    "glyph": "SharePlay",
+    "node": "I19:1036;43:791",
+    "file": "SharePlay.svg",
+    "nativeWidth": 31.0,
+    "nativeHeight": 21.0
+  },
+  {
+    "glyph": "EndCall",
+    "node": "I19:1036;43:782",
+    "file": "EndCall.svg",
+    "nativeWidth": 26.0,
+    "nativeHeight": 10.0
+  },
+  {
+    "glyph": "Info",
+    "node": "I19:1036;43:792",
+    "file": "Info.svg",
+    "nativeWidth": 18.0,
+    "nativeHeight": 18.0
+  },
+  {
+    "glyph": "AirPods",
+    "node": "I19:1035;73:816",
+    "file": "AirPods.svg",
+    "nativeWidth": 32.0,
+    "nativeHeight": 21.0
+  },
+  {
+    "glyph": "Forward",
+    "node": "I19:1033;1:1029",
+    "file": "Forward.svg",
+    "nativeWidth": 29.0,
+    "nativeHeight": 16.0
+  },
+  {
+    "glyph": "Backward",
+    "node": "I19:1033;1:1027",
+    "file": "Backward.svg",
+    "nativeWidth": 29.0,
+    "nativeHeight": 16.0
+  },
+  {
+    "glyph": "Play",
+    "node": "I19:1033;1:1028",
+    "file": "Play.svg",
+    "nativeWidth": 26.0,
+    "nativeHeight": 28.0
+  },
+  {
+    "glyph": "AirPlay",
+    "node": "I19:1033;1:1030",
+    "file": "AirPlay.svg",
+    "nativeWidth": 21.0,
+    "nativeHeight": 20.0
+  },
+  {
+    "glyph": "Pause",
+    "node": "I19:1022;43:758",
+    "file": "Pause.svg",
+    "nativeWidth": 15.0,
+    "nativeHeight": 19.0
+  },
+  {
+    "glyph": "Close",
+    "node": "I19:1022;43:757",
+    "file": "Close.svg",
+    "nativeWidth": 19.0,
+    "nativeHeight": 19.0
+  },
+  {
+    "glyph": "BellSlash",
+    "node": "I19:1030;43:1094",
+    "file": "BellSlash.svg",
+    "nativeWidth": 24.0,
+    "nativeHeight": 25.0
+  },
+  {
+    "glyph": "Undo",
+    "node": "I19:1031;93:769",
+    "file": "Undo.svg",
+    "nativeWidth": 17.0,
+    "nativeHeight": 17.0
+  },
+  {
+    "glyph": "SkipBack15",
+    "node": "I19:1038;78:857",
+    "file": "SkipBack15.svg",
+    "nativeWidth": 25.0,
+    "nativeHeight": 27.0
+  },
+  {
+    "glyph": "SkipForward15",
+    "node": "I19:1038;78:859",
+    "file": "SkipForward15.svg",
+    "nativeWidth": 25.0,
+    "nativeHeight": 28.0
+  },
+  {
+    "glyph": "Airplane",
+    "node": "I19:1039;69:403",
+    "file": "Airplane.svg",
+    "nativeWidth": 31.0,
+    "nativeHeight": 28.0
+  },
+  {
+    "glyph": "Chat",
+    "node": "27:1008",
+    "file": "Chat.svg",
+    "nativeWidth": 16.0,
+    "nativeHeight": 16.0
+  },
+  {
+    "glyph": "Bell",
+    "node": "I19:1007;67:1914",
+    "file": "Bell.svg",
+    "nativeWidth": 15.0,
+    "nativeHeight": 17.0
+  },
+  {
+    "glyph": "Check",
+    "node": "I19:1008;67:1917",
+    "file": "Check.svg",
+    "nativeWidth": 20.0,
+    "nativeHeight": 20.0
+  },
+  {
+    "glyph": "Lock",
+    "node": "I19:1009;67:1920",
+    "file": "Lock.svg",
+    "nativeWidth": 12.0,
+    "nativeHeight": 18.0
+  },
+  {
+    "glyph": "Unlock",
+    "node": "I19:1010;67:1923",
+    "file": "Unlock.svg",
+    "nativeWidth": 18.0,
+    "nativeHeight": 18.0
+  },
+  {
+    "glyph": "PersonalHotspot",
+    "node": "I19:1011;76:755",
+    "file": "PersonalHotspot.svg",
+    "nativeWidth": 23.0,
+    "nativeHeight": 14.0
+  },
+  {
+    "glyph": "Moon",
+    "node": "I19:1012;78:805",
+    "file": "Moon.svg",
+    "nativeWidth": 16.0,
+    "nativeHeight": 16.0
+  },
+  {
+    "glyph": "Car",
+    "node": "I19:1013;78:816",
+    "file": "Car.svg",
+    "nativeWidth": 20.0,
+    "nativeHeight": 16.0
+  },
+  {
+    "glyph": "ScreenMirroring",
+    "node": "I19:1040;93:785",
+    "file": "ScreenMirroring.svg",
+    "nativeWidth": 36.0,
+    "nativeHeight": 30.0
+  },
+  {
+    "glyph": "Laptop",
+    "node": "I19:1040;93:797",
+    "file": "Laptop.svg",
+    "nativeWidth": 26.0,
+    "nativeHeight": 15.0
+  },
+  {
+    "glyph": "Cellular",
+    "node": "I19:1041;107:862",
+    "file": "Cellular.svg",
+    "nativeWidth": 32.0,
+    "nativeHeight": 27.0
+  },
+  {
+    "glyph": "TransitTrain",
+    "node": "I19:1042;107:912",
+    "file": "TransitTrain.svg",
+    "nativeWidth": 27.0,
+    "nativeHeight": 38.0
+  },
+  {
+    "glyph": "Phone",
+    "node": "I19:1027;1:2456",
+    "file": "Phone.svg",
+    "nativeWidth": 22.0,
+    "nativeHeight": 22.0
+  },
+  {
+    "glyph": "NavigationLeft",
+    "node": "I19:1034;43:1042",
+    "file": "NavigationLeft.svg",
+    "nativeWidth": 33.0,
+    "nativeHeight": 28.0
+  },
+  {
+    "glyph": "NavigationRight",
+    "node": "I19:1034;43:1061",
+    "file": "NavigationRight.svg",
+    "nativeWidth": 33.0,
+    "nativeHeight": 28.0
+  },
+  {
+    "glyph": "NavigationStraight",
+    "node": "I19:1034;43:1056",
+    "file": "NavigationStraight.svg",
+    "nativeWidth": 27.0,
+    "nativeHeight": 34.0
+  },
+  {
+    "glyph": "FaceId",
+    "node": "I19:1002;67:1905",
+    "file": "FaceId.svg",
+    "nativeWidth": 20.0,
+    "nativeHeight": 20.0
+  },
+  {
+    "glyph": "Waveform",
+    "node": "I19:1033;1:1032",
+    "file": "Waveform.svg",
+    "nativeWidth": 20.0,
+    "nativeHeight": 23.0
+  },
+  {
+    "glyph": "SharePlayScreen",
+    "node": "I19:1037;93:855",
+    "file": "SharePlayScreen.svg",
+    "source": "design/reference/ios17-dynamic-island/Dynamic Island/Dynamic Island-15.svg",
+    "source_note": "Exact original supplied Figma SVG; shared-media fourth button glyph only, background excluded.",
+    "nativeWidth": 33.24300000000002,
+    "nativeHeight": 19.034999999999997
+  }
+]

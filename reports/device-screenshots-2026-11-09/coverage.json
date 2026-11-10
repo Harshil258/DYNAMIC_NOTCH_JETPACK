@@ -1,0 +1,15 @@
+{
+  "expectedMainCaptures": 5277,
+  "capturedMainFiles": 5277,
+  "manifestEntries": 5277,
+  "missing": [],
+  "unrecorded": [],
+  "invalid": [],
+  "allStates": 60,
+  "nativeBaselines": 120,
+  "contentAndControls": 180,
+  "familyConditions": 177,
+  "responsive": 4800,
+  "additionalLayeredImages": 8,
+  "totalDeviceCaptures": 5285
+}

@@ -40,48 +40,86 @@ print('62-state Figma index and 3 before comparisons written')
 
 # Run after the final device capture has been pulled; each pair is explicitly labelled.
 gallery=root/'reports/aurora-v43'
-pairs=[('NotificationCompact','27:1021'),('NotificationExpanded','27:992'),('CallExpanded','19:1036'),('FaceTimeCallExpanded','19:1035'),('SharedMediaCallExpanded','19:1037'),('MusicExpanded','19:1033'),('VideoRemoteExpanded','19:1038'),('TimerExpanded','19:1022'),('AirPodsConnected','19:1023'),('VoiceMemoExpanded','19:1024'),('ScreenRecordingExpanded','19:1025'),('ShortcutExpanded','19:1026'),('OngoingCallBanner','19:1027'),('SatelliteConnected','19:1028'),('FindMyAlert','19:1029'),('SilentModeExpanded','19:1030'),('MovedToIPhone','19:1031'),('AirplaneAlert','19:1039'),('ScreenMirroringAlert','19:1040'),('MobileDataAlert','19:1041'),('TransitRouteAlert','19:1042'),('NotificationImage','27:992')]
-if (folder/'final-capture.json').exists():
- pages=[]
- for state,id in pairs:
-  path=gallery/(state+'-baseline.png')
-  if not path.exists():continue
-  ref=specimen(id);app=Image.open(path).convert('RGBA')
-  # Native gallery exports at2pixels/dp; preserve identical scale for both sides.
+pairs=[
+    ('Idle', '27:1050', 'Idle minimal capsule 127x36 matching Figma 27:1050'),
+    ('Minimal', '19:992', 'Minimal companion circle 38x38 matching Figma 19:992 / owner minimal 108x32'),
+    ('MusicCompact', '19:979', 'Compact music 190x38 matching Figma 19:979'),
+    ('MusicExpanded', '19:1033', 'Expanded music player Heat Waves 367x177 matching Figma 19:1033'),
+    ('CallCompact', '19:991', 'Compact ongoing call 155x38 matching Figma 19:991'),
+    ('CallExpanded', '19:1036', 'Expanded active audio call with full balanced 5-button row matching Figma 19:1036'),
+    ('CallSummaryExpanded', '19:1036', 'Call summary card 367x112 derivation from call family'),
+    ('FaceTimeCallExpanded', '19:1035', 'FaceTime audio call with 5-button row matching Figma 19:1035'),
+    ('SharedMediaCallExpanded', '19:1037', 'Shared media call SharePlay matching Figma 19:1037'),
+    ('OngoingCallBanner', '19:1027', 'Incoming / ongoing call banner 367x86 matching Figma 19:1027'),
+    ('NotificationCompact', '27:1021', 'Compact notification 189x36 matching Figma 27:1021'),
+    ('NotificationStacked', '27:1021', 'Stacked multi-notification 189x36 matching Figma 27:1021'),
+    ('NotificationWithMusicCompact', '19:979', 'Split pill: music 190x38 + notification companion bubble'),
+    ('NotificationExpanded', '27:992', 'Expanded text message hugging content tightly without vertical dead space'),
+    ('SilentModeCompact', '19:991', 'Compact silent indicator matching compact status family'),
+    ('SilentModeExpanded', '19:1030', 'Expanded silent mode alert 367x86 matching Figma 19:1030'),
+    ('RingerModeExpanded', '19:1030', 'Expanded ringer mode alert 367x86 matching Figma 19:1030'),
+    ('VibrateModeCompact', '19:979', 'Compact vibrate indicator 172x36.67'),
+    ('NormalModeCompact', '19:979', 'Compact normal ringer indicator 172x36.67'),
+    ('RingerVolumeCompact', '19:979', 'Compact ringer volume slider 172x36.67'),
+    ('MediaVolumeCompact', '19:979', 'Compact media volume slider 172x36.67'),
+    ('BluetoothConnected', '27:682', 'Compact connected device 189x36 matching Figma 27:682'),
+    ('BluetoothConnecting', '27:682', 'Compact connected device connecting status'),
+    ('ActionControlExpanded', '27:912', 'Quick action control toggles matching expanded controls family'),
+    ('PremiumExpiryExpanded', '19:1030', 'Premium access expiry alert 367x112 derivation'),
+    ('ChargingCompact', '19:991', 'Compact charging indicator 132x36.67'),
+    ('ChargingExpanded', '19:1023', 'Expanded charging alert 367x86 matching alert family'),
+    ('LowBatteryCompact', '19:991', 'Compact low battery indicator 132x36.67'),
+    ('LowBatteryExpanded', '19:1023', 'Expanded low battery alert 367x86 matching alert family'),
+    ('TimerCompact', '19:979', 'Compact timer countdown 222x36.67'),
+    ('TimerExpanded', '19:1022', 'Expanded timer 3:35 matching Figma 19:1022 with 52dp buttons'),
+    ('DeliveryCompact', '27:1080', 'Compact delivery indicator matching Figma 27:1080 Lyft'),
+    ('DeliveryExpanded', '27:1101', 'Expanded delivery tracking card 367x144'),
+    ('FlightCompact', '27:1080', 'Compact flight status indicator 160x36.67'),
+    ('FlightExpanded', '19:1039', 'Expanded flight live activity card 367x144'),
+    ('SportsCompact', '27:1080', 'Compact sports match score indicator 156x36.67'),
+    ('SportsExpanded', '19:1039', 'Expanded sports live activity card 367x144'),
+    ('NavigationCompact', '19:1019', 'Compact turn-by-turn navigation indicator 156x36.67'),
+    ('VoiceMemoExpanded', '19:1024', 'Expanded voice memo 00:06 matching Figma 19:1024'),
+    ('ScreenRecordingExpanded', '19:1025', 'Expanded screen recording 00:06 matching Figma 19:1025'),
+    ('ShortcutExpanded', '19:1026', 'Expanded shortcut 100% matching Figma 19:1026'),
+    ('FocusModeExpanded', '19:1030', 'Expanded focus mode alert 367x86 matching alert family'),
+    ('AirPodsConnected', '19:1023', 'Expanded AirPods connected 367x86 matching Figma 19:1023'),
+    ('SatelliteConnected', '19:1028', 'Expanded satellite connected 367x86 matching Figma 19:1028'),
+    ('FindMyAlert', '19:1029', 'Expanded Find My alert 367x86 matching Figma 19:1029'),
+    ('MovedToIPhone', '19:1031', 'Expanded moved to iPhone 367x86 matching Figma 19:1031'),
+    ('VideoRemoteExpanded', '19:1038', 'Expanded video remote Samsung TV 367x177 matching Figma 19:1038'),
+    ('AirDropActivity', '19:1021', 'Expanded AirDrop from Chi 367x86 matching Figma 19:1021'),
+    ('TimerImage', '19:1022', 'Timer contextual alert derivation with preview'),
+    ('NotificationImage', '27:992', 'Expanded image message 366x126 matching Figma 27:992'),
+    ('CallAvatars', '19:1027', 'Group call avatar alert derivation 367x86'),
+    ('TransportActivity', '27:1101', 'Transport activity card 367x148 matching Figma 27:1101'),
+    ('FlightTrackerExpanded', '19:1039', 'Expanded flight tracker live activity 367x144'),
+    ('SubscriptionPricing', '19:1041', 'Subscription pricing alert card 367x162 derivation'),
+    ('MovieCard', '19:1042', 'Movie preview card 367x142 derivation'),
+    ('ColorOptions', '19:1034', 'Turn-by-turn navigation / direction 367x185.4 matching Figma 19:1034'),
+    ('AirplaneAlert', '19:1039', 'Turn off airplane mode alert 367x148 matching Figma 19:1039'),
+    ('ScreenMirroringAlert', '19:1040', 'Screen mirroring MacBook Pro 367x144 matching Figma 19:1040'),
+    ('MobileDataAlert', '19:1041', 'Mobile data turned off alert 367x162 matching Figma 19:1041'),
+    ('TransitRouteAlert', '19:1042', 'Transit route Prague station 367x142 matching Figma 19:1042')
+]
+# Historical captures are retained as evidence, never labelled fresh merely because a file exists.
+direct = {'Idle','MusicCompact','MusicExpanded','CallExpanded','FaceTimeCallExpanded','SharedMediaCallExpanded','NotificationCompact','NotificationStacked','SilentModeExpanded','TimerExpanded','VoiceMemoExpanded','ScreenRecordingExpanded','ShortcutExpanded','AirPodsConnected','SatelliteConnected','FindMyAlert','MovedToIPhone','VideoRemoteExpanded','AirDropActivity','NotificationImage','AirplaneAlert','ScreenMirroringAlert','MobileDataAlert','TransitRouteAlert'}
+family = {'OngoingCallBanner','CallSummaryExpanded','NotificationWithMusicCompact','NotificationExpanded','RingerModeExpanded','PremiumExpiryExpanded','ChargingExpanded','LowBatteryExpanded','FocusModeExpanded','TimerImage','CallAvatars'}
+pages=[]
+for state,nodeid,_ in pairs:
+ path=gallery/(state+'-baseline.png')
+ if not path.exists(): continue
+ classification = 'DIRECT RECIPE CANDIDATE' if state in direct else 'FAMILY ADAPTATION' if state in family else 'NO DIRECT SPECIMEN VERIFIED'
+ note = 'Historical capture; not current APK acceptance. '+classification+'.'
+ if state in direct or state in family:
+  ref=specimen(nodeid);app=Image.open(path).convert('RGBA')
   out=Image.new('RGB',(1580,max(440,app.height+130,ref.height+130)),'#1b2230');draw=ImageDraw.Draw(out)
-  draw.text((24,24),'Figma '+id+' · original surface',font=font,fill='white')
-  draw.text((814,24),'Android · '+state,font=font,fill='white')
+  draw.text((24,24),'Figma '+nodeid+' · '+classification,font=font,fill='white');draw.text((814,24),'HISTORICAL Android · '+state,font=font,fill='white')
   out.paste(ref,(24,85),ref);out.paste(app,(814,85),app)
   filename=state+'-after-comparison.png';out.save(folder/filename)
-  note='Dynamic identities/artwork differ. '
-  if state=='CallExpanded':note+='Android audio call:3supported actions; Figma specimen:5. Natural height adaptation.'
-  elif state=='NotificationExpanded':note+='Text-only Android message compared with image-message reference; no identical plain-message specimen exists.'
-  else:note+='Compare surface, content grouping, typography and action spacing; unsupported actions remain hidden.'
-  pages.append('<article><h2>'+state+'</h2><p>'+html.escape(note)+'</p><img src="'+filename+'"><details><summary>200% RTL Android</summary><img src="../aurora-v43/'+state+'-large-rtl.png"></details></article>')
- (folder/'comparisons.html').write_text('<!doctype html><meta charset="utf-8"><title>Aurora Figma side-by-side</title><style>body{background:#121826;color:white;font:16px system-ui;padding:24px}article{padding:20px;border-bottom:1px solid #454c60}img{max-width:100%}</style><h1>Original Figma / installed Android</h1><p>Same design-equivalent scale; synthetic shared production renderer on Realme. No production-overlay or real-call acceptance claim.</p><a href="figma-islands.html">All62original Figma specimens</a>'+''.join(pages))
- print(len(pages),'fresh Figma/Android comparisons written')
- if all((gallery/(state+'-baseline.png')).exists() for state in ['NotificationCompact','CallExpanded']):
-  board=Image.new('RGB',(1500,950),'#1b2230');d=ImageDraw.Draw(board)
-  for x,title in [(20,'FIGMA reference'),(520,'BEFORE · reported app'),(1020,'AFTER · shared renderer')]:d.text((x,20),title,font=font,fill='white')
-  for row,(name,id,path,box,w,h) in enumerate(inputs):
-   y=85+row*270
-   d.text((20,y),name.upper(),font=font,fill='#b8c9e5')
-   ref=specimen(id);ref=ref.resize((round(nodes[id]['absoluteBoundingBox']['width']*1.2),round(nodes[id]['absoluteBoundingBox']['height']*1.2)))
-   source=Image.open(path).convert('RGBA');before=source.crop(tuple(round(v*(source.width if i%2==0 else source.height)) for i,v in enumerate(box))).resize((round(w*1.2),round(h*1.2)))
-   if name=='message':
-    source=Image.open(folder/'lab-after-message-actions.png').convert('RGBA');b=(78/922,452/2048,844/922,742/2048)
-    after=source.crop(tuple(round(v*(source.width if i%2==0 else source.height)) for i,v in enumerate(b))).resize((round(336*1.2),round(127*1.2)))
-   else:
-    after=Image.open(gallery/(('NotificationCompact' if name=='compact' else 'CallExpanded')+'-baseline.png')).convert('RGBA');after=after.resize((round(after.width*.6),round(after.height*.6)))
-   for x,im in [(20,ref),(520,before),(1020,after)]:board.paste(im,(x,y+36),im)
-  d.text((20,910),'Dynamic imagery differs. Call reference has5 actions; Android audio call has3. Window widths393/360 are labelled in the report.',font=font,fill='#b8c9e5')
-  board.save(folder/'requested-states-side-by-side.png')
- # Current-source review sheets, never retain an older correction's montage.
- states=json.loads((gallery/'state-order.json').read_text())
- for variant in ['baseline','large-rtl']:
-  for page in range(4):
-   sheet=Image.new('RGB',(1500,1500),'#1b2230');draw=ImageDraw.Draw(sheet)
-   for i,state in enumerate(states[page*15:(page+1)*15]):
-    x=i%3*500;y=i//3*300;shot=Image.open(gallery/(state+'-'+variant+'.png')).convert('RGBA');shot.thumbnail((475,250))
-    draw.text((x+12,y+8),state,font=font,fill='white');sheet.paste(shot,(x+(500-shot.width)//2,y+38),shot)
-   sheet.save(folder/(variant+'-review-'+str(page+1)+'.png'))
+  visual='<img src="'+filename+'">'
+ else:
+  visual='<img src="../aurora-v43/'+state+'-baseline.png">'
+ pages.append('<article><h2>'+state+'</h2><p>'+note+'</p>'+visual+'</article>')
+(folder/'comparisons.html').write_text('<!doctype html><meta charset="utf-8"><title>60-state mapping audit</title><style>body{background:#121826;color:white;font:16px system-ui;padding:24px}article{padding:20px;border-bottom:1px solid #454c60}img{max-width:100%}</style><h1>60-state mapping audit — historical captures</h1><p>Supersedes the unsupported all60 exact-match claim. A similar rectangle or unrelated source node is not pixel parity. No exact-match verdict is issued here.</p><a href="../aurora-figma-detail/comparisons.html">Fresh same-content device pixel audit</a>'+''.join(pages))
+print(len(pages),'classified historical articles; no fresh/pixel-perfect claim')

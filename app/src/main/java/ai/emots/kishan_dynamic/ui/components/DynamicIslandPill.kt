@@ -1549,32 +1549,56 @@ private fun CallCompactContent(
     showDuration: Boolean,
     isDialing: Boolean
 ) {
-    CompactIslandLayout(
-        leading = {
-            Box(
-                modifier = Modifier
-                    .size(20.dp)
-                    .clip(CircleShape)
-                    .background(IslandColors.CapsuleGreen),
-                contentAlignment = Alignment.Center
-            ) {
-                AppleIcon(glyph = AppleGlyph.Phone, tint = Color.White, size = 11.dp)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(horizontal = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Leading: Phone handset glyph + Call Duration matching Figma Call Time.png
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            AppleIcon(
+                glyph = AppleGlyph.Phone,
+                tint = IslandColors.CapsuleGreen,
+                size = 13.dp
+            )
+            val durationText = when {
+                isDialing -> "Calling…"
+                showDuration -> {
+                    val m = (durationSeconds / 60L).coerceAtLeast(0L)
+                    val s = (durationSeconds % 60L).coerceAtLeast(0L)
+                    "%d:%02d".format(m, s)
+                }
+                else -> "0:00"
             }
-        },
-        trailing = {
             Text(
-                text = when {
-                    isDialing -> "Calling…"
-                    showDuration -> formatCallDuration(durationSeconds)
-                    else -> "On call"
-                },
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
+                text = durationText,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
                 color = IslandColors.CapsuleGreen,
-                fontFamily = IslandReferenceFonts.Text
+                fontFamily = IslandReferenceFonts.Text,
+                maxLines = 1,
+                softWrap = false
             )
         }
-    )
+
+        // Trailing: Live audio waveform animation (orange/green/white/orange bars)
+        WaveformAnimation(
+            modifier = Modifier.size(width = 22.dp, height = 13.dp),
+            gradient = listOf(
+                Color(0xFFFF9500),
+                IslandColors.CapsuleGreen,
+                Color.White,
+                Color(0xFFFF9500)
+            ),
+            animated = true
+        )
+    }
 }
 
 @Composable

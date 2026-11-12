@@ -7,7 +7,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -20,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
@@ -55,6 +58,14 @@ private enum class GalleryViewMode(val title: String) {
     LIVE("Live"),
     FIGMA("Figma Ref"),
     SIDE_BY_SIDE("Side-by-Side")
+}
+
+private enum class GalleryStageBackground(val label: String, val indicatorColor: Color) {
+    WALLPAPER("Wallpaper", Color(0xFF384A68)),
+    SLATE("Slate", Color(0xFF2C3240)),
+    MIDNIGHT("Midnight", Color(0xFF1E2638)),
+    LIGHT("Light", Color(0xFFE2E8F0)),
+    OLED("OLED", Color(0xFF000000))
 }
 
 private fun statesForCategory(category: GalleryCategory): List<IslandDemoState> = when (category) {
@@ -170,6 +181,7 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
     var rtl by remember { mutableStateOf(false) }
     var showMetrics by remember { mutableStateOf(true) }
     var viewMode by remember { mutableStateOf(GalleryViewMode.LIVE) }
+    var stageBg by remember { mutableStateOf(GalleryStageBackground.WALLPAPER) }
     var groupCallerFixture by remember { mutableStateOf(false) }
     var carrierControlsFixture by remember { mutableStateOf(false) }
     var navigationSourceMode by remember { mutableIntStateOf(0) }
@@ -306,7 +318,84 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
 
                 Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
 
-                // The Black OLED Canvas with Notch Clearance Indicator
+                // Canvas Background Selector - eliminates blend between black island & stage
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Canvas:",
+                        style = AppTheme.typography.caption,
+                        fontSize = 11.sp,
+                        color = AppTheme.colors.textSecondary
+                    )
+                    Row(
+                        modifier = Modifier.horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        GalleryStageBackground.entries.forEach { bg ->
+                            val isSelected = stageBg == bg
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(if (isSelected) AppTheme.colors.primary.copy(alpha = 0.22f) else AppTheme.colors.surfaceVariant.copy(alpha = 0.45f))
+                                    .border(
+                                        width = if (isSelected) 1.dp else 0.5.dp,
+                                        color = if (isSelected) AppTheme.colors.primary else Color.White.copy(alpha = 0.12f),
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .clickable { stageBg = bg }
+                                    .padding(horizontal = 6.dp, vertical = 3.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(7.dp)
+                                            .clip(CircleShape)
+                                            .background(bg.indicatorColor)
+                                            .border(0.5.dp, Color.White.copy(alpha = 0.35f), CircleShape)
+                                    )
+                                    Text(
+                                        text = bg.label,
+                                        fontSize = 10.sp,
+                                        color = if (isSelected) Color.White else IslandColors.TextSecondary,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
+
+                val stageBrush = when (stageBg) {
+                    GalleryStageBackground.WALLPAPER -> Brush.verticalGradient(
+                        listOf(Color(0xFF2C394F), Color(0xFF1E2638), Color(0xFF131824))
+                    )
+                    GalleryStageBackground.SLATE -> Brush.verticalGradient(
+                        listOf(Color(0xFF333B49), Color(0xFF232834))
+                    )
+                    GalleryStageBackground.MIDNIGHT -> Brush.verticalGradient(
+                        listOf(Color(0xFF1B2232), Color(0xFF101520))
+                    )
+                    GalleryStageBackground.LIGHT -> Brush.verticalGradient(
+                        listOf(Color(0xFFE6EBF2), Color(0xFFD8DFEB))
+                    )
+                    GalleryStageBackground.OLED -> Brush.verticalGradient(
+                        listOf(Color(0xFF000000), Color(0xFF000000))
+                    )
+                }
+                val stageBorderColor = if (stageBg == GalleryStageBackground.LIGHT) Color.Black.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.16f)
+
+                // The Canvas with Notch Clearance Indicator
                 val stageMinHeight = when (viewMode) {
                     GalleryViewMode.SIDE_BY_SIDE -> (target.height * 2 + 56).dp
                     else -> if (selected.isCompactPresentation()) 72.dp else minOf((target.height + 28).dp, 280.dp)
@@ -318,8 +407,8 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                         .heightIn(min = stageMinHeight)
                         .wrapContentHeight()
                         .clip(RoundedCornerShape(16.dp))
-                        .background(AppTheme.colors.background)
-                        .border(0.75.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(16.dp))
+                        .background(stageBrush)
+                        .border(1.dp, stageBorderColor, RoundedCornerShape(16.dp))
                         .pointerInput(selected, activeList) {
                             detectHorizontalDragGestures(
                                 onDragEnd = {
@@ -340,8 +429,8 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                             .padding(top = 9.dp)
                             .size(11.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF15181F))
-                            .border(0.5.dp, Color.White.copy(alpha = 0.15f), CircleShape)
+                            .background(if (stageBg == GalleryStageBackground.LIGHT) Color(0xFF1C1D22) else Color(0xFF15181F))
+                            .border(0.5.dp, if (stageBg == GalleryStageBackground.LIGHT) Color.Black.copy(alpha = 0.25f) else Color.White.copy(alpha = 0.15f), CircleShape)
                     )
 
                     val renderLiveIsland = @Composable {

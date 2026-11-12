@@ -2,6 +2,7 @@ package ai.emots.kishan_dynamic.playground
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +49,12 @@ private enum class GalleryCategory(val title: String) {
     ACTIVITIES("Activities (12)"),
     DEVICE("Device & Battery (12)"),
     CARDS("Controls & Cards (6)")
+}
+
+private enum class GalleryViewMode(val title: String) {
+    LIVE("Live"),
+    FIGMA("Figma Ref"),
+    SIDE_BY_SIDE("Side-by-Side")
 }
 
 private fun statesForCategory(category: GalleryCategory): List<IslandDemoState> = when (category) {
@@ -160,12 +169,15 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
     var large by remember { mutableStateOf(false) }
     var rtl by remember { mutableStateOf(false) }
     var showMetrics by remember { mutableStateOf(true) }
+    var viewMode by remember { mutableStateOf(GalleryViewMode.LIVE) }
     var groupCallerFixture by remember { mutableStateOf(false) }
     var carrierControlsFixture by remember { mutableStateOf(false) }
     var navigationSourceMode by remember { mutableIntStateOf(0) }
     var selectedCategoryIndex by remember { mutableIntStateOf(0) }
     var searchQuery by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
+
+    val gridState = rememberLazyGridState()
 
     var measuredActualW by remember { mutableFloatStateOf(0f) }
     var measuredActualH by remember { mutableFloatStateOf(0f) }
@@ -197,6 +209,13 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
     val prevInList = activeList[(activePos - 1 + activeList.size) % activeList.size]
     val nextInList = activeList[(activePos + 1) % activeList.size]
     val oppositeState = getOppositeState(selected)
+
+    LaunchedEffect(selected, filteredStates) {
+        val idx = filteredStates.indexOf(selected)
+        if (idx >= 0) {
+            gridState.animateScrollToItem(idx)
+        }
+    }
 
     AppScreen(
         scrollable = false,
@@ -278,12 +297,26 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
 
                 Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
 
+                AppSegmented(
+                    options = listOf("Live Island", "Figma Ref", "Side-by-Side"),
+                    selectedIndex = viewMode.ordinal,
+                    onOptionSelected = { viewMode = GalleryViewMode.entries[it] },
+                    modifier = Modifier.fillMaxWidth().height(30.dp)
+                )
+
+                Spacer(modifier = Modifier.height(AppTheme.spacing.xs))
+
                 // The Black OLED Canvas with Notch Clearance Indicator
+                val stageMinHeight = when (viewMode) {
+                    GalleryViewMode.SIDE_BY_SIDE -> (target.height * 2 + 56).dp
+                    else -> if (selected.isCompactPresentation()) 72.dp else minOf((target.height + 28).dp, 280.dp)
+                }
                 var swipeOffset by remember { mutableFloatStateOf(0f) }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(min = 160.dp, max = 220.dp)
+                        .heightIn(min = stageMinHeight)
+                        .wrapContentHeight()
                         .clip(RoundedCornerShape(16.dp))
                         .background(AppTheme.colors.background)
                         .border(0.75.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(16.dp))
@@ -311,52 +344,123 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                             .border(0.5.dp, Color.White.copy(alpha = 0.15f), CircleShape)
                     )
 
-                    androidx.compose.foundation.layout.BoxWithConstraints {
-                        val fixtureDensity = minOf(density.density, constraints.maxWidth.toFloat() / width)
-                        CompositionLocalProvider(
-                            LocalConfiguration provides configuration,
-                            LocalDensity provides Density(fixtureDensity, if (large) 2f else 1f),
-                            LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
-                            LocalReducedMotion provides true,
-                            LocalIslandRenderSettings provides IslandRenderSettings(
-                                maximumHeight = (constraints.maxHeight / fixtureDensity).dp
-                            ),
-                            LocalIslandGeometryObserver provides observer,
-                            LocalIslandFixtureIcons provides mapOf(FigmaReferenceFixtures.packageName to ai.emots.kishan_dynamic.R.drawable.figma_reference_app)
-                        ) {
-                            DynamicIslandPill(
-                                state = selected,
-                                batteryPercent = if (selected in setOf(IslandDemoState.LowBatteryCompact, IslandDemoState.LowBatteryExpanded)) 20 else 85,
-                                callParticipants = if (selected == IslandDemoState.CallAvatars && groupCallerFixture) listOf(ContactInfo("Alex Morgan", ""), ContactInfo("Jordan Lee", "")) else emptyList(),
-                                ringerMode = if (selected == IslandDemoState.RingerModeExpanded) RingerModeType.NORMAL else RingerModeType.SILENT,
-                                notifications = referenceMessages,
-                                notificationActiveIndex = 1,
-                                unseenNotificationCount = 3,
-                                musicTrack = FigmaReferenceFixtures.music(context),
-                                callContact = FigmaReferenceFixtures.caller(context),
-                                liveActivityInfo = if (selected == IslandDemoState.ColorOptions && navigationSourceMode > 0)
-                                    ai.emots.kishan_dynamic.data.model.LiveActivityInfo(
-                                        id = "gallery-navigation", kind = ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION,
-                                        title = "Navigation", primaryMetric = if (navigationSourceMode == 1) "500 m" else "1.2 km",
-                                        secondaryMetric = if (navigationSourceMode == 1) "University Avenue" else "University Avenue toward the Riverside science museum",
-                                        secondaryText = if (navigationSourceMode == 1) "Turn left at the next intersection" else "Continue past the town library and follow the signs toward the west entrance",
-                                        maneuverType = "left", statusBadgeText = "NEXT TURN"
-                                    ) else null,
-                                availableControlActions = if (carrierControlsFixture && selected == IslandDemoState.CallExpanded)
-                                    setOf(IslandControlAction.CallToggleSpeaker, IslandControlAction.CallToggleMute, IslandControlAction.CallEnd) else null,
-                                bluetoothDeviceName = "Studio headphones",
-                                bluetoothBatteryPercent = 75,
-                                liveActivityProgress = if (selected == IslandDemoState.AirPodsConnected) .75f else null
-                            )
-                            LaunchedEffect(observer.regions.values.toList(), selected) {
-                                observer.regions.values.firstOrNull { it.first == "Shell" }?.second?.let {
-                                    val w = it.width / fixtureDensity
-                                    val h = it.height / fixtureDensity
-                                    measuredActualW = w
-                                    measuredActualH = h
-                                    deltaW = w - IslandFamilyGeometry.resolve(selected, width.toFloat()).width
-                                    deltaH = h - target.height
+                    val renderLiveIsland = @Composable {
+                        androidx.compose.foundation.layout.BoxWithConstraints {
+                            val fixtureDensity = minOf(density.density, constraints.maxWidth.toFloat() / width)
+                            CompositionLocalProvider(
+                                LocalConfiguration provides configuration,
+                                LocalDensity provides Density(fixtureDensity, if (large) 2f else 1f),
+                                LocalLayoutDirection provides if (rtl) LayoutDirection.Rtl else LayoutDirection.Ltr,
+                                LocalReducedMotion provides true,
+                                LocalIslandRenderSettings provides IslandRenderSettings(
+                                    maximumHeight = (constraints.maxHeight / fixtureDensity).dp
+                                ),
+                                LocalIslandGeometryObserver provides observer,
+                                LocalIslandFixtureIcons provides mapOf(FigmaReferenceFixtures.packageName to ai.emots.kishan_dynamic.R.drawable.figma_reference_app)
+                            ) {
+                                DynamicIslandPill(
+                                    state = selected,
+                                    batteryPercent = if (selected in setOf(IslandDemoState.LowBatteryCompact, IslandDemoState.LowBatteryExpanded)) 20 else 85,
+                                    callParticipants = if (selected == IslandDemoState.CallAvatars && groupCallerFixture) listOf(ContactInfo("Alex Morgan", ""), ContactInfo("Jordan Lee", "")) else emptyList(),
+                                    ringerMode = if (selected == IslandDemoState.RingerModeExpanded) RingerModeType.NORMAL else RingerModeType.SILENT,
+                                    notifications = if (selected == IslandDemoState.NotificationExpanded) referenceMessages.map { it.copy(picturePath = null) } else referenceMessages,
+                                    notificationActiveIndex = 1,
+                                    unseenNotificationCount = 3,
+                                    musicTrack = FigmaReferenceFixtures.music(context),
+                                    callContact = FigmaReferenceFixtures.caller(context),
+                                    callSummary = if (selected == IslandDemoState.CallSummaryExpanded) CallRecord("gallery_summary", "Tamia Castillo", "+1 (555) 019-2834", startedAtMillis = System.currentTimeMillis() - 165_000L, durationSeconds = 165L, direction = CallDirection.INCOMING) else null,
+                                    liveActivityInfo = if (selected == IslandDemoState.ColorOptions && navigationSourceMode > 0)
+                                        ai.emots.kishan_dynamic.data.model.LiveActivityInfo(
+                                            id = "gallery-navigation", kind = ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION,
+                                            title = "Navigation", primaryMetric = if (navigationSourceMode == 1) "500 m" else "1.2 km",
+                                            secondaryMetric = if (navigationSourceMode == 1) "University Avenue" else "University Avenue toward the Riverside science museum",
+                                            secondaryText = if (navigationSourceMode == 1) "Turn left at the next intersection" else "Continue past the town library and follow the signs toward the west entrance",
+                                            maneuverType = "left", statusBadgeText = "NEXT TURN"
+                                        ) else null,
+                                    availableControlActions = if (carrierControlsFixture && selected == IslandDemoState.CallExpanded)
+                                        setOf(IslandControlAction.CallToggleSpeaker, IslandControlAction.CallToggleMute, IslandControlAction.CallEnd) else null,
+                                    bluetoothDeviceName = "Studio headphones",
+                                    bluetoothBatteryPercent = 75,
+                                    liveActivityProgress = if (selected == IslandDemoState.AirPodsConnected) .75f else null
+                                )
+                                LaunchedEffect(observer.regions.values.toList(), selected) {
+                                    observer.regions.values.firstOrNull { it.first == "Shell" }?.second?.let {
+                                        val w = it.width / fixtureDensity
+                                        val h = it.height / fixtureDensity
+                                        measuredActualW = w
+                                        measuredActualH = h
+                                        deltaW = w - IslandFamilyGeometry.resolve(selected, width.toFloat()).width
+                                        deltaH = h - target.height
+                                    }
                                 }
+                            }
+                        }
+                    }
+
+                    val renderFigmaReference = @Composable {
+                        val figmaBitmap = remember(selected) { FigmaReferenceFixtures.loadFigmaBitmap(context, selected) }
+                        if (figmaBitmap != null) {
+                            Image(
+                                bitmap = figmaBitmap.asImageBitmap(),
+                                contentDescription = "Figma Reference for ${selected.name}",
+                                modifier = Modifier
+                                    .padding(vertical = 12.dp)
+                                    .size(target.width.dp, target.height.dp)
+                                    .clip(RoundedCornerShape(target.radius.dp))
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .padding(vertical = 24.dp)
+                                    .size(target.width.dp, target.height.dp)
+                                    .clip(RoundedCornerShape(target.radius.dp))
+                                    .background(Color(0xFF10141D)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("Figma reference not found for ${selected.name}", fontSize = 11.sp, color = Color.Gray)
+                            }
+                        }
+                    }
+
+                    when (viewMode) {
+                        GalleryViewMode.LIVE -> renderLiveIsland()
+                        GalleryViewMode.FIGMA -> renderFigmaReference()
+                        GalleryViewMode.SIDE_BY_SIDE -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 10.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    "LIVE ANDROID PILL",
+                                    fontSize = 10.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = AppTheme.colors.primary
+                                )
+                                renderLiveIsland()
+
+                                Spacer(Modifier.height(4.dp))
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp)
+                                ) {
+                                    Box(Modifier.weight(1f).height(0.5.dp).background(Color.White.copy(alpha = 0.2f)))
+                                    val figmaId = FigmaReferenceFixtures.figmaNodeId(selected) ?: "Reference"
+                                    Text(
+                                        "  FIGMA $figmaId · ${target.width.toInt()}×${target.height.toInt()}dp  ",
+                                        fontSize = 9.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = IslandColors.CapsuleCyan
+                                    )
+                                    Box(Modifier.weight(1f).height(0.5.dp).background(Color.White.copy(alpha = 0.2f)))
+                                }
+                                Spacer(Modifier.height(4.dp))
+
+                                renderFigmaReference()
                             }
                         }
                     }
@@ -511,6 +615,7 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
 
             // 5. STATES SELECTION 2-COLUMN GRID
             LazyVerticalGrid(
+                state = gridState,
                 columns = GridCells.Fixed(2),
                 modifier = Modifier
                     .fillMaxWidth()

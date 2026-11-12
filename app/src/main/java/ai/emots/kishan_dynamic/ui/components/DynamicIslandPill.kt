@@ -760,7 +760,7 @@ fun DynamicIslandPill(
             verticalAlignment = Alignment.Top
         ) {
             // Main Island Pill Body
-            val pillBgColor = if (state == IslandDemoState.Minimal) Color(0xFFDC0917).copy(alpha = 0.60f) else Color(backgroundArgb)
+            val pillBgColor = Color(backgroundArgb)
             Box(
                 modifier = Modifier
                     .islandInspectableRegion("Shell")
@@ -878,7 +878,7 @@ fun DynamicIslandPill(
                         }
                     } else when (targetState) {
                         IslandDemoState.Idle -> IdleCutoutContent()
-                        IslandDemoState.Minimal -> MinimalPillContent()
+                        IslandDemoState.Minimal -> MinimalPillContent(activeNotification)
                         IslandDemoState.MusicCompact -> MusicCompactContent(musicTrack, musicIsPlaying)
                         IslandDemoState.MusicExpanded -> MusicExpandedContent(
                             track = musicTrack,
@@ -1409,9 +1409,25 @@ private fun IdleCutoutContent() {
 }
 
 @Composable
-private fun MinimalPillContent() {
-    // Owner specimen is an empty red capsule: no glyph, status dot or companion.
-    Box(Modifier.fillMaxSize())
+private fun MinimalPillContent(notification: NotificationInfo? = null) {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        if (notification != null) {
+            PackageIcon(
+                packageName = notification.packageName,
+                modifier = Modifier.size(20.dp).clip(CircleShape),
+                contentDescription = "${notification.appName} icon"
+            )
+        } else {
+            AppleIcon(
+                glyph = AppleGlyph.Chat,
+                tint = IslandColors.CapsuleCyan,
+                size = 18.dp
+            )
+        }
+    }
 }
 
 @Composable

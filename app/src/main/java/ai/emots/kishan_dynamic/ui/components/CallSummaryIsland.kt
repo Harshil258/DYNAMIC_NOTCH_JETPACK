@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.platform.LocalDensity
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
@@ -49,52 +50,84 @@ internal fun CallSummaryExpandedContent(
     record: CallRecord?,
     onControlAction: (IslandControlAction) -> Unit
 ) {
-    val name = record?.contactName?.ifBlank { null } ?: if (record == null) "Call ended" else "Unknown caller"
-    val phoneNumber = record?.phoneNumber.orEmpty()
+    val isDemoPreview = record == null
+    val name = record?.contactName?.ifBlank { null } ?: if (isDemoPreview) "Tamia Castillo" else "Unknown caller"
+    val phoneNumber = record?.phoneNumber?.ifBlank { null } ?: if (isDemoPreview) "+1 (555) 019-2834" else ""
     val isMissed = record?.direction == CallDirection.MISSED
     val callType = when (record?.direction) {
         CallDirection.INCOMING -> "Incoming call"
         CallDirection.OUTGOING -> "Outgoing call"
         CallDirection.MISSED -> "Missed call"
-        null -> "Call summary"
+        null -> if (isDemoPreview) "Call ended" else "Call summary"
     }
-    val duration = callSummaryDurationLabel(record)
-    val measuredDuration = record != null && !isMissed && record.durationAccuracy != DurationAccuracy.UNKNOWN
-    val contactActionsAvailable = record == null || phoneNumber.any(Char::isDigit)
+    val duration = if (isDemoPreview) "02:45" else callSummaryDurationLabel(record)
+    val measuredDuration = isDemoPreview || (record != null && !isMissed && record.durationAccuracy != DurationAccuracy.UNKNOWN)
+    val contactActionsAvailable = isDemoPreview || phoneNumber.any(Char::isDigit)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = AppTheme.spacing.lg, vertical = AppTheme.spacing.md),
-        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         IslandAdaptiveHeader(identity = {
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-                ContactAvatar(name = name, avatarUri = record?.avatarUri,
-                    modifier = Modifier.size(40.dp), contentDescription = name)
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+            ) {
+                ContactAvatar(
+                    name = name,
+                    avatarUri = record?.avatarUri,
+                    modifier = Modifier.size(40.dp),
+                    contentDescription = name
+                )
                 Column(Modifier.weight(1f)) {
-                    Text(name, color = Color.White, style = AppTheme.typography.body.copy(
-                        fontSize = 16.sp, lineHeight = 20.sp, fontWeight = FontWeight.Bold))
-                    Text(if (phoneNumber.isBlank()) callType else "$callType · $phoneNumber",
+                    Text(
+                        name,
+                        color = Color.White,
+                        style = AppTheme.typography.body.copy(
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
+                    Text(
+                        if (phoneNumber.isBlank()) callType else "$callType · $phoneNumber",
                         color = IslandColors.TextSecondary,
-                        style = AppTheme.typography.bodySmall.copy(fontSize = 11.sp, lineHeight = 16.sp))
+                        style = AppTheme.typography.bodySmall.copy(fontSize = 11.sp, lineHeight = 16.sp),
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                    )
                 }
             }
         }, status = {
-            if (duration.isNotBlank()) Text(duration,
-                color = when { isMissed -> IslandColors.Orange; measuredDuration -> IslandColors.CapsuleGreen; else -> IslandColors.TextSecondary },
-                style = AppTheme.typography.bodySmall.copy(fontSize = 14.sp, lineHeight = 18.sp,
-                    fontWeight = FontWeight.Bold, fontFamily = if (measuredDuration) FontFamily.Monospace else FontFamily.Default,
-                    textDirection = TextDirection.Ltr))
+            if (duration.isNotBlank()) Text(
+                duration,
+                color = when {
+                    isMissed -> IslandColors.Orange
+                    measuredDuration -> IslandColors.CapsuleGreen
+                    else -> IslandColors.TextSecondary
+                },
+                style = AppTheme.typography.bodySmall.copy(
+                    fontSize = 14.sp,
+                    lineHeight = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = if (measuredDuration) FontFamily.Monospace else FontFamily.Default,
+                    textDirection = TextDirection.Ltr
+                )
+            )
         })
 
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val columns = if (LocalDensity.current.fontScale > 1.3f || maxWidth < 320.dp) 2 else 4
             FlowRow(
-                modifier = Modifier.fillMaxWidth(), maxItemsInEachRow = columns,
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
-                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+                modifier = Modifier.fillMaxWidth(),
+                maxItemsInEachRow = columns,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 if (contactActionsAvailable && canRenderIslandControl(IslandControlAction.CallSummaryRedial)) CallSummaryActionButton(
                     glyph = AppleGlyph.Phone,
@@ -134,17 +167,26 @@ internal fun CallSummaryActionButton(
 ) {
     Row(
         modifier = modifier
-            .heightIn(min = AppTheme.island.minimumActionTarget)
-            .clip(RoundedCornerShape(24.dp))
+            .height(36.dp)
+            .clip(RoundedCornerShape(18.dp))
             .background(IslandColors.Gray6)
             .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onClick)
-            .padding(horizontal = AppTheme.spacing.xs, vertical = AppTheme.spacing.sm),
+            .padding(horizontal = 4.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AppleIcon(glyph = glyph, tint = IslandColors.CapsuleCyan, size = 14.dp)
-        Spacer(modifier = Modifier.width(5.dp))
-        Text(text = label, color = Color.White, fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+        AppleIcon(glyph = glyph, tint = IslandColors.CapsuleCyan, size = 13.dp)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = label,
+            color = Color.White,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = (-0.2).sp,
+            maxLines = 1,
+            softWrap = false,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+        )
     }
 }
 

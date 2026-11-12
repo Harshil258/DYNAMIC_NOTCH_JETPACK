@@ -1,6 +1,7 @@
 package ai.emots.kishan_dynamic.ui.components
 
 import ai.emots.kishan_dynamic.data.model.IslandState
+import ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy
 
 /** Shared presentation mapping used by the real service and debug fixtures. */
 fun resolveOverlayDemoState(state: IslandState, unseenCount: Int): IslandDemoState {
@@ -12,9 +13,10 @@ fun resolveOverlayDemoState(state: IslandState, unseenCount: Int): IslandDemoSta
             is IslandState.IncomingCall -> IslandDemoState.CallAvatars
             is IslandState.Notification -> when {
                 state.isExpanded -> IslandDemoState.NotificationExpanded
-                unseenCount <= 0 -> IslandDemoState.Idle
-                unseenCount > 1 -> IslandDemoState.NotificationStacked
-                else -> IslandDemoState.NotificationCompact
+                state.notifications.size > 1 || unseenCount > 1 || state.notifications.any(NotificationPriorityPolicy::isPriority) ->
+                    IslandDemoState.NotificationStacked
+                state.notifications.isNotEmpty() || unseenCount > 0 -> IslandDemoState.NotificationCompact
+                else -> IslandDemoState.Idle
             }
             is IslandState.NotificationWithMusic -> IslandDemoState.NotificationWithMusicCompact
             is IslandState.Charging -> if (state.batteryPercent < 20) IslandDemoState.LowBatteryCompact else IslandDemoState.ChargingCompact

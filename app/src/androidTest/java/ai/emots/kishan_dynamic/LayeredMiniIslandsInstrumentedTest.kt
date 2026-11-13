@@ -142,7 +142,7 @@ class LayeredMiniIslandsInstrumentedTest {
     }
     @Test fun verticalPagerRemainsInteractiveWithChildren() {
         render(430); arrive(3)
-        compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeDown(durationMillis = 450) }
+        compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeLeft(durationMillis = 450) }
         compose.waitUntil(5000) { state.selectedKey != "main" }
         assertEquals(4, state.canonicalQueueCount)
         assertTrue(state.queue.notifications.any { it.id == "main" })

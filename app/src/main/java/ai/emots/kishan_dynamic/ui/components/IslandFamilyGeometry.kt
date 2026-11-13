@@ -95,7 +95,7 @@ object IslandFamilyGeometry {
             else minOf(t.width, available)
         val height = maxOf(t.height, cutoutHeight, contentHeight ?: 0f,
             if (compact) t.height else t.height + (fontScale.coerceAtLeast(1f) - 1f) * 32f)
-        val radius = if (state == IslandDemoState.NotificationImage && height >= 126f) 44f else if (height >= 142f && t.family == IslandGeometryFamily.ContextualAlert) 42f else t.radius
+        val radius = if (height >= 142f && t.family == IslandGeometryFamily.ContextualAlert) 42f else if (state in setOf(IslandDemoState.NotificationExpanded, IslandDemoState.NotificationImage) && height >= 120f) 44f else t.radius
         return IslandSurfaceGeometry(width, height, minOf(radius, width / 2f, height / 2f))
     }
 }

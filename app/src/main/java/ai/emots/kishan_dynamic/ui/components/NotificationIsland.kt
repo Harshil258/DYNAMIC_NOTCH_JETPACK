@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.pager.VerticalPager
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.stateDescription
@@ -16,7 +17,6 @@ import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -411,13 +411,27 @@ fun NotificationIslandExpanded(
                     }
                 }
                 if (actions.isNotEmpty() || actionLabel.isNotBlank()) {
-                    FlowRow(Modifier.fillMaxWidth(),
+                    FlowRow(
+                        Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
-                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
-                        if (actions.isNotEmpty()) actions.forEach { action ->
-                            NotificationActionButton(label = action.label, scale = 1f,
-                                onClick = { onActionSelected(action) })
-                        } else NotificationActionButton(label = actionLabel, scale = 1f, onClick = onAction)
+                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)
+                    ) {
+                        if (actions.isNotEmpty()) {
+                            actions.forEach { action ->
+                                NotificationActionButton(
+                                    action = action,
+                                    label = action.label,
+                                    scale = 1f,
+                                    onClick = { onActionSelected(action) }
+                                )
+                            }
+                        } else {
+                            NotificationActionButton(
+                                label = actionLabel,
+                                scale = 1f,
+                                onClick = onAction
+                            )
+                        }
                     }
                 }
             }
@@ -539,35 +553,57 @@ fun IslandActionChip(
 
 @Composable
 private fun NotificationActionButton(
-    label: String,
-    scale: Float,
+    action: NotificationActionInfo? = null,
+    label: String = action?.label.orEmpty(),
+    scale: Float = 1f,
     onClick: () -> Unit
 ) {
-    val isDestructive = label.contains("Dismiss", ignoreCase = true) ||
+    var inFlight by remember { mutableStateOf(false) }
+    val isDestructive = action?.isDestructive == true ||
+        label.contains("Dismiss", ignoreCase = true) ||
         label.contains("Delete", ignoreCase = true) ||
         label.contains("Decline", ignoreCase = true) ||
         label.contains("Cancel", ignoreCase = true)
-    val isPrimary = label.contains("Reply", ignoreCase = true) ||
+    val isReply = action?.isReply == true || label.contains("Reply", ignoreCase = true)
+    val isPrimary = isReply ||
         label.contains("Open", ignoreCase = true) ||
         label.contains("Join", ignoreCase = true) ||
         label.contains("Copy", ignoreCase = true) ||
         label.contains("Accept", ignoreCase = true)
+
+    val style = when {
+        isDestructive -> IslandActionStyle.Destructive
+        isPrimary -> IslandActionStyle.Primary
+        else -> IslandActionStyle.Secondary
+    }
+    val accent = when {
+        isDestructive -> IslandSemanticAccent.Red
+        isReply -> IslandSemanticAccent.Blue
+        isPrimary -> IslandSemanticAccent.Green
+        else -> IslandSemanticAccent.Neutral
+    }
     val glyph = when {
-        label.contains("Reply", ignoreCase = true) -> AppleGlyph.Chat
+        isReply -> AppleGlyph.Chat
         label.contains("Call", ignoreCase = true) -> AppleGlyph.Phone
-        label.contains("Dismiss", ignoreCase = true) || label.contains("Cancel", ignoreCase = true) -> AppleGlyph.Close
+        isDestructive -> AppleGlyph.Close
         label.contains("Open", ignoreCase = true) -> AppleGlyph.ChevronRight
         label.contains("Copy", ignoreCase = true) -> AppleGlyph.Check
         else -> null
     }
 
-    IslandActionChip(
-        text = label,
-        onClick = onClick,
+    IslandActionPill(
+        label = label,
+        onClick = {
+            if (!inFlight) {
+                inFlight = true
+                onClick()
+            }
+        },
         glyph = glyph,
-        isPrimary = isPrimary,
-        isDestructive = isDestructive,
-        scale = scale
+        style = style,
+        accent = accent,
+        visualHeight = (36.dp * scale).coerceAtLeast(32.dp),
+        minTouchTarget = 48.dp
     )
 }
 
@@ -1047,6 +1083,23 @@ fun NotificationPictureCard(
     )
 }
 
+internal fun estimateNotificationPageHeight(item: NotificationInfo, isReplying: Boolean = false): androidx.compose.ui.unit.Dp {
+    if (isReplying) return 166.dp
+    val template = resolveNotificationTemplate(item)
+    return when (template) {
+        NotificationTemplateType.PICTURE -> 126.dp
+        NotificationTemplateType.NAVIGATION -> 120.dp
+        NotificationTemplateType.TRANSPORT -> 112.dp
+        NotificationTemplateType.PROGRESS -> 86.dp
+        NotificationTemplateType.TIMER -> 86.dp
+        NotificationTemplateType.STANDARD -> {
+            val text = item.expandedText ?: item.text
+            val lineCount = text.count { it == '\n' } + 1
+            if (lineCount >= 3) 104.8.dp else 86.dp
+        }
+    }
+}
+
 @Composable
 fun NotificationIslandExpandedPager(
     notifications: List<NotificationInfo>,
@@ -1086,22 +1139,28 @@ fun NotificationIslandExpandedPager(
     }
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.isScrollInProgress }.collect { scrolling ->
-            if (!scrolling && userPaging) {
-                userPaging = false
-                val settledKey = pagerState.layoutInfo.visiblePagesInfo
-                    .firstOrNull { it.index == pagerState.settledPage }?.key
-                ai.emots.kishan_dynamic.data.notification.NotificationPagerSelectionPolicy
-                    .settledIndex(latestNotifications.map { it.id }, settledKey)
-                    ?.let { latestOnPageChanged(it) }
+        snapshotFlow { Pair(pagerState.isScrollInProgress, pagerState.settledPage) }
+            .collect { (scrolling, settledPage) ->
+                if (!scrolling && userPaging) {
+                    userPaging = false
+                    val settledKey = latestNotifications.getOrNull(settledPage)?.id
+                    if (settledKey != null) {
+                        val settledIndex = ai.emots.kishan_dynamic.data.notification.NotificationPagerSelectionPolicy
+                            .settledIndex(latestNotifications.map { it.id }, settledKey)
+                        if (settledIndex != null && settledIndex != activeIndex) {
+                            latestOnPageChanged(settledIndex)
+                        }
+                    }
+                }
             }
-        }
     }
 
     LaunchedEffect(selectedId, notificationIds) {
-        if (!pagerState.isScrollInProgress && activeIndex in notifications.indices &&
-            pagerState.currentPage != activeIndex) {
-            pagerState.scrollToPage(activeIndex)
+        if (!pagerState.isScrollInProgress) {
+            val targetPage = notifications.indexOfFirst { it.id == selectedId }
+            if (targetPage in notifications.indices && pagerState.currentPage != targetPage) {
+                pagerState.scrollToPage(targetPage)
+            }
         }
     }
 
@@ -1109,12 +1168,32 @@ fun NotificationIslandExpandedPager(
     LaunchedEffect(notificationIds) {
         pageHeights.keys.toList().filterNot { it in notificationIds }.forEach { pageHeights.remove(it) }
     }
-    val currentPage = pagerState.currentPage
-    val activePageHeight = notifications.getOrNull(currentPage)?.id?.let { pageHeights[it] }
-    LaunchedEffect(activePageHeight, isCardExpanded) {
-        if (activePageHeight != null) {
-            onHeightChange?.invoke(activePageHeight)
-        }
+
+    val currentPage = pagerState.currentPage.coerceIn(notifications.indices)
+    val currentItem = notifications.getOrNull(currentPage)
+    val currentMeasured = currentItem?.let {
+        (pageHeights[it.id] ?: estimateNotificationPageHeight(it, replyingNotificationId == it.id)).coerceAtLeast(86.dp)
+    } ?: 86.dp
+
+    val activeHeight = if (pagerState.isScrollInProgress && notifications.size > 1) {
+        val offset = pagerState.currentPageOffsetFraction
+        val targetPage = (if (offset > 0) currentPage + 1 else if (offset < 0) currentPage - 1 else currentPage)
+            .coerceIn(notifications.indices)
+        val targetItem = notifications[targetPage]
+        val targetMeasured = (pageHeights[targetItem.id] ?: estimateNotificationPageHeight(targetItem, replyingNotificationId == targetItem.id)).coerceAtLeast(86.dp)
+        maxOf(currentMeasured, androidx.compose.ui.unit.lerp(currentMeasured, targetMeasured, kotlin.math.abs(offset)))
+    } else {
+        val settledIdx = pagerState.settledPage.coerceIn(notifications.indices)
+        val settledItem = notifications.getOrNull(settledIdx)
+        settledItem?.let {
+            (pageHeights[it.id] ?: estimateNotificationPageHeight(it, replyingNotificationId == it.id)).coerceAtLeast(86.dp)
+        } ?: currentMeasured
+    }
+
+    val viewportHeight = activeHeight.coerceIn(86.dp, (LocalConfiguration.current.screenHeightDp.dp - 64.dp).coerceAtLeast(86.dp))
+
+    LaunchedEffect(viewportHeight) {
+        onHeightChange?.invoke(viewportHeight)
     }
 
     val tokens = AppTheme.island
@@ -1122,149 +1201,189 @@ fun NotificationIslandExpandedPager(
     val accessibleRail = LocalDensity.current.fontScale > 1.3f || LocalConfiguration.current.screenWidthDp < 330
     val countScale = LocalDensity.current.fontScale.coerceIn(1f, 2f)
     val railReserve = if (accessibleRail) tokens.notificationCountSize * countScale + AppTheme.spacing.lg else tokens.notificationRailReserve
-    val currentNotification = notifications.getOrNull(currentPage)
-    val hasPicture = currentNotification?.picturePath != null
-    val defaultInitialHeight = if (hasPicture) tokens.notificationPagerMinHeight else 86.dp
-    val viewportHeight = (activePageHeight ?: defaultInitialHeight)
-        .coerceIn(86.dp, (LocalConfiguration.current.screenHeightDp.dp - 64.dp).coerceAtLeast(86.dp))
     val scope = rememberCoroutineScope()
-    val pagingInput = remember(pagerState) {
-        object : androidx.compose.ui.input.nestedscroll.NestedScrollConnection {
-            override fun onPreScroll(available: androidx.compose.ui.geometry.Offset,
-                source: androidx.compose.ui.input.nestedscroll.NestedScrollSource): androidx.compose.ui.geometry.Offset {
-                // A scrollable page can transfer motion to its parent pager without
-                // emitting the pager's own DragInteraction.Start.
-                if (source == androidx.compose.ui.input.nestedscroll.NestedScrollSource.UserInput && available.y != 0f) {
-                    userPaging = true
-                }
-                return androidx.compose.ui.geometry.Offset.Zero
-            }
-        }
-    }
-    Box(modifier = modifier.fillMaxWidth().height(viewportHeight).nestedScroll(pagingInput).testTag("notification_vertical_pager")
-        .semantics { stateDescription = "Notification ${currentPage + 1} of ${notifications.size}" }) {
-        VerticalPager(
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(viewportHeight)
+            .testTag("notification_vertical_pager")
+            .testTag("notification_horizontal_pager")
+            .semantics { stateDescription = "Notification ${currentPage + 1} of ${notifications.size}" }
+    ) {
+        HorizontalPager(
             state = pagerState,
             userScrollEnabled = notifications.size > 1 && !editing,
-            modifier = Modifier.fillMaxSize().padding(end = if (editing) 0.dp else railReserve),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = if (editing) 0.dp else railReserve),
             key = { page -> notifications.getOrNull(page)?.id ?: page.toString() },
             beyondViewportPageCount = 1
         ) { page ->
-            val item = notifications.getOrNull(page) ?: return@VerticalPager
+            val item = notifications.getOrNull(page) ?: return@HorizontalPager
             val pagerLabel = if (notifications.size > 1) "${page + 1} of ${notifications.size}" else null
             val isReplying = replyingNotificationId == item.id
             val currentReplyAction = if (isReplying) replyAction else null
             val template = resolveNotificationTemplate(item)
 
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-            when (template) {
-                NotificationTemplateType.NAVIGATION -> {
-                    NotificationNavigationCard(
-                        notification = item,
-                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                        onDismiss = { onDismiss(item) },
-                        pagerLabel = pagerLabel,
-                        onHeightChange = { h -> pageHeights[item.id] = h }
-                    )
-                }
-                NotificationTemplateType.TRANSPORT -> {
-                    NotificationTransportCard(
-                        notification = item,
-                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                        onDismiss = { onDismiss(item) },
-                        pagerLabel = pagerLabel,
-                        onHeightChange = { h -> pageHeights[item.id] = h }
-                    )
-                }
-                NotificationTemplateType.PROGRESS -> {
-                    NotificationProgressCard(
-                        notification = item,
-                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                        onDismiss = { onDismiss(item) },
-                        pagerLabel = pagerLabel,
-                        onHeightChange = { h -> pageHeights[item.id] = h }
-                    )
-                }
-                NotificationTemplateType.PICTURE -> {
-                    NotificationPictureCard(
-                        notification = item,
-                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                        onDismiss = { onDismiss(item) },
-                        onActionSelected = { action -> onActionSelected(item, action) },
-                        isReplying = isReplying,
-                        replyAction = currentReplyAction,
-                        onSendReply = onSendReply,
-                        onCancelReply = onCancelReply,
-                        pagerLabel = pagerLabel,
-                        isCardExpanded = isCardExpanded,
-                        onToggleExpand = onToggleExpand,
-                        onHeightChange = { h -> pageHeights[item.id] = h }
-                    )
-                }
-                NotificationTemplateType.TIMER -> {
-                    NotificationIslandExpanded(
-                        notificationKey = item.id,
-                        appName = item.appName,
-                        appPackageName = item.packageName,
-                        imagePath = item.imagePath,
-                        sender = item.title.ifBlank { item.appName },
-                        message = item.text,
-                        actionLabel = item.actions.firstOrNull()?.label ?: "Pause",
-                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                        actions = item.actions,
-                        onActionSelected = { act -> onActionSelected(item, act) },
-                        pagerLabel = pagerLabel,
-                        onDismiss = { onDismiss(item) },
-                        showChronometer = true,
-                        chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
-                        chronometerCountDown = item.chronometerCountDown,
-                        isReplying = isReplying,
-                        replyAction = currentReplyAction,
-                        onSendReply = onSendReply,
-                        onCancelReply = onCancelReply,
-                        isCardExpanded = isCardExpanded,
-                        onToggleExpand = onToggleExpand,
-                        onHeightChange = { h -> pageHeights[item.id] = h }
-                    )
-                }
-                NotificationTemplateType.STANDARD -> {
-                    NotificationIslandExpanded(
-                        notificationKey = item.id,
-                        appName = item.appName,
-                        appPackageName = item.packageName,
-                        imagePath = item.imagePath,
-                        sender = item.title.ifBlank { item.appName },
-                        message = item.text,
-                        expandedText = item.expandedText,
-                        inboxLines = item.inboxLines,
-                        actionLabel = item.actions.firstOrNull()?.label.orEmpty(),
-                        onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                        actions = item.actions,
-                        onActionSelected = { act -> onActionSelected(item, act) },
-                        pagerLabel = pagerLabel,
-                        onDismiss = if (item.isClearable) { { onDismiss(item) } } else null,
-                        progress = if (item.progressMax > 0) item.progress.toFloat() / item.progressMax.toFloat() else null,
-                        isProgressIndeterminate = item.isProgressIndeterminate,
-                        showChronometer = item.showChronometer,
-                        chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
-                        chronometerCountDown = item.chronometerCountDown,
-                        isReplying = isReplying,
-                        replyAction = currentReplyAction,
-                        onSendReply = onSendReply,
-                        onCancelReply = onCancelReply,
-                        isCardExpanded = isCardExpanded,
-                        onToggleExpand = onToggleExpand,
-                        onHeightChange = { h -> pageHeights[item.id] = h }
-                    )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                when (template) {
+                    NotificationTemplateType.NAVIGATION -> {
+                        NotificationNavigationCard(
+                            notification = item,
+                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                            onDismiss = { onDismiss(item) },
+                            pagerLabel = pagerLabel,
+                            onHeightChange = { h ->
+                                val clamped = h.coerceAtLeast(86.dp)
+                                val existing = pageHeights[item.id]
+                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
+                                    pageHeights[item.id] = clamped
+                                }
+                            }
+                        )
+                    }
+                    NotificationTemplateType.TRANSPORT -> {
+                        NotificationTransportCard(
+                            notification = item,
+                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                            onDismiss = { onDismiss(item) },
+                            pagerLabel = pagerLabel,
+                            onHeightChange = { h ->
+                                val clamped = h.coerceAtLeast(86.dp)
+                                val existing = pageHeights[item.id]
+                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
+                                    pageHeights[item.id] = clamped
+                                }
+                            }
+                        )
+                    }
+                    NotificationTemplateType.PROGRESS -> {
+                        NotificationProgressCard(
+                            notification = item,
+                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                            onDismiss = { onDismiss(item) },
+                            pagerLabel = pagerLabel,
+                            onHeightChange = { h ->
+                                val clamped = h.coerceAtLeast(86.dp)
+                                val existing = pageHeights[item.id]
+                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
+                                    pageHeights[item.id] = clamped
+                                }
+                            }
+                        )
+                    }
+                    NotificationTemplateType.PICTURE -> {
+                        NotificationPictureCard(
+                            notification = item,
+                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                            onDismiss = { onDismiss(item) },
+                            onActionSelected = { action -> onActionSelected(item, action) },
+                            isReplying = isReplying,
+                            replyAction = currentReplyAction,
+                            onSendReply = onSendReply,
+                            onCancelReply = onCancelReply,
+                            pagerLabel = pagerLabel,
+                            isCardExpanded = isCardExpanded,
+                            onToggleExpand = onToggleExpand,
+                            onHeightChange = { h ->
+                                val clamped = h.coerceAtLeast(126.dp)
+                                val existing = pageHeights[item.id]
+                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
+                                    pageHeights[item.id] = clamped
+                                }
+                            }
+                        )
+                    }
+                    NotificationTemplateType.TIMER -> {
+                        NotificationIslandExpanded(
+                            notificationKey = item.id,
+                            appName = item.appName,
+                            appPackageName = item.packageName,
+                            imagePath = item.imagePath,
+                            sender = item.title.ifBlank { item.appName },
+                            message = item.text,
+                            actionLabel = item.actions.firstOrNull()?.label ?: "Pause",
+                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                            actions = item.actions,
+                            onActionSelected = { act -> onActionSelected(item, act) },
+                            pagerLabel = pagerLabel,
+                            onDismiss = { onDismiss(item) },
+                            showChronometer = true,
+                            chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
+                            chronometerCountDown = item.chronometerCountDown,
+                            isReplying = isReplying,
+                            replyAction = currentReplyAction,
+                            onSendReply = onSendReply,
+                            onCancelReply = onCancelReply,
+                            isCardExpanded = isCardExpanded,
+                            onToggleExpand = onToggleExpand,
+                            onHeightChange = { h ->
+                                val clamped = h.coerceAtLeast(86.dp)
+                                val existing = pageHeights[item.id]
+                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
+                                    pageHeights[item.id] = clamped
+                                }
+                            }
+                        )
+                    }
+                    NotificationTemplateType.STANDARD -> {
+                        NotificationIslandExpanded(
+                            notificationKey = item.id,
+                            appName = item.appName,
+                            appPackageName = item.packageName,
+                            imagePath = item.imagePath,
+                            sender = item.title.ifBlank { item.appName },
+                            message = item.text,
+                            expandedText = item.expandedText,
+                            inboxLines = item.inboxLines,
+                            actionLabel = item.actions.firstOrNull()?.label.orEmpty(),
+                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
+                            actions = item.actions,
+                            onActionSelected = { act -> onActionSelected(item, act) },
+                            pagerLabel = pagerLabel,
+                            onDismiss = if (item.isClearable) { { onDismiss(item) } } else null,
+                            progress = if (item.progressMax > 0) item.progress.toFloat() / item.progressMax.toFloat() else null,
+                            isProgressIndeterminate = item.isProgressIndeterminate,
+                            showChronometer = item.showChronometer,
+                            chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
+                            chronometerCountDown = item.chronometerCountDown,
+                            isReplying = isReplying,
+                            replyAction = currentReplyAction,
+                            onSendReply = onSendReply,
+                            onCancelReply = onCancelReply,
+                            isCardExpanded = isCardExpanded,
+                            onToggleExpand = onToggleExpand,
+                            onHeightChange = { h ->
+                                val clamped = h.coerceAtLeast(86.dp)
+                                val existing = pageHeights[item.id]
+                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
+                                    pageHeights[item.id] = clamped
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
-        }
 
         if (!editing) {
+            val dotActiveIndex = if (pagerState.isScrollInProgress) {
+                pagerState.settledPage.coerceIn(notifications.indices)
+            } else {
+                currentPage
+            }
             Column(
-                modifier = Modifier.align(Alignment.TopEnd)
-                    .padding(top = tokens.notificationCountTop, end = if (accessibleRail) AppTheme.spacing.sm else tokens.notificationCountEnd)
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(
+                        top = tokens.notificationCountTop,
+                        end = if (accessibleRail) AppTheme.spacing.sm else tokens.notificationCountEnd
+                    )
                     .width(tokens.notificationCountSize * countScale)
                     .testTag("notification_vertical_indicator")
                     .semantics {
@@ -1272,25 +1391,34 @@ fun NotificationIslandExpandedPager(
                         stateDescription = "${currentPage + 1} of ${notifications.size}"
                         customActions = listOfNotNull(
                             if (currentPage > 0) CustomAccessibilityAction("Previous notification") {
-                                onUserInteraction(); userPaging = true
-                                scope.launch { pagerState.animateScrollToPage(currentPage - 1) }; true
+                                onUserInteraction()
+                                userPaging = true
+                                scope.launch { pagerState.animateScrollToPage(currentPage - 1) }
+                                true
                             } else null,
                             if (currentPage < notifications.lastIndex) CustomAccessibilityAction("Next notification") {
-                                onUserInteraction(); userPaging = true
-                                scope.launch { pagerState.animateScrollToPage(currentPage + 1) }; true
-                            } else null)
+                                onUserInteraction()
+                                userPaging = true
+                                scope.launch { pagerState.animateScrollToPage(currentPage + 1) }
+                                true
+                            } else null
+                        )
                     },
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 NotificationCountSymbol(notifications.size)
                 if (notifications.size > 1) {
                     Spacer(Modifier.height(tokens.notificationCountToDotsGap))
-                    val start = (currentPage - 1).coerceIn(0, (notifications.size - 3).coerceAtLeast(0))
+                    val start = (dotActiveIndex - 1).coerceIn(0, (notifications.size - 3).coerceAtLeast(0))
                     Column(verticalArrangement = Arrangement.spacedBy(tokens.notificationDotGap)) {
                         for (i in start until minOf(start + 3, notifications.size)) {
-                            Box(Modifier.size(tokens.notificationDotSize).clip(CircleShape)
-                                .background(Color.White.copy(alpha = if (i == currentPage) 1f else .35f))
-                                .testTag("notification_dot_$i"))
+                            Box(
+                                Modifier
+                                    .size(tokens.notificationDotSize)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = if (i == dotActiveIndex) 1f else .35f))
+                                    .testTag("notification_dot_$i")
+                            )
                         }
                     }
                 }

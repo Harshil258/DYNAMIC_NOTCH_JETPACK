@@ -186,6 +186,9 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
     var groupCallerFixture by remember { mutableStateOf(false) }
     var carrierControlsFixture by remember { mutableStateOf(false) }
     var navigationSourceMode by remember { mutableIntStateOf(0) }
+    var notificationFixtureMode by remember { mutableIntStateOf(0) }
+    var notificationQueueCount by remember { mutableIntStateOf(3) }
+    var addedNotifications by remember { mutableStateOf<List<NotificationInfo>>(emptyList()) }
     var selectedCategoryIndex by remember { mutableIntStateOf(0) }
     var searchQuery by remember { mutableStateOf("") }
     var isSearchActive by remember { mutableStateOf(false) }
@@ -203,6 +206,60 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
     val configuration = Configuration(LocalConfiguration.current).apply { screenWidthDp = width; screenHeightDp = 850 }
     val density = LocalDensity.current
     val target = IslandFamilyGeometry.target(selected)
+    val displayTargetH = if (selected == IslandDemoState.NotificationExpanded) {
+        when (notificationFixtureMode) {
+            0 -> 126.0f
+            1 -> 86.0f
+            else -> target.height
+        }
+    } else target.height
+    val displayTargetR = if (selected in setOf(IslandDemoState.NotificationExpanded, IslandDemoState.NotificationImage) && displayTargetH >= 120f) 44.0f else target.radius
+
+    val galleryNotifications = remember(selected, notificationFixtureMode, notificationQueueCount, addedNotifications, referenceMessages, context) {
+        val baseList = when (notificationFixtureMode) {
+            0 -> referenceMessages
+            1 -> listOf(
+                NotificationInfo("short-1", FigmaReferenceFixtures.packageName, "Figma", "Sarah", "Meeting at 3pm", timestamp = 1, picturePath = null),
+                NotificationInfo("short-2", FigmaReferenceFixtures.packageName, "Figma", "David", "Files shared", timestamp = 2, picturePath = null),
+                NotificationInfo("short-3", FigmaReferenceFixtures.packageName, "Figma", "Alex", "Quick call?", timestamp = 3, picturePath = null)
+            )
+            2 -> listOf(
+                NotificationInfo("multi-1", FigmaReferenceFixtures.packageName, "Figma", "Mamad", "Haji ina chie zadi\nto baz dahane mano\nservis kardi", timestamp = 1, picturePath = null),
+                NotificationInfo("multi-2", FigmaReferenceFixtures.packageName, "Figma", "Design lead", "Review the new specs before proceeding with the implementation please.", timestamp = 2, picturePath = null),
+                NotificationInfo("multi-3", FigmaReferenceFixtures.packageName, "Figma", "Team update", "Sprint retro starts in 10 minutes in room 4B.", timestamp = 3, picturePath = null)
+            )
+            3 -> referenceMessages.map {
+                it.copy(
+                    picturePath = FigmaReferenceFixtures.resourceUri(context, ai.emots.kishan_dynamic.R.drawable.figma_reference_message),
+                    text = "Photo shared in design-critique"
+                )
+            }
+            else -> referenceMessages
+        }
+        val targetSize = notificationQueueCount
+        val expandedList = if (baseList.size >= targetSize) {
+            baseList.take(targetSize)
+        } else {
+            val list = baseList.toMutableList()
+            var counter = list.size + 1
+            while (list.size < targetSize) {
+                list.add(
+                    NotificationInfo(
+                        id = "extra-$counter",
+                        packageName = FigmaReferenceFixtures.packageName,
+                        appName = "Figma",
+                        title = "Update $counter",
+                        text = "Message payload detail for item #$counter",
+                        timestamp = counter.toLong(),
+                        picturePath = if (notificationFixtureMode == 0 || notificationFixtureMode == 3) FigmaReferenceFixtures.resourceUri(context, ai.emots.kishan_dynamic.R.drawable.figma_reference_message) else null
+                    )
+                )
+                counter++
+            }
+            list
+        }
+        expandedList + addedNotifications
+    }
 
     val currentCategoryStates = remember(selectedCategoryIndex) {
         statesForCategory(GalleryCategory.entries[selectedCategoryIndex])
@@ -294,7 +351,7 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
-                            text = "${target.width.toInt()}×${target.height.toInt()}dp (r=${target.radius.toInt()}dp) · ${target.family.name}",
+                            text = "${target.width.toInt()}×${displayTargetH.toInt()}dp (r=${displayTargetR.toInt()}dp) · ${target.family.name}",
                             style = AppTheme.typography.caption,
                             color = IslandColors.CapsuleCyan,
                             fontSize = 11.sp
@@ -411,16 +468,23 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                         .background(stageBrush)
                         .border(1.dp, stageBorderColor, RoundedCornerShape(16.dp))
                         .pointerInput(selected, activeList) {
-                            detectHorizontalDragGestures(
-                                onDragEnd = {
-                                    if (swipeOffset < -40f) selected = nextInList
-                                    else if (swipeOffset > 40f) selected = prevInList
-                                    swipeOffset = 0f
-                                },
-                                onHorizontalDrag = { _, dragAmount ->
-                                    swipeOffset += dragAmount
-                                }
-                            )
+                            if (selected !in setOf(
+                                    IslandDemoState.NotificationExpanded,
+                                    IslandDemoState.NotificationImage,
+                                    IslandDemoState.NotificationStacked
+                                )
+                            ) {
+                                detectHorizontalDragGestures(
+                                    onDragEnd = {
+                                        if (swipeOffset < -40f) selected = nextInList
+                                        else if (swipeOffset > 40f) selected = prevInList
+                                        swipeOffset = 0f
+                                    },
+                                    onHorizontalDrag = { _, dragAmount ->
+                                        swipeOffset += dragAmount
+                                    }
+                                )
+                            }
                         },
                     contentAlignment = Alignment.TopCenter
                 ) {
@@ -453,9 +517,9 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                     batteryPercent = if (selected in setOf(IslandDemoState.LowBatteryCompact, IslandDemoState.LowBatteryExpanded)) 20 else 85,
                                     callParticipants = if (selected == IslandDemoState.CallAvatars && groupCallerFixture) listOf(ContactInfo("Alex Morgan", ""), ContactInfo("Jordan Lee", "")) else emptyList(),
                                     ringerMode = if (selected == IslandDemoState.RingerModeExpanded) RingerModeType.NORMAL else RingerModeType.SILENT,
-                                    notifications = if (selected == IslandDemoState.NotificationExpanded) referenceMessages.map { it.copy(picturePath = null) } else referenceMessages,
-                                    notificationActiveIndex = 1,
-                                    unseenNotificationCount = 3,
+                                    notifications = galleryNotifications,
+                                    notificationActiveIndex = 1.coerceAtMost((galleryNotifications.size - 1).coerceAtLeast(0)),
+                                    unseenNotificationCount = galleryNotifications.size,
                                     musicTrack = FigmaReferenceFixtures.music(context),
                                     callContact = FigmaReferenceFixtures.caller(context),
                                     callSummary = if (selected == IslandDemoState.CallSummaryExpanded) CallRecord("gallery_summary", "Tamia Castillo", "+1 (555) 019-2834", startedAtMillis = System.currentTimeMillis() - 165_000L, durationSeconds = 165L, direction = CallDirection.INCOMING) else null,
@@ -473,14 +537,21 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                     bluetoothBatteryPercent = 75,
                                     liveActivityProgress = if (selected == IslandDemoState.AirPodsConnected) .75f else null
                                 )
-                                LaunchedEffect(observer.regions.values.toList(), selected) {
+                                LaunchedEffect(observer.regions.values.toList(), selected, notificationFixtureMode) {
                                     observer.regions.values.firstOrNull { it.first == "Shell" }?.second?.let {
                                         val w = it.width / fixtureDensity
                                         val h = it.height / fixtureDensity
                                         measuredActualW = w
                                         measuredActualH = h
                                         deltaW = w - IslandFamilyGeometry.resolve(selected, width.toFloat()).width
-                                        deltaH = h - target.height
+                                        val expectedH = if (selected == IslandDemoState.NotificationExpanded) {
+                                            when (notificationFixtureMode) {
+                                                0 -> 126.0f
+                                                1 -> 86.0f
+                                                else -> h
+                                            }
+                                        } else target.height
+                                        deltaH = h - expectedH
                                     }
                                 }
                             }
@@ -741,6 +812,56 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                 label = listOf("Figma lane guide", "Source navigation", "Long source navigation")[navigationSourceMode],
                 selected = navigationSourceMode > 0, onClick = { navigationSourceMode = (navigationSourceMode + 1) % 3 }
             )
+            if (selected in setOf(IslandDemoState.NotificationExpanded, IslandDemoState.NotificationImage, IslandDemoState.NotificationStacked)) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Fixture:", style = AppTheme.typography.caption, fontSize = 11.sp, color = AppTheme.colors.textSecondary)
+                    listOf("Figma 27:992 (126dp)", "Short Text (86dp)", "Multi-line", "Media").forEachIndexed { index, modeLabel ->
+                        AppChip(
+                            label = modeLabel,
+                            selected = notificationFixtureMode == index,
+                            onClick = { notificationFixtureMode = index }
+                        )
+                    }
+                    Spacer(Modifier.width(4.dp))
+                    Text("Queue:", style = AppTheme.typography.caption, fontSize = 11.sp, color = AppTheme.colors.textSecondary)
+                    listOf(1, 3, 12, 25, 50).forEach { count ->
+                        AppChip(
+                            label = "$count",
+                            selected = notificationQueueCount == count,
+                            onClick = { notificationQueueCount = count }
+                        )
+                    }
+                    Spacer(Modifier.width(4.dp))
+                    AppChip(
+                        label = "+ Add",
+                        selected = false,
+                        onClick = {
+                            val newId = "sim-${System.currentTimeMillis()}"
+                            addedNotifications = addedNotifications + NotificationInfo(
+                                id = newId,
+                                packageName = FigmaReferenceFixtures.packageName,
+                                appName = "Simulated",
+                                title = "New alert",
+                                text = "Dynamic notification #${addedNotifications.size + 1}",
+                                timestamp = System.currentTimeMillis()
+                            )
+                        }
+                    )
+                    if (addedNotifications.isNotEmpty()) {
+                        AppChip(
+                            label = "Clear (${addedNotifications.size})",
+                            selected = false,
+                            onClick = { addedNotifications = emptyList() }
+                        )
+                    }
+                }
+            }
 
             // 3. OPTIONAL SEARCH BAR
             AnimatedVisibility(visible = isSearchActive || searchQuery.isNotBlank()) {

@@ -60,7 +60,8 @@ data class NotificationInfo(
 data class NotificationActionInfo(
     val id: String,
     val label: String,
-    val isReply: Boolean = false
+    val isReply: Boolean = false,
+    val isDestructive: Boolean = false
 )
 
 enum class RingerModeType {

@@ -555,7 +555,7 @@ fun DynamicIslandPill(
     // - 86dp Alert states: 43dp (86 / 2) for standard iOS alert capsule
     // - Expanded Activity Sheets (140-240dp): 42dp Apple continuous squircle
     val targetCornerRadiusDp = if (isCutoutDot) cutoutDotSizeDp.coerceIn(24.dp, 56.dp) / 2
-        else if (state == IslandDemoState.NotificationExpanded && hasLargePicture) 44.dp
+        else if ((state == IslandDemoState.NotificationExpanded || state == IslandDemoState.NotificationImage) && targetHeight >= 120.dp) 44.dp
         else IslandFamilyGeometry.resolve(state, screenWidth.value, contentHeight = targetHeight.value).radius.dp
 
     val animatedCornerRadiusDp by animateDpAsState(
@@ -960,7 +960,9 @@ fun DynamicIslandPill(
                             onNotificationAction = onNotificationAction,
                             onNotificationSelect = onNotificationSelect,
                             onNotificationDismiss = onNotificationDismiss,
-                            onHeightChange = null
+                            onHeightChange = { h ->
+                                measuredHeights[IslandDemoState.NotificationExpanded] = h
+                            }
                         )
                         IslandDemoState.SilentModeCompact -> SilentModeCompactContent()
                         IslandDemoState.SilentModeExpanded -> SilentModeExpandedContent(onControlAction)
@@ -1058,7 +1060,13 @@ fun DynamicIslandPill(
                         )
                         IslandDemoState.NavigationCompact -> ai.emots.kishan_dynamic.ui.components.live.NavigationIslandCompact(liveActivityInfo)
                         IslandDemoState.TimerImage -> TimerImageReferenceContent(timerLabel)
-                        IslandDemoState.NotificationImage -> NotificationImageReferenceContent(notifications, notificationActiveIndex)
+                        IslandDemoState.NotificationImage -> NotificationImageReferenceContent(
+                            notifications,
+                            notificationActiveIndex,
+                            onHeightChange = { h ->
+                                measuredHeights[IslandDemoState.NotificationImage] = h
+                            }
+                        )
                         IslandDemoState.CallAvatars -> if (callParticipants.size > 1) GroupCallReferenceContent(callParticipants) else IncomingCallIsland(
                             name = callContact?.name ?: "Unknown caller",
                             label = callContact?.phoneNumber?.takeIf { it.isNotBlank() } ?: "Mobile",

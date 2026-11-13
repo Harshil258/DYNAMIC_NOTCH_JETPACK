@@ -66,10 +66,14 @@ class AuroraFigmaDetailInstrumentedTest {
         for (direction in listOf(false, true)) {
             compose.runOnIdle { rtl = direction; sources = FigmaReferenceFixtures.messages(context); selectedKey = "figma-selected" }
             compose.waitForIdle()
-            compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeUp(durationMillis = 450) }
+            compose.onNodeWithTag("notification_vertical_pager").performTouchInput {
+                if (!direction) swipeLeft(durationMillis = 450) else swipeRight(durationMillis = 450)
+            }
             compose.waitForIdle()
             compose.waitUntil(5000) { selectedKey == "figma-next" }
-            compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeDown(durationMillis = 450) }
+            compose.onNodeWithTag("notification_vertical_pager").performTouchInput {
+                if (!direction) swipeRight(durationMillis = 450) else swipeLeft(durationMillis = 450)
+            }
             compose.waitUntil(5000) { selectedKey == "figma-selected" }
             compose.runOnIdle { sources = listOf(sources.first().copy(id = "new-arrival", title = "New arrival")) + sources }
             compose.waitForIdle()
@@ -80,7 +84,7 @@ class AuroraFigmaDetailInstrumentedTest {
             compose.runOnIdle { sources = sources.filterNot { it.id == selectedKey }; selectedKey = "figma-next" }
             compose.waitForIdle()
             compose.onNodeWithText("Project update").assertIsDisplayed()
-            Assert.assertEquals("vertical page gesture must not dismiss the main island", 0, dismissals)
+            Assert.assertEquals("page gesture must not dismiss the main island", 0, dismissals)
         }
     }
 
@@ -100,7 +104,7 @@ class AuroraFigmaDetailInstrumentedTest {
             }
         }
         compose.onNode(hasSetTextAction()).performTextInput("source-only draft")
-        compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeUp(durationMillis = 450) }
+        compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeLeft(durationMillis = 450) }
         compose.runOnIdle { sources = listOf(sources.first().copy(id = "arrival")) + sources }
         compose.waitForIdle()
         compose.onNode(hasSetTextAction()).assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString("source-only draft")))

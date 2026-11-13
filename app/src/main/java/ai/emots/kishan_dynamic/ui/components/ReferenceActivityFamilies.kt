@@ -404,7 +404,11 @@ internal fun GroupCallReferenceContent(participants: List<ai.emots.kishan_dynami
 }
 
 @Composable
-internal fun NotificationImageReferenceContent(notifications: List<ai.emots.kishan_dynamic.data.model.NotificationInfo>, activeIndex: Int) {
+internal fun NotificationImageReferenceContent(
+    notifications: List<ai.emots.kishan_dynamic.data.model.NotificationInfo>,
+    activeIndex: Int,
+    onHeightChange: ((androidx.compose.ui.unit.Dp) -> Unit)? = null
+) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val sources = notifications.filter { it.picturePath != null }.ifEmpty {
         listOf(
@@ -415,7 +419,11 @@ internal fun NotificationImageReferenceContent(notifications: List<ai.emots.kish
             )
         )
     }
-    NotificationIslandExpandedPager(sources, activeIndex = activeIndex.coerceIn(0, sources.lastIndex))
+    NotificationIslandExpandedPager(
+        sources,
+        activeIndex = activeIndex.coerceIn(0, sources.lastIndex),
+        onHeightChange = onHeightChange
+    )
 }
 
 @Composable

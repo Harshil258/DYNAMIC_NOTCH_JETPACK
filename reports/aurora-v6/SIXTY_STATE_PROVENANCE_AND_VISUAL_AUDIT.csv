@@ -1,0 +1,61 @@
+Index,StateName,Provenance,FigmaNodeId,Family,TargetW,TargetH,TargetR,MeasuredW,MeasuredH,DeltaW,DeltaH,Actions,GateStatus
+1,Idle,NO_SOURCE,,MinimalHud,0.0,0.0,0.0,0.0,0.0,0.0,0.0,Tap to open QuickControls,PASS
+2,Minimal,DIRECT,minimal-user-ref,MinimalHud,108.0,32.0,16.0,108.0,32.0,0.0,0.0,None,PASS
+3,MusicCompact,DIRECT,19:979,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+4,MusicExpanded,DIRECT,19:1033,ActivityExpanded,367.0,177.0,42.0,366.8,176.9,-0.2,-0.1,Play/Pause/Next/Prev/Seek,PASS
+5,CallCompact,DIRECT,19:991,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+6,CallExpanded,DIRECT,19:1036,ActivityExpanded,367.0,166.0,42.0,366.8,166.1,-0.2,0.1,EndCall/Mute/AudioSwitch,PASS
+7,CallSummaryExpanded,NO_SOURCE,,ActivityExpanded,367.0,112.0,42.0,366.8,112.2,-0.2,0.2,Redial/SMS/Done,PASS
+8,FaceTimeCallExpanded,DIRECT,19:1035,ActivityExpanded,367.0,168.0,42.0,366.8,168.0,-0.2,0.0,Camera/Mic/EndCall,PASS
+9,SharedMediaCallExpanded,DIRECT,19:1037,ActivityExpanded,367.0,172.0,42.0,366.8,172.0,-0.2,0.0,SharePlay/Audio/EndCall,PASS
+10,OngoingCallBanner,DIRECT,19:1027,ContextualAlert,367.0,86.0,43.0,366.8,86.2,-0.2,0.2,Return to call,PASS
+11,NotificationCompact,DIRECT,27:1021,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+12,NotificationStacked,FAMILY_ONLY,27:1021,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+13,NotificationWithMusicCompact,FAMILY_ONLY,19:979,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+14,NotificationExpanded,DIRECT,27:992,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,Reply/Open/Dismiss,PASS
+15,SilentModeCompact,NO_SOURCE,,StatusCompact,53.3,36.7,18.35,53.3,36.7,0.0,0.0,None (HUD),PASS
+16,SilentModeExpanded,DIRECT,19:1030,ContextualAlert,367.0,84.0,42.0,366.8,84.0,-0.2,0.0,None (HUD),PASS
+17,RingerModeExpanded,FAMILY_ONLY,19:1030,ContextualAlert,367.0,84.0,42.0,366.8,84.0,-0.2,0.0,None (HUD),PASS
+18,VibrateModeCompact,NO_SOURCE,,StatusCompact,53.3,36.7,18.35,53.3,36.7,0.0,0.0,None (HUD),PASS
+19,NormalModeCompact,NO_SOURCE,,StatusCompact,53.3,36.7,18.35,53.3,36.7,0.0,0.0,None (HUD),PASS
+20,RingerVolumeCompact,NO_SOURCE,,StatusCompact,120.0,36.7,18.35,120.0,36.7,0.0,0.0,Hardware level reflect,PASS
+21,MediaVolumeCompact,NO_SOURCE,,StatusCompact,120.0,36.7,18.35,120.0,36.7,0.0,0.0,Hardware level reflect,PASS
+22,BluetoothConnected,DIRECT,27:682,StatusCompact,186.0,36.7,18.35,185.9,36.7,-0.1,0.0,None (Transient),PASS
+23,BluetoothConnecting,NO_SOURCE,,StatusCompact,186.0,36.7,18.35,185.9,36.7,-0.1,0.0,None (Transient),PASS
+24,ActionControlExpanded,NO_SOURCE,,QuickControls,210.0,44.0,22.0,210.0,44.0,0.0,0.0,Flashlight/Camera/Timer,PASS
+25,PremiumExpiryExpanded,NO_SOURCE,,ActivityExpanded,367.0,112.0,42.0,366.8,112.0,-0.2,0.0,WatchAds/BuyPremium,PASS
+26,ChargingCompact,NO_SOURCE,,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,None (HUD),PASS
+27,ChargingExpanded,NO_SOURCE,,ContextualAlert,367.0,94.0,42.0,366.8,94.0,-0.2,0.0,None (HUD),PASS
+28,LowBatteryCompact,NO_SOURCE,,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,None (HUD),PASS
+29,LowBatteryExpanded,NO_SOURCE,,ContextualAlert,367.0,94.0,42.0,366.8,94.0,-0.2,0.0,Connect to power,PASS
+30,TimerCompact,FAMILY_ONLY,19:1022,StatusCompact,222.0,36.7,18.35,221.9,36.8,-0.1,0.1,Tap to expand,PASS
+31,TimerExpanded,DIRECT,19:1022,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,Pause/Reset/Done,PASS
+32,DeliveryCompact,FAMILY_ONLY,27:1080,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+33,DeliveryExpanded,FAMILY_ONLY,27:1101,ActivityExpanded,367.0,142.0,42.0,366.8,142.0,-0.2,0.0,ViewOrder,PASS
+34,FlightCompact,FAMILY_ONLY,27:1080,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+35,FlightExpanded,FAMILY_ONLY,27:1101,ActivityExpanded,367.0,144.0,42.0,366.8,144.0,-0.2,0.0,ViewFlight,PASS
+36,SportsCompact,NO_SOURCE,,StatusCompact,200.0,36.7,18.35,199.9,36.8,-0.1,0.1,Tap to expand,PASS
+37,SportsExpanded,NO_SOURCE,,ContextualAlert,367.0,94.0,42.0,366.8,94.0,-0.2,0.0,ViewMatch,PASS
+38,NavigationCompact,FAMILY_ONLY,19:1019,StatusCompact,190.0,36.7,18.35,189.9,36.8,-0.1,0.1,Tap to expand,PASS
+39,VoiceMemoExpanded,DIRECT,19:1024,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,Stop/Record,PASS
+40,ScreenRecordingExpanded,DIRECT,19:1025,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,StopRecording,PASS
+41,ShortcutExpanded,DIRECT,19:1026,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,Dismiss,PASS
+42,FocusModeExpanded,NO_SOURCE,,ContextualAlert,367.0,84.0,42.0,366.8,84.0,-0.2,0.0,ToggleFocus,PASS
+43,AirPodsConnected,DIRECT,19:1023,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,None (HUD),PASS
+44,SatelliteConnected,DIRECT,19:1028,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,None (HUD),PASS
+45,FindMyAlert,DIRECT,19:1029,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,Directions/PlaySound,PASS
+46,MovedToIPhone,DIRECT,19:1031,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,None (HUD),PASS
+47,VideoRemoteExpanded,DIRECT,19:1038,ActivityExpanded,367.0,168.0,42.0,366.8,168.0,-0.2,0.0,Play/Pause/Volume,PASS
+48,AirDropActivity,DIRECT,19:1021,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,CancelAirDrop,PASS
+49,TimerImage,NO_SOURCE,,ContextualAlert,367.0,86.0,43.0,366.8,86.0,-0.2,0.0,Pause/Reset,PASS
+50,NotificationImage,DIRECT,27:992,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,OpenNotification,PASS
+51,CallAvatars,FAMILY_ONLY,19:1027,ContextualAlert,367.0,86.0,43.0,366.8,86.4,-0.2,0.4,Decline/Accept,PASS
+52,TransportActivity,NO_SOURCE,,ActivityExpanded,367.0,148.0,42.0,366.8,148.2,-0.2,0.2,ViewRoute,PASS
+53,FlightTrackerExpanded,NO_SOURCE,,ActivityExpanded,367.0,144.0,42.0,366.8,144.0,-0.2,0.0,ViewFlight,PASS
+54,SubscriptionPricing,NO_SOURCE,,ActivityExpanded,367.0,162.0,42.0,366.8,162.1,-0.2,0.1,Upgrade/Later,PASS
+55,MovieCard,NO_SOURCE,,ActivityExpanded,367.0,142.0,42.0,366.8,142.1,-0.2,0.1,ViewTicket,PASS
+56,ColorOptions,DIRECT,19:1034,ActivityExpanded,367.0,185.3,42.0,366.8,185.4,-0.2,0.1,PaletteSelect,PASS
+57,AirplaneAlert,DIRECT,19:1039,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,None (HUD),PASS
+58,ScreenMirroringAlert,DIRECT,19:1040,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,Disconnect,PASS
+59,MobileDataAlert,DIRECT,19:1041,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,Settings,PASS
+60,TransitRouteAlert,DIRECT,19:1042,ContextualAlert,367.0,86.0,43.0,366.8,86.1,-0.2,0.1,OpenTransit,PASS

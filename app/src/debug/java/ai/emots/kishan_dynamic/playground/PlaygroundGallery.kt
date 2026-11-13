@@ -503,7 +503,11 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                         .clip(RoundedCornerShape(target.radius.dp))
                                 )
                                 Text(
-                                    text = "${provenance.label} REFERENCE",
+                                    text = when (provenance) {
+                                        FigmaReferenceProvenance.DIRECT -> "DIRECT REFERENCE (${FigmaReferenceFixtures.figmaNodeId(selected) ?: ""})"
+                                        FigmaReferenceProvenance.FAMILY_ONLY -> "Derived from ${target.family.name} (${FigmaReferenceFixtures.figmaNodeId(selected) ?: ""}) · not an exact state match"
+                                        FigmaReferenceProvenance.NO_SOURCE -> "NO_SOURCE SPECIMEN"
+                                    },
                                     fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = when (provenance) {
@@ -514,17 +518,76 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                 )
                             }
                         } else {
-                            Box(
+                            // Compact honest derived-design specification card (replaces giant blank black dummy)
+                            Column(
                                 modifier = Modifier
-                                    .padding(vertical = 24.dp)
-                                    .size(target.width.dp, target.height.dp)
-                                    .clip(RoundedCornerShape(target.radius.dp))
-                                    .background(Color(0xFF10141D)),
-                                contentAlignment = Alignment.Center
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color(0xFF141923))
+                                    .border(1.dp, Color(0xFF2C3240), RoundedCornerShape(12.dp))
+                                    .padding(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text("No direct Figma asset (${provenance.label})", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
-                                    Text("Family derived presentation", fontSize = 9.sp, color = Color.DarkGray)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFFFF9500).copy(alpha = 0.2f))
+                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            "NO_SOURCE · DERIVED SPECIMEN",
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFFFF9500)
+                                        )
+                                    }
+                                    Text(
+                                        "${target.width.toInt()}×${target.height.toInt()}dp (R${target.radius.toInt()})",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color.LightGray
+                                    )
+                                }
+                                Text(
+                                    "No direct Figma asset exists. Layout is derived from ${target.family.name} family layout rules with content-aware slot gravity and calibrated visual balance.",
+                                    fontSize = 11.sp,
+                                    color = Color(0xFF9EA3AE),
+                                    lineHeight = 15.sp
+                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFF202636))
+                                            .padding(horizontal = 6.dp, vertical = 3.dp)
+                                    ) {
+                                        Text("Family: ${target.family.name}", fontSize = 9.sp, color = Color.White)
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFF202636))
+                                            .padding(horizontal = 6.dp, vertical = 3.dp)
+                                    ) {
+                                        Text("Slots: START / END Gravity", fontSize = 9.sp, color = Color(0xFF70D7FF))
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFF202636))
+                                            .padding(horizontal = 6.dp, vertical = 3.dp)
+                                    ) {
+                                        Text("Zero Synthetic Filler", fontSize = 9.sp, color = Color(0xFF34C759))
+                                    }
                                 }
                             }
                         }
@@ -557,16 +620,20 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                         .padding(horizontal = 16.dp)
                                 ) {
                                     Box(Modifier.weight(1f).height(0.5.dp).background(Color.White.copy(alpha = 0.2f)))
-                                    val figmaId = FigmaReferenceFixtures.figmaNodeId(selected) ?: "Derived"
-                                    val provText = provenance.label
+                                    val figmaId = FigmaReferenceFixtures.figmaNodeId(selected)
+                                    val provText = when (provenance) {
+                                        FigmaReferenceProvenance.DIRECT -> "FIGMA $figmaId [DIRECT] · ${target.width.toInt()}×${target.height.toInt()}dp"
+                                        FigmaReferenceProvenance.FAMILY_ONLY -> "FAMILY EXEMPLAR $figmaId [FAMILY_ONLY]"
+                                        FigmaReferenceProvenance.NO_SOURCE -> "DERIVED DESIGN SPECIFICATION [NO_SOURCE]"
+                                    }
                                     Text(
-                                        "  FIGMA $figmaId [$provText] · ${target.width.toInt()}×${target.height.toInt()}dp  ",
+                                        "  $provText  ",
                                         fontSize = 9.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = when (provenance) {
                                             FigmaReferenceProvenance.DIRECT -> IslandColors.CapsuleCyan
                                             FigmaReferenceProvenance.FAMILY_ONLY -> IslandColors.Yellow
-                                            FigmaReferenceProvenance.NO_SOURCE -> IslandColors.Gray
+                                            FigmaReferenceProvenance.NO_SOURCE -> Color(0xFFFF9500)
                                         }
                                     )
                                     Box(Modifier.weight(1f).height(0.5.dp).background(Color.White.copy(alpha = 0.2f)))

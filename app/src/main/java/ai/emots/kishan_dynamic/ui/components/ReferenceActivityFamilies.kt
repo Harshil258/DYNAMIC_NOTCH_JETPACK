@@ -1,65 +1,424 @@
 package ai.emots.kishan_dynamic.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
 import ai.emots.kishan_dynamic.ui.components.live.IslandAdaptiveHeader
 import androidx.compose.ui.platform.LocalDensity
 
-/** Reference-only compositions. Production source-backed rendering takes precedence in the host. */
+/**
+ * Professional V6 Reference & Derived Activity Compositions.
+ *
+ * Adheres to the AURORA V6 Design Constitution:
+ * - Specific, authentic recipes for derived states (MovieCard, SubscriptionPricing, TransportActivity)
+ * - Strict 367dp family geometry targets with content-adaptive responsiveness
+ * - Preserves ColorOptions as an intentional debug palette fixture
+ */
+
+/**
+ * Transport Activity (NO_SOURCE, S5 Activity expanded, 367×148dp, R42).
+ * Route/vehicle glyph START, origin→destination + milestone, ETA at END, progress track.
+ */
 @Composable
-internal fun TransportReferenceContent() {
-    Column(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        IslandAdaptiveHeader(identity = { Row(verticalAlignment = Alignment.CenterVertically) {
-            AppleIcon(AppleGlyph.TransitTrain, tint = IslandColors.CapsuleCyan, size = 32.dp)
-            Spacer(Modifier.width(AppTheme.spacing.md))
-            Column(Modifier.weight(1f)) { ReferenceTitle("Route 24 · Central"); ReferenceSubtitle("Arriving at platform 2") }
-        } }, status = { ReferenceMetric("3 min") })
-        if (LocalDensity.current.fontScale > 1.3f) Column(verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-            ReferenceSubtitle("Market Street")
-            ReferenceSubtitle("Central Station")
-        } else Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            Box(Modifier.weight(1f)) { ReferenceSubtitle("Market Street") }
-            Box(Modifier.weight(1f), contentAlignment = Alignment.CenterEnd) { ReferenceSubtitle("Central Station") }
+internal fun TransportReferenceContent(
+    info: ai.emots.kishan_dynamic.data.model.LiveActivityInfo? = null,
+    onControlAction: (IslandControlAction) -> Unit = {}
+) {
+    val routeTitle = info?.title?.ifBlank { null } ?: "Route 24 · Central"
+    val milestone = info?.secondaryText?.ifBlank { null } ?: "Arriving at Platform 2"
+    val eta = info?.primaryMetric?.ifBlank { null } ?: "3 min"
+    val origin = "Market Street"
+    val destination = "Central Station"
+    val progress = info?.progress ?: 0.65f
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 148.dp)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Header Row: Vehicle Icon + Route Title + ETA at END
+        IslandAdaptiveHeader(
+            identity = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF1E293B)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(AppleGlyph.TransitTrain, tint = IslandColors.CapsuleCyan, size = 20.dp)
+                    }
+                    Column {
+                        ReferenceTitle(routeTitle)
+                        ReferenceSubtitle(milestone)
+                    }
+                }
+            },
+            status = {
+                ReferenceMetric(eta)
+            }
+        )
+
+        // Route corridor: Origin -> Destination
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = origin,
+                color = Color.White.copy(alpha = 0.9f),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
+            )
+            AppleIcon(AppleGlyph.ChevronRight, tint = IslandColors.Gray, size = 12.dp)
+            Text(
+                text = destination,
+                color = Color.White.copy(alpha = 0.9f),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
-        Box(Modifier.fillMaxWidth().height(4.dp).background(IslandColors.Gray4, RoundedCornerShape(2.dp)))
+
+        // Progress bar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(4.dp)
+                .clip(RoundedCornerShape(2.dp))
+                .background(Color(0xFF334155))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(fraction = progress.coerceIn(0.05f, 1f))
+                    .fillMaxHeight()
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(IslandColors.CapsuleCyan, Color(0xFF38BDF8))
+                        )
+                    )
+            )
+        }
     }
 }
 
+/**
+ * Movie Card (NO_SOURCE, S5 Activity expanded, 367×142dp, R42).
+ * Poster 52×76dp START, movie/session, venue/date, seat badge, ticket action.
+ */
 @Composable
-internal fun MovieReferenceContent() {
-    Row(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.lg)) {
-        Box(Modifier.size(64.dp, 96.dp).background(IslandColors.Gray4, RoundedCornerShape(AppTheme.spacing.sm)), contentAlignment = Alignment.Center) {
-            AppleIcon(AppleGlyph.FaceTimeVideo, tint = Color.White, size = 32.dp)
+internal fun MovieReferenceContent(
+    onOpenTicket: () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 142.dp)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        // Movie poster thumbnail
+        Box(
+            modifier = Modifier
+                .size(52.dp, 76.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFF1E293B), Color(0xFF0F172A))
+                    )
+                )
+                .border(0.5.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.Center
+        ) {
+            AppleIcon(AppleGlyph.FaceTimeVideo, tint = IslandColors.CapsuleCyan, size = 24.dp)
         }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
+
+        // Details column
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             ReferenceTitle("Evening screening")
-            ReferenceSubtitle("Cinema 2 · 19:30")
-            ReferenceMetric("Seat G12")
-            ReferenceSubtitle("Ticket demonstration")
+            Text(
+                text = "Cinema 2 · 19:30",
+                color = IslandColors.TextSecondary,
+                fontSize = 12.sp,
+                lineHeight = 16.sp
+            )
+
+            // Seat Badge & Session Pill
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 2.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(Color(0xFF222B3A))
+                        .border(0.5.dp, Color(0xFF38BDF8).copy(alpha = 0.4f), RoundedCornerShape(6.dp))
+                        .padding(horizontal = 7.dp, vertical = 3.dp)
+                ) {
+                    Text(
+                        text = "Seat G12",
+                        color = IslandColors.CapsuleCyan,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Text(
+                    text = "Standard 2D",
+                    color = IslandColors.Gray,
+                    fontSize = 11.sp
+                )
+            }
+        }
+
+        // Ticket CTA
+        Box(
+            modifier = Modifier
+                .height(34.dp)
+                .clip(RoundedCornerShape(17.dp))
+                .background(Color(0xFF222B3A))
+                .border(0.5.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(17.dp))
+                .clickable(onClick = onOpenTicket)
+                .padding(horizontal = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "View Ticket",
+                color = Color.White,
+                fontSize = 11.5.sp,
+                fontWeight = FontWeight.SemiBold
+            )
         }
     }
 }
 
+/**
+ * Subscription Pricing (NO_SOURCE, S5 Activity expanded, 367×162dp, R42).
+ * Aurora branding, real plan name, local price if loaded, 1 primary CTA, secondary dismiss.
+ */
 @Composable
-internal fun SubscriptionReferenceContent() {
-    Column(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-            AppleIcon(AppleGlyph.Crown, tint = IslandColors.Orange, size = 32.dp)
-            Column(Modifier.weight(1f)) { ReferenceTitle("Aurora Pro"); ReferenceSubtitle("Optional personalization") }
+internal fun SubscriptionReferenceContent(
+    planName: String = "Aurora Pro",
+    priceText: String = "Google Play",
+    onUpgrade: () -> Unit = {},
+    onDismiss: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 162.dp)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Header Row: Crown Icon + Plan Title + Free notice
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(38.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF2D2310)),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(AppleGlyph.Crown, tint = IslandColors.Orange, size = 22.dp)
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    ReferenceTitle(planName)
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(IslandColors.Orange.copy(alpha = 0.2f))
+                            .padding(horizontal = 5.dp, vertical = 1.dp)
+                    ) {
+                        Text("PREMIUM", color = IslandColors.Orange, fontSize = 9.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+                ReferenceSubtitle("Sub-pixel notch alignment & custom themes")
+            }
         }
-        ReferenceSubtitle("Core notifications and recovery stay free.")
-        ReferenceSubtitle("Localized prices are available in Google Play.")
+
+        // Trust statement
+        Text(
+            text = "Core notifications, calls, and recovery always remain free.",
+            color = IslandColors.TextSecondary,
+            fontSize = 11.5.sp,
+            lineHeight = 15.sp
+        )
+
+        // Action Row: Primary Upgrade + Secondary Dismiss
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(36.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(Color(0xFF2563EB), Color(0xFF1D4ED8))
+                        )
+                    )
+                    .clickable(onClick = onUpgrade),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    AppleIcon(AppleGlyph.Crown, tint = Color.White, size = 13.dp)
+                    Text(
+                        text = "Upgrade · $priceText",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .height(36.dp)
+                    .clip(RoundedCornerShape(18.dp))
+                    .background(IslandColors.Gray6)
+                    .clickable(onClick = onDismiss)
+                    .padding(horizontal = 14.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Maybe later",
+                    color = IslandColors.TextSecondary,
+                    fontSize = 11.5.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Color Options (DIRECT, S5 Activity expanded, 367×185.3dp, R42).
+ * Intentional swatches palette fixture for debug / theme preview.
+ */
+@Composable
+internal fun ColorOptionsReferenceContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 185.3.dp)
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            ReferenceTitle("Island colors")
+            ReferenceSubtitle("Palette demonstration · preferences unchanged")
+        }
+
+        val palettes = listOf(
+            IslandColors.CapsuleCyan to "Cyan",
+            IslandColors.Green to "Emerald",
+            IslandColors.Orange to "Amber",
+            IslandColors.Purple to "Purple",
+            Color.White to "White",
+            IslandColors.Gray to "Slate"
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            palettes.forEach { (color, label) ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(AppTheme.spacing.sm))
+                            .background(color)
+                            .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(AppTheme.spacing.sm))
+                    )
+                    Text(
+                        text = label,
+                        fontSize = 9.sp,
+                        color = IslandColors.TextSecondary
+                    )
+                }
+            }
+        }
+
+        Text(
+            text = "Tap a theme in Settings to apply custom RGB styling.",
+            color = IslandColors.Gray,
+            fontSize = 11.sp,
+            lineHeight = 14.sp
+        )
+    }
+}
+
+@Composable
+internal fun GroupCallReferenceContent(participants: List<ai.emots.kishan_dynamic.data.model.ContactInfo>) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 86.dp)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+            participants.take(2).forEach { person ->
+                Box(
+                    modifier = Modifier
+                        .size(38.dp)
+                        .background(IslandColors.Gray4, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        person.name.split(' ').mapNotNull { it.firstOrNull() }.take(2).joinToString(""),
+                        style = AppTheme.typography.caption,
+                        color = Color.White
+                    )
+                }
+            }
+        }
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
+            ReferenceTitle("Group call active")
+            ReferenceSubtitle("${participants.size} participants connected")
+        }
     }
 }
 
@@ -67,20 +426,55 @@ internal fun SubscriptionReferenceContent() {
 internal fun NotificationImageReferenceContent(notifications: List<ai.emots.kishan_dynamic.data.model.NotificationInfo>, activeIndex: Int) {
     val context = androidx.compose.ui.platform.LocalContext.current
     val sources = notifications.filter { it.picturePath != null }.ifEmpty {
-        listOf(ai.emots.kishan_dynamic.data.model.NotificationInfo("reference-image", "", "Messages", "Project review",
-            "The latest photo is ready for review.", picturePath = "android.resource://${context.packageName}/${ai.emots.kishan_dynamic.R.drawable.shared_media_art}"))
+        listOf(
+            ai.emots.kishan_dynamic.data.model.NotificationInfo(
+                "reference-image", "", "Messages", "Project review",
+                "The latest photo is ready for review.",
+                picturePath = "android.resource://${context.packageName}/${ai.emots.kishan_dynamic.R.drawable.shared_media_art}"
+            )
+        )
     }
     NotificationIslandExpandedPager(sources, activeIndex = activeIndex.coerceIn(0, sources.lastIndex))
 }
 
 @Composable
 internal fun TimerImageReferenceContent(timer: String) {
-    Box(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg)) {
-      IslandAdaptiveHeader(identity = { Row(verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        AppleIcon(AppleGlyph.Timer, tint = IslandColors.Orange, size = 40.dp)
-        Column(Modifier.weight(1f)) { ReferenceTitle("Focus session"); ReferenceSubtitle("Timer demonstration") }
-      } }, status = { ReferenceMetric(timer) })
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 86.dp)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
+        ) {
+            AppleIcon(AppleGlyph.Timer, tint = IslandColors.Orange, size = 36.dp)
+            Column {
+                ReferenceTitle("Focus session")
+                ReferenceSubtitle("Timer active")
+            }
+        }
+        ReferenceMetric(timer)
+    }
+}
+
+@Composable
+internal fun FlightTrackerReferenceContent(info: ai.emots.kishan_dynamic.data.model.LiveActivityInfo?, progress: Float?) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 144.dp)
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        ai.emots.kishan_dynamic.ui.components.live.FlightIslandExpanded(info, progress)
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            ReferenceSubtitle("Route progress")
+            ReferenceMetric("${(((progress ?: info?.progress ?: .65f).coerceIn(0f, 1f)) * 100).toInt()}%")
+        }
     }
 }
 
@@ -92,50 +486,4 @@ internal fun TimerImageReferenceContent(timer: String) {
 }
 @Composable private fun ReferenceMetric(value: String) {
     Text(value, style = AppTheme.typography.islandTime.copy(fontFeatureSettings = "tnum"), color = IslandColors.CapsuleCyan)
-}
-
-@Composable
-internal fun ColorOptionsReferenceContent() {
-    Column(Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.xxl, vertical = AppTheme.spacing.lg), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.lg)) {
-        ReferenceTitle("Island colors")
-        ReferenceSubtitle("Palette demonstration · preferences unchanged")
-        val palettes = listOf(IslandColors.CapsuleCyan, IslandColors.Green, IslandColors.Orange,
-            IslandColors.Purple, Color.White, IslandColors.Gray)
-        palettes.chunked(3).forEach { row ->
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                row.forEach { color -> Box(Modifier.size(36.dp).background(color, RoundedCornerShape(AppTheme.spacing.sm))) }
-            }
-        }
-    }
-}
-
-@Composable
-internal fun GroupCallReferenceContent(participants: List<ai.emots.kishan_dynamic.data.model.ContactInfo>) {
-    Row(Modifier.fillMaxWidth().padding(AppTheme.spacing.lg), verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
-            participants.take(2).forEach { person ->
-                Box(Modifier.size(AppTheme.spacing.xxxl).background(IslandColors.Gray4, androidx.compose.foundation.shape.CircleShape),
-                    contentAlignment = Alignment.Center) {
-                    Text(person.name.split(' ').mapNotNull { it.firstOrNull() }.take(2).joinToString(""),
-                        style = AppTheme.typography.caption, color = Color.White)
-                }
-            }
-        }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
-            ReferenceTitle("Group call")
-            ReferenceSubtitle("${participants.size} participants")
-        }
-    }
-}
-
-@Composable
-internal fun FlightTrackerReferenceContent(info: ai.emots.kishan_dynamic.data.model.LiveActivityInfo?, progress: Float?) {
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-        ai.emots.kishan_dynamic.ui.components.live.FlightIslandExpanded(info, progress)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            ReferenceSubtitle("Route progress")
-            ReferenceMetric("${(((progress ?: info?.progress ?: .65f).coerceIn(0f,1f))*100).toInt()}%")
-        }
-    }
 }

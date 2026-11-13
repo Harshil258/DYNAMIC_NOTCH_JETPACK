@@ -37,4 +37,12 @@ class IslandFamilyGeometryTest {
         assertEquals(222f,IslandFamilyGeometry.resolve(IslandDemoState.TimerCompact,430f).width,0.001f)
         assertEquals(IslandGeometryFamily.ContextualAlert,IslandFamilyGeometry.target(IslandDemoState.TimerImage).family)
     }
+    @Test fun expanded367dpFamilyDoesNotScaleUpAt430dpCanvas() {
+        val callAt430 = IslandFamilyGeometry.resolve(IslandDemoState.CallSummaryExpanded, 430f)
+        assertEquals(367f, callAt430.width, 0.001f)
+        val musicAt430 = IslandFamilyGeometry.resolve(IslandDemoState.MusicExpanded, 430f)
+        assertEquals(367f, musicAt430.width, 0.001f)
+        val callAt393 = IslandFamilyGeometry.resolve(IslandDemoState.CallSummaryExpanded, 393f)
+        assertEquals(367f, callAt393.width, 0.001f)
+    }
 }

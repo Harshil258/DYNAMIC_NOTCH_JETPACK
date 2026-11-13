@@ -529,7 +529,7 @@ fun DynamicIslandPill(
                 IslandDemoState.NotificationExpanded, IslandDemoState.CallExpanded,
                 // These cards have no direct atlas specimen. Their measured content,
                 // including recipe-owned padding, determines the surface height.
-                IslandDemoState.CallSummaryExpanded, IslandDemoState.PremiumExpiryExpanded,
+                IslandDemoState.PremiumExpiryExpanded,
                 IslandDemoState.DeliveryExpanded, IslandDemoState.FlightExpanded,
                 IslandDemoState.SportsExpanded, IslandDemoState.TransportActivity,
                 IslandDemoState.FlightTrackerExpanded, IslandDemoState.SubscriptionPricing,
@@ -1048,12 +1048,22 @@ fun DynamicIslandPill(
                         IslandDemoState.NavigationCompact -> ai.emots.kishan_dynamic.ui.components.live.NavigationIslandCompact(liveActivityInfo)
                         IslandDemoState.TimerImage -> TimerImageReferenceContent(timerLabel)
                         IslandDemoState.NotificationImage -> NotificationImageReferenceContent(notifications, notificationActiveIndex)
-                        IslandDemoState.CallAvatars -> if (callParticipants.size > 1) GroupCallReferenceContent(callParticipants) else CallExpandedContent(
-                            onControlAction = onControlAction,
-                            contact = callContact,
+                        IslandDemoState.CallAvatars -> if (callParticipants.size > 1) GroupCallReferenceContent(callParticipants) else IncomingCallIsland(
+                            name = callContact?.name ?: "Unknown caller",
+                            label = callContact?.phoneNumber?.takeIf { it.isNotBlank() } ?: "Mobile",
+                            avatarUri = callContact?.avatarUri,
+                            onAccept = { onControlAction(IslandControlAction.CallAccept) },
+                            onDecline = { onControlAction(IslandControlAction.CallDecline) },
                             canDecline = callCanDecline
                         )
-                        IslandDemoState.TransportActivity -> TransportReferenceContent()
+                        IslandDemoState.TransportActivity -> if (liveActivityInfo != null && liveActivityInfo.kind == ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION) {
+                            ai.emots.kishan_dynamic.ui.components.live.NavigationIslandExpanded(
+                                info = liveActivityInfo,
+                                onControlAction = onControlAction
+                            )
+                        } else {
+                            TransportReferenceContent(info = liveActivityInfo, onControlAction = onControlAction)
+                        }
                         IslandDemoState.AirplaneAlert -> AirplaneAlertContent(onControlAction)
                         IslandDemoState.FlightTrackerExpanded -> FlightTrackerReferenceContent(liveActivityInfo, liveActivityProgress)
                         IslandDemoState.ScreenMirroringAlert -> ScreenMirroringContent(
@@ -1069,10 +1079,7 @@ fun DynamicIslandPill(
                             subtitle = liveActivitySubtitle,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.ColorOptions -> if (liveActivityInfo == null) TurnByTurnNavigationContent(onControlAction) else ai.emots.kishan_dynamic.ui.components.live.NavigationIslandExpanded(
-                            info = liveActivityInfo,
-                            onControlAction = onControlAction
-                        )
+                        IslandDemoState.ColorOptions -> ColorOptionsReferenceContent()
                     }
                 }
                     }
@@ -1357,7 +1364,8 @@ private fun sourceBackedIdentity(state: IslandDemoState): Pair<AppleGlyph, Color
     IslandDemoState.TimerCompact,
     IslandDemoState.TimerExpanded -> AppleGlyph.Timer to IslandColors.CapsuleOrange
     IslandDemoState.NavigationCompact,
-    IslandDemoState.ColorOptions -> AppleGlyph.Maps to IslandColors.Blue
+    IslandDemoState.TransportActivity -> AppleGlyph.Maps to IslandColors.Blue
+    IslandDemoState.ColorOptions -> AppleGlyph.Sparkles to IslandColors.Purple
     IslandDemoState.VoiceMemoExpanded,
     IslandDemoState.ScreenRecordingExpanded -> AppleGlyph.Record to IslandColors.CapsuleRed
     IslandDemoState.AirDropActivity -> AppleGlyph.AirDrop to IslandColors.CapsuleCyan
@@ -1821,151 +1829,23 @@ private fun NotificationExpandedContent(
     onNotificationDismiss: (String) -> Unit,
     onHeightChange: ((androidx.compose.ui.unit.Dp) -> Unit)? = null
 ) {
-    val displayList = remember(notifications) {
-        if (notifications.isNotEmpty()) {
-            notifications
-        } else {
-            listOf(
-                NotificationInfo(
-                    id = "demo_meesup",
-                    packageName = "com.google.android.apps.messaging",
-                    appName = "Messages",
-                    title = "VM-MEESUP-S",
-                    text = "RTO Delivery: 2 shipments are out for delivery. OTP will be sent during delivery and is available on the Seller Panel - Meesho",
-                    expandedText = "RTO Delivery: 2 shipments are out for delivery. OTP will be sent during delivery and is available on the Seller Panel - Meesho",
-                    actions = listOf(
-                        NotificationActionInfo(id = "read", label = "Mark as read"),
-                        NotificationActionInfo(id = "reply", label = "Reply", isReply = true)
-                    )
-                ),
-                NotificationInfo(
-                    id = "demo_calendar",
-                    packageName = "com.google.android.calendar",
-                    appName = "Calendar",
-                    title = "Product Strategy Sync",
-                    text = "Starting in 15 mins • Aurora Island Team",
-                    actions = listOf(NotificationActionInfo(id = "open", label = "Join"))
-                ),
-                NotificationInfo(
-                    id = "demo_heytap",
-                    packageName = "com.heytap.accessory",
-                    appName = "Heytap Accessory",
-                    title = "Permission request",
-                    text = "\"Quick device connect\" wants to obtain your location to scan for devices.",
-                    actions = listOf(NotificationActionInfo(id = "open", label = "Open"))
-                ),
-                NotificationInfo(
-                    id = "demo_chatgpt",
-                    packageName = "com.heytap.themestore",
-                    appName = "Theme Store",
-                    title = "ChatGPT",
-                    text = "कार्यक्रम योजना कैसे बनाएं?",
-                    actions = listOf(NotificationActionInfo(id = "open", label = "Open"))
-                ),
-                NotificationInfo(
-                    id = "demo_chat",
-                    packageName = "com.whatsapp",
-                    appName = "WhatsApp",
-                    title = "Tamia Castillo",
-                    text = "Hey, are you free tonight? 🍕",
-                    actions = listOf(NotificationActionInfo(id = "reply", label = "Reply", isReply = true))
-                ),
-                NotificationInfo(
-                    id = "demo_youtube",
-                    packageName = "com.google.android.youtube",
-                    appName = "YouTube",
-                    title = "MKBHD: iPhone 16 Pro Review: The Truth!",
-                    text = "Marques Brownlee · 1.2M views · 2 hours ago",
-                    actions = listOf(
-                        NotificationActionInfo(id = "watch_later", label = "Watch Later"),
-                        NotificationActionInfo(id = "play", label = "Play")
-                    )
-                ),
-                NotificationInfo(
-                    id = "demo_nav",
-                    packageName = "com.google.android.apps.maps",
-                    appName = "Maps",
-                    title = "In 500 ft, Turn right on Market St",
-                    text = "4.2 mi remaining · 14 min ETA",
-                    category = "navigation",
-                    actions = listOf(NotificationActionInfo(id = "route", label = "Route"))
-                ),
-                NotificationInfo(
-                    id = "demo_transport",
-                    packageName = "com.ubercab",
-                    appName = "Uber",
-                    title = "Michael · Toyota Camry",
-                    text = "Arriving in 3 min · Plate 7XYZ89",
-                    category = "transport",
-                    actions = listOf(NotificationActionInfo(id = "contact", label = "Contact"))
-                ),
-                NotificationInfo(
-                    id = "demo_progress",
-                    packageName = "com.android.chrome",
-                    appName = "Chrome",
-                    title = "Presentation_Deck_2026.pdf",
-                    text = "14.2 MB / 19.5 MB · 2.4 MB/s",
-                    category = "progress",
-                    progress = 74,
-                    progressMax = 100,
-                    actions = listOf(NotificationActionInfo(id = "cancel", label = "Cancel"))
-                ),
-                NotificationInfo(
-                    id = "demo_bank_otp",
-                    packageName = "com.snapwork.hdfc",
-                    appName = "HDFC Bank",
-                    title = "Transaction OTP Alert",
-                    text = "AX-HDFCBK: OTP for Rs. 4,500 at Amazon Pay is 849201. Valid for 10 min. Do not share with anyone.",
-                    expandedText = "AX-HDFCBK: OTP for Rs. 4,500 at Amazon Pay is 849201. Valid for 10 min. Do not share with anyone.",
-                    actions = listOf(
-                        NotificationActionInfo(id = "copy_otp", label = "Copy 849201")
-                    )
-                ),
-                NotificationInfo(
-                    id = "demo_swiggy",
-                    packageName = "in.swiggy.android",
-                    appName = "Swiggy",
-                    title = "Order on the way! 🛵",
-                    text = "Santosh is 8 mins away with your Behrouz Biryani feast.",
-                    actions = listOf(
-                        NotificationActionInfo(id = "track", label = "Track Order"),
-                        NotificationActionInfo(id = "call_delivery", label = "Call Driver")
-                    )
-                ),
-                NotificationInfo(
-                    id = "demo_instagram",
-                    packageName = "com.instagram.android",
-                    appName = "Instagram",
-                    title = "alex_rivers and 14 others",
-                    text = "liked your story: Sunset at Marina Beach 🌅",
-                    actions = listOf(
-                        NotificationActionInfo(id = "view_story", label = "View")
-                    )
-                ),
-                NotificationInfo(
-                    id = "demo_gmail",
-                    packageName = "com.google.android.gm",
-                    appName = "Gmail",
-                    title = "Harshil Vekariya",
-                    text = "Sprint 24 Planning: Island UI polish, content-adaptive layouts & release verification checklist.",
-                    expandedText = "Sprint 24 Planning: Island UI polish, content-adaptive layouts & release verification checklist. Let's sync tomorrow at 10 AM.",
-                    actions = listOf(
-                        NotificationActionInfo(id = "archive", label = "Archive"),
-                        NotificationActionInfo(id = "reply_email", label = "Reply", isReply = true)
-                    )
-                ),
-                NotificationInfo(
-                    id = "demo_calendar",
-                    packageName = "com.google.android.calendar",
-                    appName = "Calendar",
-                    title = "Design Review with Core Team",
-                    text = "In 15 mins · meet.google.com/xyz-abcd-efg",
-                    actions = listOf(
-                        NotificationActionInfo(id = "join_meet", label = "Join Meet")
-                    )
-                )
+    val displayList = remember(notifications) { notifications }
+    if (displayList.isEmpty()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(86.dp)
+                .padding(horizontal = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No notifications",
+                color = IslandColors.TextSecondary,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium
             )
         }
+        return
     }
 
     NotificationIslandExpandedPager(

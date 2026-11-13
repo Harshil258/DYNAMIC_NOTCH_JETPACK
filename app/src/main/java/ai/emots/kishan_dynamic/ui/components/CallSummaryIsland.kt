@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.platform.LocalDensity
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,132 +29,142 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
-import ai.emots.kishan_dynamic.data.model.DurationAccuracy
-import ai.emots.kishan_dynamic.ui.components.live.IslandAdaptiveHeader
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.model.CallDirection
 import ai.emots.kishan_dynamic.data.model.CallRecord
+import ai.emots.kishan_dynamic.data.model.DurationAccuracy
+import ai.emots.kishan_dynamic.ui.components.live.IslandAdaptiveHeader
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
 
 /**
- * Call summary presentation for the Dynamic Island HUD.
- * Renders contact identity, call type, call duration or missed badge, and 1-tap quick action shortcuts:
- * - Direct redial or "Call back" for missed calls
- * - SMS messaging intent
- * - WhatsApp direct chat via wa.me normalization
- * - Dismiss / done action
+ * Call summary presentation for the Dynamic Island HUD (V6 Specification).
+ * Target geometry: 367×112dp, R42.
+ *
+ * Visual hierarchy:
+ * - Top row: 40dp avatar START; caller name 15-16sp bold; subtitle indicates true call outcome
+ *   ("Call ended · Incoming", "Outgoing call ended", "Missed call"); static duration END (neutral color, NOT green).
+ * - Bottom row: Focused actions: 1 primary action ("Call back" / "Redial") if backed by capability,
+ *   plus compact "Done" dismiss. Eliminates cramped 4-button dashboard.
+ * - Production truth: Empty/null records do NOT fake caller identity or contact shortcuts.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun CallSummaryExpandedContent(
     record: CallRecord?,
     onControlAction: (IslandControlAction) -> Unit
 ) {
-    val isDemoPreview = record == null
-    val name = record?.contactName?.ifBlank { null } ?: if (isDemoPreview) "Tamia Castillo" else "Unknown caller"
-    val phoneNumber = record?.phoneNumber?.ifBlank { null } ?: if (isDemoPreview) "+1 (555) 019-2834" else ""
+    val isDemoPreview = record?.id == "gallery_summary" || (record == null && false)
+    val name = record?.contactName?.ifBlank { null }
+        ?: record?.phoneNumber?.ifBlank { null }
+        ?: if (isDemoPreview) "Tamia Castillo" else "No recent caller"
+    val phoneNumber = record?.phoneNumber?.ifBlank { null }
+        ?: if (isDemoPreview) "+1 (555) 019-2834" else null
     val isMissed = record?.direction == CallDirection.MISSED
-    val callType = when (record?.direction) {
-        CallDirection.INCOMING -> "Incoming call"
-        CallDirection.OUTGOING -> "Outgoing call"
-        CallDirection.MISSED -> "Missed call"
-        null -> if (isDemoPreview) "Call ended" else "Call summary"
+    val phaseText = callSummaryPhaseLabel(record, isDemoPreview)
+    val subtitle = if (!phoneNumber.isNullOrBlank() && name != phoneNumber) {
+        "$phaseText · $phoneNumber"
+    } else {
+        phaseText
     }
     val duration = if (isDemoPreview) "02:45" else callSummaryDurationLabel(record)
     val measuredDuration = isDemoPreview || (record != null && !isMissed && record.durationAccuracy != DurationAccuracy.UNKNOWN)
-    val contactActionsAvailable = isDemoPreview || phoneNumber.any(Char::isDigit)
+    val canRedial = !phoneNumber.isNullOrBlank() && phoneNumber.any(Char::isDigit)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .heightIn(min = 112.dp)
             .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        IslandAdaptiveHeader(identity = {
-            Row(
-                Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-            ) {
-                ContactAvatar(
-                    name = name,
-                    avatarUri = record?.avatarUri,
-                    modifier = Modifier.size(40.dp),
-                    contentDescription = name
-                )
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        name,
-                        color = Color.White,
-                        style = AppTheme.typography.body.copy(
-                            fontSize = 16.sp,
-                            lineHeight = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+        // Top row: Avatar + Caller Info + Static Duration
+        IslandAdaptiveHeader(
+            identity = {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
+                ) {
+                    ContactAvatar(
+                        name = name,
+                        avatarUri = record?.avatarUri,
+                        modifier = Modifier.size(40.dp),
+                        contentDescription = name
                     )
+                    Column(Modifier.weight(1f)) {
+                        Text(
+                            text = name,
+                            color = Color.White,
+                            style = AppTheme.typography.body.copy(
+                                fontSize = 15.sp,
+                                lineHeight = 19.sp,
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Text(
+                            text = subtitle,
+                            color = if (isMissed) IslandColors.Orange else IslandColors.TextSecondary,
+                            style = AppTheme.typography.bodySmall.copy(
+                                fontSize = 11.5.sp,
+                                lineHeight = 15.sp
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                }
+            },
+            status = {
+                if (duration.isNotBlank() && !isMissed) {
                     Text(
-                        if (phoneNumber.isBlank()) callType else "$callType · $phoneNumber",
-                        color = IslandColors.TextSecondary,
-                        style = AppTheme.typography.bodySmall.copy(fontSize = 11.sp, lineHeight = 16.sp),
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        text = duration,
+                        color = IslandColors.TextSecondary, // Neutral color, never live green
+                        style = AppTheme.typography.bodySmall.copy(
+                            fontSize = 13.5.sp,
+                            lineHeight = 17.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            fontFamily = if (measuredDuration) FontFamily.Monospace else FontFamily.Default,
+                            textDirection = TextDirection.Ltr
+                        )
                     )
                 }
             }
-        }, status = {
-            if (duration.isNotBlank()) Text(
-                duration,
-                color = when {
-                    isMissed -> IslandColors.Orange
-                    measuredDuration -> IslandColors.CapsuleGreen
-                    else -> IslandColors.TextSecondary
-                },
-                style = AppTheme.typography.bodySmall.copy(
-                    fontSize = 14.sp,
-                    lineHeight = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = if (measuredDuration) FontFamily.Monospace else FontFamily.Default,
-                    textDirection = TextDirection.Ltr
-                )
-            )
-        })
+        )
 
-        BoxWithConstraints(Modifier.fillMaxWidth()) {
-            val columns = if (LocalDensity.current.fontScale > 1.3f || maxWidth < 320.dp) 2 else 4
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                maxItemsInEachRow = columns,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                if (contactActionsAvailable && canRenderIslandControl(IslandControlAction.CallSummaryRedial)) CallSummaryActionButton(
+        // Bottom row: Focused actions (Primary Redial/Call back + Done dismiss)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (canRedial && canRenderIslandControl(IslandControlAction.CallSummaryRedial)) {
+                CallSummaryActionButton(
                     glyph = AppleGlyph.Phone,
                     label = if (isMissed) "Call back" else "Redial",
                     onClick = { onControlAction(IslandControlAction.CallSummaryRedial) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    isPrimary = true
                 )
-                if (contactActionsAvailable && canRenderIslandControl(IslandControlAction.CallSummaryMessage)) CallSummaryActionButton(
+            }
+            if (canRedial && canRenderIslandControl(IslandControlAction.CallSummaryMessage)) {
+                CallSummaryActionButton(
                     glyph = AppleGlyph.Chat,
                     label = "SMS",
                     onClick = { onControlAction(IslandControlAction.CallSummaryMessage) },
-                    modifier = Modifier.weight(1f)
-                )
-                if (contactActionsAvailable && canRenderIslandControl(IslandControlAction.CallSummaryWhatsApp)) CallSummaryActionButton(
-                    glyph = AppleGlyph.Chat,
-                    label = "WhatsApp",
-                    onClick = { onControlAction(IslandControlAction.CallSummaryWhatsApp) },
-                    modifier = Modifier.weight(1f)
-                )
-                CallSummaryActionButton(
-                    glyph = AppleGlyph.Close,
-                    label = "Done",
-                    onClick = { onControlAction(IslandControlAction.CallSummaryDismiss) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(0.7f),
+                    isPrimary = false
                 )
             }
+            CallSummaryActionButton(
+                glyph = AppleGlyph.Close,
+                label = "Done",
+                onClick = { onControlAction(IslandControlAction.CallSummaryDismiss) },
+                modifier = Modifier.weight(if (canRedial) 0.8f else 1f),
+                isPrimary = !canRedial
+            )
         }
     }
 }
@@ -163,29 +174,33 @@ internal fun CallSummaryActionButton(
     glyph: AppleGlyph,
     label: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isPrimary: Boolean = false
 ) {
     Row(
         modifier = modifier
             .height(36.dp)
             .clip(RoundedCornerShape(18.dp))
-            .background(IslandColors.Gray6)
+            .background(if (isPrimary) Color(0xFF222B3A) else IslandColors.Gray6)
             .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onClick)
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = 12.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AppleIcon(glyph = glyph, tint = IslandColors.CapsuleCyan, size = 13.dp)
-        Spacer(modifier = Modifier.width(4.dp))
+        AppleIcon(
+            glyph = glyph,
+            tint = if (isPrimary) IslandColors.CapsuleCyan else IslandColors.TextSecondary,
+            size = 13.dp
+        )
+        Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = label,
             color = Color.White,
-            fontSize = 11.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
-            letterSpacing = (-0.2).sp,
             maxLines = 1,
             softWrap = false,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -203,4 +218,12 @@ internal fun callSummaryDurationLabel(record: CallRecord?): String = when {
     record.durationAccuracy == DurationAccuracy.UNKNOWN -> "Duration unavailable"
     record.durationAccuracy == DurationAccuracy.INFERRED_WALL_CLOCK -> "≈${formatCallDuration(record.durationSeconds)}"
     else -> formatCallDuration(record.durationSeconds)
+}
+
+/** Distinguish call direction from phase so ended calls never sound like active ringing. */
+internal fun callSummaryPhaseLabel(record: CallRecord?, isDemoPreview: Boolean = false): String = when (record?.direction) {
+    CallDirection.INCOMING -> "Call ended · Incoming"
+    CallDirection.OUTGOING -> "Outgoing call ended"
+    CallDirection.MISSED -> "Missed call"
+    null -> if (isDemoPreview) "Call ended · Incoming" else "Call ended"
 }

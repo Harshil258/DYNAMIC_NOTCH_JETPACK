@@ -188,7 +188,7 @@ val defaultPlaygroundCatalog: List<PlaygroundStateItem> = listOf(
                 detail = "Lane guidance · I-280 North · San Francisco",
                 supportsExpand = true,
                 compactState = IslandDemoState.NavigationCompact,
-                expandedState = IslandDemoState.ColorOptions
+                expandedState = IslandDemoState.TransportActivity
             ),
             PlaygroundStateItem(
                 label = "Mirroring",

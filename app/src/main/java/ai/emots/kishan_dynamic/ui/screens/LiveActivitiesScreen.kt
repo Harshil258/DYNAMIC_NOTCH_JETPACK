@@ -395,7 +395,7 @@ fun LiveActivitiesScreen() {
         2 -> if (isExpandedPreviewMode) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
         3 -> if (isExpandedPreviewMode) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
         4 -> if (isExpandedPreviewMode) IslandDemoState.TimerExpanded else IslandDemoState.TimerCompact
-        5 -> if (isExpandedPreviewMode) IslandDemoState.ColorOptions else IslandDemoState.NavigationCompact
+        5 -> if (isExpandedPreviewMode) IslandDemoState.TransportActivity else IslandDemoState.NavigationCompact
         else -> if (isExpandedPreviewMode) catalogDemoState(selectedActivityIndex - 6) else IslandDemoState.Minimal
     }
 

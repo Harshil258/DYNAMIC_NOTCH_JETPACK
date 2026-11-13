@@ -689,7 +689,7 @@ fun playgroundSelfChecks(): List<PlaygroundCheck> = buildList {
             PlaygroundCase.Timer -> IslandDemoState.TimerExpanded
             PlaygroundCase.Charging -> IslandDemoState.ChargingCompact
             PlaygroundCase.LowBattery -> IslandDemoState.LowBatteryCompact
-            PlaygroundCase.Navigation -> IslandDemoState.ColorOptions
+            PlaygroundCase.Navigation -> IslandDemoState.TransportActivity
             PlaygroundCase.Recording -> IslandDemoState.VoiceMemoExpanded
             PlaygroundCase.Multiple -> IslandDemoState.NotificationWithMusicCompact
             PlaygroundCase.Controls -> IslandDemoState.ActionControlExpanded

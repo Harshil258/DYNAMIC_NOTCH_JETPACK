@@ -92,7 +92,7 @@ object IslandFamilyGeometry {
         val available = availableWidth.coerceAtLeast(0f)
         val compact = t.family in setOf(IslandGeometryFamily.StatusCompact, IslandGeometryFamily.Idle, IslandGeometryFamily.OwnerMinimal)
         val width = if (compact) maxOf(contentWidth ?: t.width, cutoutWidth).coerceAtMost(available)
-            else (t.width * available / 393f).coerceAtMost(available)
+            else minOf(t.width, available)
         val height = maxOf(t.height, cutoutHeight, contentHeight ?: 0f,
             if (compact) t.height else t.height + (fontScale.coerceAtLeast(1f) - 1f) * 32f)
         val radius = if (state == IslandDemoState.NotificationImage && height >= 126f) 44f else if (height >= 142f && t.family == IslandGeometryFamily.ContextualAlert) 42f else t.radius

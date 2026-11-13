@@ -32,6 +32,8 @@ fun DynamicNotchParent(
         state = demoState,
         modifier = modifier,
         onTap = onIslandTap,
+        callContact = (state as? IslandState.IncomingCall)?.contact,
+        callCanDecline = (state as? IslandState.IncomingCall) != null,
         callSummary = (state as? IslandState.CallSummary)?.record,
         callIsDialing = (state as? IslandState.OngoingCall)?.isDialing == true,
         ringerMode = (state as? IslandState.RingerMode)?.mode ?: RingerModeType.SILENT,
@@ -104,7 +106,7 @@ fun mapIslandStateToDemoState(state: IslandState): IslandDemoState {
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.DELIVERY -> if (state.activity.isExpanded) IslandDemoState.DeliveryExpanded else IslandDemoState.DeliveryCompact
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.FLIGHT -> if (state.activity.isExpanded) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.SPORTS -> if (state.activity.isExpanded) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION -> if (state.activity.isExpanded) IslandDemoState.ColorOptions else IslandDemoState.NavigationCompact
+            ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION -> if (state.activity.isExpanded) IslandDemoState.TransportActivity else IslandDemoState.NavigationCompact
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.VOICE_MEMO -> IslandDemoState.VoiceMemoExpanded
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_RECORDING -> IslandDemoState.ScreenRecordingExpanded
             ai.emots.kishan_dynamic.data.model.LiveActivityKind.SHORTCUT -> IslandDemoState.ShortcutExpanded

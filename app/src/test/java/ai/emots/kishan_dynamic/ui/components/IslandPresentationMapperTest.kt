@@ -13,4 +13,29 @@ class IslandPresentationMapperTest {
             assertEquals(kind.name, IslandDemoState.Idle, resolveOverlayDemoState(state, 0))
         }
     }
+
+    @Test fun navigationExpandedMapsToTransportActivityNeverColorOptions() {
+        val navExpanded = IslandState.LiveActivity(LiveActivityInfo("nav_pkg", LiveActivityKind.NAVIGATION, "Navigation", isExpanded = true))
+        val resolved = resolveOverlayDemoState(navExpanded, 0)
+        assertEquals(IslandDemoState.TransportActivity, resolved)
+        org.junit.Assert.assertNotEquals(IslandDemoState.ColorOptions, resolved)
+    }
+
+    @Test fun incomingCallMapsToCallAvatarsForRingingPresentation() {
+        val incoming = IslandState.IncomingCall(ContactInfo("Alice Smith", "+1234567890"), declineActionId = "action_decline")
+        val resolved = resolveOverlayDemoState(incoming, 0)
+        assertEquals(IslandDemoState.CallAvatars, resolved)
+    }
+
+    @Test fun ongoingConnectedCallMapsToCallExpandedWhenExpanded() {
+        val ongoingExpanded = IslandState.OngoingCall(ContactInfo("Bob Jones", "+1987654321"), durationSeconds = 120, isExpanded = true)
+        val resolved = resolveOverlayDemoState(ongoingExpanded, 0)
+        assertEquals(IslandDemoState.CallExpanded, resolved)
+    }
+
+    @Test fun ongoingConnectedCallMapsToCallCompactWhenCompact() {
+        val ongoingCompact = IslandState.OngoingCall(ContactInfo("Bob Jones", "+1987654321"), durationSeconds = 120, isExpanded = false)
+        val resolved = resolveOverlayDemoState(ongoingCompact, 0)
+        assertEquals(IslandDemoState.CallCompact, resolved)
+    }
 }

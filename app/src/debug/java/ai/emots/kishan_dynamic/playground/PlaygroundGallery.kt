@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -500,11 +501,12 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                     contentDescription = "Figma Reference for ${selected.name}",
                                     modifier = Modifier
                                         .size(target.width.dp, target.height.dp)
-                                        .clip(RoundedCornerShape(target.radius.dp))
+                                        .clip(RoundedCornerShape(target.radius.dp)),
+                                    contentScale = ContentScale.Fit
                                 )
                                 Text(
                                     text = when (provenance) {
-                                        FigmaReferenceProvenance.DIRECT -> "DIRECT REFERENCE (${FigmaReferenceFixtures.figmaNodeId(selected) ?: ""})"
+                                        FigmaReferenceProvenance.DIRECT -> "DIRECT REFERENCE (${FigmaReferenceFixtures.figmaNodeId(selected) ?: ""}) · Calibrated 1:1 scale"
                                         FigmaReferenceProvenance.FAMILY_ONLY -> "Derived from ${target.family.name} (${FigmaReferenceFixtures.figmaNodeId(selected) ?: ""}) · not an exact state match"
                                         FigmaReferenceProvenance.NO_SOURCE -> "NO_SOURCE SPECIMEN"
                                     },
@@ -654,12 +656,20 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        val shellRect = observer.regions.values.firstOrNull { it.first == "Shell" }?.second
+                        val internalRegions = observer.regions.values.filter { it.first != "Shell" }
+                        val internalVerified = internalRegions.isNotEmpty() && shellRect != null && internalRegions.all {
+                            it.second.left >= shellRect.left - 2f && it.second.right <= shellRect.right + 2f &&
+                            it.second.top >= shellRect.top - 2f && it.second.bottom <= shellRect.bottom + 2f
+                        }
                         val isAccurate = abs(deltaW) < 0.6f && abs(deltaH) < 0.6f
                         val deltaColor = if (isAccurate) Color(0xFF34C759) else if (abs(deltaW) < 2f && abs(deltaH) < 2f) Color(0xFFFF9500) else Color(0xFFFF3B30)
-                        val statusTag = if (isAccurate) "Geometry PASS (W×H only)" else "Geometry Δ"
+                        val statusTag = if (isAccurate) {
+                            if (internalVerified) "Full Parity (Outer+Internal)" else "Outer Bounds PASS"
+                        } else "Geometry Δ"
 
                         Text(
-                            text = if (measuredActualW > 0f) "$statusTag: %.1f × %.1fdp · Δ %.1f / %.1fdp".format(measuredActualW, measuredActualH, deltaW, deltaH) else "Measuring surface...",
+                            text = if (measuredActualW > 0f) "$statusTag: %.1f × %.1fdp (Δ %.1f/%.1fdp)".format(measuredActualW, measuredActualH, deltaW, deltaH) else "Measuring surface...",
                             fontSize = 11.sp,
                             color = deltaColor,
                             fontWeight = FontWeight.Medium

@@ -40,19 +40,20 @@ internal fun TransportReferenceContent(
     info: ai.emots.kishan_dynamic.data.model.LiveActivityInfo? = null,
     onControlAction: (IslandControlAction) -> Unit = {}
 ) {
-    val routeTitle = info?.title?.ifBlank { null } ?: "Route 24 · Central"
-    val milestone = info?.secondaryText?.ifBlank { null } ?: "Arriving at Platform 2"
-    val eta = info?.primaryMetric?.ifBlank { null } ?: "3 min"
-    val origin = "Market Street"
-    val destination = "Central Station"
-    val progress = info?.progress ?: 0.65f
+    val isDemoPreview = info == null || info.id == "gallery_transport"
+    val routeTitle = info?.title?.ifBlank { null } ?: if (isDemoPreview) "Route 24 · Central" else "Transit Route"
+    val milestone = info?.secondaryText?.ifBlank { null } ?: if (isDemoPreview) "Arriving at Platform 2" else ""
+    val eta = info?.primaryMetric?.ifBlank { null } ?: if (isDemoPreview) "3 min" else ""
+    val origin = info?.secondaryMetric?.ifBlank { null } ?: if (isDemoPreview) "Market Street" else ""
+    val destination = info?.entityName?.ifBlank { null } ?: if (isDemoPreview) "Central Station" else ""
+    val progress = info?.progress ?: if (isDemoPreview) 0.65f else null
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 148.dp)
+            .wrapContentHeight()
             .padding(horizontal = 18.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         // Header Row: Vehicle Icon + Route Title + ETA at END
         IslandAdaptiveHeader(
@@ -72,54 +73,64 @@ internal fun TransportReferenceContent(
                     }
                     Column {
                         ReferenceTitle(routeTitle)
-                        ReferenceSubtitle(milestone)
+                        if (milestone.isNotBlank()) {
+                            ReferenceSubtitle(milestone)
+                        }
                     }
                 }
             },
             status = {
-                ReferenceMetric(eta)
+                if (eta.isNotBlank()) {
+                    ReferenceMetric(eta)
+                }
             }
         )
 
-        // Route corridor: Origin -> Destination
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = origin,
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
-            )
-            AppleIcon(AppleGlyph.ChevronRight, tint = IslandColors.Gray, size = 12.dp)
-            Text(
-                text = destination,
-                color = Color.White.copy(alpha = 0.9f),
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium
-            )
+        // Route corridor: Origin -> Destination (only when present)
+        if (origin.isNotBlank() || destination.isNotBlank()) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = origin.ifBlank { "En route" },
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
+                )
+                if (destination.isNotBlank()) {
+                    AppleIcon(AppleGlyph.ChevronRight, tint = IslandColors.Gray, size = 12.dp)
+                    Text(
+                        text = destination,
+                        color = Color.White.copy(alpha = 0.9f),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
         }
 
-        // Progress bar
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(4.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(Color(0xFF334155))
-        ) {
+        // Progress bar (only when present)
+        if (progress != null) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(fraction = progress.coerceIn(0.05f, 1f))
-                    .fillMaxHeight()
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(IslandColors.CapsuleCyan, Color(0xFF38BDF8))
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(Color(0xFF334155))
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = progress.coerceIn(0.05f, 1f))
+                        .fillMaxHeight()
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(IslandColors.CapsuleCyan, Color(0xFF38BDF8))
+                            )
                         )
-                    )
-            )
+                )
+            }
         }
     }
 }
@@ -135,7 +146,7 @@ internal fun MovieReferenceContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 142.dp)
+            .wrapContentHeight()
             .padding(horizontal = 18.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(14.dp)
@@ -232,9 +243,9 @@ internal fun SubscriptionReferenceContent(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 162.dp)
+            .wrapContentHeight()
             .padding(horizontal = 18.dp, vertical = 14.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         // Header Row: Crown Icon + Plan Title + Free notice
         Row(

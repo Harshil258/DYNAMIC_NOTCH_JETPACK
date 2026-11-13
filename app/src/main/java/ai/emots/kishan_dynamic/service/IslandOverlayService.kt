@@ -611,7 +611,11 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 hideSensitiveContent = hideSensitiveContent,
                                 incoming = renderedState is IslandState.IncomingCall
                             )
-                            val callSummary = (renderedState as? IslandState.CallSummary)?.record
+                            val callSummary = LockScreenPrivacyPolicy.callRecord(
+                                source = (renderedState as? IslandState.CallSummary)?.record,
+                                deviceLocked = isDeviceLocked,
+                                hideSensitiveContent = hideSensitiveContent
+                            )
                             val callDurationSeconds = (renderedState as? IslandState.OngoingCall)?.durationSeconds ?: 0L
                             val showCallDuration = (renderedState as? IslandState.OngoingCall)?.showDuration ?: true
                             val callIsDialing = (renderedState as? IslandState.OngoingCall)?.isDialing == true
@@ -860,6 +864,8 @@ class IslandOverlayService : AccessibilityService(), LifecycleOwner, ViewModelSt
                                 showCallDuration = showCallDuration,
                                 callIsDialing = callIsDialing,
                                 callCanDecline = callCanDecline,
+                                callIsMuted = runCatching { callSystemController.isMicrophoneMute }.getOrNull(),
+                                callIsSpeaker = runCatching { callSystemController.isSpeakerphoneOn }.getOrNull(),
                                 musicTrack = musicState?.track,
                                 musicIsPlaying = musicState?.isPlaying ?: true,
                                 musicScrubberEnabled = musicScrubberEnabled && supportsMedia(android.media.session.PlaybackState.ACTION_SEEK_TO),

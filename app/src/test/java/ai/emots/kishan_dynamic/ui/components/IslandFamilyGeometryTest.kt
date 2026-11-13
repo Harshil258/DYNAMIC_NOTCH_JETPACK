@@ -45,4 +45,11 @@ class IslandFamilyGeometryTest {
         val callAt393 = IslandFamilyGeometry.resolve(IslandDemoState.CallSummaryExpanded, 393f)
         assertEquals(367f, callAt393.width, 0.001f)
     }
+
+    @Test fun minimalStateResolvesIdenticallyAcrossBothMappers() {
+        assertEquals(IslandDemoState.Minimal, resolveOverlayDemoState(ai.emots.kishan_dynamic.data.model.IslandState.Minimal, 0))
+        assertEquals(IslandDemoState.Minimal, mapIslandStateToDemoState(ai.emots.kishan_dynamic.data.model.IslandState.Minimal))
+        assertEquals(IslandDemoState.Idle, resolveOverlayDemoState(ai.emots.kishan_dynamic.data.model.IslandState.Hidden, 0))
+        assertEquals(IslandDemoState.Idle, mapIslandStateToDemoState(ai.emots.kishan_dynamic.data.model.IslandState.Hidden))
+    }
 }

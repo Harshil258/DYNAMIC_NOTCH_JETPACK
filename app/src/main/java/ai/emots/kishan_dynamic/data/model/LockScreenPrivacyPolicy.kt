@@ -55,4 +55,22 @@ object LockScreenPrivacyPolicy {
             avatarUri = null
         )
     }
+
+    fun callRecord(
+        source: CallRecord?,
+        deviceLocked: Boolean,
+        hideSensitiveContent: Boolean
+    ): CallRecord? {
+        if (source == null || !deviceLocked || !hideSensitiveContent) return source
+        val fallbackName = when (source.direction) {
+            CallDirection.INCOMING -> "Incoming call"
+            CallDirection.OUTGOING -> "Outgoing call"
+            CallDirection.MISSED -> "Missed call"
+        }
+        return source.copy(
+            contactName = fallbackName,
+            phoneNumber = "",
+            avatarUri = null
+        )
+    }
 }

@@ -13,7 +13,8 @@ class PlaygroundControllerTest {
         assertTrue(playgroundSelfChecks().all { it.passed })
         assertEquals(IslandDemoState.NotificationExpanded,
             resolveOverlayDemoState(mockState(PlaygroundCase.Expanded, PlaygroundOptions()), 1))
-        assertEquals(IslandDemoState.Idle, resolveOverlayDemoState(IslandState.Minimal, 0))
+        assertEquals(IslandDemoState.Minimal, resolveOverlayDemoState(IslandState.Minimal, 0))
+        assertEquals(IslandDemoState.Idle, resolveOverlayDemoState(IslandState.Hidden, 0))
         assertEquals(IslandDemoState.NotificationWithMusicCompact,
             resolveOverlayDemoState(mockState(PlaygroundCase.Multiple, PlaygroundOptions()), 2))
     }

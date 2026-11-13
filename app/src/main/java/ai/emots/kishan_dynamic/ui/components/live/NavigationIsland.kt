@@ -49,8 +49,9 @@ fun NavigationIslandExpanded(
     val status = info?.statusBadgeText?.ifBlank { null } ?: if (info == null) "IN 200 FT" else ""
     val maneuver = when (info?.maneuverType?.lowercase()) {
         "left", "sharp_left" -> AppleGlyph.NavigationLeft
+        "right", "sharp_right" -> AppleGlyph.NavigationRight
         "straight" -> AppleGlyph.NavigationStraight
-        else -> AppleGlyph.NavigationRight
+        else -> if (info == null) AppleGlyph.NavigationRight else AppleGlyph.NavigationStraight
     }
     Column(Modifier.fillMaxWidth().padding(AppTheme.spacing.xl),
         verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
@@ -93,8 +94,9 @@ fun NavigationIslandCompact(info: LiveActivityInfo? = null) {
 
     val dominantGlyph = when (info?.maneuverType?.lowercase()) {
         "left", "sharp_left" -> AppleGlyph.NavigationLeft
+        "right", "sharp_right" -> AppleGlyph.NavigationRight
         "straight" -> AppleGlyph.NavigationStraight
-        else -> AppleGlyph.NavigationRight
+        else -> if (info == null) AppleGlyph.NavigationRight else AppleGlyph.NavigationStraight
     }
 
     CompactIslandLayout(

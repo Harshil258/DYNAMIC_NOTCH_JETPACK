@@ -17,6 +17,9 @@ class CallSystemController(private val context: Context) {
     private val telecomManager = context.getSystemService(TelecomManager::class.java)
     private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
+    val isMicrophoneMute: Boolean get() = audioManager.isMicrophoneMute
+    val isSpeakerphoneOn: Boolean get() = audioManager.isSpeakerphoneOn
+
     fun canControlCalls(): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
         ContextCompat.checkSelfPermission(
             context,

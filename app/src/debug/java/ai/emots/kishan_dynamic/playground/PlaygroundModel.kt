@@ -680,7 +680,8 @@ fun playgroundSelfChecks(): List<PlaygroundCheck> = buildList {
         val state = mockState(case, PlaygroundOptions())
         val presentation = resolveOverlayDemoState(state, 1)
         val expected = when (case) {
-            PlaygroundCase.Hidden, PlaygroundCase.Idle -> IslandDemoState.Idle
+            PlaygroundCase.Hidden -> IslandDemoState.Idle
+            PlaygroundCase.Idle -> IslandDemoState.Minimal
             PlaygroundCase.Minimal, PlaygroundCase.Compact -> IslandDemoState.NotificationCompact
             PlaygroundCase.Expanded, PlaygroundCase.Success, PlaygroundCase.Warning, PlaygroundCase.Error -> IslandDemoState.NotificationExpanded
             PlaygroundCase.Music -> IslandDemoState.MusicCompact

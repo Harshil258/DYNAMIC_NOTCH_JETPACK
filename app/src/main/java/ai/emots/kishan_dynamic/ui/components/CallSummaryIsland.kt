@@ -5,9 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import android.content.Intent
+import android.net.Uri
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -69,14 +74,23 @@ internal fun CallSummaryExpandedContent(
     }
     val duration = if (isDemoPreview) "02:45" else callSummaryDurationLabel(record)
     val measuredDuration = isDemoPreview || (record != null && !isMissed && record.durationAccuracy != DurationAccuracy.UNKNOWN)
-    val canRedial = !phoneNumber.isNullOrBlank() && phoneNumber.any(Char::isDigit)
+    val context = LocalContext.current
+    val hasDigits = !phoneNumber.isNullOrBlank() && phoneNumber.any(Char::isDigit)
+    val canRedial = isDemoPreview || (hasDigits && runCatching {
+        val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
+        context.packageManager.queryIntentActivities(dialIntent, 0).isNotEmpty()
+    }.getOrDefault(true))
+    val canSms = isDemoPreview || (hasDigits && runCatching {
+        val smsIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phoneNumber"))
+        context.packageManager.queryIntentActivities(smsIntent, 0).isNotEmpty()
+    }.getOrDefault(true))
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 112.dp)
+            .wrapContentHeight()
             .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         // Top row: Avatar + Caller Info + Static Duration
         IslandAdaptiveHeader(
@@ -134,7 +148,7 @@ internal fun CallSummaryExpandedContent(
             }
         )
 
-        // Bottom row: Focused actions (Primary Redial/Call back + Done dismiss)
+        // Bottom row: Focused actions (Primary Redial/Call back + SMS + Done dismiss)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -149,7 +163,7 @@ internal fun CallSummaryExpandedContent(
                     isPrimary = true
                 )
             }
-            if (canRedial && canRenderIslandControl(IslandControlAction.CallSummaryMessage)) {
+            if (canSms && canRenderIslandControl(IslandControlAction.CallSummaryMessage)) {
                 CallSummaryActionButton(
                     glyph = AppleGlyph.Chat,
                     label = "SMS",
@@ -177,31 +191,41 @@ internal fun CallSummaryActionButton(
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false
 ) {
-    Row(
+    Box(
         modifier = modifier
-            .height(36.dp)
-            .clip(RoundedCornerShape(18.dp))
-            .background(if (isPrimary) Color(0xFF222B3A) else IslandColors.Gray6)
-            .clickable(role = androidx.compose.ui.semantics.Role.Button, onClick = onClick)
-            .padding(horizontal = 12.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
+            .clickable(
+                role = androidx.compose.ui.semantics.Role.Button,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
     ) {
-        AppleIcon(
-            glyph = glyph,
-            tint = if (isPrimary) IslandColors.CapsuleCyan else IslandColors.TextSecondary,
-            size = 13.dp
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(
-            text = label,
-            color = Color.White,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            maxLines = 1,
-            softWrap = false,
-            overflow = TextOverflow.Ellipsis
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp)
+                .clip(RoundedCornerShape(18.dp))
+                .background(if (isPrimary) Color(0xFF222B3A) else IslandColors.Gray6)
+                .padding(horizontal = 12.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AppleIcon(
+                glyph = glyph,
+                tint = if (isPrimary) IslandColors.CapsuleCyan else IslandColors.TextSecondary,
+                size = 13.dp
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = label,
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                softWrap = false,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 

@@ -363,6 +363,8 @@ fun DynamicIslandPill(
     showCallDuration: Boolean = true,
     callIsDialing: Boolean = false,
     callCanDecline: Boolean = true,
+    callIsMuted: Boolean? = null,
+    callIsSpeaker: Boolean? = null,
     musicTrack: MusicTrack? = null,
     musicIsPlaying: Boolean = true,
     musicScrubberEnabled: Boolean = true,
@@ -534,7 +536,10 @@ fun DynamicIslandPill(
                 IslandDemoState.SportsExpanded, IslandDemoState.TransportActivity,
                 IslandDemoState.FlightTrackerExpanded, IslandDemoState.SubscriptionPricing,
                 IslandDemoState.MovieCard, IslandDemoState.TimerImage,
-                IslandDemoState.ActionControlExpanded, IslandDemoState.ColorOptions
+                IslandDemoState.ActionControlExpanded, IslandDemoState.ColorOptions,
+                IslandDemoState.CallSummaryExpanded,
+                IslandDemoState.AirplaneAlert, IslandDemoState.ScreenMirroringAlert,
+                IslandDemoState.MobileDataAlert, IslandDemoState.TransitRouteAlert
             ))
             measuredHeights[state] ?: state.resolvedHeight(islandTokens)
         else maxOf(measuredHeights[state] ?: 0.dp, state.resolvedHeight(islandTokens)))
@@ -902,7 +907,9 @@ fun DynamicIslandPill(
                             name = callContact?.name ?: "Tamia Castillo",
                             duration = if (showCallDuration) formatCallDuration(callDurationSeconds) else "On call",
                             avatarUri = callContact?.avatarUri,
-                            isDialing = callIsDialing
+                            isDialing = callIsDialing,
+                            isMutedState = callIsMuted,
+                            isSpeakerState = callIsSpeaker
                         )
                         IslandDemoState.CallSummaryExpanded -> CallSummaryExpandedContent(
                             record = callSummary,
@@ -914,11 +921,15 @@ fun DynamicIslandPill(
                             name = callContact?.name ?: "Tamia Castillo",
                             duration = if (showCallDuration) formatCallDuration(callDurationSeconds) else "On call",
                             avatarUri = callContact?.avatarUri,
-                            isDialing = callIsDialing
+                            isDialing = callIsDialing,
+                            isMutedState = callIsMuted,
+                            isSpeakerState = callIsSpeaker
                         )
                         IslandDemoState.SharedMediaCallExpanded -> FaceTimeAudioExpandedContent(
                             variant = OngoingCallVariant.SharedMedia,
-                            onControlAction = onControlAction
+                            onControlAction = onControlAction,
+                            isMutedState = callIsMuted,
+                            isSpeakerState = callIsSpeaker
                         )
                         IslandDemoState.OngoingCallBanner -> OngoingCallBannerContent()
                         IslandDemoState.NotificationCompact -> NotificationCompactContent(
@@ -1071,9 +1082,14 @@ fun DynamicIslandPill(
                             subtitle = liveActivitySubtitle,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.SubscriptionPricing -> SubscriptionReferenceContent()
+                        IslandDemoState.SubscriptionPricing -> SubscriptionReferenceContent(
+                            onUpgrade = { onControlAction(IslandControlAction.PremiumBuy) },
+                            onDismiss = { onControlAction(IslandControlAction.CallSummaryDismiss) }
+                        )
                         IslandDemoState.MobileDataAlert -> MobileDataContent(onControlAction)
-                        IslandDemoState.MovieCard -> MovieReferenceContent()
+                        IslandDemoState.MovieCard -> MovieReferenceContent(
+                            onOpenTicket = { onControlAction(IslandControlAction.LiveActivityPrimary) }
+                        )
                         IslandDemoState.TransitRouteAlert -> TransitRouteContent(
                             title = liveActivityTitle,
                             subtitle = liveActivitySubtitle,
@@ -1392,22 +1408,24 @@ internal fun CompactIslandLayout(
     trailing: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .fillMaxHeight(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        contentAlignment = Alignment.CenterStart
     ) {
         Box(
-            modifier = Modifier.wrapContentSize(Alignment.CenterStart),
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .wrapContentSize(Alignment.CenterStart),
             contentAlignment = Alignment.CenterStart
         ) {
             leading()
         }
-        Spacer(modifier = Modifier.weight(1f, fill = false))
         Box(
-            modifier = Modifier.wrapContentSize(Alignment.CenterEnd),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .wrapContentSize(Alignment.CenterEnd),
             contentAlignment = Alignment.CenterEnd
         ) {
             trailing()
@@ -1693,66 +1711,65 @@ private fun NotificationWithMusicCompactContent(
     unseenCount: Int
 ) {
     val notification = notifications.getOrNull(activeIndex) ?: notifications.firstOrNull()
-    Row(
-        modifier = Modifier.fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        if (isPlaying) {
-            // Album artwork START
-            Box(
-                modifier = Modifier
-                    .size(22.dp)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(
-                        Brush.linearGradient(
-                            listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.CapsuleCyan)
+    if (isPlaying) {
+        CompactIslandLayout(
+            leading = {
+                Box(
+                    modifier = Modifier
+                        .size(22.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .background(
+                            Brush.linearGradient(
+                                listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.CapsuleCyan)
+                            )
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (track?.albumArtUri != null) {
+                        UriArtwork(
+                            uri = track.albumArtUri,
+                            fallbackRes = ai.emots.kishan_dynamic.R.drawable.music_album_art,
+                            contentDescription = track.title,
+                            modifier = Modifier.fillMaxSize()
                         )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (track?.albumArtUri != null) {
-                    UriArtwork(
-                        uri = track.albumArtUri,
-                        fallbackRes = ai.emots.kishan_dynamic.R.drawable.music_album_art,
-                        contentDescription = track.title,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                } else {
-                    AppleIcon(glyph = AppleGlyph.Waveform, tint = Color.White, size = 14.dp)
+                    } else {
+                        AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 14.dp)
+                    }
                 }
-            }
-            // Flexible empty center
-            Spacer(modifier = Modifier.weight(1f))
-            // Single waveform END
-            Box(contentAlignment = Alignment.CenterEnd) {
+            },
+            trailing = {
                 LiveEqualizerMini(width = 17.dp, height = 19.dp, animated = isPlaying)
             }
-        } else {
-            if (notification != null) {
-                PackageIcon(
-                    packageName = notification.packageName,
-                    modifier = Modifier
-                        .size(22.dp)
-                        .clip(CircleShape),
-                    contentDescription = "${notification.appName} icon"
-                )
+        )
+    } else {
+        CompactIslandLayout(
+            leading = {
+                if (notification != null) {
+                    PackageIcon(
+                        packageName = notification.packageName,
+                        modifier = Modifier
+                            .size(22.dp)
+                            .clip(CircleShape),
+                        contentDescription = "${notification.appName} icon"
+                    )
+                }
+            },
+            trailing = {
+                if (unseenCount > 0) {
+                    Text(
+                        text = unseenCount.toString(),
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .size(22.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFF3A3A3C))
+                            .wrapContentSize(Alignment.Center)
+                    )
+                }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            if (unseenCount > 0) {
-                Text(
-                    text = unseenCount.toString(),
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .size(22.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF3A3A3C))
-                        .wrapContentSize(Alignment.Center)
-                )
-            }
-        }
+        )
     }
 }
 
@@ -3265,7 +3282,9 @@ private fun FaceTimeAudioExpandedContent(
     name: String = "Tamia Castillo",
     duration: String = "02:45",
     avatarUri: String? = null,
-    isDialing: Boolean = false
+    isDialing: Boolean = false,
+    isMutedState: Boolean? = null,
+    isSpeakerState: Boolean? = null
 ) {
     OngoingCallIslandExpanded(
         name = if (variant == OngoingCallVariant.SharedMedia) "Asia Wild Nature" else name,
@@ -3278,6 +3297,8 @@ private fun FaceTimeAudioExpandedContent(
         },
         duration = if (isDialing) "Calling…" else duration,
         variant = variant,
+        isMutedState = isMutedState,
+        isSpeakerState = isSpeakerState,
         onControlAction = onControlAction
     )
 }

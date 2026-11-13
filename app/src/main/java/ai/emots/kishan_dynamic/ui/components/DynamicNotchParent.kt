@@ -24,18 +24,32 @@ fun DynamicNotchParent(
     onPrevious: () -> Unit = {},
     onAcceptCall: () -> Unit = {},
     onDeclineCall: () -> Unit = {},
-    onEndCall: () -> Unit = {}
+    onEndCall: () -> Unit = {},
+    onControlAction: (IslandControlAction) -> Unit = {}
 ) {
     val demoState = mapIslandStateToDemoState(state)
+    val liveActivity = (state as? IslandState.LiveActivity)?.activity
 
     DynamicIslandPill(
         state = demoState,
         modifier = modifier,
         onTap = onIslandTap,
-        callContact = (state as? IslandState.IncomingCall)?.contact,
+        callContact = when (state) {
+            is IslandState.IncomingCall -> state.contact
+            is IslandState.OngoingCall -> state.contact
+            else -> null
+        },
         callCanDecline = (state as? IslandState.IncomingCall) != null,
         callSummary = (state as? IslandState.CallSummary)?.record,
         callIsDialing = (state as? IslandState.OngoingCall)?.isDialing == true,
+        liveActivityTitle = liveActivity?.title.orEmpty(),
+        liveActivitySubtitle = liveActivity?.subtitle.orEmpty(),
+        liveActivityProgress = liveActivity?.progress,
+        liveActivityShowChronometer = liveActivity?.showChronometer == true,
+        liveActivityChronometerBase = liveActivity?.chronometerBaseElapsedRealtime ?: 0L,
+        liveActivityChronometerCountDown = liveActivity?.chronometerCountDown == true,
+        liveActivitySourceBacked = liveActivity?.sourceNotificationId != null,
+        liveActivityInfo = liveActivity,
         ringerMode = (state as? IslandState.RingerMode)?.mode ?: RingerModeType.SILENT,
         ringerVolumeLevel = (state as? IslandState.RingerVolume)?.volumeLevel ?: 0.5f,
         mediaVolumeHudLevel = (state as? IslandState.MediaVolume)?.volumeLevel ?: 0.5f,
@@ -54,73 +68,13 @@ fun DynamicNotchParent(
                 IslandControlAction.MusicPrevious -> onPrevious()
                 else -> Unit
             }
+            onControlAction(action)
         }
     )
 }
 
 /**
  * Maps legacy or service [IslandState] to authentic Apple [IslandDemoState].
+ * Delegates to centralized [resolveOverlayDemoState] to ensure single source of truth.
  */
-fun mapIslandStateToDemoState(state: IslandState): IslandDemoState {
-    return when (state) {
-        is IslandState.Hidden -> IslandDemoState.Idle
-        // Minimal is the two-part presentation from Minimal.svg: a compact
-        // main capsule plus the detached 36.67dp activity bubble.
-        is IslandState.Minimal -> IslandDemoState.Minimal
-        is IslandState.Music -> if (state.isExpanded) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact
-        is IslandState.IncomingCall -> IslandDemoState.CallAvatars
-        is IslandState.OngoingCall -> if (state.isExpanded) IslandDemoState.CallExpanded else IslandDemoState.CallCompact
-        is IslandState.CallSummary -> IslandDemoState.CallSummaryExpanded
-        is IslandState.Notification -> when {
-            state.isExpanded -> IslandDemoState.NotificationExpanded
-            state.notifications.size > 1 || state.notifications.any(NotificationPriorityPolicy::isPriority) ->
-                IslandDemoState.NotificationStacked
-            else -> IslandDemoState.NotificationCompact
-        }
-        is IslandState.NotificationWithMusic -> IslandDemoState.NotificationWithMusicCompact
-        is IslandState.Charging -> if (state.batteryPercent < 20) {
-            IslandDemoState.LowBatteryCompact
-        } else {
-            IslandDemoState.ChargingCompact
-        }
-        is IslandState.RingerMode -> if (state.isExpanded) {
-            IslandDemoState.RingerModeExpanded
-        } else if (state.mode == RingerModeType.SILENT) {
-            IslandDemoState.SilentModeCompact
-        } else if (state.mode == RingerModeType.VIBRATE) {
-            IslandDemoState.VibrateModeCompact
-        } else {
-            IslandDemoState.NormalModeCompact
-        }
-        is IslandState.RingerVolume -> IslandDemoState.RingerVolumeCompact
-        is IslandState.MediaVolume -> IslandDemoState.MediaVolumeCompact
-        is IslandState.BluetoothDevice -> if (state.isConnecting) {
-            IslandDemoState.BluetoothConnecting
-        } else {
-            IslandDemoState.BluetoothConnected
-        }
-        is IslandState.ActionControl -> IslandDemoState.ActionControlExpanded
-        is IslandState.PremiumExpiry -> IslandDemoState.PremiumExpiryExpanded
-        is IslandState.LiveActivity -> when (state.activity.kind) {
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TIMER -> if (state.activity.isExpanded) IslandDemoState.TimerExpanded else IslandDemoState.TimerCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.DELIVERY -> if (state.activity.isExpanded) IslandDemoState.DeliveryExpanded else IslandDemoState.DeliveryCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FLIGHT -> if (state.activity.isExpanded) IslandDemoState.FlightExpanded else IslandDemoState.FlightCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SPORTS -> if (state.activity.isExpanded) IslandDemoState.SportsExpanded else IslandDemoState.SportsCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.NAVIGATION -> if (state.activity.isExpanded) IslandDemoState.TransportActivity else IslandDemoState.NavigationCompact
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VOICE_MEMO -> IslandDemoState.VoiceMemoExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_RECORDING -> IslandDemoState.ScreenRecordingExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SHORTCUT -> IslandDemoState.ShortcutExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FOCUS_MODE -> IslandDemoState.FocusModeExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIR_DROP -> IslandDemoState.AirDropActivity
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPODS -> IslandDemoState.AirPodsConnected
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SATELLITE -> IslandDemoState.SatelliteConnected
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.FIND_MY -> IslandDemoState.FindMyAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOVED_TO_IPHONE -> IslandDemoState.MovedToIPhone
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.VIDEO_REMOTE -> IslandDemoState.VideoRemoteExpanded
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.AIRPLANE_ALERT -> IslandDemoState.AirplaneAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.SCREEN_MIRRORING_ALERT -> IslandDemoState.ScreenMirroringAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.MOBILE_DATA_ALERT -> IslandDemoState.MobileDataAlert
-            ai.emots.kishan_dynamic.data.model.LiveActivityKind.TRANSIT_ROUTE_ALERT -> IslandDemoState.TransitRouteAlert
-        }
-    }
-}
+fun mapIslandStateToDemoState(state: IslandState): IslandDemoState = resolveOverlayDemoState(state, unseenCount = 0)

@@ -4,9 +4,10 @@ import ai.emots.kishan_dynamic.data.model.IslandState
 import ai.emots.kishan_dynamic.data.notification.NotificationPriorityPolicy
 
 /** Shared presentation mapping used by the real service and debug fixtures. */
-fun resolveOverlayDemoState(state: IslandState, unseenCount: Int): IslandDemoState {
+fun resolveOverlayDemoState(state: IslandState, unseenCount: Int = 0): IslandDemoState {
         return when (state) {
-            is IslandState.Hidden, is IslandState.Minimal -> IslandDemoState.Idle
+            is IslandState.Hidden -> IslandDemoState.Idle
+            is IslandState.Minimal -> IslandDemoState.Minimal
             is IslandState.Music -> if (state.isExpanded) IslandDemoState.MusicExpanded else IslandDemoState.MusicCompact
             is IslandState.OngoingCall -> if (state.isExpanded) IslandDemoState.CallExpanded else IslandDemoState.CallCompact
             is IslandState.CallSummary -> IslandDemoState.CallSummaryExpanded

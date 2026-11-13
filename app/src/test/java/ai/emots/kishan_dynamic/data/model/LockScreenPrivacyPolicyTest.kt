@@ -59,4 +59,52 @@ class LockScreenPrivacyPolicyTest {
         val finance = otp.copy(packageName = "com.google.android.apps.nbu.paisa.user", title = "Transaction", text = "Payment received")
         org.junit.Assert.assertEquals("New notification", LockScreenPrivacyPolicy.notification(finance, false, true).text)
     }
+
+    @Test
+    fun callRecordRedactsSensitiveCallerDataWhenLockedAndPrivacyEnabled() {
+        val incomingRecord = CallRecord(
+            id = "call-1",
+            contactName = "Tamia Castillo",
+            phoneNumber = "+1 (555) 019-2834",
+            avatarUri = "/avatars/tamia.png",
+            startedAtMillis = 1000L,
+            durationSeconds = 165L,
+            direction = CallDirection.INCOMING,
+            durationAccuracy = DurationAccuracy.RELIABLE_MONOTONIC
+        )
+        val redactedIncoming = LockScreenPrivacyPolicy.callRecord(incomingRecord, deviceLocked = true, hideSensitiveContent = true)
+        assertEquals("Incoming call", redactedIncoming?.contactName)
+        assertEquals("", redactedIncoming?.phoneNumber)
+        assertNull(redactedIncoming?.avatarUri)
+        assertEquals(165L, redactedIncoming?.durationSeconds)
+
+        val outgoingRecord = incomingRecord.copy(direction = CallDirection.OUTGOING)
+        val redactedOutgoing = LockScreenPrivacyPolicy.callRecord(outgoingRecord, deviceLocked = true, hideSensitiveContent = true)
+        assertEquals("Outgoing call", redactedOutgoing?.contactName)
+        assertEquals("", redactedOutgoing?.phoneNumber)
+
+        val missedRecord = incomingRecord.copy(direction = CallDirection.MISSED)
+        val redactedMissed = LockScreenPrivacyPolicy.callRecord(missedRecord, deviceLocked = true, hideSensitiveContent = true)
+        assertEquals("Missed call", redactedMissed?.contactName)
+        assertEquals("", redactedMissed?.phoneNumber)
+    }
+
+    @Test
+    fun callRecordPreservesDataWhenUnlockedOrPrivacyDisabled() {
+        val record = CallRecord(
+            id = "call-1",
+            contactName = "Tamia Castillo",
+            phoneNumber = "+1 (555) 019-2834",
+            avatarUri = "/avatars/tamia.png",
+            startedAtMillis = 1000L,
+            durationSeconds = 165L,
+            direction = CallDirection.INCOMING
+        )
+        // When unlocked:
+        assertEquals(record, LockScreenPrivacyPolicy.callRecord(record, deviceLocked = false, hideSensitiveContent = true))
+        // When privacy setting disabled:
+        assertEquals(record, LockScreenPrivacyPolicy.callRecord(record, deviceLocked = true, hideSensitiveContent = false))
+        // When null:
+        assertNull(LockScreenPrivacyPolicy.callRecord(null, deviceLocked = true, hideSensitiveContent = true))
+    }
 }

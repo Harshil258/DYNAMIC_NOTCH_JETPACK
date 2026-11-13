@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import ai.emots.kishan_dynamic.ui.motion.pressScale
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import ai.emots.kishan_dynamic.R
@@ -204,83 +205,99 @@ fun MusicPlayerIsland(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Rewind (44dp touch area, 22dp glyph)
-                if (canRenderIslandControl(IslandControlAction.MusicPrevious)) Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable(
-                            role = androidx.compose.ui.semantics.Role.Button,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = { progress = 0f; onPrevious() }
+                if (canRenderIslandControl(IslandControlAction.MusicPrevious)) {
+                    val prevInteraction = remember { MutableInteractionSource() }
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .pressScale(prevInteraction, pressedScale = 0.94f)
+                            .clickable(
+                                role = androidx.compose.ui.semantics.Role.Button,
+                                interactionSource = prevInteraction,
+                                indication = null,
+                                onClick = { progress = 0f; onPrevious() }
+                            )
+                            .semantics { contentDescription = "Previous track" },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = AppleGlyph.Backward,
+                            tint = Color.White,
+                            size = 29.dp
                         )
-                        .semantics { contentDescription = "Previous track" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Backward,
-                        tint = Color.White,
-                        size = 29.dp
-                    )
+                    }
                 }
 
                 // Play / Pause (Centerpiece: Solid white glyph directly on black OLED surface, matching Group 3.png & Expanded.svg)
-                if (canRenderIslandControl(IslandControlAction.MusicPlayPause)) Box(
-                    modifier = Modifier
-                        .size((48.dp * scale).coerceAtLeast(48.dp))
-                        .clickable(
-                            role = androidx.compose.ui.semantics.Role.Button,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = onPlayPause
+                if (canRenderIslandControl(IslandControlAction.MusicPlayPause)) {
+                    val playInteraction = remember { MutableInteractionSource() }
+                    Box(
+                        modifier = Modifier
+                            .size((48.dp * scale).coerceAtLeast(48.dp))
+                            .pressScale(playInteraction, pressedScale = 0.94f)
+                            .clickable(
+                                role = androidx.compose.ui.semantics.Role.Button,
+                                interactionSource = playInteraction,
+                                indication = null,
+                                onClick = onPlayPause
+                            )
+                            .semantics { contentDescription = if (playing) "Pause playback" else "Play playback" },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
+                            tint = Color.White,
+                            size = 28.dp * scale
                         )
-                        .semantics { contentDescription = if (playing) "Pause playback" else "Play playback" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = if (playing) AppleGlyph.Pause else AppleGlyph.Play,
-                        tint = Color.White,
-                        size = 28.dp * scale
-                    )
+                    }
                 }
 
                 // Forward (44dp touch area, 22dp glyph)
-                if (canRenderIslandControl(IslandControlAction.MusicNext)) Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable(
-                            role = androidx.compose.ui.semantics.Role.Button,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = { progress = (progress + 0.05f).coerceAtMost(1f); onNext() }
+                if (canRenderIslandControl(IslandControlAction.MusicNext)) {
+                    val nextInteraction = remember { MutableInteractionSource() }
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .pressScale(nextInteraction, pressedScale = 0.94f)
+                            .clickable(
+                                role = androidx.compose.ui.semantics.Role.Button,
+                                interactionSource = nextInteraction,
+                                indication = null,
+                                onClick = { progress = (progress + 0.05f).coerceAtMost(1f); onNext() }
+                            )
+                            .semantics { contentDescription = "Next track" },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = AppleGlyph.Forward,
+                            tint = Color.White,
+                            size = 29.dp
                         )
-                        .semantics { contentDescription = "Next track" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Forward,
-                        tint = Color.White,
-                        size = 29.dp
-                    )
+                    }
                 }
 
                 // AirPlay / Route (44dp touch area, 19dp glyph)
-                if (!compactControlRow && canRenderIslandControl(IslandControlAction.MusicAirPlay)) Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable(
-                            role = androidx.compose.ui.semantics.Role.Button,
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = onAirPlay
+                if (!compactControlRow && canRenderIslandControl(IslandControlAction.MusicAirPlay)) {
+                    val airPlayInteraction = remember { MutableInteractionSource() }
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .pressScale(airPlayInteraction, pressedScale = 0.94f)
+                            .clickable(
+                                role = androidx.compose.ui.semantics.Role.Button,
+                                interactionSource = airPlayInteraction,
+                                indication = null,
+                                onClick = onAirPlay
+                            )
+                            .semantics { contentDescription = "Audio output" },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AppleIcon(
+                            glyph = AppleGlyph.AirPlay,
+                            tint = Color.White,
+                            size = 21.dp
                         )
-                        .semantics { contentDescription = "Audio output" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.AirPlay,
-                        tint = Color.White,
-                        size = 21.dp
-                    )
+                    }
                 }
             }
         }

@@ -1,6 +1,8 @@
 package ai.emots.kishan_dynamic.ui.components
 
 import ai.emots.kishan_dynamic.ui.motion.rememberBreathing
+import ai.emots.kishan_dynamic.ui.motion.pressScale
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -102,22 +104,15 @@ internal fun AirplaneAlertContent(onControlAction: (IslandControlAction) -> Unit
                     )
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-                    .clip(RoundedCornerShape(21.5.dp * scale))
-                    .background(Color(0xFF2C2C2D))
-                    .clickable { onControlAction(IslandControlAction.OpenSettings) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Open Settings",
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            IslandActionPill(
+                label = "Open Settings",
+                onClick = { onControlAction(IslandControlAction.OpenSettings) },
+                glyph = AppleGlyph.Settings,
+                style = IslandActionStyle.Secondary,
+                visualHeight = 42.dp * scale,
+                fontSize = 16.sp,
+                contentDescription = "Open Settings"
+            )
         }
     }
 }
@@ -167,22 +162,16 @@ internal fun ScreenMirroringContent(
                     modifier = Modifier.padding(end = 15.dp * scale)
                 )
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-                    .clip(RoundedCornerShape(21.5.dp * scale))
-                    .background(Color(0xFF1A1C2D))
-                    .clickable { onControlAction(IslandControlAction.ScreenMirroringStop) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Stop Mirroring",
-                    color = Color(0xFF37A3DE),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            IslandActionPill(
+                label = "Stop Mirroring",
+                onClick = { onControlAction(IslandControlAction.ScreenMirroringStop) },
+                glyph = AppleGlyph.Stop,
+                style = IslandActionStyle.Destructive,
+                accent = IslandSemanticAccent.Red,
+                visualHeight = 42.dp * scale,
+                fontSize = 16.sp,
+                contentDescription = "Stop Screen Mirroring"
+            )
         }
     }
 }
@@ -233,10 +222,30 @@ internal fun MobileDataContent(onControlAction: (IslandControlAction) -> Unit = 
                 }
             }
 
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.md)) {
-                IslandPillAction("OK", { onControlAction(IslandControlAction.MobileDataOk) }, Modifier.weight(1f))
-                IslandPillAction("Settings", { onControlAction(IslandControlAction.MobileDataSettings) }, Modifier.weight(1f),
-                    background = IslandColors.ButtonCyan, textColor = IslandColors.CapsuleCyan)
+            IslandControlRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.md)
+            ) {
+                IslandActionPill(
+                    label = "OK",
+                    onClick = { onControlAction(IslandControlAction.MobileDataOk) },
+                    modifier = Modifier.weight(1f),
+                    style = IslandActionStyle.Tertiary,
+                    visualHeight = 42.dp * scale,
+                    fontSize = 16.sp,
+                    contentDescription = "Dismiss mobile data notice"
+                )
+                IslandActionPill(
+                    label = "Settings",
+                    onClick = { onControlAction(IslandControlAction.MobileDataSettings) },
+                    modifier = Modifier.weight(1f),
+                    glyph = AppleGlyph.Settings,
+                    style = IslandActionStyle.Primary,
+                    accent = IslandSemanticAccent.Cyan,
+                    visualHeight = 42.dp * scale,
+                    fontSize = 16.sp,
+                    contentDescription = "Open Cellular Settings"
+                )
             }
         }
     }
@@ -279,22 +288,16 @@ internal fun TransitRouteContent(
                     }
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-                    .clip(RoundedCornerShape(21.5.dp * scale))
-                    .background(Color(0xFF1D1011))
-                    .clickable { onControlAction(IslandControlAction.TransitEndRoute) },
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "End Route",
-                    color = Color(0xFFFA3532),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
+            IslandActionPill(
+                label = "End Route",
+                onClick = { onControlAction(IslandControlAction.TransitEndRoute) },
+                glyph = AppleGlyph.Close,
+                style = IslandActionStyle.Destructive,
+                accent = IslandSemanticAccent.Red,
+                visualHeight = 42.dp * scale,
+                fontSize = 16.sp,
+                contentDescription = "End Route"
+            )
         }
     }
 }
@@ -361,9 +364,16 @@ internal fun OngoingCallBannerContent() {
 private fun RecordingStopControl(action: IslandControlAction, onControlAction: (IslandControlAction) -> Unit) {
     if (!canRenderIslandControl(action)) return
     val tokens = AppTheme.island
+    val interaction = remember { MutableInteractionSource() }
     Box(
         Modifier.size(tokens.recordingControlSize)
-            .clickable(role = androidx.compose.ui.semantics.Role.Button) { onControlAction(action) }
+            .pressScale(interaction, pressedScale = 0.94f)
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                role = androidx.compose.ui.semantics.Role.Button,
+                onClick = { onControlAction(action) }
+            )
             .semantics { contentDescription = if (action == IslandControlAction.VoiceMemoStop) "Stop voice memo" else "Stop screen recording" },
         contentAlignment = Alignment.Center
     ) {

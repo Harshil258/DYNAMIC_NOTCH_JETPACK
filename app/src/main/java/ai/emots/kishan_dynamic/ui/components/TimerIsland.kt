@@ -111,20 +111,29 @@ internal fun TimerExpandedContent(label: String, timerRunning: Boolean, onContro
         val stacked = androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f || maxWidth < 290.dp
         val controls: @Composable () -> Unit = {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.island.timerControlGap)) {
-                if (canRenderIslandControl(IslandControlAction.TimerToggle)) androidx.compose.material3.IconButton(
-                    onClick = { onControlAction(IslandControlAction.TimerToggle) },
-                    modifier = Modifier.size(52.dp).clip(CircleShape)
-                        .background(IslandColors.CapsuleOrange.copy(alpha = if (paused) .85f else .45f))
-                        .semantics { contentDescription = if (paused) "Resume timer" else "Pause timer" }
-                ) {
+                if (canRenderIslandControl(IslandControlAction.TimerToggle)) {
                     val glyph = if (paused) AppleGlyph.Play else AppleGlyph.Pause
-                    AppleIcon(glyph, tint = if (paused) Color.White else IslandColors.CapsuleOrange, size = glyph.figmaInkSize())
+                    IslandIconAction(
+                        glyph = glyph,
+                        onClick = { onControlAction(IslandControlAction.TimerToggle) },
+                        style = if (paused) IslandActionStyle.Primary else IslandActionStyle.Toggle,
+                        visualSize = 52.dp,
+                        touchTargetSize = 52.dp,
+                        iconSize = glyph.figmaInkSize(),
+                        contentDescription = if (paused) "Resume timer" else "Pause timer"
+                    )
                 }
-                if (canRenderIslandControl(IslandControlAction.TimerCancel)) androidx.compose.material3.IconButton(
-                    onClick = { onControlAction(IslandControlAction.TimerCancel) },
-                    modifier = Modifier.size(52.dp).clip(CircleShape).background(IslandColors.timerCancelColor.copy(alpha = .7f))
-                        .semantics { contentDescription = "Cancel timer" }
-                ) { AppleIcon(AppleGlyph.Close, tint = Color.White, size = AppleGlyph.Close.figmaInkSize()) }
+                if (canRenderIslandControl(IslandControlAction.TimerCancel)) {
+                    IslandIconAction(
+                        glyph = AppleGlyph.Close,
+                        onClick = { onControlAction(IslandControlAction.TimerCancel) },
+                        style = IslandActionStyle.Tertiary,
+                        visualSize = 52.dp,
+                        touchTargetSize = 52.dp,
+                        iconSize = AppleGlyph.Close.figmaInkSize(),
+                        contentDescription = "Cancel timer"
+                    )
+                }
             }
         }
         val clock: @Composable () -> Unit = {

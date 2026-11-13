@@ -75,14 +75,28 @@ fun IncomingCallIsland(
         }
         val actions: @Composable () -> Unit = {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
-                if (canDecline && canRenderIslandControl(IslandControlAction.CallDecline)) androidx.compose.material3.IconButton(
-                    onClick = onDecline, modifier = Modifier.size(52.dp).clip(CircleShape).background(CallRed)
-                        .semantics { contentDescription = "Decline call" }
-                ) { AppleIcon(AppleGlyph.EndCall, tint = Color.White, size = AppleGlyph.EndCall.figmaInkSize()) }
-                if (canRenderIslandControl(IslandControlAction.CallAccept)) androidx.compose.material3.IconButton(
-                    onClick = onAccept, modifier = Modifier.size(52.dp).clip(CircleShape).background(CallGreen)
-                        .semantics { contentDescription = "Accept call" }
-                ) { AppleIcon(AppleGlyph.Phone, tint = Color.White, size = AppleGlyph.Phone.figmaInkSize()) }
+                if (canDecline && canRenderIslandControl(IslandControlAction.CallDecline)) {
+                    IslandIconAction(
+                        glyph = AppleGlyph.EndCall,
+                        onClick = onDecline,
+                        style = IslandActionStyle.Destructive,
+                        visualSize = 52.dp,
+                        touchTargetSize = 52.dp,
+                        iconSize = AppleGlyph.EndCall.figmaInkSize(),
+                        contentDescription = "Decline call"
+                    )
+                }
+                if (canRenderIslandControl(IslandControlAction.CallAccept)) {
+                    IslandIconAction(
+                        glyph = AppleGlyph.Phone,
+                        onClick = onAccept,
+                        style = IslandActionStyle.Positive,
+                        visualSize = 52.dp,
+                        touchTargetSize = 52.dp,
+                        iconSize = AppleGlyph.Phone.figmaInkSize(),
+                        contentDescription = "Accept call"
+                    )
+                }
             }
         }
         if (stacked) Column(Modifier.fillMaxWidth().padding(horizontal = AppTheme.spacing.xxl,

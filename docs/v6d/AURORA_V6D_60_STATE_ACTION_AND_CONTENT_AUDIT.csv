@@ -1,0 +1,61 @@
+State,Design family,Primary source-backed content,Required icon system,Allowed action priority / capability,Visual hierarchy and density,Forbidden failure
+Idle,Idle,No fabricated notification content,Camera-aware black silhouette,Tap → Quick Controls,No decorative button row,Fake counter
+Minimal,Minimal,Owner-confirmed 108×32 reference,No glyph/text in owner SVG,No visible CTA,Use exact specimen in visual matching,38×38 mistaken main minimal
+MusicCompact,MediaCompact,Artwork; play state; optional source title,Album artwork START; waveform END,Tap → expand,Waveform only if genuinely playing,Waveform next to artwork
+MusicExpanded,MediaExpanded,Title; artist; playback position,Real artwork; timeline; consistent vector controls,Supported Prev / Play-Pause / Next,Transport region visually distinct from title,Unsupported controls
+CallCompact,CallCompact,Connected elapsed duration; live call status,Phone START; timer END or supported companion,Tap → active controls,No incoming Answer/Decline on connected call,Unstable timer widths
+CallExpanded,CallActive,Caller; active duration; mute/speaker state,Avatar + clear active-call controls,End (red); supported mute/speaker,End visually dominant and source-backed,Optimistic toggles
+CallSummaryExpanded,CallSummary,Caller; ended/missed outcome; static duration,Avatar START; duration END; 18dp action glyph,Primary Redial if supported; quiet Done; optional SMS overflow,"Max two default controls, never disabled-looking",Three equal muted pills
+FaceTimeCallExpanded,CallVideo,Caller; video/VoIP status,Contact avatar; video glyph from source,Actual video/VoIP controls only,Call-specific actions and hierarchy,Fabricated FaceTime capability
+SharedMediaCallExpanded,CallShared,Shared playback; call source identity,Avatar and shared media glyph,Only supported call/shared-media controls,Context-aware control row,Faked SharePlay control
+OngoingCallBanner,CallBanner,Elapsed duration; caller,"56dp contact avatar + status badge, waveform when supported",Tap → full call controls,"Avatar identity lead, duration stable",Waveform decor unrelated to call
+NotificationCompact,NotificationCompact,Source app; sender/count,Real app icon START; useful metric END,Tap → expand,"Intrinsic width, clear readable summary",Tiny Reply button
+NotificationStacked,NotificationCompact,Count; latest relevant source,App identity + count/icon,Tap → pager,Newest-first; stable key,Index ownership
+NotificationWithMusicCompact,SplitCompact,Album artwork; waveform; pending notification count,Artwork START; waveform END; separate child notification bubble,Tap → media or pager per target,Independent anchors in main capsule,Waveform after 9dp next to art
+NotificationExpanded,NotificationExpanded,Source; sender/title; text; timestamp,App icon; scoped actions only,Reply/Open/Mark-read only if posted by source,One or two highest-value real actions,Invented chat actions
+SilentModeCompact,SystemCompact,Muted state,Muted bell glyph,No CTA,Short honest HUD,Generic music waveform
+SilentModeExpanded,SystemExpanded,Sound off; DND context,Muted bell glyph,Only real settings action if applicable,Contextual 86dp family,Unnecessary giant action bar
+RingerModeExpanded,SystemExpanded,Ringer mode; level,Bell/volume glyph,Actual mode/settings action when allowed,Clear selected mode,Invented OS toggle
+VibrateModeCompact,SystemCompact,Vibrate state,Vibration glyph,No CTA,"Brief glance, intrinsic size",Disabled-looking label
+NormalModeCompact,SystemCompact,Ringer enabled,Bell glyph,No CTA,Status-first,Extra stop button
+RingerVolumeCompact,SystemCompact,Live ringer level,Bell + stable level metric,No CTA,Dynamic short HUD,Oversized progress
+MediaVolumeCompact,SystemCompact,Media volume level,Speaker + metric,No CTA,Consistent with ringer level,Unneeded Next button
+BluetoothConnected,ConnectivityCompact,Device name; connected state,Bluetooth/device glyph,Tap → details when supported,"State truthful, text clipped safely",Fake battery
+BluetoothConnecting,ConnectivityCompact,Device name; connecting status,Bluetooth glyph + subtle spinner,No premature success action,Do not show checkmark before connected,Fake connected badge
+ActionControlExpanded,ControlsExpanded,Only enabled real controls,Semantic vector tiles with state,Capability-backed Quick Controls,"Compact 2–3 row grid, not notification clone",Fake system toggles
+PremiumExpiryExpanded,BrandedNotice,Premium name; validity/status,Aurora brand icon,Open legitimate premium screen when valid,"Low-priority promo, clear branding",System-critical disguise
+ChargingCompact,PowerCompact,Verified percent,Battery icon; stable percent,No CTA,Small neutral/green informative HUD,Invented ETA
+ChargingExpanded,PowerExpanded,Percent; charging source; optional ETA,Battery icon / progress,No CTA unless legitimate,"Battery dominant, no filler",Fake full-charge time
+LowBatteryCompact,PowerCompact,Verified percent; low threshold,Battery red/orange as appropriate,No CTA,Glanceable warning,Fake fix button
+LowBatteryExpanded,PowerExpanded,Percent; low battery meaning,Low battery glyph,Supported power settings only when appropriate,One clear hierarchy,Unrelated progress bar
+TimerCompact,TimerCompact,Remaining time,Timer glyph; tabular countdown,Tap → timer details,Fixed metric-width slot,Clock digits moving layout
+TimerExpanded,TimerExpanded,Remaining; progress; source owner,Timer icon and ring/timeline,Pause/Resume/Cancel only if source allows,Separate timer from controls,Fake external timer control
+DeliveryCompact,LiveCompact,Verified milestone/ETA,Delivery category icon,Tap → expanded source,"Only meaningful milestone, not every stop",Invented ETA
+DeliveryExpanded,LiveExpanded,Status; verified ETA; source,Delivery identity; progress optional,Open tracking only with actual intent,Content-based height,Decorative 3-button row
+FlightCompact,LiveCompact,Flight status; flight no.,Aircraft icon,Tap → expand when supported,Compact flight identity,Fake gate time
+FlightExpanded,LiveExpanded,Flight no; origin/destination; status,Flight glyph; route progress,Open source when available,Verified fields only,Fake flight feed
+SportsCompact,LiveCompact,Score/period/teams (verified),Team glyph/score metric,Tap → expanded if useful,Tabular score stable,Unrequested cricket fixture
+SportsExpanded,LiveExpanded,Teams; scores; time/event status,Team identity and scoreboard,Open source if valid,Readability and clear metric,Generic warning layout
+NavigationCompact,NavigationCompact,Turn type; distance,Verified maneuver icon,Tap → expanded,Unknown must not become right turn,Invented direction
+VoiceMemoExpanded,RecordingExpanded,Recording status; elapsed,Recording indicator; level if real,Stop only if owned/supported,Red functional action,Fake recorder controls
+ScreenRecordingExpanded,RecordingExpanded,Record active; elapsed,Red dot and source,Stop only if source supported,Strong running-state signal,Invented stop
+ShortcutExpanded,UtilityExpanded,Shortcut label; true result,Shortcut glyph; success/fail,Open source if supported,Status and outcome,Fake completed status
+FocusModeExpanded,SystemExpanded,Focus name; enabled state,Focus/moon glyph,Open DND/Focus settings only if real,Nonintrusive system state,Fake DND privileges
+AirPodsConnected,ConnectivityExpanded,Device; known battery/status,Device buds glyph,Open source if supported,Accurate battery ring only if known,Apple-only invented integration
+SatelliteConnected,ConnectivityExpanded,Actual availability; connection state,Satellite glyph,Only supported actions,Honest platform-dependent mock label,Fake satellite control
+FindMyAlert,UtilityExpanded,Supported locating alert,Location glyph,Open source if supported,Privacy-aware label,Invented Find My network
+MovedToIPhone,ConnectivityExpanded,Audio route handoff/status,Audio route glyph,Undo only when source provides it,Brief contextual confirmation,Pretend Apple handoff
+VideoRemoteExpanded,MediaExpanded,Video title; playback state,Real thumbnail + media transport glyphs,Only supported media session actions,Contextual real media controls,Fake TikTok Like
+AirDropActivity,TransferExpanded,Transfer name; real progress,Transfer icon; progress,Cancel only if owner controls transfer,Android equivalent/source-backed,Fake AirDrop transfer
+TimerImage,TimerCompact,Remaining; progress percent,Cyan ring if real,Tap → details,Intrinsic compact format,Decorative nonfunctional ring
+NotificationImage,NotificationExpanded,Source; sender; thumbnail; text,Actual notification image if available,Supported Reply/Open only,Thumbnail + text content-fit,Generic media play icon
+CallAvatars,CallIncoming,Caller; incoming status; actions,Avatar + distinct answer/decline icons,Red Decline / green Answer if supported,Verified ringing call 86dp reference,Connected-call end duration in ringing
+TransportActivity,NavigationExpanded,Maneuver; distance; route/ETA,Navigation arrow; road identity,Only source-backed route action,Source-backed navigation composition,Color palette mapping
+FlightTrackerExpanded,LiveExpanded,Flight no; route; gate/ETA if verified,Airplane + route line,Open real source if exists,Compact route and status,Fake route details
+SubscriptionPricing,BrandedNotice,Plan; real price; expiry,Aurora brand mark,Actual upgrade path; subtle dismiss,Clearly a branded app offer,System warning imitation
+MovieCard,TicketExpanded,Poster; title; venue/showtime; seat,Real ticket thumbnail or honest fixture,View Ticket only if valid source,No filler area; compact title/action,Fake ticket data in production
+ColorOptions,DemoCustomization,Color palette/source options,Color swatches,Apply only within actual settings,Preview clearly marked demo,Map route stand-in
+AirplaneAlert,SystemExpanded,Airplane state; connectivity explanation,Airplane glyph,Open Settings via real intent,Reference 148dp target if direct,Fake toggle flight mode
+ScreenMirroringAlert,SystemExpanded,Device name; session owner,Screen stack glyph,Stop only if actual mirroring session controlled,Single clear primary action,Fake stop control
+MobileDataAlert,SystemExpanded,Mobile data status; next step,Cellular antenna glyph,OK + Settings when genuinely supported,Direct reference two distinct actions,Unsupported enable cellular action
+TransitRouteAlert,LiveExpanded,Platform/route; arrival status,Transit/route glyph,Open real source if valid,Appropriate shorter content-fit live card,Fake live station ETA

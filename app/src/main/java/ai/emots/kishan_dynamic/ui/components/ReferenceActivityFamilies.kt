@@ -209,23 +209,16 @@ internal fun MovieReferenceContent(
         }
 
         // Ticket CTA
-        Box(
-            modifier = Modifier
-                .height(34.dp)
-                .clip(RoundedCornerShape(17.dp))
-                .background(Color(0xFF222B3A))
-                .border(0.5.dp, Color.White.copy(alpha = 0.15f), RoundedCornerShape(17.dp))
-                .clickable(onClick = onOpenTicket)
-                .padding(horizontal = 12.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "View Ticket",
-                color = Color.White,
-                fontSize = 11.5.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
+        IslandActionPill(
+            label = "View Ticket",
+            onClick = onOpenTicket,
+            glyph = AppleGlyph.FaceId,
+            style = IslandActionStyle.Secondary,
+            accent = IslandSemanticAccent.Cyan,
+            visualHeight = 36.dp,
+            fontSize = 12.sp,
+            contentDescription = "View movie ticket"
+        )
     }
 }
 
@@ -287,54 +280,31 @@ internal fun SubscriptionReferenceContent(
         )
 
         // Action Row: Primary Upgrade + Secondary Dismiss
-        Row(
+        IslandControlRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(36.dp)
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(Color(0xFF2563EB), Color(0xFF1D4ED8))
-                        )
-                    )
-                    .clickable(onClick = onUpgrade),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    AppleIcon(AppleGlyph.Crown, tint = Color.White, size = 13.dp)
-                    Text(
-                        text = "Upgrade · $priceText",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+            IslandActionPill(
+                label = "Upgrade · $priceText",
+                onClick = onUpgrade,
+                modifier = Modifier.weight(1.3f),
+                glyph = AppleGlyph.Crown,
+                style = IslandActionStyle.Primary,
+                accent = IslandSemanticAccent.Blue,
+                visualHeight = 38.dp,
+                fontSize = 12.5.sp,
+                contentDescription = "Upgrade to Aurora Pro for $priceText"
+            )
 
-            Box(
-                modifier = Modifier
-                    .height(36.dp)
-                    .clip(RoundedCornerShape(18.dp))
-                    .background(IslandColors.Gray6)
-                    .clickable(onClick = onDismiss)
-                    .padding(horizontal = 14.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Maybe later",
-                    color = IslandColors.TextSecondary,
-                    fontSize = 11.5.sp,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+            IslandActionPill(
+                label = "Maybe later",
+                onClick = onDismiss,
+                modifier = Modifier.weight(0.9f),
+                style = IslandActionStyle.Tertiary,
+                visualHeight = 38.dp,
+                fontSize = 12.sp,
+                contentDescription = "Dismiss upgrade offer"
+            )
         }
     }
 }

@@ -477,7 +477,7 @@ fun IslandActionChip(
         animationSpec = spring(dampingRatio = 0.7f, stiffness = Spring.StiffnessMedium),
         label = "chip_scale"
     )
-    val h = (32.dp * scale).coerceAtLeast(28.dp)
+    val h = (36.dp * scale).coerceAtLeast(32.dp)
     val r = h / 2
     val shape = RoundedCornerShape(r)
     val bg = when {
@@ -518,17 +518,17 @@ fun IslandActionChip(
                 .clip(shape)
                 .background(bg, shape)
                 .then(if (borderBrush != null) Modifier.border(0.5.dp, borderBrush, shape) else Modifier)
-                .padding(horizontal = (12.dp * scale).coerceAtLeast(10.dp)),
+                .padding(horizontal = (14.dp * scale).coerceAtLeast(12.dp)),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp * scale)
+            horizontalArrangement = Arrangement.spacedBy(6.dp * scale)
         ) {
             if (glyph != null) {
-                AppleIcon(glyph = glyph, tint = textColor, size = 13.dp * scale)
+                AppleIcon(glyph = glyph, tint = textColor, size = (16.dp * scale).coerceAtLeast(14.dp))
             }
             Text(
                 text = text,
                 color = textColor,
-                fontSize = (12.5f * scale).sp,
+                fontSize = (13f * scale).sp,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -552,10 +552,19 @@ private fun NotificationActionButton(
         label.contains("Join", ignoreCase = true) ||
         label.contains("Copy", ignoreCase = true) ||
         label.contains("Accept", ignoreCase = true)
+    val glyph = when {
+        label.contains("Reply", ignoreCase = true) -> AppleGlyph.Chat
+        label.contains("Call", ignoreCase = true) -> AppleGlyph.Phone
+        label.contains("Dismiss", ignoreCase = true) || label.contains("Cancel", ignoreCase = true) -> AppleGlyph.Close
+        label.contains("Open", ignoreCase = true) -> AppleGlyph.ChevronRight
+        label.contains("Copy", ignoreCase = true) -> AppleGlyph.Check
+        else -> null
+    }
 
     IslandActionChip(
         text = label,
         onClick = onClick,
+        glyph = glyph,
         isPrimary = isPrimary,
         isDestructive = isDestructive,
         scale = scale

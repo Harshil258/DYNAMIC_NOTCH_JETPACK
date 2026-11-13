@@ -75,15 +75,8 @@ internal fun CallSummaryExpandedContent(
     val duration = if (isDemoPreview) "02:45" else callSummaryDurationLabel(record)
     val measuredDuration = isDemoPreview || (record != null && !isMissed && record.durationAccuracy != DurationAccuracy.UNKNOWN)
     val context = LocalContext.current
-    val hasDigits = !phoneNumber.isNullOrBlank() && phoneNumber.any(Char::isDigit)
-    val canRedial = isDemoPreview || (hasDigits && runCatching {
-        val dialIntent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
-        context.packageManager.queryIntentActivities(dialIntent, 0).isNotEmpty()
-    }.getOrDefault(true))
-    val canSms = isDemoPreview || (hasDigits && runCatching {
-        val smsIntent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:$phoneNumber"))
-        context.packageManager.queryIntentActivities(smsIntent, 0).isNotEmpty()
-    }.getOrDefault(true))
+    val canRedial = isDemoPreview || IslandActionCapability.canDial(context, phoneNumber)
+    val canSms = isDemoPreview || IslandActionCapability.canSendSms(context, phoneNumber)
 
     Column(
         modifier = Modifier
@@ -148,36 +141,34 @@ internal fun CallSummaryExpandedContent(
             }
         )
 
-        // Bottom row: Focused actions (Primary Redial/Call back + SMS + Done dismiss)
-        Row(
+        // Bottom row: Focused actions (Primary Redial/Call back + Quiet Done dismiss)
+        // V6D mandate: Maximum two default controls with high visual hierarchy differentiation.
+        IslandControlRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (canRedial && canRenderIslandControl(IslandControlAction.CallSummaryRedial)) {
-                CallSummaryActionButton(
+            val showRedial = canRedial && canRenderIslandControl(IslandControlAction.CallSummaryRedial)
+            if (showRedial) {
+                IslandActionPill(
                     glyph = AppleGlyph.Phone,
                     label = if (isMissed) "Call back" else "Redial",
                     onClick = { onControlAction(IslandControlAction.CallSummaryRedial) },
-                    modifier = Modifier.weight(1f),
-                    isPrimary = true
+                    modifier = Modifier.weight(1.35f),
+                    style = IslandActionStyle.Primary,
+                    glyphSize = 18.dp,
+                    visualHeight = 38.dp,
+                    contentDescription = if (isMissed) "Call back $name" else "Redial $name"
                 )
             }
-            if (canSms && canRenderIslandControl(IslandControlAction.CallSummaryMessage)) {
-                CallSummaryActionButton(
-                    glyph = AppleGlyph.Chat,
-                    label = "SMS",
-                    onClick = { onControlAction(IslandControlAction.CallSummaryMessage) },
-                    modifier = Modifier.weight(0.7f),
-                    isPrimary = false
-                )
-            }
-            CallSummaryActionButton(
+            IslandActionPill(
                 glyph = AppleGlyph.Close,
                 label = "Done",
                 onClick = { onControlAction(IslandControlAction.CallSummaryDismiss) },
-                modifier = Modifier.weight(if (canRedial) 0.8f else 1f),
-                isPrimary = !canRedial
+                modifier = Modifier.weight(if (showRedial) 0.95f else 1f),
+                style = IslandActionStyle.Tertiary,
+                glyphSize = 16.dp,
+                visualHeight = 38.dp,
+                contentDescription = "Dismiss call summary"
             )
         }
     }
@@ -191,42 +182,15 @@ internal fun CallSummaryActionButton(
     modifier: Modifier = Modifier,
     isPrimary: Boolean = false
 ) {
-    Box(
-        modifier = modifier
-            .defaultMinSize(minWidth = 48.dp, minHeight = 48.dp)
-            .clickable(
-                role = androidx.compose.ui.semantics.Role.Button,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(36.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(if (isPrimary) Color(0xFF222B3A) else IslandColors.Gray6)
-                .padding(horizontal = 12.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AppleIcon(
-                glyph = glyph,
-                tint = if (isPrimary) IslandColors.CapsuleCyan else IslandColors.TextSecondary,
-                size = 13.dp
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = label,
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                softWrap = false,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
+    IslandActionPill(
+        glyph = glyph,
+        label = label,
+        onClick = onClick,
+        modifier = modifier,
+        style = if (isPrimary) IslandActionStyle.Primary else IslandActionStyle.Tertiary,
+        glyphSize = 18.dp,
+        visualHeight = 38.dp
+    )
 }
 
 internal fun formatCallDuration(durationSeconds: Long): String {

@@ -227,13 +227,14 @@ internal fun ActionControlExpandedContent(
 
 @Composable
 internal fun ActionUtilityButton(glyph: AppleGlyph, onClick: () -> Unit) {
-    Box(Modifier.size(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-        .semantics { contentDescription = if (glyph == AppleGlyph.Bell) "Open notifications" else "Open ${glyph.name.lowercase()}" }
-        .clickable(role = Role.Button, onClick = onClick), contentAlignment = Alignment.Center) {
-        Box(Modifier.size(24.dp).clip(CircleShape).background(Color(0xFF25262B)), contentAlignment = Alignment.Center) {
-            AppleIcon(glyph = glyph, tint = Color.White, size = 12.dp)
-        }
-    }
+    IslandIconAction(
+        glyph = glyph,
+        onClick = onClick,
+        visualSize = 28.dp,
+        touchTargetSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget,
+        iconSize = 15.dp,
+        contentDescription = if (glyph == AppleGlyph.Bell) "Open notifications" else "Open ${glyph.name.lowercase()}"
+    )
 }
 
 @Composable

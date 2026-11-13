@@ -330,139 +330,84 @@ fun OngoingCallIslandExpanded(
                 verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)
             ) {
                 // 1. Speaker Button (Audio route: Inactive #2C2C2E / Active White)
-                if (canRenderIslandControl(IslandControlAction.CallToggleSpeaker)) Box(
-                    modifier = Modifier
-                        .size(buttonTouchSize)
-                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                if (canRenderIslandControl(IslandControlAction.CallToggleSpeaker)) {
+                    IslandIconAction(
+                        glyph = if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker,
+                        onClick = {
                             if (isSpeakerState == null) localSpeaker = !localSpeaker
                             onControlAction(IslandControlAction.CallToggleSpeaker)
-                        }
-                        .semantics { contentDescription = "Toggle speakerphone" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(buttonVisualSize)
-                            .clip(CircleShape)
-                            .background(
-                                if (variant == OngoingCallVariant.FaceTime) Color.White
-                                else if (isSpeaker) Color.White else IslandColors.ButtonGlass
-                            )
-                            ,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker,
-                            tint = if (variant == OngoingCallVariant.FaceTime || isSpeaker) Color.Black else Color.White,
-                            size = (if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker).figmaInkSize()
-                        )
-                    }
+                        },
+                        style = IslandActionStyle.Toggle,
+                        visualSize = buttonVisualSize,
+                        touchTargetSize = buttonTouchSize,
+                        iconSize = (if (variant == OngoingCallVariant.FaceTime) AppleGlyph.AirPods else AppleGlyph.Speaker).figmaInkSize(),
+                        contentDescription = "Toggle speakerphone",
+                        isActiveToggle = if (variant == OngoingCallVariant.FaceTime) true else isSpeaker
+                    )
                 }
 
                 // 2. Microphone / Mute Button
-                if (canRenderIslandControl(IslandControlAction.CallToggleMute)) Box(
-                    modifier = Modifier
-                        .size(buttonTouchSize)
-                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                if (canRenderIslandControl(IslandControlAction.CallToggleMute)) {
+                    IslandIconAction(
+                        glyph = AppleGlyph.Microphone,
+                        onClick = {
                             if (isMutedState == null) localMuted = !localMuted
                             onControlAction(IslandControlAction.CallToggleMute)
-                        }
-                        .semantics { contentDescription = "Toggle microphone mute" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(buttonVisualSize)
-                            .clip(CircleShape)
-                            .background(if (isMuted) Color.White else IslandColors.ButtonGlass)
-                            ,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.Microphone,
-                            tint = if (isMuted) Color.Black else Color.White,
-                            size = AppleGlyph.Microphone.figmaInkSize()
-                        )
-                    }
+                        },
+                        style = IslandActionStyle.Toggle,
+                        visualSize = buttonVisualSize,
+                        touchTargetSize = buttonTouchSize,
+                        iconSize = AppleGlyph.Microphone.figmaInkSize(),
+                        contentDescription = "Toggle microphone mute",
+                        isActiveToggle = isMuted
+                    )
                 }
 
                 // 3. FaceTime Video Camera Button
-                if (canRenderIslandControl(IslandControlAction.CallToggleVideo)) Box(
-                    modifier = Modifier
-                        .size(buttonTouchSize)
-                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                if (canRenderIslandControl(IslandControlAction.CallToggleVideo)) {
+                    IslandIconAction(
+                        glyph = AppleGlyph.FaceTimeVideo,
+                        onClick = {
                             if (isVideoOnState == null) localVideoOn = !localVideoOn
                             onControlAction(IslandControlAction.CallToggleVideo)
-                        }
-                        .semantics { contentDescription = "Toggle video camera" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(buttonVisualSize)
-                            .clip(CircleShape)
-                            .background(if (isVideoOn) Color.White else IslandColors.ButtonGlass)
-                            ,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = AppleGlyph.FaceTimeVideo,
-                            tint = if (isVideoOn) Color.Black else Color.White,
-                            size = AppleGlyph.FaceTimeVideo.figmaInkSize()
-                        )
-                    }
+                        },
+                        style = IslandActionStyle.Toggle,
+                        visualSize = buttonVisualSize,
+                        touchTargetSize = buttonTouchSize,
+                        iconSize = AppleGlyph.FaceTimeVideo.figmaInkSize(),
+                        contentDescription = "Toggle video camera",
+                        isActiveToggle = isVideoOn
+                    )
                 }
 
                 // 4. SharePlay Button
-                if (canRenderIslandControl(IslandControlAction.CallToggleSharePlay)) Box(
-                    modifier = Modifier
-                        .size(buttonTouchSize)
-                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
+                if (canRenderIslandControl(IslandControlAction.CallToggleSharePlay)) {
+                    IslandIconAction(
+                        glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.SharePlayScreen else AppleGlyph.SharePlay,
+                        onClick = {
                             if (isSharePlayState == null) localSharePlay = !localSharePlay
                             onControlAction(IslandControlAction.CallToggleSharePlay)
-                        }
-                        .semantics { contentDescription = "Toggle SharePlay" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(buttonVisualSize)
-                            .clip(CircleShape)
-                            .background(if (isSharePlay) Color.White else IslandColors.ButtonGlass)
-                            ,
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.SharePlayScreen else AppleGlyph.SharePlay,
-                            tint = if (isSharePlay) Color.Black else Color.White,
-                            size = (if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.SharePlayScreen else AppleGlyph.SharePlay).figmaInkSize()
-                        )
-                    }
+                        },
+                        style = IslandActionStyle.Toggle,
+                        visualSize = buttonVisualSize,
+                        touchTargetSize = buttonTouchSize,
+                        iconSize = (if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.SharePlayScreen else AppleGlyph.SharePlay).figmaInkSize(),
+                        contentDescription = "Toggle SharePlay",
+                        isActiveToggle = isSharePlay
+                    )
                 }
 
                 // 5. End Call Button (Apple Red #FA3532 with phone-down icon)
-                if (canRenderIslandControl(IslandControlAction.CallEnd)) Box(
-                    modifier = Modifier
-                        .size(buttonTouchSize)
-                        .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                            onControlAction(IslandControlAction.CallEnd)
-                        }
-                        .semantics { contentDescription = "End call" },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(buttonVisualSize)
-                            .clip(CircleShape)
-                            .background(IslandColors.CapsuleRed),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AppleIcon(
-                            glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall,
-                            tint = Color.White,
-                            size = (if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall).figmaInkSize()
-                        )
-                    }
+                if (canRenderIslandControl(IslandControlAction.CallEnd)) {
+                    IslandIconAction(
+                        glyph = if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall,
+                        onClick = { onControlAction(IslandControlAction.CallEnd) },
+                        style = IslandActionStyle.Destructive,
+                        visualSize = buttonVisualSize,
+                        touchTargetSize = buttonTouchSize,
+                        iconSize = (if (variant == OngoingCallVariant.SharedMedia) AppleGlyph.Close else AppleGlyph.EndCall).figmaInkSize(),
+                        contentDescription = "End call"
+                    )
                 }
             }
         }

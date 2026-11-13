@@ -760,7 +760,10 @@ fun DynamicIslandPill(
             verticalAlignment = Alignment.Top
         ) {
             // Main Island Pill Body
-            val pillBgColor = Color(backgroundArgb)
+            val pillBgColor = when (state) {
+                IslandDemoState.Minimal -> Color(0xFFDC0917).copy(alpha = 0.60f)
+                else -> Color(backgroundArgb)
+            }
             Box(
                 modifier = Modifier
                     .islandInspectableRegion("Shell")
@@ -878,7 +881,7 @@ fun DynamicIslandPill(
                         }
                     } else when (targetState) {
                         IslandDemoState.Idle -> IdleCutoutContent()
-                        IslandDemoState.Minimal -> MinimalPillContent(activeNotification)
+                        IslandDemoState.Minimal -> MinimalPillContent()
                         IslandDemoState.MusicCompact -> MusicCompactContent(musicTrack, musicIsPlaying)
                         IslandDemoState.MusicExpanded -> MusicExpandedContent(
                             track = musicTrack,
@@ -1386,13 +1389,19 @@ internal fun CompactIslandLayout(
             .fillMaxWidth()
             .fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(
-            ai.emots.kishan_dynamic.ui.theme.AppTheme.island.compactContentGap, Alignment.CenterHorizontally)
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Box(contentAlignment = Alignment.CenterStart) {
+        Box(
+            modifier = Modifier.wrapContentSize(Alignment.CenterStart),
+            contentAlignment = Alignment.CenterStart
+        ) {
             leading()
         }
-        Box(contentAlignment = Alignment.CenterEnd) {
+        Spacer(modifier = Modifier.weight(1f, fill = false))
+        Box(
+            modifier = Modifier.wrapContentSize(Alignment.CenterEnd),
+            contentAlignment = Alignment.CenterEnd
+        ) {
             trailing()
         }
     }
@@ -1409,30 +1418,13 @@ private fun IdleCutoutContent() {
 }
 
 @Composable
-private fun MinimalPillContent(notification: NotificationInfo? = null) {
-    Box(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 6.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        if (notification != null) {
-            PackageIcon(
-                packageName = notification.packageName,
-                modifier = Modifier.size(20.dp).clip(CircleShape),
-                contentDescription = "${notification.appName} icon"
-            )
-        } else {
-            AppleIcon(
-                glyph = AppleGlyph.Chat,
-                tint = IslandColors.CapsuleCyan,
-                size = 18.dp
-            )
-        }
-    }
+private fun MinimalPillContent() {
+    // Owner reference is 108×32 R15.9018 empty red #DC0917 at 60% opacity, zero content.
+    Box(modifier = Modifier.fillMaxSize())
 }
 
 @Composable
 private fun MusicCompactContent(track: MusicTrack?, isPlaying: Boolean) {
-    // Compact.svg shows: Album art + Track title + Equalizer all in compact
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -1440,38 +1432,33 @@ private fun MusicCompactContent(track: MusicTrack?, isPlaying: Boolean) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f)
-        ) {
-            // Album Art Squircle 20dp
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(RoundedCornerShape(4.226.dp))
-                    .background(
-                        Brush.linearGradient(
-                            listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.Cyan)
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                if (track?.albumArtUri != null) {
-                    UriArtwork(
-                        uri = track.albumArtUri,
-                        fallbackRes = ai.emots.kishan_dynamic.R.drawable.music_album_art,
-                        contentDescription = track.title,
-                        modifier = Modifier.fillMaxSize()
+        // Leading: Album art 22dp squircle
+        Box(
+            modifier = Modifier
+                .size(22.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .background(
+                    Brush.linearGradient(
+                        listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.Cyan)
                     )
-                } else {
-                    AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 10.dp)
-                }
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (track?.albumArtUri != null) {
+                UriArtwork(
+                    uri = track.albumArtUri,
+                    fallbackRes = ai.emots.kishan_dynamic.R.drawable.music_album_art,
+                    contentDescription = track.title,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                AppleIcon(glyph = AppleGlyph.Music, tint = Color.White, size = 10.dp)
             }
-
-
         }
 
-        // Reference equalizer (geometry measured off Minimal.svg / DI-11)
+        Spacer(modifier = Modifier.weight(1f, fill = false))
+
+        // Trailing: Reference equalizer (geometry measured off Minimal.svg / DI-11)
         LiveEqualizerMini(width = 17.dp, height = 19.dp, animated = isPlaying)
     }
 }
@@ -1552,8 +1539,7 @@ private fun CallCompactContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(horizontal = 12.dp),
+            .fillMaxHeight(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -1588,16 +1574,18 @@ private fun CallCompactContent(
         }
 
         // Trailing: Live audio waveform animation (orange/green/white/orange bars)
-        WaveformAnimation(
-            modifier = Modifier.size(width = 22.dp, height = 13.dp),
-            gradient = listOf(
-                Color(0xFFFF9500),
-                IslandColors.CapsuleGreen,
-                Color.White,
-                Color(0xFFFF9500)
-            ),
-            animated = true
-        )
+        if (!isDialing && showDuration) {
+            WaveformAnimation(
+                modifier = Modifier.size(width = 22.dp, height = 13.dp),
+                gradient = listOf(
+                    Color(0xFFFF9500),
+                    IslandColors.CapsuleGreen,
+                    Color.White,
+                    Color(0xFFFF9500)
+                ),
+                animated = true
+            )
+        }
     }
 }
 
@@ -1703,10 +1691,11 @@ private fun NotificationWithMusicCompactContent(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         if (isPlaying) {
+            // Album artwork START
             Box(
                 modifier = Modifier
-                    .size(24.dp)
-                    .clip(RoundedCornerShape(7.dp))
+                    .size(22.dp)
+                    .clip(RoundedCornerShape(6.dp))
                     .background(
                         Brush.linearGradient(
                             listOf(IslandColors.Purple, IslandColors.Indigo, IslandColors.CapsuleCyan)
@@ -1725,16 +1714,18 @@ private fun NotificationWithMusicCompactContent(
                     AppleIcon(glyph = AppleGlyph.Waveform, tint = Color.White, size = 14.dp)
                 }
             }
-            Spacer(modifier = Modifier.width(9.dp))
-            Box(modifier = Modifier.weight(1f)) {
-                LiveEqualizerMini(animated = true)
+            // Flexible empty center
+            Spacer(modifier = Modifier.weight(1f))
+            // Single waveform END
+            Box(contentAlignment = Alignment.CenterEnd) {
+                LiveEqualizerMini(width = 17.dp, height = 19.dp, animated = isPlaying)
             }
         } else {
             if (notification != null) {
                 PackageIcon(
                     packageName = notification.packageName,
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(22.dp)
                         .clip(CircleShape),
                     contentDescription = "${notification.appName} icon"
                 )
@@ -1747,7 +1738,7 @@ private fun NotificationWithMusicCompactContent(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(22.dp)
                         .clip(CircleShape)
                         .background(Color(0xFF3A3A3C))
                         .wrapContentSize(Alignment.Center)

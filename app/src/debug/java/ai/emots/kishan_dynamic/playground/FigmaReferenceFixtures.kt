@@ -3,6 +3,13 @@ package ai.emots.kishan_dynamic.playground
 import android.content.Context
 import ai.emots.kishan_dynamic.R
 import ai.emots.kishan_dynamic.data.model.*
+import ai.emots.kishan_dynamic.ui.components.IslandDemoState
+
+enum class FigmaReferenceProvenance(val label: String) {
+    DIRECT("DIRECT"),
+    FAMILY_ONLY("FAMILY_ONLY"),
+    NO_SOURCE("NO_SOURCE")
+}
 
 /** Original reference content for visual comparison only. Excluded from release builds. */
 object FigmaReferenceFixtures {
@@ -20,72 +27,139 @@ object FigmaReferenceFixtures {
     fun music(context: Context) = MusicTrack("Heat Waves", "Grass Animals", packageName,
         durationMs = 241000, positionMs = 50000, albumArtUri = resourceUri(context, R.drawable.music_album_art))
 
-    fun figmaNodeId(state: ai.emots.kishan_dynamic.ui.components.IslandDemoState): String? = when (state) {
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.Idle -> "27:1050"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.Minimal -> "19:992"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.MusicCompact -> "19:979"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.MusicExpanded -> "19:1033"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.CallCompact -> "19:991"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.CallExpanded -> "19:1036"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.CallSummaryExpanded -> "19:1036"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.FaceTimeCallExpanded -> "19:1035"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.SharedMediaCallExpanded -> "19:1037"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.OngoingCallBanner -> "19:1027"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.NotificationCompact -> "27:1021"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.NotificationStacked -> "27:1021"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.NotificationWithMusicCompact -> "19:979"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.NotificationExpanded -> "27:992"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.SilentModeCompact -> "19:991"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.SilentModeExpanded -> "19:1030"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.RingerModeExpanded -> "19:1030"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.VibrateModeCompact -> "19:979"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.NormalModeCompact -> "19:979"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.RingerVolumeCompact -> "19:979"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.MediaVolumeCompact -> "19:979"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.BluetoothConnected -> "27:682"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.BluetoothConnecting -> "27:682"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.ActionControlExpanded -> "27:912"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.PremiumExpiryExpanded -> "19:1030"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.ChargingCompact -> "19:991"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.ChargingExpanded -> "19:1023"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.LowBatteryCompact -> "19:991"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.LowBatteryExpanded -> "19:1023"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.TimerCompact -> "19:979"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.TimerExpanded -> "19:1022"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.DeliveryCompact -> "27:1080"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.DeliveryExpanded -> "27:1101"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.FlightCompact -> "27:1080"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.FlightExpanded -> "19:1039"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.SportsCompact -> "27:1080"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.SportsExpanded -> "19:1039"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.NavigationCompact -> "19:1019"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.VoiceMemoExpanded -> "19:1024"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.ScreenRecordingExpanded -> "19:1025"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.ShortcutExpanded -> "19:1026"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.FocusModeExpanded -> "19:1030"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.AirPodsConnected -> "19:1023"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.SatelliteConnected -> "19:1028"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.FindMyAlert -> "19:1029"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.MovedToIPhone -> "19:1031"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.VideoRemoteExpanded -> "19:1038"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.AirDropActivity -> "19:1021"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.TimerImage -> "19:1022"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.NotificationImage -> "27:992"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.CallAvatars -> "19:1027"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.TransportActivity -> "27:1101"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.FlightTrackerExpanded -> "19:1039"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.SubscriptionPricing -> "19:1041"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.MovieCard -> "19:1042"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.ColorOptions -> "19:1034"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.AirplaneAlert -> "19:1039"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.ScreenMirroringAlert -> "19:1040"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.MobileDataAlert -> "19:1041"
-        ai.emots.kishan_dynamic.ui.components.IslandDemoState.TransitRouteAlert -> "19:1042"
+    fun referenceProvenance(state: IslandDemoState): FigmaReferenceProvenance = when (state) {
+        IslandDemoState.Idle -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.Minimal -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.MusicCompact -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.MusicExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.CallCompact -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.CallExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.CallSummaryExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.FaceTimeCallExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.SharedMediaCallExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.OngoingCallBanner -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.NotificationCompact -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.NotificationStacked -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.NotificationWithMusicCompact -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.NotificationExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.SilentModeCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.SilentModeExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.RingerModeExpanded -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.VibrateModeCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.NormalModeCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.RingerVolumeCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.MediaVolumeCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.BluetoothConnected -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.BluetoothConnecting -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.ActionControlExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.PremiumExpiryExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.ChargingCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.ChargingExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.LowBatteryCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.LowBatteryExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.TimerCompact -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.TimerExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.DeliveryCompact -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.DeliveryExpanded -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.FlightCompact -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.FlightExpanded -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.SportsCompact -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.SportsExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.NavigationCompact -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.VoiceMemoExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.ScreenRecordingExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.ShortcutExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.FocusModeExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.AirPodsConnected -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.SatelliteConnected -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.FindMyAlert -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.MovedToIPhone -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.VideoRemoteExpanded -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.AirDropActivity -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.TimerImage -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.NotificationImage -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.CallAvatars -> FigmaReferenceProvenance.FAMILY_ONLY
+        IslandDemoState.TransportActivity -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.FlightTrackerExpanded -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.SubscriptionPricing -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.MovieCard -> FigmaReferenceProvenance.NO_SOURCE
+        IslandDemoState.ColorOptions -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.AirplaneAlert -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.ScreenMirroringAlert -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.MobileDataAlert -> FigmaReferenceProvenance.DIRECT
+        IslandDemoState.TransitRouteAlert -> FigmaReferenceProvenance.DIRECT
     }
 
-    fun loadFigmaBitmap(context: Context, state: ai.emots.kishan_dynamic.ui.components.IslandDemoState): android.graphics.Bitmap? {
+    fun figmaNodeId(state: IslandDemoState): String? = when (state) {
+        IslandDemoState.Idle -> null
+        IslandDemoState.Minimal -> "minimal-user-ref"
+        IslandDemoState.MusicCompact -> "19:979"
+        IslandDemoState.MusicExpanded -> "19:1033"
+        IslandDemoState.CallCompact -> "19:991"
+        IslandDemoState.CallExpanded -> "19:1036"
+        IslandDemoState.CallSummaryExpanded -> null
+        IslandDemoState.FaceTimeCallExpanded -> "19:1035"
+        IslandDemoState.SharedMediaCallExpanded -> "19:1037"
+        IslandDemoState.OngoingCallBanner -> "19:1027"
+        IslandDemoState.NotificationCompact -> "27:1021"
+        IslandDemoState.NotificationStacked -> "27:1021"
+        IslandDemoState.NotificationWithMusicCompact -> "19:979"
+        IslandDemoState.NotificationExpanded -> "27:992"
+        IslandDemoState.SilentModeCompact -> null
+        IslandDemoState.SilentModeExpanded -> "19:1030"
+        IslandDemoState.RingerModeExpanded -> "19:1030"
+        IslandDemoState.VibrateModeCompact -> null
+        IslandDemoState.NormalModeCompact -> null
+        IslandDemoState.RingerVolumeCompact -> null
+        IslandDemoState.MediaVolumeCompact -> null
+        IslandDemoState.BluetoothConnected -> "27:682"
+        IslandDemoState.BluetoothConnecting -> null
+        IslandDemoState.ActionControlExpanded -> null
+        IslandDemoState.PremiumExpiryExpanded -> null
+        IslandDemoState.ChargingCompact -> null
+        IslandDemoState.ChargingExpanded -> null
+        IslandDemoState.LowBatteryCompact -> null
+        IslandDemoState.LowBatteryExpanded -> null
+        IslandDemoState.TimerCompact -> "19:1022"
+        IslandDemoState.TimerExpanded -> "19:1022"
+        IslandDemoState.DeliveryCompact -> "27:1080"
+        IslandDemoState.DeliveryExpanded -> "27:1101"
+        IslandDemoState.FlightCompact -> "27:1080"
+        IslandDemoState.FlightExpanded -> "27:1101"
+        IslandDemoState.SportsCompact -> null
+        IslandDemoState.SportsExpanded -> null
+        IslandDemoState.NavigationCompact -> "19:1019"
+        IslandDemoState.VoiceMemoExpanded -> "19:1024"
+        IslandDemoState.ScreenRecordingExpanded -> "19:1025"
+        IslandDemoState.ShortcutExpanded -> "19:1026"
+        IslandDemoState.FocusModeExpanded -> null
+        IslandDemoState.AirPodsConnected -> "19:1023"
+        IslandDemoState.SatelliteConnected -> "19:1028"
+        IslandDemoState.FindMyAlert -> "19:1029"
+        IslandDemoState.MovedToIPhone -> "19:1031"
+        IslandDemoState.VideoRemoteExpanded -> "19:1038"
+        IslandDemoState.AirDropActivity -> "19:1021"
+        IslandDemoState.TimerImage -> null
+        IslandDemoState.NotificationImage -> "27:992"
+        IslandDemoState.CallAvatars -> "19:1027"
+        IslandDemoState.TransportActivity -> null
+        IslandDemoState.FlightTrackerExpanded -> null
+        IslandDemoState.SubscriptionPricing -> null
+        IslandDemoState.MovieCard -> null
+        IslandDemoState.ColorOptions -> "19:1034"
+        IslandDemoState.AirplaneAlert -> "19:1039"
+        IslandDemoState.ScreenMirroringAlert -> "19:1040"
+        IslandDemoState.MobileDataAlert -> "19:1041"
+        IslandDemoState.TransitRouteAlert -> "19:1042"
+    }
+
+    fun loadFigmaBitmap(context: Context, state: IslandDemoState): android.graphics.Bitmap? {
         val nodeId = figmaNodeId(state) ?: return null
-        val filename = "figma_ref/figma-${nodeId.replace(':', '-')}.png"
+        val filename = if (nodeId == "minimal-user-ref") {
+            "figma_ref/figma-minimal-user-ref.png"
+        } else {
+            "figma_ref/figma-${nodeId.replace(':', '-')}.png"
+        }
         return try {
             context.assets.open(filename).use { android.graphics.BitmapFactory.decodeStream(it) }
         } catch (_: Exception) {

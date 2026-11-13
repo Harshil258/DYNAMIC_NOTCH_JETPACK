@@ -486,17 +486,33 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                         }
                     }
 
+                    val provenance = FigmaReferenceFixtures.referenceProvenance(selected)
                     val renderFigmaReference = @Composable {
                         val figmaBitmap = remember(selected) { FigmaReferenceFixtures.loadFigmaBitmap(context, selected) }
                         if (figmaBitmap != null) {
-                            Image(
-                                bitmap = figmaBitmap.asImageBitmap(),
-                                contentDescription = "Figma Reference for ${selected.name}",
-                                modifier = Modifier
-                                    .padding(vertical = 12.dp)
-                                    .size(target.width.dp, target.height.dp)
-                                    .clip(RoundedCornerShape(target.radius.dp))
-                            )
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                                modifier = Modifier.padding(vertical = 12.dp)
+                            ) {
+                                Image(
+                                    bitmap = figmaBitmap.asImageBitmap(),
+                                    contentDescription = "Figma Reference for ${selected.name}",
+                                    modifier = Modifier
+                                        .size(target.width.dp, target.height.dp)
+                                        .clip(RoundedCornerShape(target.radius.dp))
+                                )
+                                Text(
+                                    text = "${provenance.label} REFERENCE",
+                                    fontSize = 9.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = when (provenance) {
+                                        FigmaReferenceProvenance.DIRECT -> IslandColors.CapsuleGreen
+                                        FigmaReferenceProvenance.FAMILY_ONLY -> IslandColors.Yellow
+                                        FigmaReferenceProvenance.NO_SOURCE -> IslandColors.Gray
+                                    }
+                                )
+                            }
                         } else {
                             Box(
                                 modifier = Modifier
@@ -506,7 +522,10 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                     .background(Color(0xFF10141D)),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("Figma reference not found for ${selected.name}", fontSize = 11.sp, color = Color.Gray)
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Text("No direct Figma asset (${provenance.label})", fontSize = 11.sp, color = Color.Gray, fontWeight = FontWeight.Medium)
+                                    Text("Family derived presentation", fontSize = 9.sp, color = Color.DarkGray)
+                                }
                             }
                         }
                     }
@@ -538,12 +557,17 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                                         .padding(horizontal = 16.dp)
                                 ) {
                                     Box(Modifier.weight(1f).height(0.5.dp).background(Color.White.copy(alpha = 0.2f)))
-                                    val figmaId = FigmaReferenceFixtures.figmaNodeId(selected) ?: "Reference"
+                                    val figmaId = FigmaReferenceFixtures.figmaNodeId(selected) ?: "Derived"
+                                    val provText = provenance.label
                                     Text(
-                                        "  FIGMA $figmaId · ${target.width.toInt()}×${target.height.toInt()}dp  ",
+                                        "  FIGMA $figmaId [$provText] · ${target.width.toInt()}×${target.height.toInt()}dp  ",
                                         fontSize = 9.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = IslandColors.CapsuleCyan
+                                        color = when (provenance) {
+                                            FigmaReferenceProvenance.DIRECT -> IslandColors.CapsuleCyan
+                                            FigmaReferenceProvenance.FAMILY_ONLY -> IslandColors.Yellow
+                                            FigmaReferenceProvenance.NO_SOURCE -> IslandColors.Gray
+                                        }
                                     )
                                     Box(Modifier.weight(1f).height(0.5.dp).background(Color.White.copy(alpha = 0.2f)))
                                 }
@@ -565,9 +589,10 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                     ) {
                         val isAccurate = abs(deltaW) < 0.6f && abs(deltaH) < 0.6f
                         val deltaColor = if (isAccurate) Color(0xFF34C759) else if (abs(deltaW) < 2f && abs(deltaH) < 2f) Color(0xFFFF9500) else Color(0xFFFF3B30)
+                        val statusTag = if (isAccurate) "Geometry PASS (W×H only)" else "Geometry Δ"
 
                         Text(
-                            text = if (measuredActualW > 0f) "Actual: %.1f × %.1fdp · Δ %.1f / %.1fdp".format(measuredActualW, measuredActualH, deltaW, deltaH) else "Measuring surface...",
+                            text = if (measuredActualW > 0f) "$statusTag: %.1f × %.1fdp · Δ %.1f / %.1fdp".format(measuredActualW, measuredActualH, deltaW, deltaH) else "Measuring surface...",
                             fontSize = 11.sp,
                             color = deltaColor,
                             fontWeight = FontWeight.Medium

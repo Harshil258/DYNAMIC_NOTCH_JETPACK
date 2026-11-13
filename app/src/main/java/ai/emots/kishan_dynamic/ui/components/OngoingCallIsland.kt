@@ -209,14 +209,23 @@ fun OngoingCallIslandExpanded(
     label: String = "Mobile Call",
     duration: String = "02:45",
     variant: OngoingCallVariant = OngoingCallVariant.Standard,
+    isMutedState: Boolean? = null,
+    isSpeakerState: Boolean? = null,
+    isVideoOnState: Boolean? = null,
+    isSharePlayState: Boolean? = null,
     onEndCall: () -> Unit = {},
     onControlAction: (IslandControlAction) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var isMuted by remember(variant) { mutableStateOf(variant != OngoingCallVariant.SharedMedia) }
-    var isSpeaker by remember(variant) { mutableStateOf(false) }
-    var isVideoOn by remember(variant) { mutableStateOf(variant == OngoingCallVariant.SharedMedia) }
-    var isSharePlay by remember(variant) { mutableStateOf(variant == OngoingCallVariant.SharedMedia) }
+    var localMuted by remember(variant) { mutableStateOf(variant != OngoingCallVariant.SharedMedia) }
+    var localSpeaker by remember(variant) { mutableStateOf(false) }
+    var localVideoOn by remember(variant) { mutableStateOf(variant == OngoingCallVariant.SharedMedia) }
+    var localSharePlay by remember(variant) { mutableStateOf(variant == OngoingCallVariant.SharedMedia) }
+
+    val isMuted = isMutedState ?: localMuted
+    val isSpeaker = isSpeakerState ?: localSpeaker
+    val isVideoOn = isVideoOnState ?: localVideoOn
+    val isSharePlay = isSharePlayState ?: localSharePlay
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth().wrapContentHeight()) {
         val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
@@ -325,7 +334,7 @@ fun OngoingCallIslandExpanded(
                     modifier = Modifier
                         .size(buttonTouchSize)
                         .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                            isSpeaker = !isSpeaker
+                            if (isSpeakerState == null) localSpeaker = !localSpeaker
                             onControlAction(IslandControlAction.CallToggleSpeaker)
                         }
                         .semantics { contentDescription = "Toggle speakerphone" },
@@ -355,7 +364,7 @@ fun OngoingCallIslandExpanded(
                     modifier = Modifier
                         .size(buttonTouchSize)
                         .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                            isMuted = !isMuted
+                            if (isMutedState == null) localMuted = !localMuted
                             onControlAction(IslandControlAction.CallToggleMute)
                         }
                         .semantics { contentDescription = "Toggle microphone mute" },
@@ -382,7 +391,7 @@ fun OngoingCallIslandExpanded(
                     modifier = Modifier
                         .size(buttonTouchSize)
                         .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                            isVideoOn = !isVideoOn
+                            if (isVideoOnState == null) localVideoOn = !localVideoOn
                             onControlAction(IslandControlAction.CallToggleVideo)
                         }
                         .semantics { contentDescription = "Toggle video camera" },
@@ -409,7 +418,7 @@ fun OngoingCallIslandExpanded(
                     modifier = Modifier
                         .size(buttonTouchSize)
                         .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                            isSharePlay = !isSharePlay
+                            if (isSharePlayState == null) localSharePlay = !localSharePlay
                             onControlAction(IslandControlAction.CallToggleSharePlay)
                         }
                         .semantics { contentDescription = "Toggle SharePlay" },
@@ -436,7 +445,6 @@ fun OngoingCallIslandExpanded(
                     modifier = Modifier
                         .size(buttonTouchSize)
                         .clickable(role = androidx.compose.ui.semantics.Role.Button) {
-                            onEndCall()
                             onControlAction(IslandControlAction.CallEnd)
                         }
                         .semantics { contentDescription = "End call" },

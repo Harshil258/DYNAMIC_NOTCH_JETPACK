@@ -44,7 +44,10 @@ object IslandStateManager {
     } catch (_: Throwable) {
         Dispatchers.Default
     }
-    private var scope = CoroutineScope(mainDispatcher + Job())
+    private val _scopeRef = java.util.concurrent.atomic.AtomicReference<CoroutineScope>(CoroutineScope(mainDispatcher + Job()))
+    private var scope: CoroutineScope
+        get() = _scopeRef.get()
+        set(value) { _scopeRef.set(value) }
     private var dismissTimerJob: Job? = null
     private var dismissTimerGeneration = 0L
     private var pausedMusicJob: Job? = null
@@ -53,7 +56,10 @@ object IslandStateManager {
     private val liveActivityExpiryJobs = mutableMapOf<String, Job>()
     private val liveActivityGenerations = mutableMapOf<String, Long>()
 
-    private var previewTimerJob: Job? = null
+    private val _previewTimerJobRef = java.util.concurrent.atomic.AtomicReference<Job?>(null)
+    private var previewTimerJob: Job?
+        get() = _previewTimerJobRef.get()
+        set(value) { _previewTimerJobRef.set(value) }
     private val childTimerJobs = mutableMapOf<String, Job>()
 
     private fun cancelDismissTimer() {
@@ -293,9 +299,20 @@ object IslandStateManager {
         }
     }
 
-    private var notificationQueue = NotificationQueueState()
-    private var notificationAutoExpand = false
-    private var notificationDisplaySeconds = 5
+    private var notificationQueue: NotificationQueueState
+        get() = behaviorState.queue
+        set(value) {
+            behaviorState = behaviorState.copy(queue = value)
+        }
+    private val _notificationAutoExpand = java.util.concurrent.atomic.AtomicBoolean(false)
+    private var notificationAutoExpand: Boolean
+        get() = _notificationAutoExpand.get()
+        set(value) { _notificationAutoExpand.set(value) }
+
+    private val _notificationDisplaySeconds = java.util.concurrent.atomic.AtomicInteger(5)
+    private var notificationDisplaySeconds: Int
+        get() = _notificationDisplaySeconds.get()
+        set(value) { _notificationDisplaySeconds.set(value) }
     private val notificationDeadlines = mutableMapOf<String, Long>()
     private val notificationReplayGuard = ai.emots.kishan_dynamic.data.notification.NotificationReplayGuard()
     private val specializedNotificationIds = mutableSetOf<String>()

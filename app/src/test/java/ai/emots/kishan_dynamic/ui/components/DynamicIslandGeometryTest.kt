@@ -41,8 +41,8 @@ class DynamicIslandGeometryTest {
             .forEach { state ->
                 val expected = when (state) {
                     IslandDemoState.Minimal -> tokens.minimalCapsuleHeight.value
-                    IslandDemoState.Idle, IslandDemoState.NotificationCompact, IslandDemoState.NotificationStacked -> 36f
-                    IslandDemoState.MusicCompact -> 38f
+                    IslandDemoState.Idle -> 36f
+                    IslandDemoState.MusicCompact, IslandDemoState.NotificationCompact, IslandDemoState.NotificationStacked -> 36.67f
                     else -> tokens.compactHeight.value
                 }
                 assertEquals(expected, state.resolvedHeight(tokens).value, .001f)

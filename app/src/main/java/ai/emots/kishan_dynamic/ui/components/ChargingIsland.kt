@@ -126,6 +126,64 @@ fun BatteryIcon(
 }
 
 /**
+ * iOS-style compact battery capsule for trailing slot of compact island pill.
+ * Features rounded body outline, terminal nub, and animated level fill.
+ */
+@Composable
+fun MiniBatteryCapsule(
+    percentage: Int,
+    tint: Color,
+    modifier: Modifier = Modifier
+) {
+    val fill = (percentage.coerceIn(0, 100) / 100f)
+    Canvas(modifier = modifier) {
+        val width = size.width
+        val height = size.height
+
+        val bodyWidth = width - 2.5.dp.toPx()
+        val corner = 2.5.dp.toPx()
+        val stroke = 1.dp.toPx()
+
+        val nubWidth = 1.5.dp.toPx()
+        val nubHeight = height * 0.45f
+        val nubX = width - nubWidth
+        val nubY = (height - nubHeight) / 2f
+
+        // Outer battery outline
+        drawRoundRect(
+            color = Color.White.copy(alpha = 0.35f),
+            topLeft = Offset(0f, 0f),
+            size = Size(bodyWidth, height),
+            cornerRadius = CornerRadius(corner, corner),
+            style = Stroke(width = stroke)
+        )
+
+        // Terminal nub
+        drawRoundRect(
+            color = Color.White.copy(alpha = 0.45f),
+            topLeft = Offset(nubX, nubY),
+            size = Size(nubWidth, nubHeight),
+            cornerRadius = CornerRadius(0.75.dp.toPx(), 0.75.dp.toPx())
+        )
+
+        // Inner battery fill
+        val pad = stroke + 1.dp.toPx()
+        val maxFillWidth = (bodyWidth - pad * 2f).coerceAtLeast(0f)
+        val fillHeight = (height - pad * 2f).coerceAtLeast(0f)
+        val fillWidth = (maxFillWidth * fill).coerceAtLeast(if (fill > 0f) fillHeight * 0.5f else 0f)
+
+        if (fillWidth > 0f) {
+            drawRoundRect(
+                color = tint,
+                topLeft = Offset(pad, pad),
+                size = Size(fillWidth, fillHeight),
+                cornerRadius = CornerRadius(1.2.dp.toPx(), 1.2.dp.toPx())
+            )
+        }
+    }
+}
+
+/**
  * CHARGING — trailing bubble: a hand-drawn progress ring so it stays crisp at
  * the true 37pt bubble size (Material's indicator is too heavy here).
  */

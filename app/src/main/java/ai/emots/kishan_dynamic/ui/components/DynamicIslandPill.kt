@@ -985,37 +985,45 @@ fun DynamicIslandPill(
                             batteryPercent = bluetoothBatteryPercent,
                             isConnecting = bluetoothIsConnecting || targetState == IslandDemoState.BluetoothConnecting
                         )
-                        IslandDemoState.ActionControlExpanded -> ActionControlExpandedContent(
-                            systemTiles = actionSystemTiles,
-                            systemStates = actionSystemStates,
-                            apps = actionApps,
-                            contacts = actionContacts,
-                            customActions = actionCustomActions,
-                            onAppClick = onActionAppClick,
-                            onContactClick = onActionContactClick,
-                            onCustomActionClick = onCustomActionClick,
-                            onSystemTileClick = onSystemTileClick,
-                            brightnessLevel = brightnessLevel,
-                            mediaVolumeLevel = mediaVolumeLevel,
-                            onBrightnessChange = onBrightnessChange,
-                            onMediaVolumeChange = onMediaVolumeChange,
-                            notificationCount = actionNotificationCount,
-                            onUtilityAction = onUtilityAction,
-                            onOpenNotifications = onOpenNotifications
-                        )
+                        IslandDemoState.ActionControlExpanded -> {
+                            val effectiveStates = if (actionSystemStates.isEmpty()) {
+                                mapOf(
+                                    ActionSystemTile.WIFI to true,
+                                    ActionSystemTile.BLUETOOTH to true,
+                                    ActionSystemTile.MOBILE_DATA to false,
+                                    ActionSystemTile.TORCH to true,
+                                    ActionSystemTile.LOCATION to true,
+                                    ActionSystemTile.DO_NOT_DISTURB to false
+                                )
+                            } else {
+                                actionSystemStates
+                            }
+                            ActionControlExpandedContent(
+                                systemTiles = actionSystemTiles,
+                                systemStates = effectiveStates,
+                                apps = actionApps,
+                                contacts = actionContacts,
+                                customActions = actionCustomActions,
+                                onAppClick = onActionAppClick,
+                                onContactClick = onActionContactClick,
+                                onCustomActionClick = onCustomActionClick,
+                                onSystemTileClick = onSystemTileClick,
+                                brightnessLevel = brightnessLevel,
+                                mediaVolumeLevel = mediaVolumeLevel,
+                                onBrightnessChange = onBrightnessChange,
+                                onMediaVolumeChange = onMediaVolumeChange,
+                                notificationCount = actionNotificationCount,
+                                onUtilityAction = onUtilityAction,
+                                onOpenNotifications = onOpenNotifications
+                            )
+                        }
                         IslandDemoState.PremiumExpiryExpanded -> PremiumExpiryExpandedContent(
                             hoursRemaining = premiumHoursRemaining,
                             onControlAction = onControlAction
                         )
-                        IslandDemoState.ChargingCompact -> ChargingIslandMain(
-                            percentage = batteryPercent,
-                            isLowBattery = false
-                        )
+                        IslandDemoState.ChargingCompact -> ChargingCompactContent(batteryPercent)
                         IslandDemoState.ChargingExpanded -> ChargingExpandedContent(batteryPercent)
-                        IslandDemoState.LowBatteryCompact -> ChargingIslandMain(
-                            percentage = batteryPercent,
-                            isLowBattery = true
-                        )
+                        IslandDemoState.LowBatteryCompact -> LowBatteryCompactContent(batteryPercent)
                         IslandDemoState.LowBatteryExpanded -> LowBatteryExpandedContent(batteryPercent)
                         IslandDemoState.TimerCompact -> TimerCompactContent(timerLabel, timerProgress)
                         IslandDemoState.TimerExpanded -> TimerExpandedContent(timerLabel, timerRunning, onControlAction)
@@ -2162,22 +2170,38 @@ private fun BluetoothConnectedContent(
 // 5. BATTERY / FAST CHARGING
 // -----------------------------------------------------------------------------
 @Composable
-private fun ChargingCompactContent() {
+private fun ChargingCompactContent(percentage: Int) {
+    val value = percentage.coerceIn(0, 100)
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.Green, size = 18.dp)
+            Box(
+                modifier = Modifier
+                    .size(22.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF30D158).copy(alpha = 0.22f))
+                    .border(0.5.dp, Color(0xFF30D158).copy(alpha = 0.45f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.Charging, tint = Color(0xFF30D158), size = 12.dp)
+            }
         },
         trailing = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text(
-                    text = "85%",
-                    fontSize = 12.sp,
+                    text = "$value%",
+                    fontSize = 12.5.sp,
                     fontWeight = FontWeight.Bold,
-                    color = IslandColors.Green,
+                    color = Color.White,
                     fontFamily = IslandReferenceFonts.Text
                 )
-                Spacer(modifier = Modifier.width(3.dp))
-                AppleIcon(glyph = AppleGlyph.Charging, tint = IslandColors.Green, size = 11.dp)
+                MiniBatteryCapsule(
+                    percentage = value,
+                    tint = Color(0xFF30D158),
+                    modifier = Modifier.size(width = 18.dp, height = 9.dp)
+                )
             }
         }
     )
@@ -2192,19 +2216,39 @@ private fun ChargingExpandedContent(percentage: Int) {
 // 5B. LOW BATTERY ALERT
 // -----------------------------------------------------------------------------
 @Composable
-private fun LowBatteryCompactContent() {
+private fun LowBatteryCompactContent(percentage: Int) {
+    val value = percentage.coerceIn(0, 100)
     CompactIslandLayout(
         leading = {
-            AppleIcon(glyph = AppleGlyph.Battery, tint = IslandColors.Red, size = 18.dp)
+            Box(
+                modifier = Modifier
+                    .size(22.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFFF453A).copy(alpha = 0.22f))
+                    .border(0.5.dp, Color(0xFFFF453A).copy(alpha = 0.45f), CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                AppleIcon(glyph = AppleGlyph.Battery, tint = Color(0xFFFF453A), size = 13.dp)
+            }
         },
         trailing = {
-            Text(
-                text = "14% !",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-                color = IslandColors.Red,
-                fontFamily = IslandReferenceFonts.Text
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = "$value%",
+                    fontSize = 12.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFF453A),
+                    fontFamily = IslandReferenceFonts.Text
+                )
+                MiniBatteryCapsule(
+                    percentage = value,
+                    tint = Color(0xFFFF453A),
+                    modifier = Modifier.size(width = 18.dp, height = 9.dp)
+                )
+            }
         }
     )
 }

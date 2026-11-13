@@ -8,26 +8,23 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +32,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -45,8 +45,7 @@ import ai.emots.kishan_dynamic.data.model.ActionCustomShortcut
 import ai.emots.kishan_dynamic.data.model.ActionSystemTile
 import ai.emots.kishan_dynamic.data.model.ActionUtilityAction
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
-import ai.emots.kishan_dynamic.ui.theme.auroraPurchaseGradient
-import ai.emots.kishan_dynamic.ui.components.AppText
+import ai.emots.kishan_dynamic.ui.theme.IslandReferenceFonts
 
 @Composable
 internal fun ActionControlExpandedContent(
@@ -71,47 +70,49 @@ internal fun ActionControlExpandedContent(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(start = 20.dp, end = 20.dp, top = 22.dp, bottom = 14.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(start = 18.dp, end = 18.dp, top = 16.dp, bottom = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Column(
+        // Top Header Bar
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.sm)
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
+            Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
                 Text(
-                    text = "Quick controls",
+                    text = "Control Center",
                     color = Color.White,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
+                    fontFamily = IslandReferenceFonts.Text
                 )
                 Text(
-                    text = "Your essentials, one tap away",
-                    color = IslandColors.TextSecondary,
+                    text = "Quick controls",
+                    color = Color.White.copy(alpha = 0.65f),
                     fontSize = 11.sp,
+                    fontFamily = IslandReferenceFonts.Text
                 )
             }
             Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.sm)
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 if (notificationCount > 0) {
                     Box(
                         modifier = Modifier
-                            .clip(RoundedCornerShape(percent = 50))
-                            .background(IslandColors.CapsuleRed.copy(alpha = 0.22f))
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(IslandColors.CapsuleRed.copy(alpha = 0.20f))
+                            .border(0.5.dp, IslandColors.CapsuleRed.copy(alpha = 0.40f), RoundedCornerShape(12.dp))
                             .clickable(onClick = onOpenNotifications)
-                            .padding(horizontal = 7.dp, vertical = 3.dp)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
                     ) {
                         Text(
                             text = "$notificationCount ${if (notificationCount == 1) "alert" else "alerts"}",
                             color = IslandColors.CapsuleRed,
-                            fontSize = 9.sp,
-                            fontWeight = FontWeight.Bold
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = IslandReferenceFonts.Text
                         )
                     }
                 }
@@ -120,22 +121,20 @@ internal fun ActionControlExpandedContent(
                     onClick = { onUtilityAction(ActionUtilityAction.LOCK) }
                 )
                 ActionUtilityButton(
-                    glyph = AppleGlyph.Settings,
-                    onClick = { onUtilityAction(ActionUtilityAction.SETTINGS) }
-                )
-                ActionUtilityButton(
                     glyph = AppleGlyph.Camera,
                     onClick = { onUtilityAction(ActionUtilityAction.CAMERA) }
                 )
                 ActionUtilityButton(
-                    glyph = AppleGlyph.Expand,
-                    onClick = { onUtilityAction(ActionUtilityAction.EDIT) }
+                    glyph = AppleGlyph.Settings,
+                    onClick = { onUtilityAction(ActionUtilityAction.SETTINGS) }
                 )
             }
         }
+
+        // Quick Controls Grid
         val tileColumns = when {
-            androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f -> 2
-            androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp < 360 -> 3
+            LocalDensity.current.fontScale > 1.3f -> 2
+            LocalConfiguration.current.screenWidthDp < 360 -> 3
             else -> 4
         }
         val tileRows = systemTiles.chunked(tileColumns)
@@ -146,8 +145,7 @@ internal fun ActionControlExpandedContent(
             ) {
                 for (tile in row) {
                     QuickControlChip(
-                        glyph = tile.toGlyph(),
-                        label = tile.title,
+                        tile = tile,
                         state = systemStates[tile],
                         modifier = Modifier.weight(1f),
                         onClick = { onSystemTileClick(tile) }
@@ -158,6 +156,8 @@ internal fun ActionControlExpandedContent(
                 }
             }
         }
+
+        // Optional Custom Actions
         if (customActions.isNotEmpty()) {
             Row(
                 modifier = Modifier
@@ -168,12 +168,14 @@ internal fun ActionControlExpandedContent(
                 for (action in customActions) {
                     ActionCustomChip(
                         action = action,
-                        modifier = Modifier.width(58.dp),
+                        modifier = Modifier.width(62.dp),
                         onClick = { onCustomActionClick(action.actionId) }
                     )
                 }
             }
         }
+
+        // Optional App Shortcuts
         if (apps.isNotEmpty()) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for (app in apps.take(4)) {
@@ -188,6 +190,8 @@ internal fun ActionControlExpandedContent(
                 }
             }
         }
+
+        // Optional Contacts
         if (contacts.isNotEmpty()) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 for (contact in contacts.take(4)) {
@@ -202,6 +206,8 @@ internal fun ActionControlExpandedContent(
                 }
             }
         }
+
+        // Brightness & Volume Sliders
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -211,14 +217,12 @@ internal fun ActionControlExpandedContent(
                 glyph = AppleGlyph.Sparkles,
                 value = brightnessLevel,
                 onValueChange = onBrightnessChange,
-                activeColor = Color.White,
                 modifier = Modifier.weight(1f)
             )
             ActionUtilitySlider(
                 glyph = AppleGlyph.Speaker,
                 value = mediaVolumeLevel,
                 onValueChange = onMediaVolumeChange,
-                activeColor = IslandColors.CapsuleCyan,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -227,14 +231,17 @@ internal fun ActionControlExpandedContent(
 
 @Composable
 internal fun ActionUtilityButton(glyph: AppleGlyph, onClick: () -> Unit) {
-    IslandIconAction(
-        glyph = glyph,
-        onClick = onClick,
-        visualSize = 28.dp,
-        touchTargetSize = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget,
-        iconSize = 15.dp,
-        contentDescription = if (glyph == AppleGlyph.Bell) "Open notifications" else "Open ${glyph.name.lowercase()}"
-    )
+    Box(
+        modifier = Modifier
+            .size(30.dp)
+            .clip(CircleShape)
+            .background(Color(0xFF22242D))
+            .border(0.5.dp, Color.White.copy(alpha = 0.12f), CircleShape)
+            .clickable(role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        AppleIcon(glyph = glyph, tint = Color.White.copy(alpha = 0.85f), size = 14.dp)
+    }
 }
 
 @Composable
@@ -242,17 +249,16 @@ internal fun ActionUtilitySlider(
     glyph: AppleGlyph,
     value: Float,
     onValueChange: (Float) -> Unit,
-    activeColor: Color = Color.White,
     modifier: Modifier = Modifier
 ) {
     val progress = value.coerceIn(0f, 1f)
 
     Box(
         modifier = modifier
-            .height(ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-            .clip(RoundedCornerShape(percent = 50))
-            .background(Color(0xFF222326))
-            .border(0.75.dp, Color(0x22FFFFFF), RoundedCornerShape(percent = 50))
+            .height(44.dp)
+            .clip(RoundedCornerShape(22.dp))
+            .background(Color(0xFF1A1C24))
+            .border(0.75.dp, Color.White.copy(alpha = 0.10f), RoundedCornerShape(22.dp))
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = { offset ->
@@ -269,34 +275,53 @@ internal fun ActionUtilitySlider(
                 }
             }
     ) {
+        val fillBrush = if (glyph == AppleGlyph.Sparkles) {
+            Brush.horizontalGradient(listOf(Color(0xFFFFD60A), Color(0xFFFFF3B0)))
+        } else {
+            Brush.horizontalGradient(listOf(Color(0xFF007AFF), Color(0xFF64D2FF)))
+        }
+
         if (progress > 0f) {
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(progress)
-                    .background(activeColor)
+                    .clip(RoundedCornerShape(22.dp))
+                    .background(fillBrush)
             )
         }
 
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            val iconTint = if (progress > 0.16f) Color(0xFF141416) else Color.White
-            AppleIcon(glyph = glyph, tint = iconTint, size = 15.dp)
+            val iconTint = if (progress > 0.18f) Color(0xFF0D0F14) else Color.White
+            AppleIcon(glyph = glyph, tint = iconTint, size = 16.dp)
 
-            val textTint = if (progress > 0.82f) Color(0xFF141416) else Color(0xB3FFFFFF)
+            val textTint = if (progress > 0.82f) Color(0xFF0D0F14) else Color.White.copy(alpha = 0.85f)
             Text(
                 text = "${(progress * 100).toInt()}%",
                 color = textTint,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.SemiBold
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = IslandReferenceFonts.Text
             )
         }
     }
+}
+
+internal fun tileActiveColor(tile: ActionSystemTile): Color = when (tile) {
+    ActionSystemTile.WIFI, ActionSystemTile.BLUETOOTH -> Color(0xFF007AFF) // Apple iOS Blue
+    ActionSystemTile.MOBILE_DATA, ActionSystemTile.HOTSPOT -> Color(0xFF34C759) // Apple iOS Green
+    ActionSystemTile.TORCH, ActionSystemTile.AUTO_BRIGHTNESS -> Color(0xFFFF9F0A) // Apple iOS Amber
+    ActionSystemTile.LOCATION -> Color(0xFF5856D6) // Apple iOS Indigo
+    ActionSystemTile.DO_NOT_DISTURB, ActionSystemTile.DARK_MODE -> Color(0xFFAF52DE) // Apple iOS Purple
+    ActionSystemTile.ROTATION_LOCK -> Color(0xFFFF3B30) // Apple iOS Red
+    ActionSystemTile.POWER_SAVER -> Color(0xFFFFCC00) // Apple iOS Yellow
+    else -> Color(0xFF007AFF)
 }
 
 internal fun ActionSystemTile.toGlyph(): AppleGlyph = when (this) {
@@ -332,16 +357,17 @@ internal fun ActionCustomChip(
 ) {
     Column(
         modifier = modifier
-            .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Brush.linearGradient(listOf(IslandColors.TimerCyan.copy(alpha = 0.28f), IslandColors.Purple.copy(alpha = 0.24f))))
+            .heightIn(min = 52.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(Brush.linearGradient(listOf(IslandColors.TimerCyan.copy(alpha = 0.22f), IslandColors.Purple.copy(alpha = 0.18f))))
+            .border(0.5.dp, IslandColors.TimerCyan.copy(alpha = 0.30f), RoundedCornerShape(14.dp))
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(vertical = 7.dp),
+            .padding(vertical = 7.dp, horizontal = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         AppleIcon(glyph = action.toGlyph(), tint = IslandColors.TimerCyan, size = 16.dp)
-        Text(text = action.label, color = Color.White, fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Text(text = action.label, color = Color.White, fontSize = 11.sp, fontFamily = IslandReferenceFonts.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -353,17 +379,18 @@ internal fun ActionAppChip(
 ) {
     Column(
         modifier = modifier
-            .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Brush.linearGradient(listOf(IslandColors.Purple.copy(alpha = 0.34f), IslandColors.Indigo.copy(alpha = 0.22f))))
+            .heightIn(min = 52.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(Brush.linearGradient(listOf(IslandColors.Purple.copy(alpha = 0.24f), IslandColors.Indigo.copy(alpha = 0.16f))))
+            .border(0.5.dp, IslandColors.Purple.copy(alpha = 0.30f), RoundedCornerShape(14.dp))
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(vertical = 7.dp),
+            .padding(vertical = 7.dp, horizontal = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(18.dp)
+                .size(20.dp)
                 .clip(CircleShape)
                 .background(IslandColors.Purple),
             contentAlignment = Alignment.Center
@@ -376,7 +403,7 @@ internal fun ActionAppChip(
                 contentDescription = app.appName
             )
         }
-        Text(text = app.appName, color = Color.White, fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Text(text = app.appName, color = Color.White, fontSize = 11.sp, fontFamily = IslandReferenceFonts.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
@@ -388,71 +415,73 @@ internal fun ActionContactChip(
 ) {
     Column(
         modifier = modifier
-            .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Brush.linearGradient(listOf(IslandColors.CapsuleGreen.copy(alpha = 0.32f), IslandColors.CapsuleCyan.copy(alpha = 0.18f))))
+            .heightIn(min = 52.dp)
+            .clip(RoundedCornerShape(14.dp))
+            .background(Brush.linearGradient(listOf(IslandColors.CapsuleGreen.copy(alpha = 0.22f), IslandColors.CapsuleCyan.copy(alpha = 0.14f))))
+            .border(0.5.dp, IslandColors.CapsuleGreen.copy(alpha = 0.30f), RoundedCornerShape(14.dp))
             .clickable(role = Role.Button, onClick = onClick)
-            .padding(vertical = 7.dp),
+            .padding(vertical = 7.dp, horizontal = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(3.dp)
     ) {
         ContactAvatar(
             name = contact.name,
             avatarUri = contact.photoUri,
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(20.dp),
             contentDescription = contact.name
         )
-        Text(text = contact.name, color = Color.White, fontSize = 11.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        Text(text = contact.name, color = Color.White, fontSize = 11.sp, fontFamily = IslandReferenceFonts.Text, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
 
 @Composable
 internal fun QuickControlChip(
-    glyph: AppleGlyph,
-    label: String,
+    tile: ActionSystemTile,
     state: Boolean?,
     modifier: Modifier,
     onClick: () -> Unit
 ) {
     val active = state == true
-    val unreadable = state == null
-    val accent = when {
-        active -> IslandColors.CapsuleCyan
-        unreadable -> Color(0xFFFFB340)
-        else -> IslandColors.TextSecondary
-    }
+    val activeColor = tileActiveColor(tile)
+
     Column(
         modifier = modifier
-            .heightIn(min = ai.emots.kishan_dynamic.ui.theme.AppTheme.island.minimumActionTarget)
-            .clip(RoundedCornerShape(12.dp))
+            .heightIn(min = 52.dp)
+            .clip(RoundedCornerShape(14.dp))
             .background(
-                when {
-                    active -> IslandColors.CapsuleCyan.copy(alpha = 0.24f)
-                    unreadable -> Color(0xFFFFB340).copy(alpha = 0.14f)
-                    else -> IslandColors.Gray6
-                }
+                if (active) activeColor.copy(alpha = 0.22f)
+                else Color(0xFF1E2028)
+            )
+            .border(
+                if (active) 0.75.dp else 0.5.dp,
+                if (active) activeColor.copy(alpha = 0.45f) else Color.White.copy(alpha = 0.08f),
+                RoundedCornerShape(14.dp)
             )
             .clickable(role = Role.Button, onClick = onClick)
             .padding(horizontal = 4.dp, vertical = 7.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(3.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Box(modifier = Modifier.size(16.dp)) {
-            AppleIcon(glyph = glyph, tint = accent, size = 16.dp)
-            if (unreadable) {
-                Box(
-                    modifier = Modifier
-                        .size(5.dp)
-                        .align(Alignment.TopEnd)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFFB340))
-                )
-            }
+        Box(
+            modifier = Modifier
+                .size(22.dp)
+                .clip(CircleShape)
+                .background(
+                    if (active) activeColor.copy(alpha = 0.25f)
+                    else Color.White.copy(alpha = 0.06f)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            AppleIcon(glyph = tile.toGlyph(), tint = if (active) activeColor else Color.White, size = 13.dp)
         }
         Text(
-            text = label,
-            color = if (active) Color.White else accent,
+            text = tile.title,
+            color = if (active) Color.White else Color.White.copy(alpha = 0.70f),
             fontSize = 11.sp,
+            fontWeight = if (active) FontWeight.SemiBold else FontWeight.Normal,
+            fontFamily = IslandReferenceFonts.Text,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -462,48 +491,148 @@ internal fun PremiumExpiryExpandedContent(
     hoursRemaining: Int,
     onControlAction: (IslandControlAction) -> Unit
 ) {
-    val tokens = ai.emots.kishan_dynamic.ui.theme.AppTheme.island
     Column(
-        modifier = Modifier.fillMaxWidth().padding(tokens.expandedContentInset),
-        verticalArrangement = Arrangement.spacedBy(tokens.expandedContentGap)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 18.dp, vertical = 14.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        // Identity row
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(tokens.expandedContentGap)
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Box(
-                modifier = Modifier.size(tokens.expandedIconSize).clip(CircleShape)
-                    .background(ai.emots.kishan_dynamic.ui.theme.AppTheme.colors.auroraPurchaseGradient()),
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(
+                        Brush.linearGradient(
+                            listOf(Color(0xFF9747FF), Color(0xFF5E5CE6))
+                        )
+                    )
+                    .border(
+                        0.75.dp,
+                        Color(0xFFBF5AF2).copy(alpha = 0.50f),
+                        RoundedCornerShape(13.dp)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
-                AppleIcon(glyph = AppleGlyph.Crown, tint = Color.White, size = tokens.compactIconSize)
+                AppleIcon(glyph = AppleGlyph.Crown, tint = Color(0xFFFFD60A), size = 20.dp)
             }
-            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(
-                ai.emots.kishan_dynamic.ui.theme.AppTheme.spacing.xs
-            )) {
-                AppText(
-                    text = "Aurora Pro access",
-                    style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.islandTitle,
-                    color = Color.White
-                )
-                AppText(
-                    text = if (hoursRemaining <= 0) "Your Pro access has ended." else "Your Pro access ends soon.",
-                    style = ai.emots.kishan_dynamic.ui.theme.AppTheme.typography.bodySmall,
-                    color = IslandColors.TextSecondary
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Aurora Pro",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = IslandReferenceFonts.Text
+                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
+                            .background(Color(0x33FFD60A))
+                            .border(0.5.dp, Color(0x80FFD60A), RoundedCornerShape(5.dp))
+                            .padding(horizontal = 5.dp, vertical = 1.5.dp)
+                    ) {
+                        Text(
+                            text = "ACTIVE",
+                            color = Color(0xFFFFD60A),
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = IslandReferenceFonts.Text
+                        )
+                    }
+                }
+                Text(
+                    text = if (hoursRemaining <= 0) "Your Pro access has ended." else "Pro features active • Renews in ${hoursRemaining}h",
+                    color = Color.White.copy(alpha = 0.70f),
+                    fontSize = 12.sp,
+                    fontFamily = IslandReferenceFonts.Text,
+                    maxLines = 1
                 )
             }
         }
-        androidx.compose.foundation.layout.BoxWithConstraints(Modifier.fillMaxWidth()) {
-            val stacked = maxWidth < 240.dp || androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
-            if (stacked) {
-                Column(verticalArrangement = Arrangement.spacedBy(tokens.compactContentGap)) {
-                    PremiumExpiryAction("Watch Ads", false, onControlAction)
-                    PremiumExpiryAction("Buy Premium", true, onControlAction)
+
+        // Perks micro-strip
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            PremiumPerkChip(text = "✦ 60 Islands", modifier = Modifier.weight(1f))
+            PremiumPerkChip(text = "✦ Zero Ads", modifier = Modifier.weight(1f))
+            PremiumPerkChip(text = "✦ Notch Tuner", modifier = Modifier.weight(1f))
+        }
+
+        // Action buttons row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            // Watch Ads button (+24h)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(38.dp)
+                    .clip(RoundedCornerShape(19.dp))
+                    .background(Color(0xFF22242F))
+                    .border(0.75.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(19.dp))
+                    .clickable(role = Role.Button) {
+                        onControlAction(IslandControlAction.PremiumWatchAd)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    AppleIcon(glyph = AppleGlyph.Play, tint = Color.White, size = 12.dp)
+                    Text(
+                        text = "Watch Ad (+24h)",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        fontFamily = IslandReferenceFonts.Text
+                    )
                 }
-            } else {
-                Row(horizontalArrangement = Arrangement.spacedBy(tokens.compactContentGap)) {
-                    PremiumExpiryAction("Watch Ads", false, onControlAction, Modifier.weight(1f))
-                    PremiumExpiryAction("Buy Premium", true, onControlAction, Modifier.weight(1f))
+            }
+
+            // Buy Premium button (Radiant Aurora gradient)
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(38.dp)
+                    .clip(RoundedCornerShape(19.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            listOf(Color(0xFF9747FF), Color(0xFF5E5CE6))
+                        )
+                    )
+                    .border(0.75.dp, Color(0xFFBF5AF2).copy(alpha = 0.60f), RoundedCornerShape(19.dp))
+                    .clickable(role = Role.Button) {
+                        onControlAction(IslandControlAction.PremiumBuy)
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    AppleIcon(glyph = AppleGlyph.Crown, tint = Color(0xFFFFD60A), size = 13.dp)
+                    Text(
+                        text = "Unlock Lifetime",
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = IslandReferenceFonts.Text
+                    )
                 }
             }
         }
@@ -511,14 +640,22 @@ internal fun PremiumExpiryExpandedContent(
 }
 
 @Composable
-private fun PremiumExpiryAction(
-    label: String, primary: Boolean, onAction: (IslandControlAction) -> Unit, modifier: Modifier = Modifier
-) {
-    ai.emots.kishan_dynamic.ui.kit.AppButton(
-        text = label,
-        onClick = { onAction(if (primary) IslandControlAction.PremiumBuy else IslandControlAction.PremiumWatchAd) },
-        modifier = modifier,
-        style = if (primary) ai.emots.kishan_dynamic.ui.kit.AppButtonStyle.AuroraPro
-            else ai.emots.kishan_dynamic.ui.kit.AppButtonStyle.Secondary
-    )
+private fun PremiumPerkChip(text: String, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(Color.White.copy(alpha = 0.06f))
+            .border(0.5.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(6.dp))
+            .padding(vertical = 3.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = text,
+            color = Color.White.copy(alpha = 0.65f),
+            fontSize = 9.5.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = IslandReferenceFonts.Text,
+            maxLines = 1
+        )
+    }
 }

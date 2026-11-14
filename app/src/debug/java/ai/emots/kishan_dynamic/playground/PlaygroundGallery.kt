@@ -216,6 +216,11 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
     val displayTargetR = if (selected in setOf(IslandDemoState.NotificationExpanded, IslandDemoState.NotificationImage) && displayTargetH >= 120f) 44.0f else target.radius
 
     val galleryNotifications = remember(selected, notificationFixtureMode, notificationQueueCount, addedNotifications, referenceMessages, context) {
+        if (RealWorldNotificationFixtures.isRealWorldMode(notificationFixtureMode)) {
+            (0 until notificationQueueCount).map { index ->
+                RealWorldNotificationFixtures.notification(notificationFixtureMode, index, context)
+            } + addedNotifications
+        } else {
         val baseList = when (notificationFixtureMode) {
             0 -> referenceMessages
             1 -> listOf(
@@ -259,6 +264,7 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
             list
         }
         expandedList + addedNotifications
+        }
     }
 
     val currentCategoryStates = remember(selectedCategoryIndex) {
@@ -821,7 +827,7 @@ fun PlaygroundGallery(initialState: IslandDemoState = IslandDemoState.Idle, onBa
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text("Fixture:", style = AppTheme.typography.caption, fontSize = 11.sp, color = AppTheme.colors.textSecondary)
-                    listOf("Figma 27:992 (126dp)", "Short Text (86dp)", "Multi-line", "Media").forEachIndexed { index, modeLabel ->
+                    RealWorldNotificationFixtures.modeLabels.forEachIndexed { index, modeLabel ->
                         AppChip(
                             label = modeLabel,
                             selected = notificationFixtureMode == index,

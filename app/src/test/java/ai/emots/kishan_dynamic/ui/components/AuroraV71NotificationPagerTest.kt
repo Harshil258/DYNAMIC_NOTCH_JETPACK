@@ -67,12 +67,14 @@ class AuroraV71NotificationPagerTest {
     // --- H02: 3-line Figma Mamad fixture sizing ---
     @Test
     fun h02_figmaMamadFixture_measuresAccuratelyWithoutClipping() {
+        // Mirrors FigmaReferenceFixtures: a MessagingStyle conversation with an
+        // attachment crop, i.e. the 126dp THUMBNAIL_ALERT recipe, not large media.
         val mamad = sampleNotification(
             id = "figma-selected",
             title = "Mamad",
             text = "Haji ina chie zadi\nto baz dahane mano\nservis kardi",
             hasImage = true
-        )
+        ).copy(isConversation = true, conversationTitle = "Mamad")
         val estimated = estimateNotificationPageHeight(mamad).value
         assertTrue("Figma 27:992 with image must measure ≥ 126dp, was $estimated", estimated >= 126.0f)
         val geometry = IslandFamilyGeometry.resolve(

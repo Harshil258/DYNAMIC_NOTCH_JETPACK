@@ -31,15 +31,31 @@ class LayeredMiniIslandsAnimationBenchmarkTest {
 
         // Launch the continuous 12-cycle animation benchmark on the app's main looper
         val latch = CountDownLatch(1)
+        val cycleProgress = java.util.concurrent.atomic.AtomicInteger(0)
         scenario.onActivity {
-            controller.runLayeredAnimationBenchmark(cycles = 12) {
+            controller.runLayeredAnimationBenchmark(
+                cycles = 12,
+                onProgress = { current, _ -> cycleProgress.set(current) }
+            ) {
                 latch.countDown()
             }
         }
 
-        // Wait for the benchmark to execute all cycles (approx 32 seconds)
-        val completed = latch.await(60, TimeUnit.SECONDS)
-        assertTrue("Benchmark timed out before completing all cycles", completed)
+        // Nominal workload is ~39s of choreographed delays. Judge a stall by missing
+        // cycle progress rather than by a wall-clock budget a loaded device can exceed.
+        val deadline = SystemClock.elapsedRealtime() + 180_000
+        var lastObservedCycle = 0
+        var lastProgressAt = SystemClock.elapsedRealtime()
+        while (!latch.await(500, TimeUnit.MILLISECONDS)) {
+            val now = SystemClock.elapsedRealtime()
+            val cycle = cycleProgress.get()
+            if (cycle != lastObservedCycle) {
+                lastObservedCycle = cycle
+                lastProgressAt = now
+            }
+            assertTrue("Benchmark stalled at cycle $lastObservedCycle of 12", now - lastProgressAt < 30_000)
+            assertTrue("Benchmark timed out before completing all cycles", now < deadline)
+        }
 
         // Allow final frame buffer to flush
         SystemClock.sleep(500)

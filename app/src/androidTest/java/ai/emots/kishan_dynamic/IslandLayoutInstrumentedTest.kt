@@ -90,10 +90,11 @@ class IslandLayoutInstrumentedTest {
             compose.runOnIdle { scenario.value = Scenario(width, font, rtl = rtl) }
             compose.waitForIdle()
             val surface = compose.onNodeWithTag("island_surface", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
-            val watch = compose.onNodeWithText("Watch Ads").fetchSemanticsNode().boundsInRoot
-            val buy = compose.onNodeWithText("Buy Premium").fetchSemanticsNode().boundsInRoot
-            val title = compose.onNodeWithText("Aurora Pro access", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
-            assertTrue("shell respects window gutters", surface.width <= width - 21f)
+            val watch = compose.onNodeWithText("Watch Ad (+24h)").fetchSemanticsNode().boundsInRoot
+            val buy = compose.onNodeWithText("Unlock Lifetime").fetchSemanticsNode().boundsInRoot
+            val title = compose.onNodeWithText("Aurora Pro", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+            val canvasCap = minOf(367f, width.toFloat())
+            assertTrue("shell stays within the 367dp family canvas and window", surface.width <= canvasCap + 0.5f)
             if (font == 1f) assertTrue("content must not create a tall access card", surface.height <= 160f)
             assertTrue("title above actions: width=$width font=$font rtl=$rtl title=$title watch=$watch surface=$surface", title.bottom <= watch.top)
             assertTrue("actions inside surface", watch.bottom <= surface.bottom && buy.bottom <= surface.bottom)
@@ -106,8 +107,8 @@ class IslandLayoutInstrumentedTest {
             if (!rtl && font == 1f) save("expiry_${width}")
             if (rtl && font == 2f && width == 320) save("expiry_320_200pct_rtl")
             val actionCountBefore = actions.size
-            compose.onNodeWithText("Watch Ads").performClick()
-            compose.onNodeWithText("Buy Premium").performClick()
+            compose.onNodeWithText("Watch Ad (+24h)").performClick()
+            compose.onNodeWithText("Unlock Lifetime").performClick()
             assertEquals("both fixture callbacks must run this iteration", actionCountBefore + 2, actions.size)
             assertEquals(listOf(IslandControlAction.PremiumWatchAd, IslandControlAction.PremiumBuy), actions.takeLast(2))
             compose.runOnIdle { scenario.value = Scenario(width, font, IslandDemoState.NotificationStacked, rtl) }

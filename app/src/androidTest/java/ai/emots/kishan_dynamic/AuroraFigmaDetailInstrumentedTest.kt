@@ -79,8 +79,21 @@ class AuroraFigmaDetailInstrumentedTest {
             compose.waitForIdle()
             Assert.assertEquals("arrival must preserve source identity", "figma-selected", selectedKey)
             compose.onNodeWithText("Mamad").assertIsDisplayed()
-            compose.runOnIdle { sources = sources.map { if (it.id == selectedKey) it.copy(title = "Updated selected source") else it } }
+            // Conversation sources headline from conversationTitle, so an in-place
+            // update must carry the fields the adaptive card actually renders.
+            compose.runOnIdle {
+                sources = sources.map {
+                    if (it.id == selectedKey) it.copy(
+                        title = "Updated selected source",
+                        conversationTitle = "Updated selected source",
+                        text = "Updated body copy"
+                    ) else it
+                }
+            }
+            compose.waitForIdle()
             compose.onNodeWithText("Updated selected source").assertIsDisplayed()
+            compose.onNodeWithText("Updated body copy").assertIsDisplayed()
+            compose.onNodeWithText("Mamad").assertDoesNotExist()
             compose.runOnIdle { sources = sources.filterNot { it.id == selectedKey }; selectedKey = "figma-next" }
             compose.waitForIdle()
             compose.onNodeWithText("Project update").assertIsDisplayed()

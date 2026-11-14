@@ -17,11 +17,14 @@ object FigmaReferenceFixtures {
     fun resourceUri(context: Context, id: Int) = "android.resource://${context.packageName}/$id"
     fun messages(context: Context) = listOf(
         NotificationInfo("figma-previous", packageName, "Figma", "Design team", "The previous update is ready.",
-            timestamp = 1, picturePath = resourceUri(context, R.drawable.figma_reference_message)),
+            timestamp = 1, picturePath = resourceUri(context, R.drawable.figma_reference_message),
+            isConversation = true, conversationTitle = "Design team"),
         NotificationInfo("figma-selected", packageName, "Figma", "Mamad", "Haji ina chie zadi\nto baz dahane mano\nservis kardi",
-            timestamp = 2, picturePath = resourceUri(context, R.drawable.figma_reference_message)),
+            timestamp = 2, picturePath = resourceUri(context, R.drawable.figma_reference_message),
+            isConversation = true, conversationTitle = "Mamad"),
         NotificationInfo("figma-next", packageName, "Figma", "Project update", "The next update is ready.",
-            timestamp = 3, picturePath = resourceUri(context, R.drawable.figma_reference_message))
+            timestamp = 3, picturePath = resourceUri(context, R.drawable.figma_reference_message),
+            isConversation = true, conversationTitle = "Project update")
     )
     fun caller(context: Context) = ContactInfo("Tamia Castillo", "", resourceUri(context, R.drawable.figma_reference_caller))
     fun music(context: Context) = MusicTrack("Heat Waves", "Grass Animals", packageName,

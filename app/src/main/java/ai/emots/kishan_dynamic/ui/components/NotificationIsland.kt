@@ -1,11 +1,9 @@
 package ai.emots.kishan_dynamic.ui.components
 
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -15,6 +13,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.foundation.interaction.DragInteraction
@@ -32,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.focus.FocusRequester
@@ -48,22 +47,21 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
-import ai.emots.kishan_dynamic.ui.components.AppleIcon
-import ai.emots.kishan_dynamic.ui.components.AppleGlyph
 import ai.emots.kishan_dynamic.ui.theme.AppTheme
-import ai.emots.kishan_dynamic.ui.components.AppText
 import ai.emots.kishan_dynamic.data.model.NotificationActionInfo
 import ai.emots.kishan_dynamic.data.model.NotificationInfo
 import ai.emots.kishan_dynamic.data.notification.NotificationChronometerPolicy
+import ai.emots.kishan_dynamic.data.notification.NotificationLayoutPolicy
 import ai.emots.kishan_dynamic.ui.theme.IslandColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.rememberUpdatedState
+
+/** Quiet window separating a true pager rest from the drag-to-fling handoff gap. */
+private const val PagerSettleGraceMs = 120L
 
 /** Injection seam keeps debug/editor fixtures out of the production in-memory draft store. */
 val LocalIslandReplyDraftStore = androidx.compose.runtime.staticCompositionLocalOf {
@@ -71,50 +69,8 @@ val LocalIslandReplyDraftStore = androidx.compose.runtime.staticCompositionLocal
 }
 
 /**
- * Compact stacked notification main pill
- */
-@Composable
-fun CompactNotificationIslandMain(
-    appName: String = "WhatsApp",
-    sender: String = "John Doe",
-    modifier: Modifier = Modifier
-) {
-    // The real capsule is 126pt wide: a single app badge plus a short label.
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(7.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .size(23.dp)
-                .clip(CircleShape)
-                .background(Color(0xFF25D366)),
-            contentAlignment = Alignment.Center
-        ) {
-            AppleIcon(
-                glyph = AppleGlyph.Bell,
-                tint = Color.White,
-                size = 12.dp
-            )
-        }
-
-        AppText(
-            text = sender,
-            style = AppTheme.typography.islandSubtitle,
-            color = Color.White,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
-
-/**
  * Inline reply input box with authentic Apple styling and direct FocusRequester.
+ * Drafts persist per notification key + action id and never cross source identity.
  */
 @Composable
 fun InlineReplyBox(
@@ -122,7 +78,6 @@ fun InlineReplyBox(
     onSendReply: (String) -> Unit,
     onCancelReply: () -> Unit,
     notificationKey: String? = null,
-    scale: Float = 1f,
     modifier: Modifier = Modifier
 ) {
     val draftStore = LocalIslandReplyDraftStore.current
@@ -137,15 +92,15 @@ fun InlineReplyBox(
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp * scale)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(14.dp * scale))
+                .clip(RoundedCornerShape(14.dp))
                 .background(Color(0xFF242426))
-                .border(0.75.dp, Color(0x33FFFFFF), RoundedCornerShape(14.dp * scale))
-                .padding(horizontal = 12.dp * scale, vertical = 8.dp * scale)
+                .border(0.75.dp, Color(0x33FFFFFF), RoundedCornerShape(14.dp))
+                .padding(horizontal = 12.dp, vertical = 8.dp)
         ) {
             BasicTextField(
                 value = replyText,
@@ -155,7 +110,7 @@ fun InlineReplyBox(
                     .focusRequester(focusRequester),
                 textStyle = androidx.compose.ui.text.TextStyle(
                     color = Color.White,
-                    fontSize = (13.5f * scale).sp,
+                    fontSize = 13.5.sp,
                     fontWeight = FontWeight.Normal
                 ),
                 cursorBrush = SolidColor(Color(0xFF007AFF)),
@@ -165,7 +120,7 @@ fun InlineReplyBox(
                         Text(
                             text = "Reply to ${replyAction.label.ifBlank { "message" }}...",
                             color = Color(0xFF8E8E93),
-                            fontSize = (13.5f * scale).sp
+                            fontSize = 13.5.sp
                         )
                     }
                     innerTextField()
@@ -180,37 +135,39 @@ fun InlineReplyBox(
         ) {
             Box(
                 modifier = Modifier
+                    .heightIn(min = 44.dp)
                     .clip(RoundedCornerShape(percent = 50))
                     .background(Color(0xFF3A3A3C))
-                    .clickable(onClick = onCancelReply)
-                    .padding(horizontal = 14.dp * scale, vertical = 6.dp * scale),
+                    .clickable(role = Role.Button, onClick = onCancelReply)
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Cancel",
                     color = Color.White,
-                    fontSize = (12.5f * scale).sp,
+                    fontSize = 12.5.sp,
                     fontWeight = FontWeight.Medium
                 )
             }
 
-            Spacer(modifier = Modifier.width(8.dp * scale))
+            Spacer(modifier = Modifier.width(8.dp))
 
             val canSend = replyText.isNotBlank()
             Box(
                 modifier = Modifier
+                    .heightIn(min = 44.dp)
                     .clip(RoundedCornerShape(percent = 50))
                     .background(if (canSend) Color(0xFF007AFF) else Color(0xFF007AFF).copy(alpha = 0.35f))
-                    .clickable(enabled = canSend, role = androidx.compose.ui.semantics.Role.Button) {
+                    .clickable(enabled = canSend, role = Role.Button) {
                         onSendReply(replyText.trim())
                     }
-                    .padding(horizontal = 16.dp * scale, vertical = 6.dp * scale),
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = "Send",
                     color = if (canSend) Color.White else Color.White.copy(alpha = 0.5f),
-                    fontSize = (12.5f * scale).sp,
+                    fontSize = 12.5.sp,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -219,20 +176,18 @@ fun InlineReplyBox(
 }
 
 /**
- * Notification expanded card (86dp capsule or 166dp inline reply sheet)
- * 
- * Layout: App icon / Avatar (44dp circle) + App name & Sender & Message on left,
- * Charcoal pill button [Reply] on right.
+ * Compatibility bridge for legacy callers and instrumented fixtures.
+ * Builds a typed source from the historical parameter list and delegates to the
+ * universal [AdaptiveNotificationCard]; no second rendering path exists.
  */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NotificationIslandExpanded(
     notificationKey: String? = null,
     appName: String = "WhatsApp",
     appPackageName: String? = null,
     imagePath: String? = null,
-    sender: String = "Tamia Castillo",
-    message: String = "Hey, are you free tonight? 🍕",
+    sender: String = "",
+    message: String = "",
     expandedText: String? = null,
     inboxLines: List<String> = emptyList(),
     isCardExpanded: Boolean = false,
@@ -259,184 +214,43 @@ fun NotificationIslandExpanded(
     picturePath: String? = null,
     modifier: Modifier = Modifier
 ) {
-    val density = LocalDensity.current
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = 16.dp * scale
-        val vPad = 12.dp * scale
+    val effectiveActions = if (actions.isNotEmpty()) actions else if (actionLabel.isNotBlank()) {
+        listOf(NotificationActionInfo(id = "legacy-action", label = actionLabel))
+    } else emptyList()
 
-        if (isReplying && replyAction != null) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .onSizeChanged { size ->
-                        with(density) {
-                            onHeightChange?.invoke(size.height.toDp())
-                        }
-                    }
-                    .padding(horizontal = hPad, vertical = vPad),
-                verticalArrangement = Arrangement.spacedBy(8.dp * scale)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(7.dp * scale),
-                        modifier = Modifier.weight(1f, fill = false)
-                    ) {
-                        NotificationArtwork(
-                            imagePath = imagePath,
-                            packageName = appPackageName,
-                            modifier = Modifier
-                                .size(18.dp * scale)
-                                .clip(RoundedCornerShape(4.dp * scale)),
-                            contentDescription = "$appName icon"
-                        )
-                        AppText(
-                            text = if (pagerLabel == null) "$appName · $sender" else "$appName · $sender · $pagerLabel",
-                            style = AppTheme.typography.caption,
-                            fontSize = (11.5f * scale).sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
-                    }
+    val source = NotificationInfo(
+        id = notificationKey ?: "expanded-preview",
+        packageName = appPackageName.orEmpty(),
+        appName = appName,
+        title = sender,
+        text = message,
+        expandedText = expandedText ?: message,
+        inboxLines = inboxLines,
+        imagePath = imagePath,
+        picturePath = picturePath,
+        actions = effectiveActions,
+        progress = progress?.let { (it.coerceIn(0f, 1f) * 100).toInt() } ?: 0,
+        progressMax = if (progress != null) 100 else 0,
+        isProgressIndeterminate = isProgressIndeterminate,
+        showChronometer = showChronometer,
+        chronometerBaseElapsedRealtime = chronometerBaseElapsedRealtime,
+        chronometerCountDown = chronometerCountDown
+    )
 
-                    if (onDismiss != null) {
-                        Box(
-                            modifier = Modifier
-                                .size(24.dp * scale)
-                                .clip(CircleShape)
-                                .background(Color(0xFF2C2C2E))
-                                .border(0.5.dp, Color.White.copy(alpha = 0.15f), CircleShape)
-                                .clickable(onClick = onDismiss),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AppleIcon(
-                                glyph = AppleGlyph.Close,
-                                tint = Color(0xFFA4A4A9),
-                                size = 9.dp * scale
-                            )
-                        }
-                    }
-                }
-
-                if (message.isNotBlank()) {
-                    AppText(
-                        text = message,
-                        style = AppTheme.typography.caption,
-                        fontSize = (12.5f * scale).sp,
-                        color = Color(0xFFDDDDDD),
-                        maxLines = 2,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                    )
-                }
-
-                InlineReplyBox(
-                    notificationKey = notificationKey,
-                    replyAction = replyAction,
-                    onSendReply = onSendReply,
-                    onCancelReply = onCancelReply,
-                    scale = scale
-                )
-            }
-        } else {
-            val tokens = AppTheme.island
-            val hasPicture = picturePath != null
-            val stackArtwork = hasPicture && (density.fontScale > 1.3f || maxWidth < 260.dp)
-            val vPad = if (hasPicture) tokens.notificationContentInset else 14.dp
-            val hPad = if (hasPicture) tokens.notificationContentInset else 16.dp
-            val bottomPad = if (hasPicture) tokens.notificationContentInset else if (actions.isNotEmpty() || actionLabel.isNotBlank()) 12.dp else 14.dp
-            Column(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                    .onSizeChanged { size -> with(density) { onHeightChange?.invoke(size.height.toDp()) } }
-                    .semantics {
-                        contentDescription = appName
-                        if (onDismiss != null) customActions = listOf(
-                            CustomAccessibilityAction("Dismiss notification") { onDismiss(); true })
-                    }
-                    .padding(start = hPad, end = if (pagerLabel != null && !hasPicture) 36.dp else hPad, top = vPad, bottom = bottomPad),
-                verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)
-            ) {
-                val artwork: @Composable () -> Unit = {
-                    NotificationArtwork(imagePath = picturePath ?: imagePath, packageName = appPackageName,
-                        modifier = (if (picturePath != null) Modifier.size(tokens.notificationImageWidth, tokens.notificationImageHeight)
-                            .clip(RoundedCornerShape(tokens.notificationImageCorner))
-                            else Modifier.size(tokens.callAvatarSize).clip(CircleShape)),
-                        contentDescription = "$appName image")
-                }
-                val messageCopy: @Composable () -> Unit = {
-                    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)) {
-                        AppText(text = sender, style = AppTheme.typography.islandTitle,
-                            fontFamily = ai.emots.kishan_dynamic.ui.theme.IslandReferenceFonts.Display,
-                            fontSize = 16.sp, lineHeight = 19.sp,
-                            color = Color.White, fontWeight = FontWeight.Medium)
-                        val fullMessageText = when {
-                            inboxLines.isNotEmpty() -> inboxLines.joinToString("\n")
-                            !expandedText.isNullOrBlank() -> expandedText
-                            else -> message
-                        }
-                        if (fullMessageText.isNotBlank()) AppText(text = fullMessageText,
-                            style = AppTheme.typography.body, fontFamily = ai.emots.kishan_dynamic.ui.theme.IslandReferenceFonts.Display,
-                            fontSize = 16.sp, lineHeight = 17.sp,
-                            fontWeight = FontWeight.Light, letterSpacing = (-.075).sp, color = IslandColors.TextSecondary)
-                        if (showChronometer && chronometerBaseElapsedRealtime > 0L) {
-                            NotificationChronometerText(baseElapsedRealtime = chronometerBaseElapsedRealtime,
-                                countDown = chronometerCountDown)
-                        }
-                        if (progress != null || isProgressIndeterminate) {
-                            if (progress != null) androidx.compose.material3.LinearProgressIndicator(
-                                progress = { progress.coerceIn(0f, 1f) },
-                                modifier = Modifier.fillMaxWidth(), color = Color.White)
-                            else androidx.compose.material3.LinearProgressIndicator(
-                                modifier = Modifier.fillMaxWidth(), color = Color.White)
-                        }
-                    }
-                }
-                if (stackArtwork) {
-                    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.md)) {
-                        artwork()
-                        messageCopy()
-                    }
-                } else {
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(tokens.notificationImageTextGap)) {
-                        artwork()
-                        Box(Modifier.weight(1f)) { messageCopy() }
-                    }
-                }
-                if (actions.isNotEmpty() || actionLabel.isNotBlank()) {
-                    FlowRow(
-                        Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm),
-                        verticalArrangement = Arrangement.spacedBy(AppTheme.spacing.xs)
-                    ) {
-                        if (actions.isNotEmpty()) {
-                            actions.forEach { action ->
-                                NotificationActionButton(
-                                    action = action,
-                                    label = action.label,
-                                    scale = 1f,
-                                    onClick = { onActionSelected(action) }
-                                )
-                            }
-                        } else {
-                            NotificationActionButton(
-                                label = actionLabel,
-                                scale = 1f,
-                                onClick = onAction
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    AdaptiveNotificationCard(
+        notification = source,
+        modifier = modifier,
+        pagerLabel = pagerLabel,
+        isReplying = isReplying,
+        replyAction = replyAction,
+        onSendReply = onSendReply,
+        onCancelReply = onCancelReply,
+        onActionSelected = { action ->
+            if (actions.isEmpty() && action.id == "legacy-action") onAction() else onActionSelected(action)
+        },
+        onDismiss = onDismiss,
+        onHeightChange = onHeightChange
+    )
 }
 
 @Composable
@@ -551,555 +365,23 @@ fun IslandActionChip(
     }
 }
 
-@Composable
-private fun NotificationActionButton(
-    action: NotificationActionInfo? = null,
-    label: String = action?.label.orEmpty(),
-    scale: Float = 1f,
-    onClick: () -> Unit
-) {
-    var inFlight by remember { mutableStateOf(false) }
-    val isDestructive = action?.isDestructive == true ||
-        label.contains("Dismiss", ignoreCase = true) ||
-        label.contains("Delete", ignoreCase = true) ||
-        label.contains("Decline", ignoreCase = true) ||
-        label.contains("Cancel", ignoreCase = true)
-    val isReply = action?.isReply == true || label.contains("Reply", ignoreCase = true)
-    val isPrimary = isReply ||
-        label.contains("Open", ignoreCase = true) ||
-        label.contains("Join", ignoreCase = true) ||
-        label.contains("Copy", ignoreCase = true) ||
-        label.contains("Accept", ignoreCase = true)
-
-    val style = when {
-        isDestructive -> IslandActionStyle.Destructive
-        isPrimary -> IslandActionStyle.Primary
-        else -> IslandActionStyle.Secondary
-    }
-    val accent = when {
-        isDestructive -> IslandSemanticAccent.Red
-        isReply -> IslandSemanticAccent.Blue
-        isPrimary -> IslandSemanticAccent.Green
-        else -> IslandSemanticAccent.Neutral
-    }
-    val glyph = when {
-        isReply -> AppleGlyph.Chat
-        label.contains("Call", ignoreCase = true) -> AppleGlyph.Phone
-        isDestructive -> AppleGlyph.Close
-        label.contains("Open", ignoreCase = true) -> AppleGlyph.ChevronRight
-        label.contains("Copy", ignoreCase = true) -> AppleGlyph.Check
-        else -> null
-    }
-
-    IslandActionPill(
-        label = label,
-        onClick = {
-            if (!inFlight) {
-                inFlight = true
-                onClick()
-            }
-        },
-        glyph = glyph,
-        style = style,
-        accent = accent,
-        visualHeight = (36.dp * scale).coerceAtLeast(32.dp),
-        minTouchTarget = 48.dp
-    )
-}
-
-@Composable
-private fun NotificationPagerButton(
-    label: String,
-    scale: Float,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size((28.dp * scale).coerceAtLeast(24.dp))
-            .clip(CircleShape)
-            .background(Color(0xFF2C2C2E))
-            .border(0.75.dp, Color.White.copy(alpha = 0.15f), CircleShape)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(label, color = Color.White, fontSize = 13.sp * scale, fontWeight = FontWeight.SemiBold)
-    }
-}
-
-/**
- * Specialized visual template styles derived from iOS 17 and reference usecases.
- */
+/** Legacy presentation taxonomy, retained for classification diagnostics. */
 typealias NotificationTemplateType = ai.emots.kishan_dynamic.data.notification.NotificationPresentationType
 
-/**
- * Intelligently classifies an incoming notification into its optimal Dynamic Island presentation.
- */
 fun resolveNotificationTemplate(notification: NotificationInfo): NotificationTemplateType {
     return ai.emots.kishan_dynamic.data.notification.NotificationPresentationPolicy.classify(notification)
 }
 
-/**
- * Navigation Card Template: iOS Maps turn guidance with prominent direction arrow,
- * high-contrast white maneuver instructions, and ETA metrics.
- */
-@Composable
-fun NotificationNavigationCard(
-    notification: NotificationInfo,
-    onAction: (() -> Unit)? = null,
-    onDismiss: (() -> Unit)? = null,
-    pagerLabel: String? = null,
-    onHeightChange: ((androidx.compose.ui.unit.Dp) -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    val density = LocalDensity.current
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (16.dp * scale)
-        val vPad = (12.dp * scale)
-        val iconSize = (40.dp * scale)
-
-        val titleLower = notification.title.lowercase()
-        val textLower = notification.text.lowercase()
-        val glyph = when {
-            titleLower.contains("left") || textLower.contains("left") -> AppleGlyph.NavigationLeft
-            titleLower.contains("right") || textLower.contains("right") -> AppleGlyph.NavigationRight
-            else -> AppleGlyph.NavigationStraight
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .onSizeChanged { size ->
-                    with(density) {
-                        onHeightChange?.invoke(size.height.toDp())
-                    }
-                }
-                .padding(
-                    start = hPad,
-                    end = hPad,
-                    top = vPad,
-                    bottom = if (pagerLabel != null) vPad + 14.dp else vPad
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(iconSize)
-                        .clip(RoundedCornerShape(12.dp * scale))
-                        .background(Color(0xFF34C759)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = glyph,
-                        tint = Color.White,
-                        size = 24.dp * scale
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    AppText(
-                        text = if (pagerLabel == null) notification.appName else "${notification.appName} · $pagerLabel",
-                        style = AppTheme.typography.caption,
-                        fontSize = (11f * scale).sp,
-                        color = Color(0xFFA4A4A9),
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(1.dp * scale))
-                    AppText(
-                        text = notification.title.ifBlank { "Turn Guidance" },
-                        style = AppTheme.typography.islandTitle,
-                        fontSize = (16.5f * scale).sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                    )
-                    if (notification.text.isNotBlank() || notification.subText != null) {
-                        Spacer(modifier = Modifier.height(1.dp * scale))
-                        AppText(
-                            text = listOfNotNull(notification.text.takeIf { it.isNotBlank() }, notification.subText).joinToString(" · "),
-                            style = AppTheme.typography.caption,
-                            fontSize = (11.5f * scale).sp,
-                            color = Color(0xFF9A9A9A),
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.width(10.dp * scale))
-
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp * scale)
-            ) {
-                val action = notification.actions.firstOrNull()
-                NotificationActionButton(
-                    label = action?.label ?: "Route",
-                    scale = scale,
-                    onClick = { onAction?.invoke() }
-                )
-                if (onDismiss != null && notification.isClearable) {
-                    AppText(
-                        text = "Dismiss",
-                        style = AppTheme.typography.caption,
-                        color = Color(0xFF8E8E93),
-                        modifier = Modifier.clickable(onClick = onDismiss)
-                    )
-                }
-            }
-        }
-    }
-}
+/** First-frame estimate only; measured content heights are authoritative. */
+internal fun estimateNotificationPageHeight(item: NotificationInfo, isReplying: Boolean = false): androidx.compose.ui.unit.Dp =
+    NotificationLayoutPolicy.estimatePageHeight(item, isReplying)
 
 /**
- * Transport / Rideshare Card Template: Driver details, car glyph, ETA badge,
- * and quick contact action pill.
+ * Horizontal notification pager — the approved v7.1 interaction contract:
+ * stable per-source keys, settled-page selection commit, non-collapsing drag
+ * height, per-source measured heights, and the accessible count/dot rail.
+ * Every page renders through the single universal [AdaptiveNotificationCard].
  */
-@Composable
-fun NotificationTransportCard(
-    notification: NotificationInfo,
-    onAction: (() -> Unit)? = null,
-    onDismiss: (() -> Unit)? = null,
-    pagerLabel: String? = null,
-    onHeightChange: ((androidx.compose.ui.unit.Dp) -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    val density = LocalDensity.current
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (16.dp * scale)
-        val vPad = (12.dp * scale)
-        val iconSize = (40.dp * scale)
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .onSizeChanged { size ->
-                    with(density) {
-                        onHeightChange?.invoke(size.height.toDp())
-                    }
-                }
-                .padding(
-                    start = hPad,
-                    end = hPad,
-                    top = vPad,
-                    bottom = if (pagerLabel != null) vPad + 14.dp else vPad
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(iconSize)
-                        .clip(CircleShape)
-                        .background(Color(0xFF2C2C2E))
-                        .border(0.75.dp, Color(0x33FFFFFF), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    AppleIcon(
-                        glyph = AppleGlyph.Car,
-                        tint = Color.White,
-                        size = 22.dp * scale
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    AppText(
-                        text = if (pagerLabel == null) notification.appName else "${notification.appName} · $pagerLabel",
-                        style = AppTheme.typography.caption,
-                        fontSize = (11f * scale).sp,
-                        color = Color(0xFFA4A4A9),
-                        fontWeight = FontWeight.Medium
-                    )
-                    Spacer(modifier = Modifier.height(1.dp * scale))
-                    AppText(
-                        text = notification.title.ifBlank { "Ride In Progress" },
-                        style = AppTheme.typography.islandTitle,
-                        fontSize = (16.5f * scale).sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                    )
-                    if (notification.text.isNotBlank() || notification.subText != null) {
-                        Spacer(modifier = Modifier.height(1.dp * scale))
-                        AppText(
-                            text = listOfNotNull(notification.text.takeIf { it.isNotBlank() }, notification.subText).joinToString(" · "),
-                            style = AppTheme.typography.caption,
-                            fontSize = (11.5f * scale).sp,
-                            color = Color(0xFF34C759),
-                            fontWeight = FontWeight.SemiBold,
-                            maxLines = 1,
-                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.width(10.dp * scale))
-
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp * scale)
-            ) {
-                val action = notification.actions.firstOrNull()
-                NotificationActionButton(
-                    label = action?.label ?: "Details",
-                    scale = scale,
-                    onClick = { onAction?.invoke() }
-                )
-                if (onDismiss != null && notification.isClearable) {
-                    AppText(
-                        text = "Dismiss",
-                        style = AppTheme.typography.caption,
-                        color = Color(0xFF8E8E93),
-                        modifier = Modifier.clickable(onClick = onDismiss)
-                    )
-                }
-            }
-        }
-    }
-}
-
-/**
- * Progress / Download Card Template: Horizontal progress bar, percentage readout,
- * throughput speed, and cancel/pause control.
- */
-@Composable
-fun NotificationProgressCard(
-    notification: NotificationInfo,
-    onAction: (() -> Unit)? = null,
-    onDismiss: (() -> Unit)? = null,
-    pagerLabel: String? = null,
-    onHeightChange: ((androidx.compose.ui.unit.Dp) -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    val density = LocalDensity.current
-    androidx.compose.foundation.layout.BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
-        val scale = (maxWidth / 367.dp).coerceIn(0.68f, 1.15f)
-        val hPad = (16.dp * scale)
-        val vPad = (12.dp * scale)
-        val iconSize = (40.dp * scale)
-
-        val progressRatio = if (notification.progressMax > 0) {
-            (notification.progress.toFloat() / notification.progressMax.toFloat()).coerceIn(0f, 1f)
-        } else null
-        val percentText = progressRatio?.let { "${(it * 100).toInt()}%" } ?: "Working"
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .onSizeChanged { size ->
-                    with(density) {
-                        onHeightChange?.invoke(size.height.toDp())
-                    }
-                }
-                .padding(
-                    start = hPad,
-                    end = hPad,
-                    top = vPad,
-                    bottom = if (pagerLabel != null) vPad + 14.dp else vPad
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(iconSize)
-                        .clip(RoundedCornerShape(12.dp * scale))
-                        .background(Color(0xFF2C2C2E)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    PackageIcon(
-                        packageName = notification.packageName,
-                        modifier = Modifier
-                            .size(iconSize * 0.72f)
-                            .clip(CircleShape),
-                        contentDescription = "${notification.appName} icon"
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp * scale))
-
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    val effectiveCaption = if (pagerLabel == null) {
-                        notification.appName
-                    } else {
-                        "${notification.appName} · $pagerLabel"
-                    }
-                    val effectiveTitle = if (notification.title.isNotBlank() &&
-                        !notification.title.equals(notification.appName, ignoreCase = true)
-                    ) {
-                        notification.title
-                    } else if (notification.text.isNotBlank()) {
-                        notification.text
-                    } else {
-                        "Progress"
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AppText(
-                            text = effectiveCaption,
-                            style = AppTheme.typography.caption,
-                            fontSize = (11f * scale).sp,
-                            color = Color(0xFFA4A4A9),
-                            fontWeight = FontWeight.Medium
-                        )
-                        AppText(
-                            text = percentText,
-                            style = AppTheme.typography.caption,
-                            fontSize = (11f * scale).sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(1.dp * scale))
-                    AppText(
-                        text = effectiveTitle,
-                        style = AppTheme.typography.islandTitle,
-                        fontSize = (15.5f * scale).sp,
-                        color = Color.White,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(5.dp * scale))
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(3.5.dp * scale)
-                            .clip(RoundedCornerShape(percent = 50))
-                            .background(Color(0x553A3A3C))
-                    ) {
-                        if (progressRatio != null) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(progressRatio)
-                                    .fillMaxSize()
-                                    .background(Color.White)
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.5f)
-                                    .fillMaxSize()
-                                    .background(Color.White)
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.width(10.dp * scale))
-
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(4.dp * scale)
-            ) {
-                val action = notification.actions.firstOrNull()
-                NotificationActionButton(
-                    label = action?.label ?: "Cancel",
-                    scale = scale,
-                    onClick = { onAction?.invoke() }
-                )
-                if (onDismiss != null && notification.isClearable) {
-                    AppText(
-                        text = "Dismiss",
-                        style = AppTheme.typography.caption,
-                        color = Color(0xFF8E8E93),
-                        modifier = Modifier.clickable(onClick = onDismiss)
-                    )
-                }
-            }
-        }
-    }
-}
-
-/**
- * Picture Notification Card Template: Visual media thumbnail with high-fidelity styling.
- */
-@Composable
-fun NotificationPictureCard(
-    notification: NotificationInfo,
-    onAction: (() -> Unit)? = null,
-    onDismiss: (() -> Unit)? = null,
-    isReplying: Boolean = false,
-    replyAction: NotificationActionInfo? = null,
-    onSendReply: (String) -> Unit = {},
-    onCancelReply: () -> Unit = {},
-    pagerLabel: String? = null,
-    isCardExpanded: Boolean = true,
-    onToggleExpand: (() -> Unit)? = null,
-    onHeightChange: ((androidx.compose.ui.unit.Dp) -> Unit)? = null,
-    onActionSelected: ((NotificationActionInfo) -> Unit)? = null,
-    modifier: Modifier = Modifier
-) {
-    NotificationIslandExpanded(
-        notificationKey = notification.id, appName = notification.appName,
-        appPackageName = notification.packageName, imagePath = notification.imagePath,
-        picturePath = notification.picturePath ?: notification.imagePath,
-        sender = notification.title.ifBlank { notification.appName }, message = notification.text,
-        expandedText = notification.expandedText, inboxLines = notification.inboxLines,
-        isCardExpanded = isCardExpanded, onToggleExpand = onToggleExpand,
-        onDismiss = onDismiss, actionLabel = "", actions = notification.actions,
-        onActionSelected = { action -> onActionSelected?.invoke(action) ?: onAction?.invoke() },
-        pagerLabel = pagerLabel, isReplying = isReplying, replyAction = replyAction,
-        onSendReply = onSendReply, onCancelReply = onCancelReply,
-        onHeightChange = onHeightChange, modifier = modifier
-    )
-}
-
-internal fun estimateNotificationPageHeight(item: NotificationInfo, isReplying: Boolean = false): androidx.compose.ui.unit.Dp {
-    if (isReplying) return 166.dp
-    val template = resolveNotificationTemplate(item)
-    return when (template) {
-        NotificationTemplateType.PICTURE -> 126.dp
-        NotificationTemplateType.NAVIGATION -> 120.dp
-        NotificationTemplateType.TRANSPORT -> 112.dp
-        NotificationTemplateType.PROGRESS -> 86.dp
-        NotificationTemplateType.TIMER -> 86.dp
-        NotificationTemplateType.STANDARD -> {
-            val text = item.expandedText ?: item.text
-            val lineCount = text.count { it == '\n' } + 1
-            if (lineCount >= 3) 104.8.dp else 86.dp
-        }
-    }
-}
-
 @Composable
 fun NotificationIslandExpandedPager(
     notifications: List<NotificationInfo>,
@@ -1126,6 +408,7 @@ fun NotificationIslandExpandedPager(
     var userPaging by remember { mutableStateOf(false) }
     val latestNotifications by rememberUpdatedState(notifications)
     val latestOnPageChanged by rememberUpdatedState(onPageChanged)
+    val latestActiveIndex by rememberUpdatedState(activeIndex)
     val notificationIds = notifications.map { it.id }
     val selectedId = notifications.getOrNull(activeIndex)?.id
 
@@ -1139,17 +422,21 @@ fun NotificationIslandExpandedPager(
     }
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { Pair(pagerState.isScrollInProgress, pagerState.settledPage) }
-            .collect { (scrolling, settledPage) ->
-                if (!scrolling && userPaging) {
-                    userPaging = false
-                    val settledKey = latestNotifications.getOrNull(settledPage)?.id
-                    if (settledKey != null) {
-                        val settledIndex = ai.emots.kishan_dynamic.data.notification.NotificationPagerSelectionPolicy
-                            .settledIndex(latestNotifications.map { it.id }, settledKey)
-                        if (settledIndex != null && settledIndex != activeIndex) {
-                            latestOnPageChanged(settledIndex)
-                        }
+        snapshotFlow { pagerState.isScrollInProgress }
+            .collect { scrolling ->
+                if (scrolling || !userPaging) return@collect
+                // Drag-end can report "not scrolling" for a moment before the fling
+                // starts; committing there would select an intermediate page and
+                // swallow the final settle. Only commit after a quiet rest window.
+                delay(PagerSettleGraceMs)
+                if (pagerState.isScrollInProgress || !userPaging) return@collect
+                userPaging = false
+                val settledKey = latestNotifications.getOrNull(pagerState.settledPage)?.id
+                if (settledKey != null) {
+                    val settledIndex = ai.emots.kishan_dynamic.data.notification.NotificationPagerSelectionPolicy
+                        .settledIndex(latestNotifications.map { it.id }, settledKey)
+                    if (settledIndex != null && settledIndex != latestActiveIndex) {
+                        latestOnPageChanged(settledIndex)
                     }
                 }
             }
@@ -1214,9 +501,7 @@ fun NotificationIslandExpandedPager(
         HorizontalPager(
             state = pagerState,
             userScrollEnabled = notifications.size > 1 && !editing,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(end = if (editing) 0.dp else railReserve),
+            modifier = Modifier.fillMaxSize(),
             key = { page -> notifications.getOrNull(page)?.id ?: page.toString() },
             beyondViewportPageCount = 1
         ) { page ->
@@ -1224,150 +509,32 @@ fun NotificationIslandExpandedPager(
             val pagerLabel = if (notifications.size > 1) "${page + 1} of ${notifications.size}" else null
             val isReplying = replyingNotificationId == item.id
             val currentReplyAction = if (isReplying) replyAction else null
-            val template = resolveNotificationTemplate(item)
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(end = if (editing) 0.dp else railReserve)
                     .verticalScroll(rememberScrollState())
             ) {
-                when (template) {
-                    NotificationTemplateType.NAVIGATION -> {
-                        NotificationNavigationCard(
-                            notification = item,
-                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                            onDismiss = { onDismiss(item) },
-                            pagerLabel = pagerLabel,
-                            onHeightChange = { h ->
-                                val clamped = h.coerceAtLeast(86.dp)
-                                val existing = pageHeights[item.id]
-                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
-                                    pageHeights[item.id] = clamped
-                                }
-                            }
-                        )
+                AdaptiveNotificationCard(
+                    notification = item,
+                    pagerLabel = pagerLabel,
+                    isReplying = isReplying,
+                    replyAction = currentReplyAction,
+                    onSendReply = onSendReply,
+                    onCancelReply = onCancelReply,
+                    onActionSelected = { action -> onActionSelected(item, action) },
+                    onDismiss = if (item.isClearable) {
+                        { onDismiss(item) }
+                    } else null,
+                    onHeightChange = { h ->
+                        val clamped = h.coerceAtLeast(86.dp)
+                        val existing = pageHeights[item.id]
+                        if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
+                            pageHeights[item.id] = clamped
+                        }
                     }
-                    NotificationTemplateType.TRANSPORT -> {
-                        NotificationTransportCard(
-                            notification = item,
-                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                            onDismiss = { onDismiss(item) },
-                            pagerLabel = pagerLabel,
-                            onHeightChange = { h ->
-                                val clamped = h.coerceAtLeast(86.dp)
-                                val existing = pageHeights[item.id]
-                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
-                                    pageHeights[item.id] = clamped
-                                }
-                            }
-                        )
-                    }
-                    NotificationTemplateType.PROGRESS -> {
-                        NotificationProgressCard(
-                            notification = item,
-                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                            onDismiss = { onDismiss(item) },
-                            pagerLabel = pagerLabel,
-                            onHeightChange = { h ->
-                                val clamped = h.coerceAtLeast(86.dp)
-                                val existing = pageHeights[item.id]
-                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
-                                    pageHeights[item.id] = clamped
-                                }
-                            }
-                        )
-                    }
-                    NotificationTemplateType.PICTURE -> {
-                        NotificationPictureCard(
-                            notification = item,
-                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                            onDismiss = { onDismiss(item) },
-                            onActionSelected = { action -> onActionSelected(item, action) },
-                            isReplying = isReplying,
-                            replyAction = currentReplyAction,
-                            onSendReply = onSendReply,
-                            onCancelReply = onCancelReply,
-                            pagerLabel = pagerLabel,
-                            isCardExpanded = isCardExpanded,
-                            onToggleExpand = onToggleExpand,
-                            onHeightChange = { h ->
-                                val clamped = h.coerceAtLeast(126.dp)
-                                val existing = pageHeights[item.id]
-                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
-                                    pageHeights[item.id] = clamped
-                                }
-                            }
-                        )
-                    }
-                    NotificationTemplateType.TIMER -> {
-                        NotificationIslandExpanded(
-                            notificationKey = item.id,
-                            appName = item.appName,
-                            appPackageName = item.packageName,
-                            imagePath = item.imagePath,
-                            sender = item.title.ifBlank { item.appName },
-                            message = item.text,
-                            actionLabel = item.actions.firstOrNull()?.label ?: "Pause",
-                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                            actions = item.actions,
-                            onActionSelected = { act -> onActionSelected(item, act) },
-                            pagerLabel = pagerLabel,
-                            onDismiss = { onDismiss(item) },
-                            showChronometer = true,
-                            chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
-                            chronometerCountDown = item.chronometerCountDown,
-                            isReplying = isReplying,
-                            replyAction = currentReplyAction,
-                            onSendReply = onSendReply,
-                            onCancelReply = onCancelReply,
-                            isCardExpanded = isCardExpanded,
-                            onToggleExpand = onToggleExpand,
-                            onHeightChange = { h ->
-                                val clamped = h.coerceAtLeast(86.dp)
-                                val existing = pageHeights[item.id]
-                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
-                                    pageHeights[item.id] = clamped
-                                }
-                            }
-                        )
-                    }
-                    NotificationTemplateType.STANDARD -> {
-                        NotificationIslandExpanded(
-                            notificationKey = item.id,
-                            appName = item.appName,
-                            appPackageName = item.packageName,
-                            imagePath = item.imagePath,
-                            sender = item.title.ifBlank { item.appName },
-                            message = item.text,
-                            expandedText = item.expandedText,
-                            inboxLines = item.inboxLines,
-                            actionLabel = item.actions.firstOrNull()?.label.orEmpty(),
-                            onAction = { item.actions.firstOrNull()?.let { onActionSelected(item, it) } },
-                            actions = item.actions,
-                            onActionSelected = { act -> onActionSelected(item, act) },
-                            pagerLabel = pagerLabel,
-                            onDismiss = if (item.isClearable) { { onDismiss(item) } } else null,
-                            progress = if (item.progressMax > 0) item.progress.toFloat() / item.progressMax.toFloat() else null,
-                            isProgressIndeterminate = item.isProgressIndeterminate,
-                            showChronometer = item.showChronometer,
-                            chronometerBaseElapsedRealtime = item.chronometerBaseElapsedRealtime,
-                            chronometerCountDown = item.chronometerCountDown,
-                            isReplying = isReplying,
-                            replyAction = currentReplyAction,
-                            onSendReply = onSendReply,
-                            onCancelReply = onCancelReply,
-                            isCardExpanded = isCardExpanded,
-                            onToggleExpand = onToggleExpand,
-                            onHeightChange = { h ->
-                                val clamped = h.coerceAtLeast(86.dp)
-                                val existing = pageHeights[item.id]
-                                if (existing == null || kotlin.math.abs(existing.value - clamped.value) > 0.5f) {
-                                    pageHeights[item.id] = clamped
-                                }
-                            }
-                        )
-                    }
-                }
+                )
             }
         }
 

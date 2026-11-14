@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.*
@@ -142,11 +143,36 @@ class LayeredMiniIslandsInstrumentedTest {
     }
     @Test fun verticalPagerRemainsInteractiveWithChildren() {
         render(430); arrive(3)
-        compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeLeft(durationMillis = 450) }
+        // Newest-first queue puts "main" on the last page; only a right swipe moves off it.
+        compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeRight(durationMillis = 450) }
         compose.waitUntil(5000) { state.selectedKey != "main" }
+        compose.waitForIdle()
         assertEquals(4, state.canonicalQueueCount)
         assertTrue(state.queue.notifications.any { it.id == "main" })
+        // Regression: the final settled page must commit, never an intermediate
+        // drag-end page, and the selected notification must not also render as a mini.
+        assertPagerSelectionConsistent()
         shot("pager-swipe-with-children")
+        repeat(3) {
+            compose.onNodeWithTag("notification_vertical_pager").performTouchInput { swipeLeft(durationMillis = 450) }
+            compose.waitForIdle()
+            compose.mainClock.advanceTimeBy(400)
+            compose.waitForIdle()
+            assertPagerSelectionConsistent()
+        }
+        assertEquals("main", state.selectedKey)
+        shot("pager-return-to-main")
+    }
+    private fun assertPagerSelectionConsistent() {
+        compose.waitForIdle()
+        val selected = state.selectedKey
+        assertNotNull("engine must hold a selected key", selected)
+        assertEquals("queue.activeIndex must point at the selected notification",
+            selected, state.queue.notifications.getOrNull(state.queue.activeIndex)?.id)
+        compose.onNodeWithTag("child_$selected").assertDoesNotExist()
+        val expectedLabel = "Notification ${state.queue.activeIndex + 1} of ${state.queue.notifications.size}"
+        compose.onNodeWithTag("notification_vertical_pager").assert(
+            SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, expectedLabel))
     }
     @Test fun captureActualEmergenceAndMergeFrames() {
         render(430, reduced = false)

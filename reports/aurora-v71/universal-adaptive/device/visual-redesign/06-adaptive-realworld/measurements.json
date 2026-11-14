@@ -1,0 +1,245 @@
+[
+  {
+    "mode": "00-figma-thumbnail",
+    "width_dp": 360,
+    "height_dp": 126,
+    "width_px": 1080,
+    "height_px": 378,
+    "full_file": "00-figma-thumbnail-full.png",
+    "crop_file": "00-figma-thumbnail-crop.png"
+  },
+  {
+    "mode": "00-figma-thumbnail-queue3",
+    "width_dp": 360,
+    "height_dp": 126,
+    "width_px": 1080,
+    "height_px": 378,
+    "full_file": "00-figma-thumbnail-queue3-full.png",
+    "crop_file": "00-figma-thumbnail-queue3-crop.png"
+  },
+  {
+    "mode": "01-short-text",
+    "width_dp": 360,
+    "height_dp": 86,
+    "width_px": 1080,
+    "height_px": 258,
+    "full_file": "01-short-text-full.png",
+    "crop_file": "01-short-text-crop.png"
+  },
+  {
+    "mode": "02-multi-line",
+    "width_dp": 360,
+    "height_dp": 113,
+    "width_px": 1080,
+    "height_px": 339,
+    "full_file": "02-multi-line-full.png",
+    "crop_file": "02-multi-line-crop.png"
+  },
+  {
+    "mode": "03-conversation-media",
+    "width_dp": 360,
+    "height_dp": 144,
+    "width_px": 1080,
+    "height_px": 432,
+    "full_file": "03-conversation-media-full.png",
+    "crop_file": "03-conversation-media-crop.png"
+  },
+  {
+    "mode": "04-inbox-digest",
+    "width_dp": 360,
+    "height_dp": 322,
+    "width_px": 1080,
+    "height_px": 966,
+    "full_file": "04-inbox-digest-full.png",
+    "crop_file": "04-inbox-digest-crop.png"
+  },
+  {
+    "mode": "04-inbox-digest-queue3",
+    "width_dp": 360,
+    "height_dp": 322,
+    "width_px": 1080,
+    "height_px": 966,
+    "full_file": "04-inbox-digest-queue3-full.png",
+    "crop_file": "04-inbox-digest-queue3-crop.png"
+  },
+  {
+    "mode": "05-download-63",
+    "width_dp": 360,
+    "height_dp": 171,
+    "width_px": 1080,
+    "height_px": 513,
+    "full_file": "05-download-63-full.png",
+    "crop_file": "05-download-63-crop.png"
+  },
+  {
+    "mode": "05-download-63-queue3",
+    "width_dp": 360,
+    "height_dp": 171,
+    "width_px": 1080,
+    "height_px": 513,
+    "full_file": "05-download-63-queue3-full.png",
+    "crop_file": "05-download-63-queue3-crop.png"
+  },
+  {
+    "mode": "06-indeterminate",
+    "width_dp": 360,
+    "height_dp": 115,
+    "width_px": 1080,
+    "height_px": 345,
+    "full_file": "06-indeterminate-full.png",
+    "crop_file": "06-indeterminate-crop.png"
+  },
+  {
+    "mode": "06-indeterminate-queue3",
+    "width_dp": 360,
+    "height_dp": 115,
+    "width_px": 1080,
+    "height_px": 345,
+    "full_file": "06-indeterminate-queue3-full.png",
+    "crop_file": "06-indeterminate-queue3-crop.png"
+  },
+  {
+    "mode": "07-timer",
+    "width_dp": 360,
+    "height_dp": 199.66667,
+    "width_px": 1080,
+    "height_px": 599,
+    "full_file": "07-timer-full.png",
+    "crop_file": "07-timer-crop.png"
+  },
+  {
+    "mode": "07-timer-queue3",
+    "width_dp": 360,
+    "height_dp": 199.66667,
+    "width_px": 1080,
+    "height_px": 599,
+    "full_file": "07-timer-queue3-full.png",
+    "crop_file": "07-timer-queue3-crop.png"
+  },
+  {
+    "mode": "08-navigation",
+    "width_dp": 360,
+    "height_dp": 178,
+    "width_px": 1080,
+    "height_px": 534,
+    "full_file": "08-navigation-full.png",
+    "crop_file": "08-navigation-crop.png"
+  },
+  {
+    "mode": "08-navigation-queue3",
+    "width_dp": 360,
+    "height_dp": 178,
+    "width_px": 1080,
+    "height_px": 534,
+    "full_file": "08-navigation-queue3-full.png",
+    "crop_file": "08-navigation-queue3-crop.png"
+  },
+  {
+    "mode": "09-group-summary",
+    "width_dp": 360,
+    "height_dp": 184.66667,
+    "width_px": 1080,
+    "height_px": 554,
+    "full_file": "09-group-summary-full.png",
+    "crop_file": "09-group-summary-crop.png"
+  },
+  {
+    "mode": "09-group-summary-queue3",
+    "width_dp": 360,
+    "height_dp": 184.66667,
+    "width_px": 1080,
+    "height_px": 554,
+    "full_file": "09-group-summary-queue3-full.png",
+    "crop_file": "09-group-summary-queue3-crop.png"
+  },
+  {
+    "mode": "10-big-picture",
+    "width_dp": 360,
+    "height_dp": 351,
+    "width_px": 1080,
+    "height_px": 1053,
+    "full_file": "10-big-picture-full.png",
+    "crop_file": "10-big-picture-crop.png"
+  },
+  {
+    "mode": "10-big-picture-queue3",
+    "width_dp": 360,
+    "height_dp": 351,
+    "width_px": 1080,
+    "height_px": 1053,
+    "full_file": "10-big-picture-queue3-full.png",
+    "crop_file": "10-big-picture-queue3-crop.png"
+  },
+  {
+    "mode": "11-conversation",
+    "width_dp": 360,
+    "height_dp": 281.66666,
+    "width_px": 1080,
+    "height_px": 845,
+    "full_file": "11-conversation-full.png",
+    "crop_file": "11-conversation-crop.png"
+  },
+  {
+    "mode": "11-conversation-queue3",
+    "width_dp": 360,
+    "height_dp": 281.66666,
+    "width_px": 1080,
+    "height_px": 845,
+    "full_file": "11-conversation-queue3-full.png",
+    "crop_file": "11-conversation-queue3-crop.png"
+  },
+  {
+    "mode": "12-empty-fallback",
+    "width_dp": 360,
+    "height_dp": 86,
+    "width_px": 1080,
+    "height_px": 258,
+    "full_file": "12-empty-fallback-full.png",
+    "crop_file": "12-empty-fallback-crop.png"
+  },
+  {
+    "mode": "12-empty-fallback-queue3",
+    "width_dp": 360,
+    "height_dp": 86,
+    "width_px": 1080,
+    "height_px": 258,
+    "full_file": "12-empty-fallback-queue3-full.png",
+    "crop_file": "12-empty-fallback-queue3-crop.png"
+  },
+  {
+    "mode": "13-typed-actions",
+    "width_dp": 360,
+    "height_dp": 221,
+    "width_px": 1080,
+    "height_px": 663,
+    "full_file": "13-typed-actions-full.png",
+    "crop_file": "13-typed-actions-crop.png"
+  },
+  {
+    "mode": "13-typed-actions-queue3",
+    "width_dp": 360,
+    "height_dp": 221,
+    "width_px": 1080,
+    "height_px": 663,
+    "full_file": "13-typed-actions-queue3-full.png",
+    "crop_file": "13-typed-actions-queue3-crop.png"
+  },
+  {
+    "mode": "14-long-copy",
+    "width_dp": 360,
+    "height_dp": 379,
+    "width_px": 1080,
+    "height_px": 1137,
+    "full_file": "14-long-copy-full.png",
+    "crop_file": "14-long-copy-crop.png"
+  },
+  {
+    "mode": "14-long-copy-queue3",
+    "width_dp": 360,
+    "height_dp": 379,
+    "width_px": 1080,
+    "height_px": 1137,
+    "full_file": "14-long-copy-queue3-full.png",
+    "crop_file": "14-long-copy-queue3-crop.png"
+  }
+]

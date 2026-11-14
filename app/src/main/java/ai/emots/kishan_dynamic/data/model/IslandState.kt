@@ -19,6 +19,23 @@ data class ContactInfo(
     val avatarUri: String? = null
 )
 
+/** One MessagingStyle history entry, normalized from the platform source. */
+@Immutable
+data class NotificationMessageInfo(
+    val sender: String?,
+    val text: String,
+    val timestamp: Long = 0L
+)
+
+/**
+ * Typed action capability reported by the source notification
+ * (RemoteInput, semantic action, or synthesized content intent).
+ * Presentation never infers semantics from localized label text.
+ */
+enum class NotificationActionKind {
+    GENERIC, REPLY, OPEN, CALL, DELETE, ARCHIVE, MARK_READ, MUTE, THUMBS_UP, THUMBS_DOWN
+}
+
 @Immutable
 data class NotificationInfo(
     val id: String,
@@ -34,6 +51,8 @@ data class NotificationInfo(
     val category: String = "general",
     val groupKey: String = packageName,
     val isGroupSummary: Boolean = false,
+    /** Number of sibling children observed for a group summary; 0 when unknown. */
+    val groupChildCount: Int = 0,
     val isOngoing: Boolean = false,
     val isClearable: Boolean = true,
     val progress: Int = 0,
@@ -53,7 +72,12 @@ data class NotificationInfo(
     val hasContentIntent: Boolean = false,
     val actions: List<NotificationActionInfo> = emptyList(),
     /** Android channel/ranking importance; legacy sources default to DEFAULT. */
-    val importance: Int = 3
+    val importance: Int = 3,
+    /** True when the source is a MessagingStyle conversation. */
+    val isConversation: Boolean = false,
+    val conversationTitle: String? = null,
+    /** MessagingStyle history, oldest first; empty for non-conversation sources. */
+    val messages: List<NotificationMessageInfo> = emptyList()
 )
 
 @Immutable
@@ -61,7 +85,8 @@ data class NotificationActionInfo(
     val id: String,
     val label: String,
     val isReply: Boolean = false,
-    val isDestructive: Boolean = false
+    val isDestructive: Boolean = false,
+    val kind: NotificationActionKind = NotificationActionKind.GENERIC
 )
 
 enum class RingerModeType {

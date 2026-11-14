@@ -101,7 +101,8 @@ fun IslandActionPill(
     fontSize: TextUnit = 12.5.sp,
     fontWeight: FontWeight = FontWeight.SemiBold,
     contentDescription: String? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    fillWidth: Boolean = true
 ) {
     if (style == IslandActionStyle.Passive) {
         // Passive status: Non-interactive presentation
@@ -203,7 +204,7 @@ fun IslandActionPill(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .then(if (fillWidth) Modifier.fillMaxWidth() else Modifier)
                 .height(visualHeight)
                 .clip(capsuleShape)
                 .pressScale(interaction, pressedScale = 0.96f, enabled = enabled)

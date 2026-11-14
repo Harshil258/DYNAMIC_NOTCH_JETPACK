@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ai.emots.kishan_dynamic.data.model.CallDirection
@@ -107,9 +106,7 @@ internal fun CallSummaryExpandedContent(
                                 fontSize = 15.sp,
                                 lineHeight = 19.sp,
                                 fontWeight = FontWeight.SemiBold
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            )
                         )
                         Text(
                             text = subtitle,
@@ -117,9 +114,7 @@ internal fun CallSummaryExpandedContent(
                             style = AppTheme.typography.bodySmall.copy(
                                 fontSize = 11.5.sp,
                                 lineHeight = 15.sp
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            )
                         )
                     }
                 }

@@ -21,6 +21,8 @@ import java.io.File
 import ai.emots.kishan_dynamic.data.model.MusicTrack
 import ai.emots.kishan_dynamic.data.model.NotificationInfo
 import ai.emots.kishan_dynamic.data.model.NotificationActionInfo
+import ai.emots.kishan_dynamic.data.model.NotificationActionKind
+import ai.emots.kishan_dynamic.data.model.NotificationMessageInfo
 import ai.emots.kishan_dynamic.data.model.ContactInfo
 import ai.emots.kishan_dynamic.data.liveactivity.NotificationLiveActivityMapper
 import ai.emots.kishan_dynamic.data.notification.NotificationArtworkRepository
@@ -305,6 +307,31 @@ class IslandNotificationListener : NotificationListenerService() {
         )
         val template = extras.getString(Notification.EXTRA_TEMPLATE).orEmpty()
 
+        // Typed conversation capability: MessagingStyle history via public extras.
+        // The platform's extractMessagingStyleFromNotification helper is absent from SDK stubs.
+        val messageBundles: List<android.os.Bundle> = runCatching {
+            @Suppress("DEPRECATION")
+            extras.getParcelableArrayList<android.os.Bundle>(Notification.EXTRA_MESSAGES).orEmpty()
+        }.getOrDefault(emptyList())
+        val isConversationSource = messageBundles.isNotEmpty() ||
+            extras.containsKey(Notification.EXTRA_CONVERSATION_TITLE)
+        val conversationMessages = messageBundles.mapNotNull { bundle ->
+            val messageText = bundle.getCharSequence("text")?.toString()?.trim().orEmpty()
+            if (messageText.isEmpty()) return@mapNotNull null
+            val senderName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                @Suppress("DEPRECATION")
+                val person = bundle.getParcelable<android.app.Person>("sender_person")
+                person?.name?.toString() ?: bundle.getString("sender")
+            } else {
+                bundle.getString("sender")
+            }
+            NotificationMessageInfo(
+                sender = senderName?.trim()?.takeIf { it.isNotEmpty() },
+                text = messageText,
+                timestamp = bundle.getLong("time")
+            )
+        }.takeLast(6)
+
         val actionIntents = mutableMapOf<String, NotificationActionRegistry.Target>()
         val actions = notification.actions.orEmpty().mapIndexedNotNull { index, action ->
             val label = action.title?.toString()?.trim().orEmpty()
@@ -318,17 +345,33 @@ class IslandNotificationListener : NotificationListenerService() {
                 pendingIntent = actionIntent,
                 remoteInputs = action.remoteInputs?.toList().orEmpty()
             )
+            val semanticKind = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                when (action.semanticAction) {
+                    Notification.Action.SEMANTIC_ACTION_REPLY -> NotificationActionKind.REPLY
+                    Notification.Action.SEMANTIC_ACTION_DELETE -> NotificationActionKind.DELETE
+                    Notification.Action.SEMANTIC_ACTION_ARCHIVE -> NotificationActionKind.ARCHIVE
+                    Notification.Action.SEMANTIC_ACTION_MARK_AS_READ -> NotificationActionKind.MARK_READ
+                    Notification.Action.SEMANTIC_ACTION_MUTE -> NotificationActionKind.MUTE
+                    Notification.Action.SEMANTIC_ACTION_THUMBS_UP -> NotificationActionKind.THUMBS_UP
+                    Notification.Action.SEMANTIC_ACTION_THUMBS_DOWN -> NotificationActionKind.THUMBS_DOWN
+                    Notification.Action.SEMANTIC_ACTION_CALL -> NotificationActionKind.CALL
+                    else -> NotificationActionKind.GENERIC
+                }
+            } else NotificationActionKind.GENERIC
+            val isReply = action.remoteInputs?.any { it.allowFreeFormInput } == true
             NotificationActionInfo(
                 id = actionId,
                 label = label,
-                isReply = action.remoteInputs?.any { it.allowFreeFormInput } == true
+                isReply = isReply,
+                isDestructive = semanticKind == NotificationActionKind.DELETE,
+                kind = if (isReply) NotificationActionKind.REPLY else semanticKind
             )
         }
         notification.contentIntent?.let {
             actionIntents["open"] = NotificationActionRegistry.Target(it)
         }
         val resolvedActions = if (actions.isEmpty() && notification.contentIntent != null) {
-            listOf(NotificationActionInfo(id = "open", label = "Open"))
+            listOf(NotificationActionInfo(id = "open", label = "Open", kind = NotificationActionKind.OPEN))
         } else {
             actions
         }
@@ -347,6 +390,11 @@ class IslandNotificationListener : NotificationListenerService() {
             NotificationActionRegistry.remove(sbn.key)
             return
         }
+        val groupChildCount = if (isGroupSummary) {
+            runCatching {
+                activeNotifications.orEmpty().count { it.key != sbn.key && it.groupKey == sbn.groupKey }
+            }.getOrDefault(0)
+        } else 0
         var notifInfo = NotificationInfo(
             id = sbn.key,
             packageName = sbn.packageName,
@@ -365,6 +413,7 @@ class IslandNotificationListener : NotificationListenerService() {
             category = category,
             groupKey = sbn.groupKey ?: sbn.packageName,
             isGroupSummary = isGroupSummary,
+            groupChildCount = groupChildCount,
             isOngoing = isOngoing,
             isClearable = sbn.isClearable,
             progress = extras.getInt(Notification.EXTRA_PROGRESS, 0).coerceIn(0,
@@ -388,7 +437,11 @@ class IslandNotificationListener : NotificationListenerService() {
             ),
             hasContentIntent = notification.contentIntent != null,
             actions = resolvedActions,
-            importance = importance
+            importance = importance,
+            isConversation = isConversationSource,
+            conversationTitle = extras.getCharSequence(Notification.EXTRA_CONVERSATION_TITLE)
+                ?.toString()?.trim()?.takeIf { it.isNotEmpty() },
+            messages = conversationMessages
         )
 
         // Classify first: navigation, recording and other live work may have

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -555,85 +556,112 @@ internal fun PremiumExpiryExpandedContent(
                     text = if (hoursRemaining <= 0) "Your Pro access has ended." else "Pro features active • Renews in ${hoursRemaining}h",
                     color = Color.White.copy(alpha = 0.70f),
                     fontSize = 12.sp,
-                    fontFamily = IslandReferenceFonts.Text,
-                    maxLines = 1
+                    fontFamily = IslandReferenceFonts.Text
                 )
             }
         }
 
         // Perks micro-strip
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            PremiumPerkChip(text = "✦ 60 Islands", modifier = Modifier.weight(1f))
-            PremiumPerkChip(text = "✦ Zero Ads", modifier = Modifier.weight(1f))
-            PremiumPerkChip(text = "✦ Notch Tuner", modifier = Modifier.weight(1f))
-        }
-
-        // Action buttons row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            // Watch Ads button (+24h)
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(38.dp)
-                    .clip(RoundedCornerShape(19.dp))
-                    .background(Color(0xFF22242F))
-                    .border(0.75.dp, Color.White.copy(alpha = 0.14f), RoundedCornerShape(19.dp))
-                    .clickable(role = Role.Button) {
-                        onControlAction(IslandControlAction.PremiumWatchAd)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    AppleIcon(glyph = AppleGlyph.Play, tint = Color.White, size = 12.dp)
-                    Text(
-                        text = "Watch Ad (+24h)",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        fontFamily = IslandReferenceFonts.Text
-                    )
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val stackChips = maxWidth < 240.dp ||
+                androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
+            if (stackChips) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    PremiumPerkChip(text = "✦ 60 Islands", modifier = Modifier.fillMaxWidth())
+                    PremiumPerkChip(text = "✦ Zero Ads", modifier = Modifier.fillMaxWidth())
+                    PremiumPerkChip(text = "✦ Notch Tuner", modifier = Modifier.fillMaxWidth())
+                }
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    PremiumPerkChip(text = "✦ 60 Islands", modifier = Modifier.weight(1f))
+                    PremiumPerkChip(text = "✦ Zero Ads", modifier = Modifier.weight(1f))
+                    PremiumPerkChip(text = "✦ Notch Tuner", modifier = Modifier.weight(1f))
                 }
             }
+        }
 
-            // Buy Premium button (Radiant Aurora gradient)
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(38.dp)
-                    .clip(RoundedCornerShape(19.dp))
-                    .background(
-                        Brush.horizontalGradient(
-                            listOf(Color(0xFF9747FF), Color(0xFF5E5CE6))
-                        )
-                    )
-                    .border(0.75.dp, Color(0xFFBF5AF2).copy(alpha = 0.60f), RoundedCornerShape(19.dp))
-                    .clickable(role = Role.Button) {
-                        onControlAction(IslandControlAction.PremiumBuy)
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    AppleIcon(glyph = AppleGlyph.Crown, tint = Color(0xFFFFD60A), size = 13.dp)
-                    Text(
-                        text = "Unlock Lifetime",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = IslandReferenceFonts.Text
-                    )
+        // Action buttons: stack when narrow or large type, per island layout rules.
+        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+            val stackVertically = maxWidth < 240.dp ||
+                androidx.compose.ui.platform.LocalDensity.current.fontScale > 1.3f
+            val watchButton: @Composable (Modifier) -> Unit = { buttonModifier ->
+                PremiumExpiryButton(
+                    label = "Watch Ad (+24h)",
+                    glyph = AppleGlyph.Play,
+                    glyphTint = Color.White,
+                    background = androidx.compose.ui.graphics.SolidColor(Color(0xFF22242F)),
+                    borderColor = Color.White.copy(alpha = 0.14f),
+                    bold = false,
+                    modifier = buttonModifier
+                ) { onControlAction(IslandControlAction.PremiumWatchAd) }
+            }
+            val buyButton: @Composable (Modifier) -> Unit = { buttonModifier ->
+                PremiumExpiryButton(
+                    label = "Unlock Lifetime",
+                    glyph = AppleGlyph.Crown,
+                    glyphTint = Color(0xFFFFD60A),
+                    background = Brush.horizontalGradient(
+                        listOf(Color(0xFF9747FF), Color(0xFF5E5CE6))
+                    ),
+                    borderColor = Color(0xFFBF5AF2).copy(alpha = 0.60f),
+                    bold = true,
+                    modifier = buttonModifier
+                ) { onControlAction(IslandControlAction.PremiumBuy) }
+            }
+            if (stackVertically) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    watchButton(Modifier.fillMaxWidth())
+                    buyButton(Modifier.fillMaxWidth())
                 }
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    watchButton(Modifier.weight(1f))
+                    buyButton(Modifier.weight(1f))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PremiumExpiryButton(
+    label: String,
+    glyph: AppleGlyph,
+    glyphTint: Color,
+    background: Brush,
+    borderColor: Color,
+    bold: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
+            .clickable(role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 38.dp)
+                .clip(RoundedCornerShape(50))
+                .background(background)
+                .border(0.75.dp, borderColor, RoundedCornerShape(50)),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                AppleIcon(glyph = glyph, tint = glyphTint, size = 12.dp)
+                Text(
+                    text = label,
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    fontWeight = if (bold) FontWeight.Bold else FontWeight.SemiBold,
+                    fontFamily = IslandReferenceFonts.Text
+                )
             }
         }
     }

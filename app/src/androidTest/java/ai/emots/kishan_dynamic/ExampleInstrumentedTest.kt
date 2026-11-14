@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("ai.emots.kishan_dynamic", appContext.packageName)
+        assertEquals("com.island.dynamicnotch", appContext.packageName)
     }
 }

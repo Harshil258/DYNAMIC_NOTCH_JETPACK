@@ -26,7 +26,7 @@ class DynamicIslandPlaygroundTest {
                 motion = it.motion.copy(enabled = false)) }
         }
         compose.waitForIdle()
-        compose.onNodeWithText("Aurora Pro access", useUnmergedTree = true).assertExists()
+        compose.onNodeWithText("Aurora Pro", useUnmergedTree = true).assertExists()
         compose.runOnIdle { controller.runChecks() }
         assertTrue(controller.checks.value.all { it.passed })
     }
@@ -38,7 +38,7 @@ class DynamicIslandPlaygroundTest {
         }
         compose.waitForIdle()
         val before = compose.onNodeWithTag("island_surface", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.width
-        compose.runOnIdle { controller.options { it.copy(minimumWidth = 140f) } }
+        compose.runOnIdle { controller.options { it.copy(minimumWidth = 240f) } }
         compose.waitForIdle()
         val after = compose.onNodeWithTag("island_surface", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot.width
         assertTrue("geometry overrides must change the real surface", after > before)
@@ -57,7 +57,7 @@ class DynamicIslandPlaygroundTest {
         compose.waitUntil(5_000) { !controller.snapshot.value.sequenceRunning }
         compose.onNodeWithText("States", useUnmergedTree = true).performScrollTo().performClick()
         compose.onNodeWithTag("case_Access").performScrollTo().performClick()
-        compose.onNodeWithText("Aurora Pro access", useUnmergedTree = true).assertExists()
+        compose.onNodeWithText("Aurora Pro", useUnmergedTree = true).assertExists()
         val context = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext
         val folder = java.io.File(context.filesDir, "island-playground-qa").apply { mkdirs() }
         java.io.File(folder, "access-preview.png").outputStream().use { output ->

@@ -6,15 +6,16 @@ enum class NotificationPresentationType { STANDARD, NAVIGATION, TRANSPORT, PROGR
 
 /** Message prose and app names are not Android capabilities. */
 object NotificationPresentationPolicy {
-    fun classify(source: NotificationInfo): NotificationPresentationType = when {
-        source.progressMax > 0 || source.isProgressIndeterminate -> NotificationPresentationType.PROGRESS
-        source.showChronometer || source.chronometerBaseElapsedRealtime > 0 ||
-            source.category == "timer" || source.category == "stopwatch" -> NotificationPresentationType.TIMER
-        source.isOngoing && source.category == "navigation" -> NotificationPresentationType.NAVIGATION
-        source.picturePath != null -> NotificationPresentationType.PICTURE
-        // Android CATEGORY_TRANSPORT describes media, not a taxi reservation.
-        else -> NotificationPresentationType.STANDARD
-    }
+    fun classify(source: NotificationInfo): NotificationPresentationType =
+        when (NotificationLayoutPolicy.recipe(source)) {
+            NotificationLayoutRecipe.PROGRESS -> NotificationPresentationType.PROGRESS
+            NotificationLayoutRecipe.TIMER -> NotificationPresentationType.TIMER
+            NotificationLayoutRecipe.NAVIGATION -> NotificationPresentationType.NAVIGATION
+            NotificationLayoutRecipe.THUMBNAIL_ALERT, NotificationLayoutRecipe.LARGE_MEDIA ->
+                NotificationPresentationType.PICTURE
+            // Android CATEGORY_TRANSPORT describes media, not a taxi reservation.
+            else -> NotificationPresentationType.STANDARD
+        }
 }
 
 /** Conservative extra lock-screen protection; never derives a payment outcome. */
